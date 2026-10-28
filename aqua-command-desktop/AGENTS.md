@@ -7,3 +7,7 @@ WinCC/PLC access remains strictly READ ONLY. No tag writes, PLC commands, revers
 This repository is public: no original SCADA samples, infrastructure addresses, credentials, generated enrollment, runtime databases, workstation paths or plant-specific tag names in commits/packages. Use generic LAB tags; import actual tag names only into private local configuration at runtime. No fabricated WinCC/Windows/physical-LAN verification claim.
 
 Build and test on Linux first; create a real RPM and test its installed payload. .exe is not claimed built/tested on Linux. Existing web assets are regression fixtures only; exclude them and their entry points from the RPM.
+
+## Actual-use increment authorized after G2
+
+The user now requests actual runtime development instead of simulation and confirms OPC DA exists but has NOT been officially enabled/approved. Develop real Windows-local OPC DA read-only client and explicit authenticated HTTPS deployed roles; this supersedes the prior increment's loopback-only implementation scope, not the ban on production access/config changes. Do not activate/connect OPC DA, enable WinCC services, change network settings or send real Telegram messages in development. Windows client must require operator confirmation of prior organizational authorization and explicit manual start; readiness only reads registration. No simulation in normal installed workflow. Keep legacy simulation solely in explicitly gated developer tests. Never claim Windows/WinCC/physical-LAN acceptance from Linux tests.

@@ -36,7 +36,7 @@ export function requestJSON(base,path,identity,value,options={}){
   let settled=false,req;const timeoutMs=Math.min(10000,Math.max(100,options.timeoutMs??1500));
   const done=(error,value)=>{if(settled)return;settled=true;clearTimeout(deadline);error?reject(error):resolve(value)};
   const deadline=setTimeout(()=>{done(Error('LAB request deadline exceeded'));req?.destroy()},timeoutMs);
-  req=(u.protocol==='https:'?https:http).request({hostname:u.hostname,port:u.port,method:'POST',path,rejectUnauthorized:true,headers:{...headers,'content-type':'application/json','content-length':Buffer.byteLength(raw)},timeout:timeoutMs,...(options.caFile?{ca:fs.readFileSync(options.caFile)}:{})},res=>{
+  req=(u.protocol==='https:'?https:http).request({hostname:u.hostname,port:u.port,method:'POST',path,rejectUnauthorized:true,headers:{...headers,'content-type':'application/json','content-length':Buffer.byteLength(raw)},timeout:timeoutMs,...(options.caData!==undefined?{ca:options.caData}:options.caFile?{ca:fs.readFileSync(options.caFile)}:{})},res=>{
    let bytes=0;const parts=[];
    const interrupted=()=>done(Object.assign(Error('LAB response interrupted'),{transportConnected:true}));
    res.once('aborted',interrupted);res.once('error',interrupted);res.once('close',()=>{if(!res.complete)interrupted()});

@@ -11,7 +11,7 @@ export const INITIAL=Object.fromEntries(Object.values(GROUPS).flat().map(id=>[id
 export class Store{
  constructor(dir,options={}){
   this.maxPending=options.maxPending??10000;this.maxHistory=options.maxHistory??2000;this.maxRecords=options.maxRecords??50000;
-  this.notifications=options.notifications===true;this.allowReorderedRuntime=options.allowReorderedRuntime===true;
+  this.realOnly=options.realOnly===true;this.notifications=options.notifications===true;this.allowReorderedRuntime=options.allowReorderedRuntime===true;
   for(const n of [this.maxPending,this.maxHistory,this.maxRecords])if(!Number.isSafeInteger(n)||n<1||n>1000000)throw Error('Invalid LAB storage quota');
   assertOwnedStorage(dir);fs.mkdirSync(dir,{recursive:true,mode:0o700});this.dir=dir;this.db=new DatabaseSync(path.join(dir,'aqua.sqlite3'));
   this.db.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA busy_timeout=3000;');
@@ -35,7 +35,7 @@ export class Store{
    if(alive&&(!owner.instance||!liveInstance||owner.instance===liveInstance))throw Object.assign(Error('LAB data directory is already owned by a running service'),{code:'LAB_DATA_IN_USE'});
   }
   const instance=processIdentity(process.pid);if(!instance)throw Object.assign(Error('Cannot establish stable LAB process ownership'),{code:'LAB_PROCESS_IDENTITY_UNAVAILABLE'});
-  this.set('serviceOwner',{id,pid:process.pid,instance,startedAt:new Date().toISOString()});
+  this.owner={id,pid:process.pid,instance,startedAt:new Date().toISOString()};this.set('serviceOwner',this.owner);
  })}
  tx(fn){this.db.exec('BEGIN IMMEDIATE');try{const value=fn();this.db.exec('COMMIT');return value}catch(e){this.db.exec('ROLLBACK');throw e}}
  claimNonce(source,nonce){
@@ -79,7 +79,19 @@ export class Store{
  })}
  session(source){const token=randomBytes(32).toString('hex'),expiresAt=Date.now()+30000;this.db.prepare('DELETE FROM sessions WHERE expires<?').run(Date.now());this.db.prepare('INSERT INTO sessions VALUES(?,?,?)').run(digest(token),source,expiresAt);return {session:token,expiresAt}}
  validSession(source,token){return typeof token==='string'&&!!this.db.prepare('SELECT token FROM sessions WHERE token=? AND source=? AND expires>?').get(digest(token),source,Date.now())}
+ validateV3(source,e){
+  const fail=()=>{throw Object.assign(Error('Invalid read-only OPC DA runtime schema'),{status:400})},stamp=v=>typeof v==='string'&&Number.isFinite(Date.parse(v));
+  if(!GROUPS[source]||e.source_id!==source||e.schema_version!==3||e.source_adapter!=='wincc-opc-da'||e.simulated!==false||!['SNAPSHOT','STATE_CHANGE'].includes(e.kind)||!Number.isSafeInteger(e.sequence)||e.sequence<1||typeof e.event_id!=='string'||!e.event_id.startsWith(source+':')||e.event_id.length>100||!stamp(e.at)||!stamp(e.read_at)||e.observed_at!==e.read_at||!e.values||Array.isArray(e.values)||!e.observations||Array.isArray(e.observations))fail();
+  const tags=Object.keys(e.values);if(!tags.length||tags.length>100||Object.keys(e.observations).length!==tags.length)fail();
+  for(const tag of tags){const v=e.values[tag],o=e.observations[tag];if(!/^[-A-Za-z0-9_.]{1,100}$/.test(tag)||Object.hasOwn(Object.prototype,tag)||(v!==null&&typeof v!=='boolean')||!o||Object.keys(o).some(k=>!['raw_value','quality_code','read_error','quality','source_timestamp'].includes(k))||(o.raw_value!==null&&!Number.isFinite(o.raw_value))||(o.quality_code!==null&&(!Number.isSafeInteger(o.quality_code)||o.quality_code<0||o.quality_code>4294967295))||!Number.isSafeInteger(o.read_error)||o.read_error< -2147483648||o.read_error>2147483647||!['GOOD','BAD','UNCERTAIN','UNVERIFIED_MAPPING','UNSUPPORTED_VALUE'].includes(o.quality)||(o.source_timestamp!==null&&!stamp(o.source_timestamp))||(o.quality!=='GOOD'&&v!==null)||(o.quality==='GOOD'&&(o.read_error<0||o.quality_code===null||(o.quality_code&192)!==192||![0,1].includes(o.raw_value)||v!==(o.raw_value===1))))fail()}
+  const allowed=['event_id','schema','schema_version','source_id','sequence','kind','at','simulated','observed_at','read_at','source_adapter','values','observations',...(e.kind==='STATE_CHANGE'?['tag_name','before','value']:[])];if(Object.keys(e).some(k=>!allowed.includes(k)))fail();
+  if(e.kind==='STATE_CHANGE'&&(!tags.includes(e.tag_name)||typeof e.before!=='boolean'||typeof e.value!=='boolean'||e.before===e.value||e.values[e.tag_name]!==e.value))fail();
+ }
  validate(source,event){
+  if(this.realOnly&&event?.simulated!==false)throw Object.assign(Error('Actual-only Gateway rejects simulated events'),{status:400});
+  if(event?.schema==='aqua.runtime.v3'){
+   this.validateV3(source,event);return;
+  }
   if(event?.schema==='aqua.runtime.v2'){
    const fail=()=>{throw Object.assign(Error('Invalid read-only runtime schema'),{status:400})};
    if(!GROUPS[source]||event.source_id!==source||event.schema_version!==2||typeof event.simulated!=='boolean'||!['SNAPSHOT','STATE_CHANGE'].includes(event.kind)||!Number.isSafeInteger(event.sequence)||event.sequence<1||typeof event.event_id!=='string'||!event.event_id.startsWith(source+':')||event.event_id.length>100||!Number.isFinite(Date.parse(event.at))||!Number.isFinite(Date.parse(event.observed_at))||!event.values||!event.observations)fail();
@@ -105,9 +117,9 @@ export class Store{
     if(old){if(old.digest!==hash)throw Object.assign(Error('Event ID collision'),{status:409});duplicates++}
     else{
      if(this.db.prepare('SELECT count(*) n FROM records').get().n>=this.maxRecords)throw Object.assign(Error('Gateway ledger quota reached; source must retain backlog'),{status:507});
-     if(event.sequence!==last+1&&!(event.schema_version===2&&(event.sequence>last||this.allowReorderedRuntime)))throw Object.assign(Error('Source sequence gap/collision'),{status:409});
+     if(event.sequence!==last+1&&!([2,3].includes(event.schema_version)&&(event.sequence>last||this.allowReorderedRuntime)))throw Object.assign(Error('Source sequence gap/collision'),{status:409});
      this.db.prepare('INSERT INTO records(id,source,seq,kind,at,payload,digest) VALUES(?,?,?,?,?,?,?)').run(event.event_id,source,event.sequence,event.kind,event.at,payload,hash);
-     last=Math.max(last,event.sequence);this.set('received',this.get('received',0)+1);
+     last=Math.max(last,event.sequence);this.set('received',this.get('received',0)+1);this.set('receivedAt:'+source,new Date().toISOString());
      if(this.notifications&&event.kind==='STATE_CHANGE')this.db.prepare('INSERT INTO notifications(id,source,payload,text) VALUES(?,?,?,?)').run(event.event_id,source,payload,this.notificationText(event));
     }
     acks.push({event_id:event.event_id,sha256:hash});
@@ -117,7 +129,7 @@ export class Store{
  }
  stats(){return {snapshots:this.get('snapshots',0),transitions:this.get('transitions',0),pending:Number(this.db.prepare("SELECT count(*) n FROM records WHERE state!='acked'").get().n),acked:this.get('acked',0),received:this.get('received',0),duplicates:this.get('duplicates',0),lastExport:this.get('lastExport'),lastAckAt:this.get('lastAckAt'),sequence:this.get('sequence',0),latest:this.db.prepare("SELECT payload FROM records WHERE kind='SNAPSHOT' ORDER BY seq DESC LIMIT 1").get()?.payload??null}}
  disk(){return {bytes:['aqua.sqlite3','aqua.sqlite3-wal','aqua.sqlite3-shm'].reduce((sum,name)=>{try{return sum+fs.statSync(path.join(this.dir,name)).size}catch{return sum}},0),maxDatabaseBytes:64*1024*1024,maxPending:this.maxPending,maxHistory:this.maxHistory,maxRecords:this.maxRecords}}
- notificationText(e){return `[${e.simulated?'AQUA LAB / SIMULATED':'AQUA READ-ONLY FILE / WINCC CONNECTION UNVERIFIED'}]\n${e.source_id} ${e.tag_name}: ${e.before?'ON':'OFF'} -> ${e.value?'ON':'OFF'}\n${e.observed_at||e.at}\nevent_id: ${e.event_id}`}
+ notificationText(e){return `[${e.simulated?'AQUA LAB / SIMULATED':e.source_adapter==='wincc-opc-da'?'AQUA READ-ONLY / WINCC OPC DA':'AQUA READ-ONLY FILE / WINCC CONNECTION UNVERIFIED'}]\n${e.source_id} ${e.tag_name}: ${e.before?'ON':'OFF'} -> ${e.value?'ON':'OFF'}\n${e.observed_at||e.at}\nevent_id: ${e.event_id}`}
  notificationStats(){return {notificationPending:Number(this.db.prepare("SELECT count(*) n FROM notifications WHERE state='pending'").get().n),notificationSent:Number(this.db.prepare("SELECT count(*) n FROM notifications WHERE state='delivered'").get().n),notificationEffects:Number(this.db.prepare('SELECT count(*) n FROM notification_receipts').get().n)}}
  messages(){return this.db.prepare("SELECT id event_id,source source_id,text,mode,delivered_at,message_id FROM notifications WHERE state='delivered' ORDER BY delivered_at DESC LIMIT 50").all()}
  nextNotification(){return this.db.prepare("SELECT * FROM notifications WHERE state='pending' AND next_at<=? ORDER BY rowid LIMIT 1").get(Date.now())}
@@ -132,5 +144,5 @@ export class Store{
   });
  }
  markForwarded(acks){return this.tx(()=>{let changed=0;for(const ack of acks)changed+=Number(this.db.prepare("UPDATE records SET state='acked',acked_at=? WHERE id=? AND digest=? AND state!='acked'").run(new Date().toISOString(),ack.event_id,ack.sha256).changes);this.set('upstreamDelivered',this.get('upstreamDelivered',0)+changed);if(changed){this.set('lastDelivery',new Date().toISOString());this.log('DELIVERY',`${changed} records upstream ACKed`)}return changed})}
- close(){this.db.close()}
+ close(){if(this.owner){const owner=this.get('serviceOwner');if(owner?.pid===this.owner.pid&&owner?.instance===this.owner.instance&&owner?.id===this.owner.id)this.db.prepare('DELETE FROM kv WHERE key=?').run('serviceOwner');this.owner=null}this.db.close()}
 }

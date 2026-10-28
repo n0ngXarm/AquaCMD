@@ -12,6 +12,7 @@ export class CsvReadonlySource{
   if(!c.directory)throw Error('Read-only input folder required');assertStorageOutsideInput(this.directory,config.dataDir);
   if(c.goodQualityCodes!==undefined&&(!Array.isArray(c.goodQualityCodes)||!c.goodQualityCodes.length||c.goodQualityCodes.some(q=>!Number.isSafeInteger(q)||q<0||q>4294967295)))throw Error('Invalid approved quality codes');
   this.good=c.goodQualityCodes||[128];
+  if(c.captureRevision!==undefined&&!/^[a-f0-9]{64}$/.test(c.captureRevision))throw Error('Invalid capture revision');this.cursorPrefix=c.captureRevision?'csv:'+c.captureRevision+':':'csv:';
  }
  capture(){
   const root=fs.realpathSync(this.directory),names=fs.readdirSync(root).filter(n=>/^runtime_\d{8}\.csv$/.test(n)).sort();if(names.length>366)throw Error('Input file limit reached; archive stopped inputs outside this folder');
@@ -20,7 +21,7 @@ export class CsvReadonlySource{
    const file=path.join(root,name),before=fs.lstatSync(file);if(!before.isFile()||before.isSymbolicLink())throw Error('Input must be a regular local CSV file');
    const fd=fs.openSync(file,'r');let bytes;
    try{const stat=fs.fstatSync(fd);if(!stat.isFile()||stat.ino!==before.ino||stat.dev!==before.dev||stat.size>8388608)throw Error('Input replaced or file quota exceeded');bytes=Buffer.alloc(stat.size);let n=0;while(n<bytes.length){const got=fs.readSync(fd,bytes,n,bytes.length-n,n);if(!got)throw Error('Input changed during read');n+=got}}finally{fs.closeSync(fd)}
-   const cursor=this.store.get('csv:'+name,{offset:0,hash:digest(Buffer.alloc(0))});if(bytes.length<cursor.offset||digest(bytes.subarray(0,cursor.offset))!==cursor.hash)throw Error('Committed input changed/replaced/truncated; retained queue is safe');
+   const cursor=this.store.get(this.cursorPrefix+name,{offset:0,hash:digest(Buffer.alloc(0))});if(bytes.length<cursor.offset||digest(bytes.subarray(0,cursor.offset))!==cursor.hash)throw Error('Committed input changed/replaced/truncated; retained queue is safe');
    let offset=cursor.offset;
    if(!offset){const end=bytes.indexOf(10);if(end<0)break;const header=bytes.subarray(0,end).toString('utf8').replace(/^\uFEFF/,'').replace(/\r$/,'');if(header!==CSV_HEADER)throw Error('Not a runtime CSV: Tag configuration exports are not live readings');offset=end+1}
    let frame=null;
@@ -38,7 +39,7 @@ export class CsvReadonlySource{
     const state=good&&confirmed&&(raw===0||raw===1)?raw===1:null;
     frame.values[f[1]]=state;frame.observations[f[1]]={raw_value:raw,quality_code:qualityCode,read_error:readError,quality:!good?'BAD':!confirmed?'UNVERIFIED_MAPPING':state===null?'UNSUPPORTED_VALUE':'GOOD'};
     offset=end+1;
-    if(Object.keys(frame.values).length===this.config.tags.length){const previous=this.store.get('runtimeObservedAt');if(previous&&frame.observed_at<previous)throw Error('Source timestamp moved backwards; cursor retained');this.store.appendRuntime(this.sourceId,frame,{key:'csv:'+name,value:{offset,hash:digest(bytes.subarray(0,offset))}});imported++;frame=null}
+    if(Object.keys(frame.values).length===this.config.tags.length){const previous=this.store.get('runtimeObservedAt');if(previous&&frame.observed_at<previous)throw Error('Source timestamp moved backwards; cursor retained');this.store.appendRuntime(this.sourceId,frame,{key:this.cursorPrefix+name,value:{offset,hash:digest(bytes.subarray(0,offset))}});imported++;frame=null}
    }
    if(frame||offset<bytes.length)break; // never skip a partial batch to process newer files
    if(imported>=32)break;

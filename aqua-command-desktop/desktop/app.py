@@ -8,8 +8,10 @@ from client import BackendClient
 from model import present_status,prepare_profile,read_tag_names,atomic_json,owned_directory,valid_tags
 from consent import ConsentBook,scope_key
 from console import ConsoleView,PAGES
+from actual_editor import ActualEditor
+from production import prepare_actual_profile,permission_material,validate_settings
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-VERSION='0.8.0'
+VERSION='0.9.0'
 def label(text='',css=None,x=0):
  w=Gtk.Label(label=text,xalign=x);w.set_wrap(True)
  if css:w.add_css_class(css)
@@ -24,7 +26,7 @@ def button(text,callback,css=None):
  return w
 class ConsentDialog(Gtk.Window):
  def __init__(self,owner,action,details,accept):
-  title='อนุญาตให้อ่านและเก็บข้อมูล' if action=='capture' else 'อนุญาตให้ส่งข้อมูล'
+  title=('อนุญาตให้รับและเก็บข้อมูล' if owner.source_mode=='gateway' else 'อนุญาตให้อ่านและเก็บข้อมูล') if action=='capture' else 'อนุญาตให้ส่งข้อมูล'
   super().__init__(title=title,transient_for=owner,modal=True);self.set_default_size(700,660)
   body=box(True,16,'dialog-body');self.set_child(body);body.append(label('ตรวจรายละเอียดก่อนเริ่ม','eyebrow'));body.append(label(title,'page-title'));review=Gtk.ScrolledWindow();review.set_min_content_height(280);review.set_max_content_height(300);review.set_propagate_natural_height(True);review.set_child(label(details,'review-details'));body.append(review)
   body.append(label('สิทธิ์นี้ใช้ต่อเนื่องจนกว่าจะหยุดหรือปิดโปรแกรม ไม่ถามซ้ำทุก 5 วินาที','muted'))
@@ -77,16 +79,16 @@ class SourceEditor(Gtk.Window):
 class AquaWindow(Gtk.ApplicationWindow):
  def __init__(self,app,state_root,port):
   super().__init__(application=app,title='AQUA COMMAND');self.set_default_size(1320,820);self.set_size_request(1050,650)
-  self.state_root=pathlib.Path(state_root);self.port=port;self.client=None;self.status={};self.pending={};self.tag_widgets={};self.last_export=None;self.closing=False;self.switching=False;self.generation=0;self.consent_dialog=None;self.source_editor=None;self.capture_requested=False;self.host_error=False;self.presentation_timer=None;self.source_mode='runtime';self.settings={}
+  self.lab_tools=getattr(app,'lab_tools',False);self.state_root=pathlib.Path(state_root);self.port=port;self.client=None;self.status={};self.pending={};self.tag_widgets={};self.last_export=None;self.closing=False;self.switching=False;self.generation=0;self.consent_dialog=None;self.source_editor=None;self.capture_requested=False;self.host_error=False;self.presentation_timer=None;self.source_mode='runtime';self.settings={}
   try:
    with (self.state_root/'preferences.json').open('rb') as f:raw=f.read(32769)
    p=json.loads(raw) if len(raw)<=32768 else {}
-   if p.get('version')==2 and p.get('mode') in ('runtime','csv','lab') and isinstance(p.get('source'),dict):self.source_mode=p['mode'];self.settings=p['source']
+   if p.get('version')==2 and p.get('mode') in (('runtime','csv','gateway','lab') if self.lab_tools else ('runtime','csv','gateway')) and isinstance(p.get('source'),dict):self.source_mode=p['mode'];self.settings=p['source']
    elif p.get('sourceDirectory'):self.source_mode='csv';self.settings=p
   except (ValueError,OSError,AttributeError):pass
   self.book=ConsentBook(self.state_root,self.settings.get('sourceDirectory'))
   css=Gtk.CssProvider();css.load_from_path(str(ROOT/'desktop/style.css'));Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(),css,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-  header=Gtk.HeaderBar();brand=label('AQUA COMMAND','brand');brand.set_wrap(False);header.set_title_widget(brand);local=label('LOCAL LAB · 1 HOST','eyebrow');local.set_wrap(False);header.pack_start(local);header.pack_end(label('READ ONLY','readonly'));self.set_titlebar(header)
+  header=Gtk.HeaderBar();brand=label('AQUA COMMAND','brand');brand.set_wrap(False);header.set_title_widget(brand);self.local_label=label('ACTUAL DATA · MANUAL START','eyebrow');self.local_label.set_wrap(False);header.pack_start(self.local_label);header.pack_end(label('READ ONLY','readonly'));self.set_titlebar(header)
   shell=box();self.set_child(shell);side=box(True,6,'sidebar');side.set_size_request(232,-1);side.append(label('NETWORK + SCADA','eyebrow'));side.append(label('Operations Console','side-title'));shell.append(side)
   self.console=ConsoleView(self);self.pages=self.console.pages;header.pack_end(self.console.freeze_button);self.nav_buttons={};first=None
   for key,name,_ in PAGES:
@@ -94,7 +96,7 @@ class AquaWindow(Gtk.ApplicationWindow):
    if first:nav.set_group(first)
    else:first=nav
    nav.connect('toggled',lambda b,k=key:self.pages.set_visible_child_name(k) if b.get_active() else None);side.append(nav);self.nav_buttons[key]=nav
-  first.set_active(True);spacer=box();spacer.set_vexpand(True);side.append(spacer);side.append(label('Configured endpoints เท่านั้น\nไม่มี NIC / Hostname inventory\nWinCC Runtime: unavailable','caption'));side.append(button('สิทธิ์ / การเชื่อมต่อ',self.permissions_dialog));side.append(label('G2 UI preview · '+VERSION,'caption'))
+  first.set_active(True);spacer=box();spacer.set_vexpand(True);side.append(spacer);self.side_note=label('Configured endpoints เท่านั้น\nไม่มีการสแกน / เปิด OPC เอง\nWinCC: ต้องได้รับอนุญาต','caption');side.append(self.side_note);side.append(button('สิทธิ์ / การเชื่อมต่อ',self.permissions_dialog));side.append(label('Read-only desktop · '+VERSION,'caption'))
   main=box(True,8,'body');main.set_hexpand(True);shell.append(main);self.page_title=label('Operations Overview','page-title');main.append(self.page_title)
   self.display_status=label('','display-status');main.append(self.display_status);self.mode=label('','mode');main.append(self.mode)
   actions=Gtk.FlowBox();actions.set_selection_mode(Gtk.SelectionMode.NONE);actions.set_max_children_per_line(7);actions.set_min_children_per_line(1);actions.set_column_spacing(6);actions.set_row_spacing(6);main.append(actions)
@@ -109,7 +111,7 @@ class AquaWindow(Gtk.ApplicationWindow):
   if not hasattr(self,'display_status'):return
   if self.host_error:self.display_status.set_text('BACKEND NOT REPORTING · ข้อมูลค้าง / CACHED · สถานะงานยังไม่ยืนยัน — กดหยุดงานทั้งหมดก่อนเริ่มใหม่')
   elif frozen:self.display_status.set_text('CACHED DISPLAY · พักภาพที่ '+self.console.last_model.get('updated','Not reported')+' · การเก็บ/ส่งยังทำงานตามสิทธิ์เดิม')
-  else:self.display_status.set_text('G2 · existing-field bindings · IP แสดงเป็น configured endpoint ไม่ใช่ observed NIC · ไม่มีการสแกน')
+  else:self.display_status.set_text('ข้อมูลจริงตามแหล่งที่กำหนด · IP เป็น configured endpoint · ไม่สแกน / ไม่เปิด OPC เอง')
  def permissions_dialog(self,_):
   if self.consent_dialog or self.source_editor or self.closing:return
   dialog=Gtk.Window(title='สิทธิ์และการเชื่อมต่อ',transient_for=self,modal=True);dialog.set_default_size(640,500);body=box(True,14,'dialog-body');dialog.set_child(body);body.append(label('คุณควบคุมการเริ่มงาน','page-title'))
@@ -118,8 +120,8 @@ class AquaWindow(Gtk.ApplicationWindow):
   def revoke(_):dialog.destroy();self.revoke_permissions(None)
   body.append(button('ถอนสิทธิ์ทั้งหมดและหยุดงาน',revoke,'danger'));body.append(button('ปิด',lambda _:dialog.close()));dialog.present()
  def scopes(self):
-  capture=scope_key({'mode':self.source_mode,'settings':self.settings,'interval':5,'readOnly':True,'state':str(self.state_root.absolute())})
-  transfer=scope_key({'capture':capture,'gateway':f'http://127.0.0.1:{self.port+1}','gatewayId':'PC-04','central':f'http://127.0.0.1:{self.port+2}','telegram':'dry-run'})
+  capture=scope_key({'mode':self.source_mode,'settings':permission_material(self.settings) if self.settings.get('deployment') else self.settings,'interval':5,'readOnly':True,'state':str(self.state_root.absolute())})
+  transfer=scope_key({'capture':capture,'actual':permission_material(self.settings)}) if self.settings.get('deployment') else scope_key({'capture':capture,'gateway':f'http://127.0.0.1:{self.port+1}','gatewayId':'PC-04','central':f'http://127.0.0.1:{self.port+2}','telegram':'dry-run'})
   return capture,transfer
  def consent(self,action,details,callback):
   if self.consent_dialog or self.closing or self.switching:return
@@ -133,6 +135,9 @@ class AquaWindow(Gtk.ApplicationWindow):
   self.consent_dialog=ConsentDialog(self,action,details,accept);self.consent_dialog.present()
  def request_capture(self):
   if self.source_mode=='runtime':self.message.set_text('ยังไม่มีช่องทางอ่าน WinCC Runtime ที่ได้รับอนุญาต กรุณาตกลงกับผู้ดูแลก่อน');return
+  if self.settings.get('deployment',{}).get('role')=='gateway':
+   d=self.settings['deployment'];details=f"รับข้อมูลจริงจากเครื่องที่ลงทะเบียน: {', '.join(d['peers'])}\nHTTPS รับที่ {d['listenHost']}:{d['listenPort']}\nเก็บใน: {self.state_root}\nไม่อ่าน PLC/WinCC บนเครื่องนี้ ไม่สแกนเครื่องอื่น\nการส่งภายนอกยังปิด ต้องอนุญาตแยก";self.consent('capture',details,self.begin_capture);return
+  if not self.lab_tools and not self.settings.get('deployment'):self.message.set_text('ตั้งค่าปลายทางจริงและคีย์ที่ลงทะเบียนก่อน ไม่มี LAB fallback');return
   source=self.settings.get('sourceDirectory') if self.source_mode=='csv' else 'Tag จำลองในเครื่องนี้ (LAB)'
   tags=self.settings.get('tags',[]) if self.source_mode=='csv' else [f'LAB_PUMP_{i:02}.RUN_S' for i in range(1,6)]
   details=f"ต้นทาง: {source}\nอ่านอย่างเดียวทุก 5 วินาที จนกว่าจะหยุด\nเก็บใน: {self.state_root}\nการส่งข้อมูล: ยังไม่อนุญาต\nTag: {len(tags)} รายการ\n"+'\n'.join(tags)
@@ -142,7 +147,12 @@ class AquaWindow(Gtk.ApplicationWindow):
   self.capture_requested=True;self.start_backend()
  def request_transfer(self):
   if not self.client:return
-  details=f"ต้นทาง: {self.settings.get('sourceDirectory','Tag จำลอง LAB ในเครื่องนี้')}\nข้อมูล: ค่าปั๊ม เวลา และคุณภาพข้อมูลในคิว\nเครื่องรับ: PC-04 ในเครื่องนี้ · 127.0.0.1:{self.port+1}\nปลายทางถัดไป: CENTRAL-LAB · 127.0.0.1:{self.port+2}\nส่งคิวเก่าและข้อมูลใหม่จนกว่าจะหยุด\nTelegram: ทดสอบเท่านั้น ไม่ส่งข้อความจริง\nการทดสอบนี้ยังไม่ใช่การส่งข้ามเครื่อง LAN"
+  d=self.settings.get('deployment')
+  if d:
+   if d['role']=='gateway':details=f"Gateway: {d['listenHost']}:{d['listenPort']}\nปลายทาง: {d['telegramMode']}\nTelegram API: https://api.telegram.org (getMe และ sendMessage)\nอนุญาต probe/แจ้งเตือนเฉพาะปลายทางที่ตั้งค่า จนกว่าจะหยุด\nไม่ส่ง snapshots ทั้งหมดเข้า Telegram; ประวัติเก็บใน Gateway\nข้อความอาจซ้ำเมื่อ Telegram ตอบกลับไม่ชัดเจน"
+   else:details=f"ส่งคิวเก่าและข้อมูลใหม่ของ {d['id']} ไป {d['gatewayUrl']}\nHTTPS ตรวจ certificate/CA และ HMAC ตามเครื่องที่ลงทะเบียน\nไม่เปิดอ่าน Runtime หรือสั่ง Gateway จากระยะไกล\nส่งต่อเนื่องจนกว่าจะหยุด คิวคงอยู่หากไม่ ACK"
+  else:
+   details=f"ต้นทาง: {self.settings.get('sourceDirectory','Tag จำลอง LAB ในเครื่องนี้')}\nข้อมูล: ค่าปั๊ม เวลา และคุณภาพข้อมูลในคิว\nเครื่องรับ: PC-04 ในเครื่องนี้ · 127.0.0.1:{self.port+1}\nปลายทางถัดไป: CENTRAL-LAB · 127.0.0.1:{self.port+2}\nส่งคิวเก่าและข้อมูลใหม่จนกว่าจะหยุด\nTelegram: ทดสอบเท่านั้น ไม่ส่งข้อความจริง\nการทดสอบนี้ยังไม่ใช่การส่งข้ามเครื่อง LAN"
   self.consent('transfer',details,lambda:self.send('transfer',running=True,approved=True))
  def start_backend(self):
   if self.closing or self.switching or self.source_mode=='runtime':return
@@ -151,7 +161,8 @@ class AquaWindow(Gtk.ApplicationWindow):
     if not self.settings.get('sourceDirectory'):raise ValueError('ยังไม่ได้เลือกโฟลเดอร์ Runtime CSV — จะไม่ใช้ข้อมูล LAB แทน')
     valid_tags(self.settings.get('tags'))
    self.host_error=False
-   self.profile=prepare_profile(self.state_root,self.settings if self.source_mode=='csv' else {});self.generation+=1;generation=self.generation;self.client=BackendClient(ROOT,self.profile,lambda m:GLib.idle_add(self.on_backend,m,generation),self.port);self.message.set_text('กำลังเริ่มตามสิทธิ์ที่อนุญาต — การส่งยังปิดอยู่');self.start_button.set_sensitive(False)
+   if not self.settings.get('deployment') and not self.lab_tools:raise ValueError('ต้องตั้งค่าบทบาทจริง ไม่มี LAB fallback')
+   self.profile=prepare_actual_profile(self.state_root,self.settings) if self.settings.get('deployment') else prepare_profile(self.state_root,self.settings if self.source_mode=='csv' else {});self.generation+=1;generation=self.generation;self.client=BackendClient(ROOT,self.profile,lambda m:GLib.idle_add(self.on_backend,m,generation),self.port);self.message.set_text('กำลังเริ่มตามสิทธิ์ที่อนุญาต — การส่งยังปิดอยู่');self.start_button.set_sensitive(False)
   except (ValueError,OSError,RuntimeError,TypeError) as e:self.capture_requested=False;self.show_error(str(e))
  def on_backend(self,m,generation):
   if not isinstance(m,dict):self.host_error=True;self.show_error('Host message invalid');return False
@@ -186,14 +197,15 @@ class AquaWindow(Gtk.ApplicationWindow):
   status=status if isinstance(status,dict) else {};self.status=status;shown=copy.deepcopy(status)
   if self.host_error:
    shown['captureAllowed']=False;shown['transferAllowed']=False
-   for role in [*(shown.get('agents') or []),shown.get('gateway'),shown.get('central')]:
+   for role in [*(shown.get('agents') if isinstance(shown.get('agents'),list) else []),shown.get('gateway'),shown.get('central')]:
     if isinstance(role,dict):role['online']=False
   records=status.get('snapshots');has_records=isinstance(records,(int,float)) and not isinstance(records,bool) and records>0
   active=self.client is not None and not self.switching;capturing=shown.get('captureAllowed') is True and active;sending=shown.get('transferAllowed') is True and active
   self.console.update(shown,self.source_mode,self.settings,self.port,active);self.update_display_status(self.console.frozen)
-  mode={'runtime':'UNAVAILABLE — ยังไม่มี WinCC Runtime connector ที่อนุญาต','csv':'FILE — CSV ที่ผู้ใช้เลือก ไม่ใช่การยืนยัน Live WinCC','lab':'SIMULATED — LAB ที่เลือกเอง / ไม่เชื่อม PLC หรือ WinCC'}[self.source_mode]
+  mode={'runtime':'WINCC OPC DA — ใช้ Windows Runtime Reader.exe หลังได้รับอนุญาต','csv':'FILE — Runtime CSV จริงที่ผู้ใช้เลือก','gateway':'GATEWAY — รับข้อมูลจริงจากเครื่องที่ลงทะเบียน','lab':'SIMULATED — developer LAB เท่านั้น'}[self.source_mode]
   self.mode.set_text(mode+' · Data: '+','.join(self.console.latest.get('reading_modes',[]))+(' · สถานะอ่าน/ส่ง: ไม่ทราบ (Backend ไม่รายงาน)' if self.host_error else ' · อ่าน: '+('อนุญาต' if capturing else 'หยุด/รอสิทธิ์')+' · ส่ง: '+('อนุญาต' if sending else 'หยุด/รอสิทธิ์')))
-  self.start_button.set_sensitive(not self.closing and not self.switching and self.source_mode!='runtime' and not capturing and not self.capture_requested and not self.host_error);self.stop_button.set_sensitive(capturing);self.end_button.set_sensitive(active);self.send_button.set_sensitive(active and not self.host_error and not sending and has_records);self.stop_send_button.set_sensitive(sending);self.export_button.set_sensitive(active and not self.host_error and has_records);self.folder_button.set_sensitive(self.last_export is not None)
+  gateway_mode=self.source_mode=='gateway';self.start_button.set_label('เริ่มรับข้อมูล' if gateway_mode else 'เริ่มอ่านทุก 5s');self.stop_button.set_label('หยุดรับข้อมูล' if gateway_mode else 'หยุดอ่าน');self.local_label.set_text('GATEWAY · HTTPS' if gateway_mode else 'ACTUAL DATA · MANUAL START' if self.source_mode!='lab' else 'DEVELOPER LAB · SIMULATED')
+  self.start_button.set_sensitive(not self.closing and not self.switching and self.source_mode!='runtime' and not capturing and not self.capture_requested and not self.host_error);self.stop_button.set_sensitive(capturing);self.end_button.set_sensitive(active);self.send_button.set_sensitive(active and not self.host_error and not sending and (has_records or gateway_mode));self.stop_send_button.set_sensitive(sending);self.export_button.set_sensitive(active and not self.host_error and (has_records or gateway_mode));self.folder_button.set_sensitive(self.last_export is not None)
  def show_error(self,message):
   self.message.set_text(message[:350]);self.start_button.set_sensitive(False);self.stop_button.set_sensitive(False);self.send_button.set_sensitive(False);self.stop_send_button.set_sensitive(False);self.export_button.set_sensitive(False)
  def open_exports(self,_):
@@ -202,7 +214,7 @@ class AquaWindow(Gtk.ApplicationWindow):
    except GLib.Error:self.message.set_text(str(self.last_export.parent))
  def source_dialog(self,_):
   if self.closing or self.switching or self.source_editor or self.consent_dialog:return
-  def open_editor():self.source_editor=SourceEditor(self);self.source_editor.present()
+  def open_editor():self.source_editor=SourceEditor(self) if self.lab_tools else ActualEditor(self);self.source_editor.present()
   if self.client:self.end_session(open_editor)
   else:open_editor()
  def end_session(self,after=None):
@@ -233,11 +245,11 @@ class AquaWindow(Gtk.ApplicationWindow):
    GLib.idle_add(self.destroy)
   threading.Thread(target=finish,daemon=True).start();return True
 class AquaApplication(Gtk.Application):
- def __init__(self,state_root,port):super().__init__(application_id='org.aquacommand.Desktop',flags=Gio.ApplicationFlags.NON_UNIQUE);self.state_root=state_root;self.port=port
+ def __init__(self,state_root,port,lab_tools=False):super().__init__(application_id='org.aquacommand.Desktop',flags=Gio.ApplicationFlags.NON_UNIQUE);self.state_root=state_root;self.port=port;self.lab_tools=lab_tools
  def do_activate(self):
   window=self.get_active_window()
   if not window:window=AquaWindow(self,self.state_root,self.port)
   window.present()
 def main():
- parser=argparse.ArgumentParser(description='AQUA operator-started read-only desktop');parser.add_argument('--version',action='version',version='AQUA COMMAND Desktop '+VERSION);parser.add_argument('--state-dir',default=str(pathlib.Path(GLib.get_user_state_dir())/'aqua-command'));parser.add_argument('--port',type=int,default=4173);args=parser.parse_args();GLib.set_application_name('AQUA COMMAND');return AquaApplication(args.state_dir,args.port).run([sys.argv[0]])
+ parser=argparse.ArgumentParser(description='AQUA operator-started read-only desktop');parser.add_argument('--version',action='version',version='AQUA COMMAND Desktop '+VERSION);parser.add_argument('--state-dir',default=str(pathlib.Path(GLib.get_user_state_dir())/'aqua-command'));parser.add_argument('--port',type=int,default=4173);parser.add_argument('--lab-tools',action='store_true',help=argparse.SUPPRESS);args=parser.parse_args();GLib.set_application_name('AQUA COMMAND');return AquaApplication(args.state_dir,args.port,args.lab_tools).run([sys.argv[0]])
 if __name__=='__main__':raise SystemExit(main())

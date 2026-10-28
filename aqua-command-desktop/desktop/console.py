@@ -61,7 +61,7 @@ class Topology(Gtk.DrawingArea):
   count=max(1,len(self.nodes));gap=20;nw=(w-gap*(count-1))/count;nh=109;y=6
   for i,d in enumerate(self.nodes):
    x=i*(nw+gap);c.set_source_rgb(*palette['bg']);c.rectangle(x,y,nw,nh);c.fill_preserve();c.set_source_rgb(*palette['line']);c.set_line_width(1);c.stroke()
-   txt(x+10,y+7,d['id'],14,nw-20);txt(x+10,y+29,d['endpoint'] or 'Not reported',13,nw-20,'accent',True);txt(x+10,y+52,d['role']+' · local service',11,nw-20,'muted');txt(x+10,y+70,d['reachability'],11,nw-20,'muted');txt(x+10,y+88,'Hostname: not reported',10,nw-20,'muted')
+   txt(x+10,y+7,d['id'],14,nw-20);txt(x+10,y+29,d['endpoint'] or 'Not reported',13,nw-20,'accent',True);txt(x+10,y+52,d['role']+' · configured',11,nw-20,'muted');txt(x+10,y+70,d['reachability'],11,nw-20,'muted');txt(x+10,y+88,'Hostname: not reported',10,nw-20,'muted')
    if i<count-1:
     c.set_source_rgb(*palette['line']);c.set_dash([4,4]);c.move_to(x+nw,y+55);c.line_to(x+nw+gap,y+55);c.stroke();c.set_dash([])
   txt(0,124,'เส้นประ = configured application flow · ไม่ใช่สาย LAN / NIC / VLAN ที่ตรวจพบ',11,w,'muted')
@@ -71,18 +71,18 @@ class ConsoleView:
  def __init__(self,owner):
   self.owner=owner;self.pages=Gtk.Stack();self.pages.set_hexpand(True);self.pages.set_vexpand(True);self.pages.set_transition_type(Gtk.StackTransitionType.NONE);self.last_model={};self.latest={};self.context=None;self.focus_device='PC-01';self.focus_signal=None;self.frozen=False
   self.freeze_button=Gtk.ToggleButton(label='พักการแสดงผล');self.freeze_button.connect('toggled',self.toggle_freeze)
-  self.overview_topology=Topology();self.network_topology=Topology();self.metric_labels={};self.metric_scopes={};self.pipeline_labels={};self.nav_callback=None
+  self.overview_topology=Topology();self.network_topology=Topology();self.metric_labels={};self.metric_scopes={};self.metric_titles={};self.pipeline_labels={};self.pipeline_titles={};self.nav_callback=None
   self.build_overview();self.build_network();self.build_sources();self.build_items();self.build_monitoring();self.build_delivery();self.build_logs()
  def add_page(self,key,child):self.pages.add_named(scroll(child),key)
  def build_overview(self):
   body=box(spacing=12);metrics=box(False,10)
   for key,title in [('snapshots','Snapshots ที่เก็บแล้ว'),('local','Local pending events'),('gateway','Gateway pending events'),('central','Central accepted events')]:
-   tile=box(css='metric');tile.set_hexpand(True);tile.append(label(title,'caption'));v=label('—','metric-value');scope=label('Not reported','micro');tile.append(v);tile.append(scope);metrics.append(tile);self.metric_labels[key]=v;self.metric_scopes[key]=scope
-  body.append(metrics);row=box(False,12);graph=panel('Configured endpoint flow · เครื่องเดียว / Local LAB');graph.set_hexpand(True);graph.append(self.overview_topology);row.append(graph)
+   tile=box(css='metric');tile.set_hexpand(True);mt=label(title,'caption');tile.append(mt);self.metric_titles[key]=mt;v=label('—','metric-value');scope=label('Not reported','micro');tile.append(v);tile.append(scope);metrics.append(tile);self.metric_labels[key]=v;self.metric_scopes[key]=scope
+  body.append(metrics);row=box(False,12);graph=panel('Configured endpoint flow');self.graph_title=graph.get_first_child();graph.set_hexpand(True);graph.append(self.overview_topology);row.append(graph)
   inspect=panel('Source & permission');inspect.set_size_request(255,-1);self.inspector=label('','detail-copy');inspect.append(self.inspector);row.append(inspect);body.append(row)
   pipeline=box(False,8)
   for key,title in [('collect','COLLECT 5s'),('local','LOCAL SPOOL'),('ack','GATEWAY ACK'),('central','CENTRAL ACK'),('notification','NOTIFICATION')]:
-   tile=box(css='pipeline-stage');tile.set_hexpand(True);tile.append(label(title,'eyebrow'));value=label('—','stage-value');tile.append(value);pipeline.append(tile);self.pipeline_labels[key]=value
+   tile=box(css='pipeline-stage');tile.set_hexpand(True);pt=label(title,'eyebrow');tile.append(pt);self.pipeline_titles[key]=pt;value=label('—','stage-value');tile.append(value);pipeline.append(tile);self.pipeline_labels[key]=value
   body.append(pipeline);body.append(label('Central ACK และ Notification เป็นหลักฐานคนละเส้นทางจาก Gateway · ไม่ใช่ Telegram read receipt','caption'));self.overview_note=label('','notice');body.append(self.overview_note);self.add_page('overview',body)
  def build_network(self):
   body=box(spacing=12);body.append(label('แสดง configured service endpoints เท่านั้น ยังไม่มี observed NIC IP, Hostname หรือ Physical LAN inventory','notice'));p=panel('Application flow / ไม่สแกนเครือข่าย');p.append(self.network_topology);body.append(p)
@@ -100,7 +100,7 @@ class ConsoleView:
  def build_monitoring(self):
   body=box(spacing=12);row=box(False,12);self.signal_search=Gtk.SearchEntry(placeholder_text='ค้นหา Tag / Source — กรองหน้าจอเท่านั้น');self.signal_search.set_hexpand(True);self.signal_search.connect('search-changed',lambda _:self.render_signals());row.append(self.signal_search)
   self.quality_filter=Gtk.DropDown.new_from_strings(['ทุกสถานะ','GOOD / CURRENT','BAD / Unknown / Stale']);self.quality_filter.connect('notify::selected',lambda *_:self.render_signals());row.append(self.quality_filter);body.append(row)
-  self.monitor_note=label('','notice');body.append(self.monitor_note);self.signal_table=DataTable(['Tag / ดูรายละเอียด','Source','RAW','STATE','Quality / code','Freshness / age'],self.select_signal);body.append(self.signal_table.widget)
+  self.monitor_note=label('','notice');body.append(self.monitor_note);self.signal_table=DataTable(['Tag / ดูรายละเอียด','Source','RAW','STATE','Quality / code','Read / data age'],self.select_signal);body.append(self.signal_table.widget)
   self.signal_expander=Gtk.Expander(label='รายละเอียดการอ่าน / เหตุผล Unknown — คลิก Tag เพื่อเปิด');p=panel('Observed / recorded / status received — คนละเวลา');self.signal_detail=label('','detail-copy');self.signal_detail.set_selectable(True);p.append(self.signal_detail);self.signal_expander.set_child(p);body.append(self.signal_expander);body.append(label('Isometric: Not available — ยังไม่มี selected-item mapping; เก็บ asset เดิมไว้','caption'));self.add_page('values',body)
  def build_delivery(self):
   body=box(spacing=12);self.delivery_note=label('','notice');body.append(self.delivery_note);self.delivery_table=DataTable(['Stage / scope','Count / evidence','Freshness','Meaning']);body.append(self.delivery_table.widget)
@@ -137,6 +137,10 @@ class ConsoleView:
  def render(self):
   m=self.last_model
   if not m:return
+  actual=m.get('deployment',False);gateway_role=m.get('gateway_role',False)
+  self.graph_title.set_text('Configured authenticated peering · ไม่มีการสแกน' if actual else 'Configured endpoint flow · Local LAB')
+  self.metric_titles['snapshots'].set_text('Gateway snapshots retained' if gateway_role else 'Snapshots ที่เก็บแล้ว');self.metric_titles['gateway'].set_text('Gateway archive events' if gateway_role else 'Gateway pending events');self.metric_titles['central'].set_text('Upstream accepted events')
+  self.pipeline_titles['collect'].set_text('RECEIVE' if gateway_role else 'COLLECT 5s')
   for key,item in m['metrics'].items():
    self.metric_labels[key].set_text(val(item['value']));scope=('CACHED · ' if item['cached'] else '')+('partial '+item['coverage'] if item['partial'] else 'reported '+item['coverage']);self.metric_scopes[key].set_text(scope+' · '+('current backlog' if key in ('local','gateway') else 'dataset cumulative'))
   for topo in (self.overview_topology,self.network_topology):topo.update(m['devices'],m['egress'])
@@ -155,6 +159,17 @@ class ConsoleView:
   self.retry_text.set_text('\n'.join(s['id']+' · retries '+val(s['retry_count'])+' · next '+s['next_retry']+'\nLocal DB bytes '+val(s['disk']['bytes'])+' / quota '+val(s['disk']['maxDatabaseBytes'])+' · Source error: '+(s['source_error'] or '—')+' · Transfer error: '+(s['transfer_error'] or '—') for s in m['sources']) or 'Not reported — session ยังไม่เริ่ม; ไม่เปิดฐานข้อมูลเพื่อเติมตัวเลข')
   self.render_events()
   self.notification_table.update([(str(i),[n['id']+' / '+n['source'],n['mode'],'Dry-run recorded (not sent)' if n['mode']=='dry-run' else 'Mock sink accepted' if n['mode']=='mock-http' else 'Telegram API accepted' if n['mode']=='telegram' and n['message_id'] is not None else 'Not verified',n['time']]) for i,n in enumerate(m['notification']['messages'])])
+  if actual:
+   self.inspector.set_text('Role: '+('Gateway' if gateway_role else 'CSV Agent')+'\nData modes: '+', '.join(m['reading_modes'])+'\nNIC / OS login: Not reported\nWinCC service activation: operator approval required')
+   self.pipeline_labels['collect'].set_text(('Receive ' if gateway_role else 'Read5s ')+('allowed' if m['capture_allowed'] else 'waiting'))
+   self.pipeline_labels['central'].set_text('Not configured');self.overview_note.set_text('Gateway รับข้อมูลจริงจากแหล่งที่ลงทะเบียน ไม่เปิด/อ่าน WinCC บนเครื่องนี้' if gateway_role else 'อ่าน Runtime CSV จริงแบบ read-only; ไม่ใช้ข้อมูลจำลองและไม่ยืนยันการเชื่อม OPC โดยตรง')
+   self.capability_text.set_text('Windows OPC DA reader: ตัวอ่านจริงแยก .exe / ต้องอนุญาตก่อนเชื่อม\nLocal role: '+('Gateway receiver' if gateway_role else 'CSV reader')+'\nNIC inventory / OS login: Not reported\nOPC browse / WinCC configuration changes: ไม่ดำเนินการ\nQuality, source timestamp และ read time แยกกัน')
+   self.source_table.update([('actual',[m['source_mode'],'Authenticated receive' if gateway_role else 'Read-only file',str(m['configured_count'])+' '+m.get('tag_inventory','names'),'Manual permission']),('windows',['Windows Runtime Reader.exe','OPC DA3 Read only','Explicit selected binary tags','Needs approved Windows commissioning'])])
+   self.item_summary.set_text(('รายชื่อที่รับแล้ว ไม่ใช่ inventory ทั้ง WinCC' if gateway_role else 'รายชื่อ CSV ที่กำหนด')+' · '+str(m['configured_count'])+' names · ค้นหาตารางไม่เปลี่ยน collector')
+   if gateway_role:self.item_table.update([(r['key'],[r['tag'],r['source_id']+' / '+r['mode'],'5s reader','Receive only / no remote configuration']) for r in m['signals']])
+   if gateway_role:
+    self.pipeline_labels['ack'].set_text(val(m.get('archive_received'))+' durably received')
+    self.delivery_table.update([('archive',['Gateway archive',val(m['metrics']['gateway']['value']),'CACHED' if m['metrics']['gateway']['cached'] else 'Reported','Retained locally; finite quota, no snapshot upstream']),('source',['Exporter pending','Not reported','No exporter control access','Gateway custody does not prove exporter received ACK']),('upstream',['Snapshot upstream','Not configured','—','Telegram is not a full snapshot archive']),('notify',['Notifications',val(m['notification']['count']),m['notification']['mode'],'Transition notification receipts only'])])
   self.owner.tag_widgets=self.signal_table.widgets
  def render_signals(self):
   m=self.last_model
@@ -165,12 +180,12 @@ class ConsoleView:
    good=r['quality']=='GOOD' and r['freshness']=='CURRENT'
    if quality==1 and not good or quality==2 and good:continue
    rows.append((r['key'],[r['tag'],r['source_id']+' / '+r['mode'],val(r['raw']),r['state'],r['quality']+' / '+val(r['quality_code']),r['freshness']+' / '+(str(r['age'])+'s' if r['age'] is not None else '—')]))
-  self.signal_table.update(rows);self.owner.tag_widgets=self.signal_table.widgets;self.monitor_note.set_text(m['source_mode']+' config / data '+','.join(m['reading_modes'])+' · '+str(len(rows))+' displayed / '+str(len(m['signals']))+' configured observations · State Unknown มีเหตุผลแยกจาก RAW / Quality')
+  self.signal_table.update(rows);self.owner.tag_widgets=self.signal_table.widgets;self.monitor_note.set_text(m['source_mode']+' / data '+','.join(m['reading_modes'])+' · '+str(len(rows))+' displayed / '+str(len(m['signals']))+' observations · RAW / Quality / Freshness แยกจาก state')
   self.render_signal_detail()
  def select_signal(self,key):self.focus_signal=key;self.signal_expander.set_expanded(True);self.render_signal_detail()
  def render_signal_detail(self):
   rows=self.last_model.get('signals',[]);r=next((r for r in rows if r['key']==self.focus_signal),rows[0] if rows else None)
-  self.signal_detail.set_text('ยังไม่มีค่า — เลือก Source และอนุญาตอ่านก่อน' if not r else r['tag']+' · '+r['reason']+'\nObserved: '+r['observed']+' | Recorded locally: '+r['recorded']+'\nStatus received: '+r['status_received']+'\nRead error: '+val(r['read_error'])+' | Quality code: '+val(r['quality_code'])+'\nLast good / sample received / exact receipt: Not reported (ไม่มี contract)')
+  self.signal_detail.set_text('ยังไม่มีค่า — เลือก Source และอนุญาตอ่านก่อน' if not r else r['tag']+' · '+r['reason']+'\nObserved: '+r['observed']+' | Recorded locally: '+r['recorded']+'\nStatus received: '+r['status_received']+'\nRead error: '+val(r['read_error'])+' | Quality code: '+val(r['quality_code'])+'\nRead at: '+r.get('read_at','Not reported')+' | OPC source timestamp: '+r.get('source_timestamp','Not reported')+'\nGateway last receive: '+r.get('gateway_received','Not reported')+'\nLast good / exact sender ACK receipt: Not reported')
  def render_events(self):
   if not self.last_model:return
   query=self.event_search.get_text().casefold();events=[e for e in self.last_model['events'] if not query or query in (' '.join(e.values())).casefold()];self.event_table.update([(e['id'],[e['time'],e['id'],e['kind'],e['message']]) for e in events])

@@ -11,3 +11,7 @@ runtime_*.csv
 **/enrollment/
 local-data/
 .env
+windows-reader/**/bin/
+windows-reader/**/obj/
+windows-reader/**/publish/
+*.pdb

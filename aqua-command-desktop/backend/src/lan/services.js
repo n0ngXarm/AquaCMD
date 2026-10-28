@@ -14,12 +14,18 @@ export function retainedExport(store){
  return {records:records.reverse(),totalRecords,truncated:records.length<totalRecords,bytes};
 }
 
+// Keep each upload below the receiver's512KiB body limit; never retry the same oversized32-record batch forever.
+function boundedRows(rows,envelope){
+ const selected=[],events=[];
+ for(const row of rows){const event=JSON.parse(row.payload),next=[...events,event];if(Buffer.byteLength(encode(envelope(next)))>500000){if(!selected.length)throw Error('Single retained event exceeds transport body limit');break}selected.push(row);events.push(event)}
+ return selected;
+}
 function serverFor(config,store,keys,handle){
  const scheme=config.tls?'https':'http';endpoint(`${scheme}://${config.listen.host}:${config.listen.port}`,config);
  const handler=async(req,res)=>{
   let auth=null;
   try{
-   if(req.method==='GET'&&req.url==='/health')return answer(res,200,{id:config.id,role:config.role,protocol:1,simulated:true});
+   if(req.method==='GET'&&req.url==='/health')return answer(res,200,{id:config.id,role:config.role,protocol:1,simulated:config.realOnly!==true});
    if(req.method!=='POST')return answer(res,405,{error:'POST required'});
    const raw=await readBody(req);auth=authenticate(req,raw,keys,store);const body=JSON.parse(raw);
    const result=await handle(req.url,body,auth.id);answer(res,200,result,auth);
@@ -65,7 +71,7 @@ export function createAgent(config){
  app.step=async({sample=true}={})=>{
   if(app.stopped)return;if(sample)app.exportDue();
   const generation=app.transferGeneration,allowed=()=>app.transferAllowed&&app.transferGeneration===generation&&!app.stopped;if(!allowed())return;
-  const rows=app.store.pending();if(!rows.length||Date.now()<app.nextRetry)return;
+  let rows=app.store.pending();if(!rows.length||Date.now()<app.nextRetry)return;
   try{
    const identity={id:config.id,secret:config.secret};
    if(!app.session||app.sessionExpires<=Date.now()){
@@ -82,7 +88,7 @@ export function createAgent(config){
     app.session=hello.session;app.sessionExpires=hello.expiresAt;app.lanState='LAN_CONNECTED';if(!app.gatewayAuthenticated)app.store.log('LAN_CONNECT','Enrolled Gateway handshake authenticated');app.gatewayAuthenticated=true;
    }
    if(!allowed())return;
-   app.store.set('inFlight',rows.length);
+   rows=boundedRows(rows,events=>({session:app.session,events}));app.store.set('inFlight',rows.length);
    const response=await requestJSON(app.selectedGatewayUrl,'/v1/events',identity,{session:app.session,events:rows.map(r=>JSON.parse(r.payload))},config);
    const want=new Map(rows.map(r=>[r.id,r.digest]));
    if(!Array.isArray(response.acks)||response.acks.length!==want.size||new Set(response.acks.map(a=>a.event_id)).size!==want.size||response.acks.some(a=>want.get(a.event_id)!==a.sha256))throw Object.assign(Error('ACK digest/set mismatch'),{transportConnected:true,authenticatedPeer:true});
@@ -94,15 +100,15 @@ export function createAgent(config){
 }
 export function createGateway(config,options={}){
  if(config.upstream)endpoint(config.upstream.url,config);if(config.notificationSink)endpoint(config.notificationSink.url,config);
- const app={config,store:new Store(config.dataDir,{...config.storage,notifications:true}),port:null,stopped:false,lastError:null,busy:null};
- app.transferAllowed=config.requireConsent!==true;app.transferGeneration=0;
+ const app={config,store:new Store(config.dataDir,{...config.storage,notifications:true,realOnly:config.realOnly===true||config.storage?.realOnly===true}),port:null,stopped:false,lastError:null,busy:null};
+ app.transferAllowed=config.requireConsent!==true;app.receiveAllowed=config.requireReceiveConsent===true?false:app.transferAllowed;app.transferGeneration=0;
  app.telegram=options.telegram||new TelegramTransport({env:config.internetMode==='real'?(options.env??process.env):{}});
  if(app.store.get('internetOnline')===null)app.store.set('internetOnline',config.internetOnline??config.internetMode==='real');
  app.setInternet=online=>{if(config.readOnly)throw Object.assign(Error('Read-only LAB'),{status:403});if(typeof online!=='boolean')throw Error('Internet gate must be boolean');app.store.set('internetOnline',online);app.store.log('EGRESS_CHANGE',`Gateway outbound simulation gate ${online?'UP':'DOWN'}`)};
- app.status=()=>({id:config.id,role:'gateway',pid:process.pid,simulated:true,...app.store.stats(),...app.store.notificationStats(),transferAllowed:app.transferAllowed,internetMode:config.internetMode||'simulated',internetOnline:app.store.get('internetOnline',false),egress:app.store.get('egress',{status:'BLOCKED',mode:config.internetMode||'simulated',checkedAt:null}),upstreamConfigured:!!config.upstream,upstreamDelivered:app.store.get('upstreamDelivered',0),lastDelivery:app.store.get('lastDelivery'),notificationMode:config.notificationSink?'mock-http':app.telegram.mode,telegramCooldownUntil:app.store.get('telegramNotBefore',0),lastError:app.lastError,messages:app.store.messages(),disk:app.store.disk(),logs:app.store.logs()});
+ app.status=()=>({id:config.id,role:'gateway',pid:process.pid,simulated:config.realOnly!==true,...app.store.stats(),...app.store.notificationStats(),transferAllowed:app.transferAllowed,internetMode:config.internetMode||'simulated',internetOnline:app.store.get('internetOnline',false),egress:app.store.get('egress',{status:'BLOCKED',mode:config.internetMode||'simulated',checkedAt:null}),upstreamConfigured:!!config.upstream,upstreamDelivered:app.store.get('upstreamDelivered',0),lastDelivery:app.store.get('lastDelivery'),receiveAllowed:app.receiveAllowed,notificationMode:config.notificationSink?'mock-http':app.telegram.mode,telegramCooldownUntil:app.store.get('telegramNotBefore',0),lastError:app.lastError,messages:app.store.messages(),disk:app.store.disk(),logs:app.store.logs()});
  app.server=serverFor(config,app.store,config.keys,async(route,body,id)=>{
   if(route==='/v1/status'){if(id!=='DASHBOARD')throw Object.assign(Error('Admin identity required'),{status:403});return app.status()}
-  if(route==='/v1/transfer'&&config.requireConsent){if(id!=='DASHBOARD'||typeof body.running!=='boolean')throw Object.assign(Error('Admin transfer permission required'),{status:403});app.transferAllowed=body.running;app.transferGeneration++;if(!body.running&&app.busy)await app.busy.catch(()=>{});return {transferAllowed:app.transferAllowed}}
+  if(route==='/v1/transfer'&&config.requireConsent){if(id!=='DASHBOARD'||typeof body.running!=='boolean')throw Object.assign(Error('Admin transfer permission required'),{status:403});app.transferAllowed=body.running;if(config.requireReceiveConsent!==true)app.receiveAllowed=body.running;app.transferGeneration++;if(!body.running&&app.busy)await app.busy.catch(()=>{});return {transferAllowed:app.transferAllowed}}
   if(route==='/v1/sim/internet'){if(id!=='DASHBOARD')throw Object.assign(Error('Admin identity required'),{status:403});app.setInternet(body.online);return {ok:true}}
   if(route==='/v1/sim/fault'){
    if(id!=='DASHBOARD'||config.readOnly)throw Object.assign(Error('Simulation admin required'),{status:403});
@@ -113,10 +119,10 @@ export function createGateway(config,options={}){
   if(!GROUPS[id])throw Object.assign(Error('Exporter enrollment required'),{status:403});
   if(route==='/v1/handshake'){
    if(typeof body.clientNonce!=='string'||body.clientNonce.length<16||body.clientNonce.length>128)throw Error('Invalid handshake');
-   return {...app.store.session(id),clientNonce:body.clientNonce,gatewayId:'PC-04',ready:app.transferAllowed&&app.store.get('internetOnline',false)&&((config.internetMode||'simulated')==='simulated'||app.store.get('egress',{}).status==='VERIFIED')};
+   return {...app.store.session(id),clientNonce:body.clientNonce,gatewayId:'PC-04',ready:config.storeFirst===true?app.receiveAllowed:app.transferAllowed&&app.store.get('internetOnline',false)&&((config.internetMode||'simulated')==='simulated'||app.store.get('egress',{}).status==='VERIFIED')};
   }
   if(route==='/v1/events'){
-   if(!app.transferAllowed)throw Object.assign(Error('Transfer permission required'),{status:403});
+   if(!(config.storeFirst===true?app.receiveAllowed:app.transferAllowed))throw Object.assign(Error('Receive permission required'),{status:403});
    if(!app.store.validSession(id,body.session))throw Object.assign(Error('Session expired'),{status:409});
    if(app.store.get('beforeCommit',false)){app.store.set('beforeCommit',false);throw Object.assign(Error('LAB fault before commit; no ACK'),{status:503})}
    const acks=app.store.ingest(id,body.events);
@@ -141,7 +147,7 @@ export function createGateway(config,options={}){
   if(!allowed())return;
   if(config.upstream&&app.store.get('upstreamRetryAt',0)<=Date.now()){
    const first=app.store.pending(1)[0];
-   if(first){const rows=app.store.db.prepare("SELECT * FROM records WHERE state!='acked' AND source=? ORDER BY seq LIMIT 32").all(first.source);
+   if(first){const rows=boundedRows(app.store.db.prepare("SELECT * FROM records WHERE state!='acked' AND source=? ORDER BY seq LIMIT 32").all(first.source),events=>({source:first.source,events}));
     try{const response=await requestJSON(config.upstream.url,'/v1/events',{id:'PC-04',secret:config.upstream.secret},{source:first.source,events:rows.map(r=>JSON.parse(r.payload))},config);const want=new Map(rows.map(r=>[r.id,r.digest]));if(!Array.isArray(response.acks)||response.acks.length!==want.size||new Set(response.acks.map(a=>a.event_id)).size!==want.size||response.acks.some(a=>want.get(a.event_id)!==a.sha256))throw Error('Upstream ACK mismatch');app.store.markForwarded(response.acks);app.store.set('upstreamFailures',0);app.lastError=null}
     catch{const n=app.store.get('upstreamFailures',0)+1;app.store.set('upstreamFailures',n);app.store.set('upstreamRetryAt',Date.now()+Math.min(5000,200*2**Math.min(n-1,5)));app.store.log('RETRY','Upstream ACK unavailable; durable outbound retained');app.lastError='Upstream request not ACKed'}
    }
@@ -158,7 +164,7 @@ export function createGateway(config,options={}){
 }
 export function createCentral(config){
  const app={config,store:new Store(config.dataDir,{...config.storage,allowReorderedRuntime:true}),stopped:false,port:null};
- app.status=()=>({id:config.id,role:'central',pid:process.pid,simulated:true,...app.store.stats(),...app.store.notificationStats()});
+ app.status=()=>({id:config.id,role:'central',pid:process.pid,simulated:config.realOnly!==true,...app.store.stats(),...app.store.notificationStats()});
  app.server=serverFor(config,app.store,config.keys,async(route,body,id)=>{
   if(route==='/v1/status'&&id==='DASHBOARD')return app.status();
   if(id!=='PC-04')throw Object.assign(Error('Gateway enrollment required'),{status:403});

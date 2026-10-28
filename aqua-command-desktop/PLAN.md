@@ -27,3 +27,17 @@ User approval: “go to build program?” following the G1 recommendation for Op
 No plant-specific samples/tags, secrets, generated enrollment/DBs or private workstation paths in commits/package. Keep work on existing codex/aqua-native-desktop-rpm feature branch; no main merge/production deploy. Reverting G2 must not delete user queues or change WinCC/source input.
 
 G2 verification:50 backend tests,23 Python tests, installed-payload native workflow and56 actual native layout combinations passed. All38 protected engine files unchanged. G3–G5 remain unapproved; no Runtime/physical-LAN/Windows/real-Telegram acceptance claim.
+
+# Actual-use increment — 0.9
+
+User authorization: develop for actual data instead of simulation. OPC DA is present but not formally enabled/approved; development does not authorize activation or Production access.
+
+Architecture: Windows-local native .exe uses documented OPC DA3 IOPCItemIO Read for explicit pump tags every5000ms, stores immutable v3 snapshots with raw quality/HRESULT/source timestamp and forwards through separately approved HMAC-authenticated HTTPS. Existing Linux Native app becomes explicit Agent/receiver Gateway using existing SQLite custody. No website, remote DCOM, scan, auto-start or source writes.
+
+- [x] Windows real reader: read-only registration check, explicit COM activation consent, isolated STA worker, bounded atomic durable spool, manual TLS send/retry/digest ACK; Linux core tests and actual Windows binary build. Windows COM remains unverified until authorized station test.
+- [x] Deployed Gateway/CSV Agent: strict configuration, TLS/member authentication, independent local receive/outbound gates, no remote admin commands/poll before consent; runtime v3/no simulated ingest and honest archive/Telegram states.
+- [x] Native setup: actual role/addresses/CA/member keys, no LAB in normal launch, precise consent scopes, received Tag timestamp/provenance and archive views.
+- [x] Tests/review: existing regression, real local TLS interop across Windows Core and Node Gateway, quotas/restart/lost ACK/permissions, real-data binding and no auto-start, package audit.
+- [x] Deliver actual-code .exe/.rpm with approved-station commissioning checklist, stage evidence/risks/rollback. Do not claim real WinCC or cross-machine tests completed.
+
+Actual-use verification:57/57backend,30/30Python,47Coreassertions;ordinary/numericC#↔NodeactualTLS/HMAC/ACK,installedRPMnativeworkflowand56actualGTKlayoutcombinationsPASS. WindowsEXEcross-built;actualWindowsGUI/COM/WinCC/physicalLAN/Telegramandlong-termretentionremaincommissioningrequirements,notcompletedclaims.

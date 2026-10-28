@@ -26,5 +26,5 @@ export class TelegramTransport{
   });
  }
  async probe(){if(this.mode==='dry-run'||!this.configured)return false;const result=await this.call('getMe',{});if(!result?.is_bot)throw new DeliveryError('Telegram identity check failed');return true}
- async send(text){if(!text.startsWith('[AQUA LAB / SIMULATED]')||text.length>3000)throw new DeliveryError('Only labelled LAB notifications allowed');const result=await this.call('sendMessage',{chat_id:this.chat,text});if(!Number.isSafeInteger(result?.message_id))throw new DeliveryError('Telegram delivery response ambiguous');return result.message_id}
+ async send(text){if(!['[AQUA LAB / SIMULATED]','[AQUA READ-ONLY FILE / WINCC CONNECTION UNVERIFIED]','[AQUA READ-ONLY / WINCC OPC DA]'].some(prefix=>text.startsWith(prefix))||text.length>3000)throw new DeliveryError('Only provenance-labelled AQUA notifications allowed');const result=await this.call('sendMessage',{chat_id:this.chat,text});if(!Number.isSafeInteger(result?.message_id))throw new DeliveryError('Telegram delivery response ambiguous');return result.message_id}
 }

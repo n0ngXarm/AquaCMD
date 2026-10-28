@@ -1,6 +1,6 @@
-# AQUA COMMAND Native Desktop (RPM)
+# AQUA COMMAND Native Desktop (.exe / RPM)
 
-The new read-only desktop application runs as a native GTK4 window on Fedora 44, without a browser. [Install and usage guide](aqua-command-desktop/README.md) · [Download RPM](aqua-command-desktop/releases/aqua-command-desktop-0.8.0-1.fc44.noarch.rpm).
+The new read-only desktop application runs as a native GTK4 window on Fedora 44, without a browser. [Install and usage guide](aqua-command-desktop/README.md) · [Linux Gateway RPM](aqua-command-desktop/releases/aqua-command-desktop-0.9.0-1.fc44.noarch.rpm) · [Windows WinCC Reader EXE](aqua-command-desktop/releases/AquaCommand.WinCCReader-0.9.0-win-x64.exe). The Windows reader uses local read-only OPC DA after organizational authorization; Windows/WinCC commissioning remains required.
 
 This desktop release is under `aqua-command-desktop/`. The existing web application below is retained separately; its production services are not started by the desktop package.
 

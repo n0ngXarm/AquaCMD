@@ -1,6 +1,7 @@
 import fs from 'node:fs';import path from 'node:path';import {randomUUID} from 'node:crypto';import {fileURLToPath} from 'node:url';
 import {startSingle} from '../backend/src/lan/supervisor.js';import {createDashboard} from '../backend/src/lan/dashboard.js';import {CsvReadonlySource,assertStorageOutsideInput} from '../backend/src/lan/csv-source.js';import {assertOwnedStorage} from '../backend/src/lan/storage-boundary.js';import {requestJSON} from '../backend/src/lan/protocol.js';
 export async function startDesktopHost({dataRoot,port=4173,sourceSettings={},emit=()=>{}}){
+ if(sourceSettings?.deployment){const {startDeployedHost}=await import('./deployed-host.mjs');return startDeployedHost({dataRoot,sourceSettings,emit})}
  if(!dataRoot)throw Error('A separate owned AQUA data directory is required');dataRoot=path.resolve(dataRoot);
  const settings=sourceSettings;if(!settings||Array.isArray(settings)||Object.keys(settings).some(k=>!['sourceDirectory','tags','timezoneOffset','mappingConfirmed','internetMode'].includes(k)))throw Error('Unsupported source settings');
  if(settings.sourceDirectory){if(!fs.statSync(settings.sourceDirectory).isDirectory())throw Error('CSV source folder unavailable');new CsvReadonlySource({dataDir:dataRoot,csv:{directory:settings.sourceDirectory,tags:settings.tags,timezoneOffset:settings.timezoneOffset||'+07:00',mappingConfirmed:settings.mappingConfirmed===true}},null,'PC-01')}

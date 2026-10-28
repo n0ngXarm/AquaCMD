@@ -32,7 +32,7 @@ def rect(w,ancestor):
  return [round(bounds.get_x(),1),round(bounds.get_y(),1),round(bounds.get_width(),1),round(bounds.get_height(),1)]
 settings=Gtk.Settings.get_default()
 if args.scale!=1:settings.set_property('gtk-xft-dpi',int(96*1024*args.scale))
-app=AquaApplication(str(out/'unused-app-state'),22473);app.register(None)
+app=AquaApplication(str(out/'unused-app-state'),22473,lab_tools=True);app.register(None)
 for index,(width,height) in enumerate(((1366,768),(1440,900),(1600,900),(1920,1080))):
  with tempfile.TemporaryDirectory(prefix='aqua-g2-layout-') as state:
   w=AquaWindow(app,state,22473+index*100);w.set_default_size(width,height);w.set_size_request(width,height);w.present()

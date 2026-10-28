@@ -1,3 +1,15 @@
+#0.9 actual-use implementation
+
+Client-facing verification date:29October2026. User authorizes development for actual Runtime instead ofsimulation;OPC DA exists but isnotofficiallyenabled/approved. This increment implements realread-only code andexplicitHTTPSroles. It doesnotauthorizeorclaimProduction/Windows/WinCC/physicalLAN/Telegramacceptance.
+
+Windows:local registryreadiness,manualorganizational+captureapproval,DA3Read-onlyisolatedworker,5sboundedcadence,quality/sourceFILETIME/readtime,v3atomicspool andseparatesignedHTTPStransfer. Linux:explicitownCSVAgent/Gateway,actual-onlyingest,independentreceive/outboundpermission,noremoteadmin/scan/sourcewrites. NormalUIhasnoLABselection;legacyfixturesonlybehindexplicitdeveloperflag/tests.
+
+Fresh results:57/57backendtests,30/30Pythontests,47WindowsCoreassertionspassed. ActualCore↔NodeHTTPS/HMAC/digestACKpassedforRUN_SandnumericTagnames;noexternalprobeoccurred. NormalnativeGatewayworkflowandsevenpagespassedagainstCoretestpayloads. Finalpackage/layoutresultsandremainingstationacceptanceareinthe0.9deliveryreport. Existingresultsbelowarehistorical;the38protectedfileschecksumclaimappliesonlytoG2. Thisauthorizedincrementnecessarilychangesengine/IPCforactualrolesandv3.
+
+See docs/COMMISSIONING.md forrequiredpriorauthorization,actualWindows/WinCC/two-hosttestsanddata-preservingrollback. Gatewayarchiveisfinite;noimaginaryCentral/Telegramreceipt.
+
+---
+
 # 0.8.0 — G2 Native Option B preview
 
 Approval: user “go to build program?” after the G1 Option B recommendation; “continue” confirms ongoing work. Scope is G2 UI foundations and safe existing-field bindings, with RPM preview delivery. G3–G5, backend gaps and WinCC/OPC/network work remain unapproved.

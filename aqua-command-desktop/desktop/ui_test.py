@@ -27,7 +27,7 @@ def screenshot(w,file):
   return False
  wait(rendered,5);assert w.get_renderer().render_texture(nodes[0],None).save_to_png(file)
 with tempfile.TemporaryDirectory(prefix='aqua-native-consent-') as state:
- app=AquaApplication(state,args.port);app.register(None);w=AquaWindow(app,state,args.port);w.present()
+ app=AquaApplication(state,args.port,lab_tools=True);app.register(None);w=AquaWindow(app,state,args.port);w.present()
  try:
   spin(.8);assert w.pages.get_pages().get_n_items()==7,'G2 has seven native pages';assert w.client is None,'Opening window must not start a backend';assert list(pathlib.Path(state).iterdir())==[],'Opening must not create spool/config files';assert w.source_mode=='runtime';assert not w.start_button.get_sensitive();screenshot(w,args.screenshot_idle)
   w.source_dialog(None);w.source_editor.mode.set_selected(2);w.source_editor.save_button.emit('clicked');spin();assert w.source_mode=='lab';assert w.client is None
