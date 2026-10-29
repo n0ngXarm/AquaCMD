@@ -1,116 +1,79 @@
-# AQUA COMMAND Native Desktop (.exe / RPM)
+# AQUA COMMAND — WinCC V8.1 SCADA & Task Manager
 
-The new read-only desktop application runs as a native GTK4 window on Fedora 44, without a browser. [Install and usage guide](aqua-command-desktop/README.md) · [Linux Gateway RPM](aqua-command-desktop/releases/aqua-command-desktop-0.9.0-1.fc44.noarch.rpm) · [Windows WinCC Reader EXE](aqua-command-desktop/releases/AquaCommand.WinCCReader-0.9.0-win-x64.exe). The Windows reader uses local read-only OPC DA after organizational authorization; Windows/WinCC commissioning remains required.
-
-This desktop release is under `aqua-command-desktop/`. The existing web application below is retained separately; its production services are not started by the desktop package.
+ระบบบริหารจัดการและเฝ้าระวังสถานีผลิตน้ำอุโมงค์ (การประปาส่วนภูมิภาค เขต 9 / เชียงใหม่) ผสานการทำงานระหว่างระบบ **Siemens WinCC V8.1 SCADA**, **OPC UA**, **ระบบเครือข่าย 2 วงแลน (OT Closed LAN & IT 4G Gateway)** และระบบแจ้งเตือน **Telegram Incident Alerting**
 
 ---
 
-# 💧 PWA AQUA COMMAND & TELEGRAM ALERT SYSTEM
-### ระบบศูนย์ควบคุมการจ่ายน้ำประปาส่วนภูมิภาค (Web Dashboard) & แจ้งเตือนผ่าน Telegram แบบ 24/7
+## 🎨 F1 Overview — Station Explorer Redesign (Option B)
 
-ระบบรวมศูนย์สั่งการและเฝ้าระวังน้ำประปาอัจฉริยะ ผสานพลังระหว่าง **AQUA COMMAND CENTER** (เว็บแดชบอร์ดศูนย์ควบคุมภาษาไทย) และ **PWA Live Alert Engine** (ระบบดึงข้อมูลสดจากการประปาส่วนภูมิภาค ส่งเข้า Telegram แบบ Real-time)
+การออกแบบปรับปรุงส่วนติดต่อผู้ใช้ (UI/UX) หน้าแรก (F1 ภาพรวมสถานีสูบน้ำ) เป็นรูปแบบ **Master–Detail Station Explorer**:
+* โครงสร้างเมนูมาตรฐานเดิมแบบ **Bottom Function Keys F1–F8** และ **Header สถานะระบบ**
+* ชุดสี Cyber-Industrial Dark Theme ตามสัดส่วน **60/30/10** (Background `#0B1220`, Panels `#1C2D45`, Accent `#3186EA`)
+* ใช้ SVG Icons แทนอีโมจิ คมชัดระดับอุตสาหกรรม
+* แยกกลุ่มสถานีจริงจากโครงการ WinCC: `High_VSD`, `High1_PT1PT`, `High_Analog`, `High_Valve`, `High_DPM`
 
----
+### ภาพจำลองการออกแบบใหม่ (Design Mockups)
 
-## 🏗️ สถาปัตยกรรมระบบแบบผสมผสาน (Integrated Architecture)
+#### แบบ B1 — Balanced Industrial (เรียบง่าย สบายตา สรุปกลุ่มสถานีและตารางรายละเอียด)
+![Option B1 Balanced Industrial](docs/mockups/mockup_option_b1_balanced_industrial.png)
 
-```text
-       การประปาส่วนภูมิภาค (กปภ. / PWA Live APIs)
-       ├── ข่าวหยุดจ่ายน้ำ / ท่อแตกฉุกเฉิน (api-mg.pwa.co.th)
-       └── เซนเซอร์ตรวจวัดคุณภาพน้ำ RTU 666 สถานี (dmamas.pwa.co.th)
-                         │
-                         ▼
-             [ PWA Live Agent & Bridge ]
-        (สแครปข้อมูลสด, คัดกรอง, ตรวจจับสถานะซ่อมเสร็จ)
-            │                               │
-            │ (REST /api/telemetry)         │ (Telegram Bot API)
-            ▼                               ▼
- [ AQUA COMMAND CENTER ]          [ TELEGRAM BOT ]
-    🌐 Web Dashboard                 📱 @nongwater_agentbot
-    พอร์ต 8787 (http://localhost:8787)   แจ้งเตือนท่อแตก/ซ่อมเสร็จทันที
-    - แผนผังเครือข่ายสถานี 12 เขต         ส่งพร้อมภาพโปสเตอร์ประกาศทางการ
-    - ค่าความดัน, ระดับถัง, Flow, NTU, Cl   ปุ่มกดโต้ตอบ /latest, /quality, /status
-    - ตาราง Incident Response & Ack      ระบบ Anti-flood & Dedup 100%
-```
+#### แบบ B2 — Refined Technical (เพิ่มช่องค้นหา Tag และแผง Tag Property Inspector Drawer)
+![Option B2 Refined Technical](docs/mockups/mockup_option_b2_refined_technical.png)
+
+* **ดูตัวอย่างความละเอียด 1920×1080 (Full HD):** [docs/mockups/preview_b2_1920x1080.png](docs/mockups/preview_b2_1920x1080.png)
+* **ดูตัวอย่างความละเอียด 1366×768 (Laptop Standard):** [docs/mockups/preview_b2_1366x768.png](docs/mockups/preview_b2_1366x768.png)
+* **เปิดหน้าต่างเว็บแกลเลอรีแบบ Interactive:** [docs/gallery/ดูแบบ_F1_MOCKUPS.html](docs/gallery/ดูแบบ_F1_MOCKUPS.html)
 
 ---
 
-## 🌟 จุดเด่นของระบบ (Key Highlights)
+## 🖥️ ภาพหน้าจอจริงของโปรแกรม SCADA ปัจจุบัน (Current System Screens)
 
-1. **🌐 ศูนย์ควบคุม AQUA COMMAND CENTER (พอร์ต 8787)**
-   - เข้าใช้งานได้ผ่านเบราว์เซอร์ที่: **`http://localhost:8787`**
-   - **Overview & KPI**: แสดงสถานะออนไลน์, แรงดันเฉลี่ย, ปริมาณน้ำสำรอง, คุณภาพน้ำ, และกราฟ Telemetry ย้อนหลัง 24 ชั่วโมง
-   - **Network Map**: แผนผังจำลองสถานีหลัก กปภ. ทั่วประเทศ (เชียงใหม่, ลำพูน, ชลบุรี, ระยอง, ขอนแก่น, โคราช, สงขลา ฯลฯ)
-   - **Live Ingest**: รับข้อมูลความขุ่น (NTU), คลอรีนคงเหลือ (Cl) สดจากเซนเซอร์ กปภ. แบบเรียลไทม์
-   - **Incident Management**: บันทึกเหตุการณ์ท่อแตก/หยุดจ่ายน้ำ พร้อมระบบกดรับทราบ (Acknowledge) และ Export CSV
-
-2. **🤖 ระบบแจ้งเตือนและบอทโต้ตอบบน Telegram (`@nongwater_agentbot`)**
-   - ส่งภาพประกาศและรายละเอียดทันทีเมื่อ กปภ. ออกประกาศใหม่
-   - **แจ้งเตือนความคืบหน้า**: เมื่อซ่อมท่อเสร็จสิ้น ระบบจะแจ้งเตือนทันทีว่า *"น้ำเริ่มกลับมาไหลปกติแล้ว"*
-   - **คำสั่งโต้ตอบผ่านแชท**:
-     - `/start` : เมนูหลักพร้อมปุ่มกดเปิด Web Dashboard ทันที
-     - `/latest [สาขา]` : ดูประกาศหยุดจ่ายน้ำล่าสุด
-     - `/branch <สาขา>` : ค้นหาข้อมูลสาขา กปภ.
-     - `/quality [สถานี]` : ตรวจสอบคุณภาพน้ำประปา RTU
-     - `/subscribe <สาขา>` : รับแจ้งเตือนเฉพาะพื้นที่ที่ต้องการ
-     - `/status` : ดูสถานะการทำงานของระบบ
-
-3. **🛡️ 24/7 Production Docker Setup**
-   - รันผ่าน Docker Compose แยก 2 บริการอิสระ (`aqua-command` + `pwa-water-alert`)
-   - นโยบาย `restart: always` สตาร์ตตัวเองอัตโนมัติตลอดเวลาแม้เซิร์ฟเวอร์รีบูต
-   - มีระบบ Baseline Sync และ Anti-flood ป้องกันการส่งข้อความสแปมรัว
+| หน้าจอ | คำอธิบาย | ภาพหน้าจอจริง |
+| :--- | :--- | :--- |
+| **F1 ภาพรวมสถานีสูบน้ำ** | แสดงกลุ่มสถานีสูบน้ำดิบ/น้ำแรงสูง พร้อมการ์ดแสดงสถานะอุปกรณ์รายตัว | ![F1 Overview](docs/screenshots/scada_after_scan_f1.png) |
+| **F2 ตัวจัดการ Task** | กำหนด Task เฝ้าระวังเฉพาะจุด ตั้งเวลารอบสแกนอัตโนมัติ (Auto-Scanner) | ![F2 Tasks](docs/screenshots/scada_autoscan_f2_ready.png) |
+| **F3 ผังเครือข่าย 2 วงแลน** | ตรวจสอบสถานะการเชื่อมต่อระหว่างวงแลนปิด SCADA (192.168.1.x) และเราเตอร์ 4G | ![F3 Network](docs/screenshots/scada_clean_network_f3.png) |
+| **F4 ข้อมูลเครื่องจริง** | สเปกฮาร์ดแวร์, CPU Load, RAM, อุณหภูมิ, ดิสก์ และสถานะ NIC Interface | ![F4 Machine](docs/screenshots/scada_host_diagnostics_f4.png) |
+| **F5 คลัง Tag ที่สแกนพบ** | รายการ Tag ทั้งหมด 457 Tags แยกตามหมวดหมู่ พร้อมฟิลเตอร์ค้นหา | ![F5 Tags](docs/screenshots/scada_all_tags.png) |
+| **F6 เชื่อมต่อ OPC UA & Telegram** | ตั้งค่า Endpoint OPC UA Server และการแจ้งเตือนเหตุการณ์ผ่าน Telegram Bot | ![F6 Alarms](docs/screenshots/scada_opcua_stable_f6.png) |
 
 ---
 
-## 🚀 วิธีการใช้งาน (Usage Guide)
+## 🏗️ โครงสร้างเมนูและการควบคุม (Global F1–F8 Navigation)
 
-### 1. เข้าดูหน้าเว็บแดชบอร์ด
-เปิดเว็บเบราว์เซอร์ไปที่:
-👉 **[http://localhost:8787](http://localhost:8787)** *(หรือ `http://<IP-เครื่อง>:8787`)*
+| ปุ่มฟังก์ชัน | หน้าจอ | รายละเอียดการทำงาน |
+| :---: | :--- | :--- |
+| **F1** | ภาพรวมสถานีสูบน้ำ | สรุปสถานะปั๊มน้ำ, วาล์วไฟฟ้า, อัตราไหล และระดับน้ำ |
+| **F2** | ตัวจัดการ Task | WinCC Task Manager รันเฉพาะงานที่ได้รับมอบหมาย ไม่รบกวน PLC ทั้งระบบ |
+| **F3** | ผังเครือข่าย 2 วงแลน | แสดงเราเตอร์ 4G, Switch, IP Address และเวลา Ping ของแต่ละโหนด |
+| **F4** | ข้อมูลเครื่องจริง (Host) | ตรวจสอบสุขภาพเครื่องคอมพิวเตอร์และพอร์ตแลน `enp0s31f6` |
+| **F5** | คลัง Tag ที่สแกนพบ | ค้นหาและตรวจสอบ Offset, Data Block (DB60/61/62) ของแต่ละ Tag |
+| **F6** | เชื่อมต่อ SCADA & Bot | บันทึก Log เหตุการณ์, กำหนด OPC UA Endpoint และทดสอบส่ง Telegram |
+| **F7** | สแกน & รีเฟรช | ดึงข้อมูล Tag ล่าสุดจากไฟล์ WinCC หรือ OPC UA ทันที |
+| **F8** | ปิดระบบ | บันทึกสถานะและปิดโปรแกรมอย่างปลอดภัย |
 
-### 2. ตรวจสอบสถานะคอนเทนเนอร์
+---
+
+## 📂 เอกสารและรายงานการพัฒนา (Reports & Audits)
+
+* 📄 [F1 Overview Visual Mockup Review](docs/reports/F1_OVERVIEW_VISUAL_MOCKUPS.md) — รายละเอียดการออกแบบ Option B1 และ B2
+* 📄 [WinCC SCADA Mod Report](docs/reports/WINCC_SCADA_MOD_REPORT.md) — รายงานการทดสอบและสถาปัตยกรรมระบบ WinCC
+* 📄 [Modern Interface Overhaul Report](docs/reports/MODERN_INTERFACE_OVERHAUL_REPORT.md) — แผนและเกณฑ์การปรับปรุง UI/UX
+* 📊 [WinCC Tag Database (Export all.txt)](docs/tags/Export%20all.txt) — ฐานข้อมูล Tag จริง 457 รายการจากโครงการอุโมงค์
+
+---
+
+## 🚀 การติดตั้งและการเปิดใช้งาน
+
+### บนระบบ Linux (Fedora / RHEL / Ubuntu)
 ```bash
-docker compose ps
+# รันโปรแกรมผ่าน Python GTK4
+python3 aqua-command-desktop/desktop/app.py
 ```
 
-### 3. ดู Log การทำงานแบบเรียลไทม์
+### บนระบบ Windows 11
 ```bash
-docker compose logs -f
+# รันเวอร์ชัน Windows Portable
+python aqua-command-desktop/desktop/win_desktop.py
 ```
-
-### 4. สั่งหยุด / สตาร์ตระบบ
-```bash
-# หยุดการทำงาน
-docker compose stop
-
-# เริ่มการทำงานใหม่
-docker compose up -d
-```
-
----
-
-## 📁 โครงสร้างโปรเจกต์
-
-```
-project_water/
-├── docker-compose.yml       # ตัวควบคุม Multi-Container (Web Dashboard + Python Agent)
-├── Dockerfile               # Dockerfile สำหรับ PWA Python Agent
-├── .env                     # ไฟล์เก็บ Token, Chat ID และ Admin API Key
-├── data/
-│   ├── pwa_alerts.db        # ฐานข้อมูล SQLite (ประวัติและสมาชิก Telegram)
-│   └── branches.json        # ฐานข้อมูล 235 สาขา กปภ.
-├── src/
-│   ├── aqua_bridge.py       # สะพานเชื่อมข้อมูลสด กปภ. เข้าสู่ Aqua Command Web API
-│   ├── monitor_service.py   # Background Worker เฝ้าระวังและส่งแจ้งเตือน
-│   ├── telegram_bot.py      # Interactive Telegram Bot
-│   ├── telegram_notifier.py # ตัวจัดรูปแบบข้อความ HTML/ภาพโปสเตอร์
-│   ├── pwa_client.py        # Client สแครป API ข่าวหยุดจ่ายน้ำ และ RTU คุณภาพน้ำ
-│   └── database.py          # SQLite Manager
-└── aqua-command/            # Web Dashboard Application (Node.js)
-    ├── server.mjs           # HTTP/SSE Server & REST API
-    ├── rules.mjs            # กฎเกณฑ์เตือนภัยด้านวิศวกรรมน้ำ
-    ├── public/              # ไฟล์เว็บ (HTML, CSS, JS Responsive Thai UI)
-    ├── storage/             # จัดเก็บ state.json สำหรับหน้าเว็บ
-    └── Dockerfile           # Dockerfile สำหรับ Web Dashboard
-```
+*(หรือเปิดไฟล์ปฏิบัติการแบบ Standalone `AQUA_COMMAND_SCADA.exe`)*

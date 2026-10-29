@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>AQUA COMMAND — F1 Option B Refined Gallery</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background: #0B1220; color: #F8FAFC; padding: 24px; line-height: 1.5; }
+  header { text-align: center; margin-bottom: 24px; }
+  h1 { font-size: 24px; color: #3186EA; margin-bottom: 6px; }
+  p { color: #94A3B8; font-size: 14px; }
+  .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn {
+    background: #1C2D45; color: #94A3B8; border: 1px solid #2B4263;
+    padding: 10px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: #3186EA; color: #fff; border-color: #3186EA;
+    box-shadow: 0 4px 16px rgba(49, 134, 234, 0.4);
+  }
+  .view-container { display: none; flex-direction: column; align-items: center; gap: 16px; }
+  .view-container.active { display: flex; }
+  .img-frame {
+    border: 2px solid #2B4263; border-radius: 10px; overflow: hidden;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.6); max-width: 95%; background: #000;
+  }
+  img { width: 100%; display: block; }
+  .badge-note {
+    background: #1C2D45; border: 1px solid #2B4263; padding: 14px 20px;
+    border-radius: 8px; font-size: 13.5px; color: #CBD5E1; max-width: 95%; width: 100%;
+  }
+  .specs-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; font-size: 12.5px;
+  }
+  .spec-item { background: #142033; padding: 8px 12px; border-radius: 6px; border: 1px solid #243B5A; }
+  .spec-item strong { color: #3186EA; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>AQUA COMMAND — F1 Option B Visual Refinement</h1>
+    <p>เปรียบเทียบภาพจำลองเสมือนจริงของ <strong>B1 (Balanced Industrial)</strong> และ <strong>B2 (Refined Technical)</strong> ตามสัดส่วนสี 60/30/10</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchView('b1')">🌟 ดูแบบ B1 — Balanced Industrial (1600×950)</button>
+    <button class="tab-btn" onclick="switchView('b2')">🎛️ ดูแบบ B2 — Refined Technical + Tag Inspector (1600×950)</button>
+    <button class="tab-btn" onclick="switchView('b2-1366')">💻 ดูพรีวิว B2 บนจอแล็ปท็อป (1366×768)</button>
+    <button class="tab-btn" onclick="switchView('b2-1920')">🖥️ ดูพรีวิว B2 บนจอ Full HD (1920×1080)</button>
+  </div>
+
+  <div id="view-b1" class="view-container active">
+    <div class="badge-note">
+      <strong>🌟 แนวทาง B1 (Balanced Industrial):</strong>
+      เน้นความเรียบง่าย สบายตา พื้นที่ว่างเหมาะสม ฟอนต์ไทยอ่านง่ายชัดเจน สระและวรรณยุกต์ไม่ซ้อนทับ ตารางหลักโปร่งตา
+      <div class="specs-grid">
+        <div class="spec-item"><strong>สัดส่วนสี:</strong> 60% #0B1220 / 30% #1C2D45 / 10% #3186EA</div>
+        <div class="spec-item"><strong>สถานะ:</strong> แยก NO-CARRIER (NIC) และ ออฟไลน์ (รอเชื่อมต่อ) ชัดเจน</div>
+        <div class="spec-item"><strong>จุดเด่น:</strong> ปลอดอีโมจิ 100% ไร้ขอบนีออนรบกวนสายตา</div>
+      </div>
+    </div>
+    <div class="img-frame">
+      <img src="mockup_option_b1_balanced_industrial.png" alt="Option B1 Mockup">
+    </div>
+  </div>
+
+  <div id="view-b2" class="view-container">
+    <div class="badge-note">
+      <strong>🎛️ แนวทาง B2 (Refined Technical):</strong>
+      คงโครงสร้าง B1 ทั้งหมด แต่เพิ่ม <strong>ช่องค้นหา Tag</strong> และ <strong>แผง Tag Inspector ด้านล่าง</strong> สำหรับเจาะลึก Bit Offset, S7 Connection, และ Scan Cycle ของจุดที่เลือก
+      <div class="specs-grid">
+        <div class="spec-item"><strong>ความสามารถเสริม:</strong> ค้นหา Tag ในกลุ่ม + ดู DataBlock ละเอียด</div>
+        <div class="spec-item"><strong>การจัดวาง:</strong> ตารางบน (Flex 1) + แผง Inspector ล่าง (135px)</div>
+        <div class="spec-item"><strong>ความหนาแน่น:</strong> พอเหมาะสำหรับวิศวกรวินิจฉัยหน้างาน</div>
+      </div>
+    </div>
+    <div class="img-frame">
+      <img src="mockup_option_b2_refined_technical.png" alt="Option B2 Mockup">
+    </div>
+  </div>
+
+  <div id="view-b2-1366" class="view-container">
+    <div class="badge-note">
+      <strong>💻 พรีวิวการแสดงผลบนจอแล็ปท็อป (1366 × 768 px):</strong>
+      ทดสอบสัดส่วนและความกว้างของตารางบนหน้าจอมาตรฐานทั่วไป ตารางสามารถเลื่อน Scroll ภายในได้โดยไม่ล้นหน้าจอหลัก
+    </div>
+    <div class="img-frame">
+      <img src="preview_b2_1366x768.png" alt="Option B2 at 1366x768">
+    </div>
+  </div>
+
+  <div id="view-b2-1920" class="view-container">
+    <div class="badge-note">
+      <strong>🖥️ พรีวิวการแสดงผลบนจอใหญ่ Full HD (1920 × 1080 px):</strong>
+      สัดส่วนกว้างขึ้น รองรับการอ่านค่าตัวเลขและ PLC Address ได้อย่างคมชัดสบายตา
+    </div>
+    <div class="img-frame">
+      <img src="preview_b2_1920x1080.png" alt="Option B2 at 1920x1080">
+    </div>
+  </div>
+
+  <script>
+    function switchView(mode) {
+      const tabs = ['b1', 'b2', 'b2-1366', 'b2-1920'];
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', tabs[i] === mode);
+      });
+      tabs.forEach(t => {
+        const el = document.getElementById('view-' + t);
+        if (el) el.classList.toggle('active', t === mode);
+      });
+    }
+  </script>
+</body>
+</html>
