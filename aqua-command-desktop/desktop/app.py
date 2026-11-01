@@ -107,6 +107,11 @@ gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GLib, Pango, PangoCairo
 import cairo
 
+try:
+    from .f1_overview import F1StationExplorerView
+except ImportError:
+    from f1_overview import F1StationExplorerView
+
 
 # ---------------------------------------------------------
 # Platform Abstraction & Crash-Resistant Storage (Linux & Windows 11)
@@ -342,6 +347,13 @@ def draw_pango_text(cr, text, x, y, font_desc_str="Noto Sans Thai, Sans 10", col
 DEFAULT_WINCC_EXPORT = Path.home() / 'Downloads' / 'Export all.txt'
 if not IS_WINDOWS and not DEFAULT_WINCC_EXPORT.exists() and Path('/home/nong_ing/Downloads/Export all.txt').exists():
     DEFAULT_WINCC_EXPORT = Path('/home/nong_ing/Downloads/Export all.txt')
+repo_export1 = Path(__file__).resolve().parent.parent / 'docs' / 'tags' / 'Export all.txt'
+repo_export2 = Path(__file__).resolve().parent.parent.parent / 'docs' / 'tags' / 'Export all.txt'
+if not DEFAULT_WINCC_EXPORT.exists():
+    if repo_export1.exists():
+        DEFAULT_WINCC_EXPORT = repo_export1
+    elif repo_export2.exists():
+        DEFAULT_WINCC_EXPORT = repo_export2
 
 # ---------------------------------------------------------
 # WinCC Tag Scanner (Parses full Siemens WinCC Tag Export)
@@ -914,15 +926,30 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.set_size_request(1024, 700)
         self.connect('close-request', self.on_close_request)
 
-        # Load WinCC CSS
+        # Load WinCC Base CSS
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(CSS_DATA)
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-        # State - Fresh Default State (Empty like fresh install until user scans)
+        # Load F1 Industrial Precision CSS
+        f1_css_path = Path(__file__).resolve().parent / 'f1_style.css'
+        if f1_css_path.exists():
+            try:
+                f1_css_provider = Gtk.CssProvider()
+                f1_css_provider.load_from_path(str(f1_css_path))
+                Gtk.StyleContext.add_provider_for_display(
+                    Gdk.Display.get_default(), f1_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 10
+                )
+            except Exception as e:
+                print(f"[F1_CSS] Warning loading f1_style.css: {e}", file=sys.stderr)
+
+        # State - Fresh Default State (Preload verified catalog if file exists for instant readiness)
         self.scanned_tags = []
+        if DEFAULT_WINCC_EXPORT.exists():
+            self.scanned_tags = scan_wincc_tags(DEFAULT_WINCC_EXPORT)
+
         self.tasks = load_tasks()
         self.topology_data = load_topology()
         self.telegram_config = load_telegram_config()
@@ -934,6 +961,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.tag_checkboxes = {}
         self.selected_tags_for_task = set()
         self.internet_online = True
+
         # Real Live Probed Status Cache
         self.live_status = {
             'scada_carrier': False,
@@ -957,60 +985,46 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.auto_scan_cycles = 0
         self.scan_in_progress = False
         self.auto_scan_last_time = "เริ่มต้น..."
-        self.scan_in_progress = False
         self.last_tag_file_mtime = 0
-
-        # Real Live Probed Status Cache
-        self.live_status = {
-            'scada_carrier': False,
-            'pings': {
-                '192.168.1.11': 'nope',
-                '192.168.1.12': 'nope',
-                '192.168.1.13': 'nope',
-                '192.168.1.254': 'nope',
-                '192.168.100.1': 'nope',
-                '192.168.100.135': 'nope',
-                '192.168.100.150': 'nope',
-                '192.168.100.178': 'nope',
-            }
-        }
 
         # Main Root Layout
         root_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.set_child(root_box)
 
-        # 1. WinCC Top Bar
+        # 1. WinCC Top Bar (Section A - Industrial Precision V1.1)
         topbar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         topbar.add_css_class('wincc-topbar')
         root_box.append(topbar)
 
-        logo_label = Gtk.Label(label="💧 กปภ. เชียงใหม่")
-        logo_label.add_css_class('wincc-title')
+        logo_label = Gtk.Label(label="AQUA COMMAND")
+        logo_label.add_css_class('wincc-logo')
         topbar.append(logo_label)
 
-        title_label = Gtk.Label(label="สถานีผลิตน้ำอุโมงค์ | AQUA COMMAND — WinCC V8.1 SCADA & Task Manager")
+        title_label = Gtk.Label(label="WINCC V8.1 / INDUSTRIAL OPERATIONS · สถานีผลิตน้ำอุโมงค์")
         title_label.add_css_class('wincc-title')
         title_label.set_hexpand(True)
         title_label.set_xalign(0.0)
+        title_label.set_ellipsize(Pango.EllipsizeMode.END)
         topbar.append(title_label)
 
+        # Section A Status Cluster (Restrained visual weight hierarchy)
         if len(self.scanned_tags) == 0:
-            self.pill_scan = Gtk.Label(label="สแกนพบ: 0 Tags")
+            self.pill_scan = Gtk.Label(label="Catalog: 0 Tags")
             self.pill_scan.add_css_class('badge-nope')
         else:
-            self.pill_scan = Gtk.Label(label=f"สแกนพบ: {len(self.scanned_tags)} Tags")
+            self.pill_scan = Gtk.Label(label=f"Catalog: {len(self.scanned_tags)} Tags")
             self.pill_scan.add_css_class('badge-active')
         topbar.append(self.pill_scan)
 
-        self.pill_scada_ip = Gtk.Label(label="🔒 SCADA: 192.168.1.14")
+        self.pill_scada_ip = Gtk.Label(label="SCADA: Standby (Offline)")
         self.pill_scada_ip.add_css_class('badge-standby')
         topbar.append(self.pill_scada_ip)
 
-        self.pill_wan_ip = Gtk.Label(label="🌐 4G LTE: 192.168.100.177")
-        self.pill_wan_ip.add_css_class('badge-sensor')
-        topbar.append(self.pill_wan_ip)
+        self.pill_readonly = Gtk.Label(label="READ ONLY")
+        self.pill_readonly.add_css_class('badge-readonly')
+        topbar.append(self.pill_readonly)
 
-        self.pill_net = Gtk.Label(label="🟢 Internet Online")
+        self.pill_net = Gtk.Label(label="Internet: Online")
         self.pill_net.add_css_class('badge-gateway')
         topbar.append(self.pill_net)
 
@@ -1018,25 +1032,29 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.clock_label.add_css_class('wincc-clock')
         topbar.append(self.clock_label)
 
-        # 2. Alarm Banner Line
+        # Internal attribute preserved for background handlers
+        self.pill_wan_ip = Gtk.Label(label="")
+        self.pill_opcua = Gtk.Label(label="")
+
+        # 2. System Status / Alarm Ribbon Line
         alarm_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         alarm_box.add_css_class('alarm-banner')
         root_box.append(alarm_box)
 
         if len(self.scanned_tags) == 0:
-            self.alarm_icon = Gtk.Label(label="⚪ [READY]")
+            self.alarm_icon = Gtk.Label(label="[STANDBY]")
             self.alarm_icon.add_css_class('alarm-text')
             alarm_box.append(self.alarm_icon)
 
-            self.alarm_text = Gtk.Label(label="ระบบพร้อมใช้งาน (เพิ่งติดตั้งใหม่) — ยังไม่มีข้อมูล Tag ในระบบ | กรุณากดปุ่ม [F7 สแกน & รีเฟรช] เพื่อเริ่มสแกน")
+            self.alarm_text = Gtk.Label(label="ระบบพร้อมใช้งาน — ยังไม่มีข้อมูล Tag ในระบบ | กรุณากดปุ่ม [F7 สแกน & รีเฟรช] เพื่อเริ่มสแกน")
             self.alarm_text.add_css_class('alarm-text')
             self.alarm_text.set_hexpand(True)
         else:
-            self.alarm_icon = Gtk.Label(label="🟢 [NORMAL]")
+            self.alarm_icon = Gtk.Label(label="[CATALOG VERIFIED]")
             self.alarm_icon.add_css_class('alarm-text')
             alarm_box.append(self.alarm_icon)
 
-            self.alarm_text = Gtk.Label(label="ระบบสถานีผลิตน้ำอุโมงค์ทำงานปกติ — รันเฉพาะ Task ที่กำหนด | บันทึก & แจ้งเตือนเฉพาะจุดที่เลือก")
+            self.alarm_text = Gtk.Label(label=f"คลัง Tag WinCC V8.1 โหลดสมบูรณ์ ({len(self.scanned_tags)} Tags / 10 Groups) — โหมด READ ONLY | สัญญาณสด: Not Observed (ไม่มีเซสชัน OPC UA ภายนอก)")
             self.alarm_text.add_css_class('alarm-text')
             self.alarm_text.set_hexpand(True)
         self.alarm_text.set_xalign(0.0)
@@ -1076,6 +1094,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         for key, text in pages_def:
             b = Gtk.ToggleButton(label=text)
             b.add_css_class('fkey-btn')
+            if isinstance(b.get_child(), Gtk.Label):
+                b.get_child().set_ellipsize(Pango.EllipsizeMode.END)
             if group_btn:
                 b.set_group(group_btn)
             else:
@@ -1096,11 +1116,17 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         refresh_btn = Gtk.Button(label="F7  สแกน & รีเฟรช")
         refresh_btn.add_css_class('fkey-btn')
+        refresh_btn.add_css_class('fkey-btn-orange')
+        if isinstance(refresh_btn.get_child(), Gtk.Label):
+            refresh_btn.get_child().set_ellipsize(Pango.EllipsizeMode.END)
         refresh_btn.connect('clicked', lambda _: self.trigger_rescan())
         fkey_bar.append(refresh_btn)
 
         exit_btn = Gtk.Button(label="F8  ปิดระบบ")
         exit_btn.add_css_class('fkey-btn')
+        exit_btn.add_css_class('fkey-btn-exit')
+        if isinstance(exit_btn.get_child(), Gtk.Label):
+            exit_btn.get_child().set_ellipsize(Pango.EllipsizeMode.END)
         exit_btn.connect('clicked', lambda _: self.close())
         fkey_bar.append(exit_btn)
 
@@ -1132,13 +1158,13 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
     def trigger_rescan(self):
         self.scanned_tags = scan_wincc_tags(DEFAULT_WINCC_EXPORT)
-        self.pill_scan.set_text(f"สแกนพบ: {len(self.scanned_tags)} Tags")
+        self.pill_scan.set_text(f"Catalog: {len(self.scanned_tags)} Tags")
         self.pill_scan.remove_css_class('badge-nope')
         self.pill_scan.add_css_class('badge-active')
         if 'tags' in self.nav_btns:
             self.nav_btns['tags'].set_label(f"F5  คลัง Tag ที่สแกนพบ ({len(self.scanned_tags)} Tags)")
-        self.alarm_icon.set_text("🟢 [SCANNED]")
-        self.alarm_text.set_text(f"สแกน Tag WinCC สำเร็จ: พบทั้งหมด {len(self.scanned_tags)} Tags เรียบร้อยแล้ว")
+        self.alarm_icon.set_text("[SCANNED]")
+        self.alarm_text.set_text(f"สแกน Tag WinCC สำเร็จ: โหลดข้อมูล {len(self.scanned_tags)} Tags เข้าสู่ F1 Station Explorer เรียบร้อยแล้ว")
         self.render_dynamic_overview()
         if hasattr(self, 'render_tags_grid'):
             self.render_tags_grid()
@@ -1148,159 +1174,21 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.update_real_data()
 
     # ---------------------------------------------------------
-    # TAB 1: Real WinCC Plant Groups Overview (100% Zero Mock)
+    # TAB 1: Real WinCC Plant Groups Overview (F1 Industrial Precision)
     def build_overview_page(self):
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_hexpand(True)
         scrolled.set_vexpand(True)
-        self.overview_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.overview_vbox.set_margin_start(10)
-        self.overview_vbox.set_margin_end(10)
-        self.overview_vbox.set_margin_top(8)
-        self.overview_vbox.set_margin_bottom(8)
-        scrolled.set_child(self.overview_vbox)
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
-        self.render_dynamic_overview()
+        self.f1_explorer = F1StationExplorerView(self)
+        scrolled.set_child(self.f1_explorer.root_widget)
         self.stack.add_named(scrolled, 'overview')
+        self.render_dynamic_overview()
 
     def render_dynamic_overview(self):
-        while self.overview_vbox.get_first_child():
-            self.overview_vbox.remove(self.overview_vbox.get_first_child())
-
-        # If no tags have been scanned yet -> EMPTY STATE (ว่างเปล่า เหมือนติดตั้งโปรแกรมใหม่)
-        if not self.scanned_tags:
-            empty_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
-            empty_box.add_css_class('wincc-group')
-            empty_box.set_margin_top(40)
-            empty_box.set_margin_bottom(40)
-            empty_box.set_margin_start(40)
-            empty_box.set_margin_end(40)
-            self.overview_vbox.append(empty_box)
-
-            empty_title = Gtk.Label(label="📭 ยังไม่มีข้อมูลในระบบ — ว่างเปล่า (เหมือนติดตั้งโปรแกรมใหม่)")
-            empty_title.add_css_class('group-title')
-            empty_title.set_justify(Gtk.Justification.CENTER)
-            empty_box.append(empty_title)
-
-            desc = Gtk.Label(
-                label="ขณะนี้โปรแกรมยังไม่มีข้อมูลสถานีสูบน้ำหรือ Tag ในระบบ (เหมือนโปรแกรมที่เพิ่งติดตั้งใหม่)\n"
-                      "ระบบจะเริ่มแสดงข้อมูลก็ต่อเมื่อท่านกดปุ่ม [สแกนหา Tag จาก WinCC] แล้วเท่านั้น\n"
-                      "เพื่อนำเข้า Tag ทั้งหมด 457 Tags และจัดสรร Task เฝ้าระวังเฉพาะจุดที่ต้องการ"
-            )
-            desc.set_justify(Gtk.Justification.CENTER)
-            desc.set_wrap(True)
-            empty_box.append(desc)
-
-            btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-            btn_box.set_halign(Gtk.Align.CENTER)
-            empty_box.append(btn_box)
-
-            start_scan_btn = Gtk.Button(label="🔍 สแกนหา Tag จากไฟล์ WinCC (F7)")
-            start_scan_btn.add_css_class('action-btn')
-            start_scan_btn.connect('clicked', lambda _: self.trigger_rescan())
-            btn_box.append(start_scan_btn)
-
-            opc_scan_btn = Gtk.Button(label="🏭 สแกนสดผ่าน WinCC OPC UA (F6)")
-            opc_scan_btn.add_css_class('action-btn')
-            opc_scan_btn.connect('clicked', lambda _: self.switch_to_tab('alarms'))
-            btn_box.append(opc_scan_btn)
-
-            goto_tasks_btn = Gtk.Button(label="⚙️ ไปที่ตัวจัดการ Task (F2)")
-            goto_tasks_btn.add_css_class('action-btn')
-            goto_tasks_btn.connect('clicked', lambda _: self.switch_to_tab('tasks'))
-            btn_box.append(goto_tasks_btn)
-            return
-
-        # Real Diagnostic Hardware Banner
-        diag_banner = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        diag_banner.add_css_class('alarm-banner')
-        self.overview_vbox.append(diag_banner)
-
-        plc_carrier = check_interface_carrier('enp0s31f6')
-        if not plc_carrier:
-            diag_icon = Gtk.Label(label="⚠️ [สถานะฮาร์ดแวร์จริง]")
-            diag_icon.add_css_class('badge-nope')
-            diag_banner.append(diag_icon)
-
-            diag_lbl = Gtk.Label(label="พอร์ตแลนตู้ควบคุม PLC (enp0s31f6): nope (NO-CARRIER) — ข้อมูลเครื่องจักรทุกจุดแสดงค่าจริง: nope (ยกเลิกข้อมูลจำลองทั้งหมด)")
-            diag_lbl.add_css_class('alarm-text')
-            diag_lbl.set_hexpand(True)
-            diag_lbl.set_xalign(0.0)
-            diag_banner.append(diag_lbl)
-        else:
-            diag_icon = Gtk.Label(label="🟢 [ฮาร์ดแวร์ออนไลน์]")
-            diag_icon.add_css_class('badge-active')
-            diag_banner.append(diag_icon)
-
-            diag_lbl = Gtk.Label(label="พอร์ตแลนตู้ควบคุม PLC (enp0s31f6): ONLINE — เชื่อมต่อตู้ควบคุม SCADA สำเร็จ")
-            diag_lbl.add_css_class('alarm-text')
-            diag_lbl.set_hexpand(True)
-            diag_lbl.set_xalign(0.0)
-            diag_banner.append(diag_lbl)
-
-        # Generate plant groups dynamically from real scanned WinCC tags
-        plant_groups = get_dynamic_plant_groups(self.scanned_tags)
-
-        for st in plant_groups:
-            grp = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-            grp.add_css_class('wincc-group')
-            self.overview_vbox.append(grp)
-
-            title = Gtk.Label(label=f"{st['category']}  [รวม {st['total_tags']} Tags]")
-            title.add_css_class('group-title')
-            title.set_xalign(0.0)
-            grp.append(title)
-
-            flow = Gtk.FlowBox()
-            flow.set_selection_mode(Gtk.SelectionMode.NONE)
-            flow.set_max_children_per_line(6)
-            flow.set_row_spacing(6)
-            flow.set_column_spacing(6)
-            grp.append(flow)
-
-            for item in st['items']:
-                card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
-                card.add_css_class('scada-card')
-
-                hdr = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-                card.append(hdr)
-
-                id_lbl = Gtk.Label(label=item['id'])
-                id_lbl.add_css_class('card-header')
-                id_lbl.set_hexpand(True)
-                id_lbl.set_xalign(0.0)
-                hdr.append(id_lbl)
-
-                if not plc_carrier:
-                    badge = Gtk.Label(label="❌ nope")
-                    badge.add_css_class('badge-nope')
-                else:
-                    badge = Gtk.Label(label="ONLINE")
-                    badge.add_css_class('badge-running')
-                hdr.append(badge)
-
-                name_lbl = Gtk.Label(label=item['comment'][:28])
-                name_lbl.set_xalign(0.0)
-                name_lbl.set_wrap(True)
-                name_lbl.set_max_width_chars(25)
-                card.append(name_lbl)
-
-                addr_lbl = Gtk.Label(label=f"PLC Addr: {item['addr']} ({item['type']})")
-                addr_lbl.set_xalign(0.0)
-                card.append(addr_lbl)
-
-                if not plc_carrier:
-                    val_lbl = Gtk.Label(label="สัญญาณจริง: ❌ nope (ไม่พบ PLC)")
-                    val_lbl.set_xalign(0.0)
-                    val_lbl.add_css_class('table-td')
-                    card.append(val_lbl)
-                else:
-                    val_lbl = Gtk.Label(label="สัญญาณจริง: 🟢 ONLINE (อ่านค่าสด)")
-                    val_lbl.set_xalign(0.0)
-                    val_lbl.add_css_class('card-header')
-                    card.append(val_lbl)
-
-                flow.append(card)
+        if hasattr(self, 'f1_explorer'):
+            self.f1_explorer.update_catalog_data(self.scanned_tags)
 
     # TAB 2: Cloned WinCC V8.1 Task Management & Scanner
     # ---------------------------------------------------------
@@ -2490,7 +2378,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
             if res.get('new_tags'):
                 self.scanned_tags = res['new_tags']
-                self.pill_scan.set_text(f"สแกนพบ: {len(self.scanned_tags)} Tags")
+                self.pill_scan.set_text(f"Catalog: {len(self.scanned_tags)} Tags")
                 self.pill_scan.remove_css_class('badge-nope')
                 self.pill_scan.add_css_class('badge-active')
                 if 'tags' in self.nav_btns:
@@ -2502,28 +2390,30 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 if hasattr(self, 'render_tags_page_grid'):
                     self.render_tags_page_grid()
 
-            # Update top pills
+            # Update top pills (Zero emojis, no raw IP in header)
             if res['scada_carrier']:
-                self.pill_scada_ip.set_text("🔒 SCADA: ONLINE")
+                self.pill_scada_ip.set_text("SCADA: Online")
+                self.pill_scada_ip.remove_css_class('badge-nope')
+                self.pill_scada_ip.remove_css_class('badge-standby')
+                self.pill_scada_ip.add_css_class('badge-active')
+            else:
+                self.pill_scada_ip.set_text("SCADA: Standby (Offline)")
+                self.pill_scada_ip.remove_css_class('badge-active')
                 self.pill_scada_ip.remove_css_class('badge-nope')
                 self.pill_scada_ip.add_css_class('badge-standby')
-            else:
-                self.pill_scada_ip.set_text("🔒 SCADA: ❌ nope")
-                self.pill_scada_ip.remove_css_class('badge-standby')
-                self.pill_scada_ip.add_css_class('badge-nope')
 
             if res['has_net']:
-                self.pill_net.set_text("🟢 Internet Online")
+                self.pill_net.set_text("Internet: Online")
                 self.pill_net.remove_css_class('badge-no-net')
                 self.pill_net.add_css_class('badge-gateway')
                 if hasattr(self, 'pill_net_status'):
-                    self.pill_net_status.set_text("🟢 Internet: Online")
+                    self.pill_net_status.set_text("Internet: Online")
             else:
-                self.pill_net.set_text("⚠️ Internet Offline")
+                self.pill_net.set_text("Internet: Offline")
                 self.pill_net.remove_css_class('badge-gateway')
                 self.pill_net.add_css_class('badge-no-net')
                 if hasattr(self, 'pill_net_status'):
-                    self.pill_net_status.set_text("⚠️ Internet: Offline")
+                    self.pill_net_status.set_text("Internet: Offline")
 
             # Redraw Topology Canvas and Table
             if hasattr(self, 'topology_canvas'):
@@ -3094,11 +2984,16 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 nic_in = gw.get('nic_scada', {})
                 carrier = check_interface_carrier('enp0s31f6')
                 if carrier:
-                    self.pill_scada_ip.set_text(f"🔒 SCADA: {nic_in.get('ip', '192.168.1.14')}")
+                    self.pill_scada_ip.set_text("SCADA: Online")
+                    self.pill_scada_ip.remove_css_class('badge-nope')
+                    self.pill_scada_ip.remove_css_class('badge-standby')
+                    self.pill_scada_ip.add_css_class('badge-active')
                 else:
-                    self.pill_scada_ip.set_text("🔒 SCADA: ❌ nope")
-                    self.pill_scada_ip.add_css_class('badge-nope')
-                self.pill_wan_ip.set_text(f"🌐 4G: {m['ip_lan']}")
+                    self.pill_scada_ip.set_text("SCADA: Standby (Offline)")
+                    self.pill_scada_ip.remove_css_class('badge-active')
+                    self.pill_scada_ip.remove_css_class('badge-nope')
+                    self.pill_scada_ip.add_css_class('badge-standby')
+                self.pill_wan_ip.set_text(f"WAN: {m['ip_lan']}")
         except Exception as e:
             print(f"Update error: {e}", file=sys.stderr)
         return True

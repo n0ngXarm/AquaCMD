@@ -1,0 +1,617 @@
+/* ==========================================================================
+   AQUA COMMAND — F1 Industrial Spectrum V2 Theme Refinement
+   Design System Tokens:
+     Canvas / Deep Background: #0B1017
+     Main Panel:                #1B2532
+     Secondary Panel / Inset:   #222D3A
+     Elevated Surface:          #25313D
+     Border:                    #364553
+     Primary Text:              #F2F6FA
+     Neutral Gray / Inactive:   #8998AA
+     Interactive Blue:          #3489E8 (Selected row, Active tab, Active nav)
+     Verified Green:            #27B785 (Catalog verified, Confirmed success)
+     Caution Yellow:            #EAC54F (Warning with evidence, Missing config)
+     Action Orange:             #F28D35 (Refresh / Scan action, Attention)
+     Critical Red:              #E35B64 (Verified error, Destructive / Exit)
+   ========================================================================== */
+
+window {
+    background-color: #0B1017;
+    color: #F2F6FA;
+    font-family: 'Noto Sans Thai', 'Inter', -apple-system, sans-serif;
+    font-size: 13px;
+}
+
+label {
+    color: #F2F6FA;
+}
+
+/* --------------------------------------------------------------------------
+   Global Shell: Header (Section A)
+   -------------------------------------------------------------------------- */
+.wincc-topbar {
+    background: #1B2532;
+    border-bottom: 1px solid #364553;
+    padding: 8px 16px;
+}
+
+.wincc-logo {
+    font-size: 16px;
+    font-weight: 800;
+    color: #3489E8;
+    letter-spacing: 0.8px;
+    padding-right: 6px;
+}
+
+.wincc-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #F2F6FA;
+    letter-spacing: 0.3px;
+}
+
+/* Header Status Badges (Restrained visual weight hierarchy) */
+.badge-active {
+    background-color: rgba(39, 183, 133, 0.15);
+    color: #27B785;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 10px;
+    border: 1px solid rgba(39, 183, 133, 0.45);
+    border-radius: 4px;
+}
+
+.badge-standby {
+    background-color: #222D3A;
+    color: #8998AA;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 3px 10px;
+    border: 1px solid #364553;
+    border-radius: 4px;
+}
+
+.badge-sensor {
+    background-color: #222D3A;
+    color: #8998AA;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 3px 10px;
+    border: 1px solid #364553;
+    border-radius: 4px;
+}
+
+.badge-readonly {
+    background-color: rgba(52, 137, 232, 0.12);
+    color: #8998AA;
+    font-weight: 700;
+    font-size: 11.5px;
+    padding: 3px 10px;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.badge-gateway {
+    background-color: #222D3A;
+    color: #8998AA;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 3px 10px;
+    border: 1px solid #364553;
+    border-radius: 4px;
+}
+
+.badge-nope {
+    background-color: rgba(227, 91, 100, 0.15);
+    color: #E35B64;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 10px;
+    border: 1px solid rgba(227, 91, 100, 0.45);
+    border-radius: 4px;
+}
+
+.wincc-clock {
+    font-family: 'JetBrains Mono', 'Liberation Mono', 'Source Code Pro', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: #0B1017;
+    color: #3489E8;
+    padding: 3px 10px;
+    border: 1px solid #364553;
+    border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Global Shell: System Status Ribbon Line
+   -------------------------------------------------------------------------- */
+.alarm-banner {
+    background: #1B2532;
+    border-bottom: 1px solid #364553;
+    padding: 6px 16px;
+}
+
+.alarm-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #8998AA;
+}
+
+/* --------------------------------------------------------------------------
+   Global Shell: Bottom Navigation (F1–F8)
+   -------------------------------------------------------------------------- */
+.wincc-fkey-bar {
+    background: #0B1017;
+    border-top: 1px solid #364553;
+    padding: 6px 14px;
+}
+
+.fkey-btn {
+    background: #1B2532;
+    color: #8998AA;
+    border: 1px solid #364553;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 6px 12px;
+    margin: 0 2px;
+}
+
+.fkey-btn:checked {
+    background: #3489E8;
+    border-color: #3489E8;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+.fkey-btn:hover:not(:checked) {
+    background: #25313D;
+    color: #F2F6FA;
+    border-color: #3489E8;
+}
+
+/* F7 Orange Action Accent */
+.fkey-btn-orange {
+    background: rgba(242, 141, 53, 0.12);
+    color: #F28D35;
+    border: 1px solid rgba(242, 141, 53, 0.45);
+    font-weight: 700;
+}
+
+.fkey-btn-orange:hover {
+    background: rgba(242, 141, 53, 0.25);
+    color: #FFFFFF;
+    border-color: #F28D35;
+}
+
+/* F8 Exit Subtle Accent */
+.fkey-btn-exit:hover {
+    background: rgba(227, 91, 100, 0.18);
+    color: #E35B64;
+    border-color: rgba(227, 91, 100, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   Section B: F1 Page Heading Bar
+   -------------------------------------------------------------------------- */
+.f1-heading-bar {
+    padding: 2px 0 6px 0;
+}
+
+.f1-page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #F2F6FA;
+    letter-spacing: -0.2px;
+}
+
+.f1-page-subtitle {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #8998AA;
+}
+
+.f1-action-btn {
+    background: #1B2532;
+    color: #8998AA;
+    border: 1px solid #364553;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
+.f1-action-btn:hover {
+    background: #25313D;
+    border-color: #3489E8;
+    color: #F2F6FA;
+}
+
+/* Action Orange Quick Refresh Button */
+.f1-btn-refresh {
+    background: rgba(242, 141, 53, 0.12);
+    color: #F28D35;
+    border: 1px solid rgba(242, 141, 53, 0.45);
+    font-weight: 700;
+}
+
+.f1-btn-refresh:hover {
+    background: rgba(242, 141, 53, 0.25);
+    border-color: #F28D35;
+    color: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   Section C: Summary KPI Cards (Elevated Surface)
+   -------------------------------------------------------------------------- */
+.f1-kpi-card {
+    background: #25313D;
+    border: 1px solid #364553;
+    border-radius: 6px;
+    padding: 9px 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.f1-kpi-title {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #8998AA;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.f1-kpi-value {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #F2F6FA;
+    line-height: 1.15;
+    margin: 2px 0;
+}
+
+.f1-kpi-desc {
+    font-size: 12px;
+    color: #8998AA;
+}
+
+/* --------------------------------------------------------------------------
+   Surface Panels (Master & Detail)
+   -------------------------------------------------------------------------- */
+.f1-surface-panel {
+    background: #1B2532;
+    border: 1px solid #364553;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.f1-group-header-card {
+    background: #1B2532;
+    border: 1px solid #364553;
+    border-radius: 6px;
+    padding: 8px 14px;
+}
+
+.f1-panel-header {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #364553;
+    margin-bottom: 4px;
+}
+
+.f1-panel-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #F2F6FA;
+}
+
+/* Semantic Badges */
+.f1-badge-neutral {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    background: #222D3A;
+    color: #8998AA;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f1-badge-accent {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(52, 137, 232, 0.15);
+    color: #3489E8;
+    border: 1px solid rgba(52, 137, 232, 0.45);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f1-badge-verified {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(39, 183, 133, 0.15);
+    color: #27B785;
+    border: 1px solid rgba(39, 183, 133, 0.45);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f1-badge-warning {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(234, 197, 79, 0.15);
+    color: #EAC54F;
+    border: 1px solid rgba(234, 197, 79, 0.45);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f1-badge-error {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(227, 91, 100, 0.15);
+    color: #E35B64;
+    border: 1px solid rgba(227, 91, 100, 0.45);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f1-badge-attention {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(242, 141, 53, 0.15);
+    color: #F28D35;
+    border: 1px solid rgba(242, 141, 53, 0.45);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Section D: Equipment Group Explorer (Left List)
+   -------------------------------------------------------------------------- */
+.f1-group-list {
+    background: transparent;
+}
+
+.f1-group-row {
+    background: #222D3A;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    margin: 2px 4px;
+    padding: 0;
+    transition: background 120ms ease, border-color 120ms ease;
+}
+
+.f1-group-row:selected {
+    background: #253549;
+    border-left: 4px solid #3489E8;
+    border-top: 1px solid #3489E8;
+    border-bottom: 1px solid #3489E8;
+    border-right: 1px solid #3489E8;
+}
+
+.f1-group-row:hover:not(:selected) {
+    background: #25313D;
+    border-color: rgba(52, 137, 232, 0.4);
+}
+
+.f1-group-row-box {
+    padding: 7px 10px;
+    min-height: 48px;
+}
+
+.f1-group-icon {
+    color: #3489E8;
+}
+
+.f1-group-row-code {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #F2F6FA;
+}
+
+.f1-group-row:selected .f1-group-row-code {
+    color: #FFFFFF;
+}
+
+.f1-group-row-desc {
+    font-size: 12px;
+    color: #8998AA;
+}
+
+.f1-count-pill {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: #1B2532;
+    color: #3489E8;
+    border: 1px solid rgba(52, 137, 232, 0.4);
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Section E: Group Title Header (Upper Right)
+   -------------------------------------------------------------------------- */
+.f1-group-code-pill {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    background: #222D3A;
+    color: #3489E8;
+    border: 1px solid rgba(52, 137, 232, 0.45);
+    border-radius: 4px;
+    padding: 3px 10px;
+}
+
+.f1-group-title-en {
+    font-size: 15px;
+    font-weight: 700;
+    color: #F2F6FA;
+}
+
+.f1-group-desc-th {
+    font-size: 12.5px;
+    color: #8998AA;
+}
+
+/* --------------------------------------------------------------------------
+   Section G: Signal Table & Inspector
+   -------------------------------------------------------------------------- */
+.f1-mode-switcher {
+    background: #222D3A;
+    border: 1px solid #364553;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.f1-mode-btn {
+    background: transparent;
+    color: #8998AA;
+    border: none;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+}
+
+.f1-mode-btn:checked {
+    background: #253549;
+    color: #F2F6FA;
+    font-weight: 700;
+    border: 1px solid #3489E8;
+}
+
+.f1-search-entry {
+    background: #222D3A;
+    border: 1px solid #364553;
+    color: #F2F6FA;
+    font-size: 12.5px;
+    border-radius: 4px;
+    padding: 4px 8px;
+    min-height: 30px;
+}
+
+.f1-search-entry:focus {
+    border-color: #3489E8;
+    background: #25313D;
+}
+
+.f1-search-entry.f1-search-active {
+    border-color: #F28D35;
+    background: #25313D;
+}
+
+.f1-table-th {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #8998AA;
+    padding: 8px 12px;
+    border-bottom: 2px solid #364553;
+    background: #222D3A;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.f1-table-row {
+    border-bottom: 1px solid rgba(54, 69, 83, 0.6);
+    min-height: 38px;
+    transition: background-color 80ms ease;
+}
+
+.f1-table-row:hover, .f1-table-row-hover {
+    background-color: #222E3D;
+}
+
+.f1-table-row-selected {
+    background-color: #253549;
+    border-bottom: 1px solid #3489E8;
+}
+
+.f1-table-cell {
+    font-size: 13px;
+    color: #F2F6FA;
+    padding: 8px 12px;
+}
+
+.f1-table-cell-mono {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 12.5px;
+    color: #F2F6FA;
+    padding: 8px 12px;
+}
+
+.f1-table-cell-muted {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 12px;
+    color: #8998AA;
+    padding: 8px 12px;
+}
+
+.f1-table-cell-name {
+    padding: 6px 12px;
+}
+
+.f1-tag-link-btn {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3489E8;
+}
+
+.f1-tag-link-btn:hover {
+    color: #F2F6FA;
+    text-decoration: underline;
+}
+
+.f1-caption-subtle {
+    font-size: 12px;
+    color: #8998AA;
+}
+
+.f1-caption-mono {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 12px;
+    color: #8998AA;
+}
+
+.f1-table-empty {
+    font-size: 13px;
+    color: #8998AA;
+    padding: 24px;
+}
+
+.f1-card-inner {
+    background: #222D3A;
+    border: 1px solid #364553;
+    border-radius: 6px;
+    padding: 14px;
+}
+
+.f1-metric-title {
+    font-size: 11.5px;
+    color: #8998AA;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.f1-prop-value-mono {
+    font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
+    font-size: 13px;
+    color: #F2F6FA;
+    background: #25313D;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #364553;
+}
