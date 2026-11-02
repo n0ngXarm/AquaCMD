@@ -107,10 +107,16 @@ gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GLib, Pango, PangoCairo
 import cairo
 
+USE_UNIFIED_WORKSPACE = True
+
 try:
     from .f1_overview import F1StationExplorerView
+    from .f2_tasks import F2TaskManagerView
+    from .workspace import AquaUnifiedWorkspaceView
 except ImportError:
     from f1_overview import F1StationExplorerView
+    from f2_tasks import F2TaskManagerView
+    from workspace import AquaUnifiedWorkspaceView
 
 
 # ---------------------------------------------------------
@@ -945,6 +951,30 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             except Exception as e:
                 print(f"[F1_CSS] Warning loading f1_style.css: {e}", file=sys.stderr)
 
+        # Load F2 Task Management CSS
+        f2_css_path = Path(__file__).resolve().parent / 'f2_style.css'
+        if f2_css_path.exists():
+            try:
+                f2_css_provider = Gtk.CssProvider()
+                f2_css_provider.load_from_path(str(f2_css_path))
+                Gtk.StyleContext.add_provider_for_display(
+                    Gdk.Display.get_default(), f2_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 12
+                )
+            except Exception as e:
+                print(f"[F2_CSS] Warning loading f2_style.css: {e}", file=sys.stderr)
+
+        # Load Unified Workspace CSS
+        ws_css_path = Path(__file__).resolve().parent / 'workspace_style.css'
+        if ws_css_path.exists():
+            try:
+                ws_css_provider = Gtk.CssProvider()
+                ws_css_provider.load_from_path(str(ws_css_path))
+                Gtk.StyleContext.add_provider_for_display(
+                    Gdk.Display.get_default(), ws_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 15
+                )
+            except Exception as e:
+                print(f"[WS_CSS] Warning loading workspace_style.css: {e}", file=sys.stderr)
+
         # State - Fresh Default State (Preload verified catalog if file exists for instant readiness)
         self.scanned_tags = []
         if DEFAULT_WINCC_EXPORT.exists():
@@ -1101,7 +1131,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             else:
                 group_btn = b
                 b.set_active(True)
-            b.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
+            if USE_UNIFIED_WORKSPACE and key == 'overview':
+                b.connect('toggled', lambda btn: self.activate_workspace_mode('monitoring') if btn.get_active() else None)
+            elif USE_UNIFIED_WORKSPACE and key == 'tasks':
+                b.connect('toggled', lambda btn: self.activate_workspace_mode('task_manager') if btn.get_active() else None)
+            else:
+                b.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
             fkey_bar.append(b)
             self.nav_btns[key] = b
         # Native Keyboard F1..F8 Controller
@@ -1173,433 +1208,88 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.trigger_network_rescan()
         self.update_real_data()
 
-    # ---------------------------------------------------------
-    # TAB 1: Real WinCC Plant Groups Overview (F1 Industrial Precision)
-    def build_overview_page(self):
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_hexpand(True)
-        scrolled.set_vexpand(True)
-        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+    def activate_workspace_mode(self, mode):
+        self.stack.set_visible_child_name('overview')
+        if hasattr(self, 'unified_workspace'):
+            self.unified_workspace.set_workspace_mode(mode)
 
-        self.f1_explorer = F1StationExplorerView(self)
-        scrolled.set_child(self.f1_explorer.root_widget)
-        self.stack.add_named(scrolled, 'overview')
-        self.render_dynamic_overview()
+    # ---------------------------------------------------------
+    # TAB 1: Real WinCC Plant Groups Overview (F1 Industrial Precision / Unified Workspace)
+    def build_overview_page(self):
+        if USE_UNIFIED_WORKSPACE:
+            root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            root.set_margin_start(4)
+            root.set_margin_end(4)
+            root.set_margin_top(4)
+            root.set_margin_bottom(4)
+            self.unified_workspace = AquaUnifiedWorkspaceView(self, root)
+            self.stack.add_named(root, 'overview')
+        else:
+            scrolled = Gtk.ScrolledWindow()
+            scrolled.set_hexpand(True)
+            scrolled.set_vexpand(True)
+            scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+            self.f1_explorer = F1StationExplorerView(self)
+            scrolled.set_child(self.f1_explorer.root_widget)
+            self.stack.add_named(scrolled, 'overview')
+            self.render_dynamic_overview()
 
     def render_dynamic_overview(self):
         if hasattr(self, 'f1_explorer'):
             self.f1_explorer.update_catalog_data(self.scanned_tags)
+        if hasattr(self, 'unified_workspace'):
+            self.unified_workspace.sync_catalog_data()
+            self.unified_workspace.refresh_group_explorer()
+            self.unified_workspace.render_catalog_table()
 
     # TAB 2: Cloned WinCC V8.1 Task Management & Scanner
     # ---------------------------------------------------------
     def build_task_manager_page(self):
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_hexpand(True)
-        scrolled.set_vexpand(True)
         root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         root.set_margin_start(10)
         root.set_margin_end(10)
         root.set_margin_top(8)
         root.set_margin_bottom(8)
-        scrolled.set_child(root)
 
-        # Top Task Bar - Control & Auto-Scan Panel
-        control_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        control_container.add_css_class('wincc-group')
-        root.append(control_container)
+        # F2 Task Configuration & Monitoring Rule Editor Workstation
+        if not USE_UNIFIED_WORKSPACE:
+            self.f2_tasks_view = F2TaskManagerView(self, root)
+        self.stack.add_named(root, 'tasks')
 
-        # Row 1: Scan Buttons & Interval / Duration Selectors
-        row1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        control_container.append(row1)
+    def render_tags_grid(self, *args, **kwargs):
+        if hasattr(self, 'f2_tasks_view'):
+            self.f2_tasks_view.render_discovered_tags()
 
-        scan_once_btn = Gtk.Button(label="🔍 สแกนทันที 1 ครั้ง (Scan Once)")
-        scan_once_btn.add_css_class('action-btn')
-        scan_once_btn.connect('clicked', lambda _: self.trigger_single_scan(silent=False))
-        row1.append(scan_once_btn)
-
-        self.btn_auto_scan = Gtk.Button(label="⏹️ หยุด Auto Scan" if self.auto_scan_active else "▶️ เริ่ม Auto Scan")
-        self.btn_auto_scan.add_css_class('btn-autoscan-stop' if self.auto_scan_active else 'btn-autoscan-start')
-        self.btn_auto_scan.connect('clicked', self.toggle_auto_scan)
-        row1.append(self.btn_auto_scan)
-
-        lbl_int = Gtk.Label(label="รอบสแกน:")
-        lbl_int.add_css_class('card-header')
-        row1.append(lbl_int)
-
-        self.interval_combo = Gtk.DropDown.new_from_strings([
-            "ทุกๆ 1 วินาที", "ทุกๆ 5 วินาที (ค่าแนะนำ)", "ทุกๆ 10 วินาที", "ทุกๆ 30 วินาที", "ทุกๆ 60 วินาที"
-        ])
-        self.interval_combo.set_selected(1) # Default 5 seconds
-        self.interval_combo.connect('notify::selected', self.on_scan_interval_changed)
-        row1.append(self.interval_combo)
-
-        lbl_dur = Gtk.Label(label="ระยะเวลารวม:")
-        lbl_dur.add_css_class('card-header')
-        row1.append(lbl_dur)
-
-        self.duration_combo = Gtk.DropDown.new_from_strings([
-            "ทั้งหมด 1 ชั่วโมง (1 hr)", "รันต่อเนื่อง (Continuous)", "ทั้งหมด 2 ชั่วโมง (2 hrs)", "ทั้งหมด 8 ชั่วโมง (1 Shift)"
-        ])
-        self.duration_combo.set_selected(0) # Default 1 hour
-        self.duration_combo.connect('notify::selected', self.on_scan_duration_changed)
-        row1.append(self.duration_combo)
-
-        new_task_btn = Gtk.Button(label="➕ สร้าง Task ใหม่")
-        new_task_btn.add_css_class('action-btn')
-        new_task_btn.connect('clicked', self.create_new_task)
-        row1.append(new_task_btn)
-
-        save_btn = Gtk.Button(label="💾 บันทึก Task")
-        save_btn.add_css_class('action-btn')
-        save_btn.connect('clicked', lambda _: self.save_all_tasks())
-        row1.append(save_btn)
-
-        spacer_t = Gtk.Box()
-        spacer_t.set_hexpand(True)
-        row1.append(spacer_t)
-
-        active_cnt = len([t for t in self.tasks if t.get('active')])
-        self.task_summary_lbl = Gtk.Label(label=f"กำลังรัน: {active_cnt} Tasks แอคทีฟ")
-        self.task_summary_lbl.add_css_class('badge-active' if active_cnt > 0 else 'badge-standby')
-        row1.append(self.task_summary_lbl)
-
-        # Row 2: Live Auto-Scan Monitor Badges
-        row2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        control_container.append(row2)
-
-        self.auto_scan_badge = Gtk.Label(label="🟢 AUTO SCAN: ทำงาน (ทุกๆ 5 วินาที)" if self.auto_scan_active else "⚪ AUTO SCAN: หยุดทำงาน (รอเริ่มสแกน)")
-        self.auto_scan_badge.add_css_class('badge-active' if self.auto_scan_active else 'badge-standby')
-        row2.append(self.auto_scan_badge)
-
-        self.auto_scan_countdown_lbl = Gtk.Label(label="⏱️ สแกนรอบถัดไป: 5s")
-        self.auto_scan_countdown_lbl.add_css_class('badge-sensor')
-        row2.append(self.auto_scan_countdown_lbl)
-
-        self.auto_scan_remaining_lbl = Gtk.Label(label="⏳ เวลาที่เหลือ: 1 ชม. 0 นาที (จาก 1 ชม.)")
-        self.auto_scan_remaining_lbl.add_css_class('badge-standby')
-        row2.append(self.auto_scan_remaining_lbl)
-
-        self.auto_scan_cycle_lbl = Gtk.Label(label="🔄 สแกนไปแล้ว: 0 รอบ")
-        self.auto_scan_cycle_lbl.add_css_class('badge-gateway')
-        row2.append(self.auto_scan_cycle_lbl)
-
-        self.auto_scan_last_time_lbl = Gtk.Label(label="🕒 สแกนล่าสุด: เริ่มต้น...")
-        self.auto_scan_last_time_lbl.add_css_class('table-td')
-        row2.append(self.auto_scan_last_time_lbl)
-
-        # 2-Column Split: Left = Discovered Tags / Right = Task Properties
-        paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
-        paned.set_position(720)
-        paned.set_hexpand(True)
-        paned.set_vexpand(True)
-        root.append(paned)
-
-        # Left Column: Discovered Tags Explorer
-        left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        left_box.add_css_class('wincc-group')
-        paned.set_start_child(left_box)
-
-        left_title = Gtk.Label(label="📋 คลัง Tag ที่สแกนพบ (Discovered Tags Library — เลือกเพิ่มเข้า Task)")
-        left_title.add_css_class('group-title')
-        left_title.set_xalign(0.0)
-        left_box.append(left_title)
-
-        # Filter bar
-        filter_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        left_box.append(filter_box)
-
-        self.group_combo = Gtk.DropDown.new_from_strings([
-            "ทุกกลุ่ม (All Groups)", "High_VSD (135)", "High_Valve (68)",
-            "High_Analog (75)", "High1_PT1PT (133)", "High_DPM (31)"
-        ])
-        self.group_combo.connect('notify::selected', self.filter_tags_view)
-        filter_box.append(self.group_combo)
-
-        self.tag_search = Gtk.SearchEntry(placeholder_text="พิมพ์ค้นหาชื่อ Tag หรือ PLC Address...")
-        self.tag_search.set_hexpand(True)
-        self.tag_search.connect('search-changed', self.filter_tags_view)
-        filter_box.append(self.tag_search)
-
-        # Scrolled tag list
-        tag_scroll = Gtk.ScrolledWindow()
-        tag_scroll.set_vexpand(True)
-        tag_scroll.set_min_content_height(380)
-        left_box.append(tag_scroll)
-
-        self.tag_grid = Gtk.Grid(column_spacing=1, row_spacing=1)
-        self.tag_grid.add_css_class('data-table')
-        tag_scroll.set_child(self.tag_grid)
-
-        # Action: Add selected to Task
-        add_to_task_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        left_box.append(add_to_task_box)
-
-        add_btn = Gtk.Button(label="➡️ เพิ่ม Tag ที่เลือกเข้า Task ด้านขวา")
-        add_btn.add_css_class('action-btn')
-        add_btn.connect('clicked', self.add_selected_tags_to_current_task)
-        add_to_task_box.append(add_btn)
-
-        # Right Column: Task Manager Configurator
-        right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        right_box.add_css_class('wincc-group')
-        paned.set_end_child(right_box)
-
-        right_title = Gtk.Label(label="⚙️ ตั้งค่า Task ที่เลือก (Task Properties & Actions)")
-        right_title.add_css_class('group-title')
-        right_title.set_xalign(0.0)
-        right_box.append(right_title)
-
-        # Task Selector Row
-        t_sel_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        right_box.append(t_sel_box)
-
-        t_sel_lbl = Gtk.Label(label="เลือก Task:")
-        t_sel_lbl.add_css_class('card-header')
-        t_sel_box.append(t_sel_lbl)
-
-        task_names = [f"[{t['id']}] {t['name']}" for t in self.tasks]
-        if not task_names:
-            task_names = ["[ไม่มี Task — สแกน Tag แล้วกดสร้าง Task ใหม่]"]
-        self.task_selector = Gtk.DropDown.new_from_strings(task_names)
-        self.task_selector.set_hexpand(True)
-        self.task_selector.connect('notify::selected', self.on_task_selected)
-        t_sel_box.append(self.task_selector)
-
-        # Task Fields Grid
-        prop_grid = Gtk.Grid(column_spacing=12, row_spacing=8)
-        right_box.append(prop_grid)
-
-        prop_grid.attach(Gtk.Label(label="ชื่อ Task:"), 0, 0, 1, 1)
-        self.task_name_entry = Gtk.Entry()
-        self.task_name_entry.set_hexpand(True)
-        prop_grid.attach(self.task_name_entry, 1, 0, 1, 1)
-
-        prop_grid.attach(Gtk.Label(label="รอบการสแกน (Cycle):"), 0, 1, 1, 1)
-        self.cycle_combo = Gtk.DropDown.new_from_strings([
-            "1 วินาที", "5 วินาที (มาตรฐาน WinCC)", "10 วินาที", "30 วินาที", "60 วินาที"
-        ])
-        prop_grid.attach(self.cycle_combo, 1, 1, 1, 1)
-
-        # Action checkboxes
-        prop_grid.attach(Gtk.Label(label="การกระทำ (Actions):"), 0, 2, 1, 1)
-        actions_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        prop_grid.attach(actions_box, 1, 2, 1, 1)
-
-        self.chk_log = Gtk.CheckButton(label="บันทึกลง Local SQLite/CSV Archive (Data Logging)")
-        actions_box.append(self.chk_log)
-
-        notify_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        self.chk_notify = Gtk.CheckButton(label="ส่งแจ้งเตือน Telegram เมื่อเปลี่ยนสถานะ (Alert on State Change)")
-        notify_row.append(self.chk_notify)
-
-        btn_cfg_tg = Gtk.Button(label="⚙️ ตั้งค่า Token & Chat ID")
-        btn_cfg_tg.add_css_class("action-btn")
-        btn_cfg_tg.connect("clicked", lambda _: self.switch_to_tab("alarms"))
-        notify_row.append(btn_cfg_tg)
-        actions_box.append(notify_row)
-
-        self.chk_active = Gtk.CheckButton(label="เปิดใช้งาน Task นี้ (Enable / Active Task)")
-        actions_box.append(self.chk_active)
-
-        # Assigned Tags Scrolled Window
-        right_box.append(Gtk.Label(label="รายการ Tag ที่กำหนดให้กับ Task นี้ (Assigned Tags):"))
-        self.assigned_scroll = Gtk.ScrolledWindow()
-        self.assigned_scroll.set_vexpand(True)
-        self.assigned_scroll.set_min_content_height(200)
-        right_box.append(self.assigned_scroll)
-
-        self.assigned_grid = Gtk.Grid(column_spacing=1, row_spacing=1)
-        self.assigned_grid.add_css_class('data-table')
-        self.assigned_scroll.set_child(self.assigned_grid)
-
-        # Initial populate
-        self.render_tags_grid()
-        self.load_task_to_ui(0)
-
-        self.stack.add_named(scrolled, 'tasks')
-
-    def render_tags_grid(self, filter_text="", group_filter=0):
-        # Clear existing
-        while self.tag_grid.get_first_child():
-            self.tag_grid.remove(self.tag_grid.get_first_child())
-
-        # Headers
-        headers = ["เลือก", "Tag Name", "กลุ่ม (Group)", "PLC Address", "ชนิดข้อมูล"]
-        for col, h in enumerate(headers):
-            th = Gtk.Label(label=h)
-            th.add_css_class('table-th')
-            th.set_xalign(0.0)
-            self.tag_grid.attach(th, col, 0, 1, 1)
-
-        if not self.scanned_tags:
-            empty_lbl = Gtk.Label(label="📭 ยังไม่มี Tag ในคลัง (0 Tags) — กรุณากดปุ่ม [🔍 สแกนทันที 1 ครั้ง (Scan Once)] ด้านบน หรือกด F7 เพื่อเริ่มสแกน")
-            empty_lbl.add_css_class('table-td')
-            empty_lbl.set_xalign(0.0)
-            self.tag_grid.attach(empty_lbl, 0, 1, 5, 1)
-            return
-
-        group_map = ["", "High_VSD", "High_Valve", "High_Analog", "High1_PT1PT", "High_DPM"]
-        target_group = group_map[group_filter] if group_filter < len(group_map) else ""
-        filter_lower = filter_text.lower().strip()
-
-        row = 1
-        limit = 60 # Performance limit for view
-        for t in self.scanned_tags:
-            if target_group and t['group'] != target_group:
-                continue
-            if filter_lower and filter_lower not in t['name'].lower() and filter_lower not in t['addr'].lower():
-                continue
-
-            # Checkbox
-            chk = Gtk.CheckButton()
-            chk.set_active(t['name'] in self.selected_tags_for_task)
-            chk.connect('toggled', lambda b, name=t['name']: self.on_tag_check_toggled(b, name))
-            self.tag_grid.attach(chk, 0, row, 1, 1)
-
-            # Name
-            lbl_name = Gtk.Label(label=t['name'])
-            lbl_name.add_css_class('table-td')
-            lbl_name.set_xalign(0.0)
-            self.tag_grid.attach(lbl_name, 1, row, 1, 1)
-
-            # Group
-            lbl_grp = Gtk.Label(label=t['group'])
-            lbl_grp.add_css_class('table-td')
-            lbl_grp.set_xalign(0.0)
-            self.tag_grid.attach(lbl_grp, 2, row, 1, 1)
-
-            # Addr
-            lbl_addr = Gtk.Label(label=t['addr'])
-            lbl_addr.add_css_class('table-td')
-            lbl_addr.set_xalign(0.0)
-            self.tag_grid.attach(lbl_addr, 3, row, 1, 1)
-
-            # Type
-            lbl_type = Gtk.Label(label=t['type'])
-            lbl_type.add_css_class('table-td')
-            lbl_type.set_xalign(0.0)
-            self.tag_grid.attach(lbl_type, 4, row, 1, 1)
-
-            row += 1
-            if row > limit:
-                break
-
-    def filter_tags_view(self, *args):
-        grp_idx = self.group_combo.get_selected()
-        q = self.tag_search.get_text()
-        self.render_tags_grid(q, grp_idx)
-
-    def on_tag_check_toggled(self, btn, tag_name):
-        if btn.get_active():
-            self.selected_tags_for_task.add(tag_name)
-        else:
-            self.selected_tags_for_task.discard(tag_name)
-
-    def on_task_selected(self, drop_down, *args):
-        idx = drop_down.get_selected()
-        if 0 <= idx < len(self.tasks):
+    def load_task_to_ui(self, idx=0):
+        if hasattr(self, 'unified_workspace'):
+            self.unified_workspace.switch_to_task(idx)
+        elif hasattr(self, 'f2_tasks_view'):
             self.current_task_idx = idx
-            self.load_task_to_ui(idx)
+            self.f2_tasks_view.load_current_task_to_ui()
 
-    def load_task_to_ui(self, idx):
-        if not self.tasks or idx >= len(self.tasks):
-            self.task_name_entry.set_text("")
-            self.chk_log.set_active(False)
-            self.chk_notify.set_active(False)
-            self.chk_active.set_active(False)
-            while self.assigned_grid.get_first_child():
-                self.assigned_grid.remove(self.assigned_grid.get_first_child())
-            headers = ["Tag Name", "คำสั่ง"]
-            for col, h in enumerate(headers):
-                th = Gtk.Label(label=h)
-                th.add_css_class('table-th')
-                self.assigned_grid.attach(th, col, 0, 1, 1)
-            empty_t = Gtk.Label(label="📭 ยังไม่มี Task ที่เลือก (สแกน Tag แล้วกด + สร้าง Task ใหม่ ด้านบน)")
-            empty_t.add_css_class('table-td')
-            empty_t.set_xalign(0.0)
-            self.assigned_grid.attach(empty_t, 0, 1, 2, 1)
-            return
-        t = self.tasks[idx]
-        self.task_name_entry.set_text(t['name'])
-        cycle_opts = [1, 5, 10, 30, 60]
-        c_idx = cycle_opts.index(t.get('cycle_sec', 5)) if t.get('cycle_sec', 5) in cycle_opts else 1
-        self.cycle_combo.set_selected(c_idx)
-        self.chk_log.set_active(t.get('action_log', True))
-        self.chk_notify.set_active(t.get('action_notify', True))
-        self.chk_active.set_active(t.get('active', True))
+    def create_new_task(self, _=None):
+        if hasattr(self, 'unified_workspace'):
+            self.unified_workspace.on_create_new_task()
+        elif hasattr(self, 'f2_tasks_view'):
+            self.f2_tasks_view.on_create_new_task(None)
 
-        # Render assigned tags list
-        while self.assigned_grid.get_first_child():
-            self.assigned_grid.remove(self.assigned_grid.get_first_child())
-
-        headers = ["Tag Name", "คำสั่ง"]
-        for col, h in enumerate(headers):
-            th = Gtk.Label(label=h)
-            th.add_css_class('table-th')
-            self.assigned_grid.attach(th, col, 0, 1, 1)
-
-        for row, tname in enumerate(t.get('tags', []), 1):
-            lbl = Gtk.Label(label=tname)
-            lbl.add_css_class('table-td')
-            lbl.set_xalign(0.0)
-            self.assigned_grid.attach(lbl, 0, row, 1, 1)
-
-            del_btn = Gtk.Button(label="ลบออก")
-            del_btn.add_css_class('action-btn')
-            del_btn.connect('clicked', lambda _, tn=tname: self.remove_tag_from_task(tn))
-            self.assigned_grid.attach(del_btn, 1, row, 1, 1)
-
-    def remove_tag_from_task(self, tag_name):
-        t = self.tasks[self.current_task_idx]
-        if tag_name in t.get('tags', []):
-            t['tags'].remove(tag_name)
-            self.load_task_to_ui(self.current_task_idx)
-            save_tasks(self.tasks)
-
-    def add_selected_tags_to_current_task(self, _):
-        t = self.tasks[self.current_task_idx]
-        added = 0
-        for tag_name in self.selected_tags_for_task:
-            if tag_name not in t['tags']:
-                t['tags'].append(tag_name)
-                added += 1
-        self.selected_tags_for_task.clear()
-        self.render_tags_grid()
-        self.load_task_to_ui(self.current_task_idx)
+    def save_tasks(self):
         save_tasks(self.tasks)
-        self.alarm_text.set_text(f"เพิ่ม {added} Tags เข้าสู่ {t['name']} เรียบร้อยแล้ว")
-
-    def create_new_task(self, _):
-        new_id = f"TASK-{len(self.tasks)+1:02d}"
-        new_task = {
-            'id': new_id,
-            'name': f"Task ใหม่ {new_id}",
-            'cycle_sec': 5,
-            'action_log': True,
-            'action_notify': True,
-            'active': True,
-            'tags': [],
-            'scan_count': 0,
-            'log_count': 0,
-            'alert_count': 0,
-        }
-        self.tasks.append(new_task)
-        save_tasks(self.tasks)
-        # Refresh combo
-        task_names = [f"[{t['id']}] {t['name']}" for t in self.tasks]
-        self.task_selector.set_model(Gtk.StringList.new(task_names))
-        self.task_selector.set_selected(len(self.tasks) - 1)
+        return True
 
     def save_all_tasks(self):
-        t = self.tasks[self.current_task_idx]
-        t['name'] = self.task_name_entry.get_text()
-        cycle_opts = [1, 5, 10, 30, 60]
-        t['cycle_sec'] = cycle_opts[self.cycle_combo.get_selected()]
-        t['action_log'] = self.chk_log.get_active()
-        t['action_notify'] = self.chk_notify.get_active()
-        t['active'] = self.chk_active.get_active()
         save_tasks(self.tasks)
-        self.alarm_text.set_text(f"บันทึกการตั้งค่า {t['name']} เรียบร้อย — ทำงานเฉพาะ Task นี้ตามรอบ {t['cycle_sec']}s")
+        if hasattr(self, 'alarm_text'):
+            self.alarm_text.set_text("บันทึกการตั้งค่า Task ทั้งหมดเรียบร้อยแล้ว")
+
+    def add_selected_tags_to_current_task(self, _=None):
+        if hasattr(self, 'f2_tasks_view'):
+            self.f2_tasks_view.on_add_selected_tags(None)
+
+    def remove_tag_from_task(self, tag_name):
+        if hasattr(self, 'f2_tasks_view'):
+            self.f2_tasks_view.on_remove_tag_from_task(tag_name)
 
     # ---------------------------------------------------------
     # TAB 3: Dual-Router Network Topology & Multi-IP View
@@ -2173,6 +1863,17 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     # Global Function Keys Controller (F1 - F8)
     # ---------------------------------------------------------
     def on_global_key_pressed(self, controller, keyval, keycode, state):
+        if USE_UNIFIED_WORKSPACE and keyval == Gdk.KEY_F1:
+            self.activate_workspace_mode('monitoring')
+            if 'overview' in self.nav_btns:
+                self.nav_btns['overview'].set_active(True)
+            return True
+        elif USE_UNIFIED_WORKSPACE and keyval == Gdk.KEY_F2:
+            self.activate_workspace_mode('task_manager')
+            if 'tasks' in self.nav_btns:
+                self.nav_btns['tasks'].set_active(True)
+            return True
+
         key_map = {
             Gdk.KEY_F1: 'overview',
             Gdk.KEY_F2: 'tasks',
@@ -2445,17 +2146,22 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.auto_scan_start_time = time.time()
             self.auto_scan_cycles = 0
             self.auto_scan_countdown = self.auto_scan_interval
-            self.btn_auto_scan.set_label("⏹️ หยุด Auto Scan")
+            self.btn_auto_scan.set_label("หยุด Auto Scan")
+            self.btn_auto_scan.remove_css_class('f2-btn-auto-start')
             self.btn_auto_scan.remove_css_class('btn-autoscan-start')
-            self.btn_auto_scan.add_css_class('btn-autoscan-stop')
+            self.btn_auto_scan.add_css_class('f2-btn-auto-stop')
             self.trigger_single_scan(silent=True)
             dur_str = "1 ชั่วโมง" if self.auto_scan_duration == 3600 else f"{self.auto_scan_duration}s"
-            self.alarm_text.set_text(f"▶️ เริ่ม Auto Scan: สแกนทุกๆ {self.auto_scan_interval}วิ (กำหนดระยะเวลารวม {dur_str})")
+            self.alarm_text.set_text(f"เริ่ม Auto Scan: สแกนทุกๆ {self.auto_scan_interval}วิ (กำหนดระยะเวลารวม {dur_str})")
         else:
-            self.btn_auto_scan.set_label("▶️ เริ่ม Auto Scan")
+            self.btn_auto_scan.set_label("เริ่ม Auto Scan")
+            self.btn_auto_scan.remove_css_class('f2-btn-auto-stop')
             self.btn_auto_scan.remove_css_class('btn-autoscan-stop')
-            self.btn_auto_scan.add_css_class('btn-autoscan-start')
-            self.alarm_text.set_text(f"⏹️ สั่งหยุด Auto Scan แล้ว (สแกนสำเร็จไปทั้งหมด {self.auto_scan_cycles} รอบ)")
+            self.btn_auto_scan.add_css_class('f2-btn-auto-start')
+            self.alarm_text.set_text(f"สั่งหยุด Auto Scan แล้ว (สแกนสำเร็จไปทั้งหมด {self.auto_scan_cycles} รอบ)")
+
+        if hasattr(self, 'f2_tasks_view'):
+            self.f2_tasks_view.load_current_task_to_ui()
 
     def on_scan_interval_changed(self, drop_down, *args):
         opts = [1, 5, 10, 30, 60]

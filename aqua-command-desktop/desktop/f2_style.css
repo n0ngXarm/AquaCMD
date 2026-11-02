@@ -1,0 +1,623 @@
+/* ==========================================================================
+   AQUA COMMAND — F2 TAG LIBRARY & TASK CONFIGURATOR V4 STYLING
+   GTK4 Industrial Spectrum V2 Tokens & Layout Control
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. COLOR PALETTE DESIGN TOKENS
+   -------------------------------------------------------------------------- */
+/*
+   Base Background:   #0B1017 (Canvas)
+   Main Panels:       #1B2532 (Industrial Charcoal Blue)
+   Subpanels / Cards: #1E2835 (Medium Structural Surface)
+   Inset Surfaces:    #141C24 (Deep Dark Inset)
+   Borders:           #364553 (Structural Divider)
+   Subtle Borders:    #25313D (Card Divider)
+   Text Primary:      #F2F6FA (Pure White)
+   Text Technical:    #8998AA (Technical Gray)
+   Accent Action:     #3489E8 (Industrial Spectrum Blue)
+   Verified Success:  #27B785 (Vivid Emerald Green)
+   Warning / Incompl: #EAC54F (Industrial Amber Yellow)
+   Attention:         #F28D35 (Warm Signal Orange)
+   Error / Danger:    #E35B64 (Alert Red)
+*/
+
+/* --------------------------------------------------------------------------
+   2. TOP SCAN TOOLBAR
+   -------------------------------------------------------------------------- */
+.f2-scan-bar {
+    background-color: #1B2532;
+    border: 1px solid #364553;
+    border-radius: 6px;
+    padding: 5px 10px;
+}
+
+.f2-btn-scan-once {
+    background: #222D3A;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    font-weight: 600;
+    padding: 3px 8px;
+}
+.f2-btn-scan-once:hover {
+    background: #25313D;
+    border-color: #3489E8;
+}
+
+.f2-btn-auto-start {
+    background: #143829;
+    border: 1px solid #27B785;
+    border-radius: 4px;
+    color: #27B785;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 3px 10px;
+}
+.f2-btn-auto-start:hover {
+    background: #1b4d38;
+}
+
+.f2-btn-auto-stop {
+    background: #3f191d;
+    border: 1px solid #E35B64;
+    border-radius: 4px;
+    color: #E35B64;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 3px 10px;
+}
+.f2-btn-auto-stop:hover {
+    background: #542227;
+}
+
+.f2-scan-sep {
+    background-color: #364553;
+    min-width: 1px;
+    margin: 2px 4px;
+}
+
+.f2-scan-label {
+    color: #8998AA;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+.f2-scan-status-idle {
+    background: #1E2835;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #8998AA;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 2px 6px;
+}
+
+.f2-scan-status-running {
+    background: #143829;
+    border: 1px solid #27B785;
+    border-radius: 4px;
+    color: #27B785;
+    font-size: 8pt;
+    font-weight: bold;
+    padding: 2px 6px;
+}
+
+.f2-scan-countdown {
+    color: #3489E8;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    font-weight: bold;
+}
+
+.f2-scan-meta {
+    color: #8998AA;
+    font-size: 8pt;
+}
+
+.f2-badge-catalog {
+    background: #25313D;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #8998AA;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 2px 6px;
+}
+
+/* --------------------------------------------------------------------------
+   3. MAIN TWO PANELS & GTK PANED
+   -------------------------------------------------------------------------- */
+paned > separator {
+    background: #364553;
+    min-width: 4px;
+    border: none;
+}
+paned > separator:hover {
+    background: #3489E8;
+}
+
+.f2-panel {
+    background-color: #1B2532;
+    border: 1px solid #364553;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.f2-panel-header {
+    border-bottom: 1px solid #25313D;
+    padding-bottom: 6px;
+}
+
+.f2-panel-title {
+    color: #F2F6FA;
+    font-size: 10.5pt;
+    font-weight: bold;
+}
+
+/* --------------------------------------------------------------------------
+   4. LEFT PANEL: TAG LIBRARY
+   -------------------------------------------------------------------------- */
+.f2-group-container {
+    background-color: #141C24;
+    border: 1px solid #25313D;
+    border-radius: 6px;
+    padding: 6px;
+}
+
+.f2-subpanel-title {
+    color: #8998AA;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding-bottom: 4px;
+}
+
+.f2-group-list {
+    margin-top: 2px;
+}
+
+.f2-group-item {
+    background-color: #1B2532;
+    border: 1px solid #25313D;
+    border-radius: 4px;
+    padding: 5px 7px;
+}
+.f2-group-item:hover {
+    background-color: #222D3A;
+    border-color: #3489E8;
+}
+
+.f2-group-item-selected {
+    background-color: #182F4D;
+    border: 1.5px solid #3489E8;
+}
+
+.f2-group-title {
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+.f2-group-count-badge {
+    background-color: #25313D;
+    border-radius: 3px;
+    color: #8998AA;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 1px 4px;
+}
+
+.f2-table-container {
+    background-color: #141C24;
+    border: 1px solid #25313D;
+    border-radius: 6px;
+    padding: 6px;
+}
+
+.f2-search-input {
+    background: #1B2532;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    padding: 3px 6px;
+}
+
+.f2-filter-banner {
+    background: #142232;
+    border: 1px solid #1E3D59;
+    border-radius: 4px;
+    padding: 3px 8px;
+    margin-bottom: 2px;
+}
+
+.f2-filter-label {
+    color: #3489E8;
+    font-size: 8pt;
+    font-weight: 600;
+}
+
+.f2-btn-clear-filter {
+    background: #1E2835;
+    border: 1px solid #364553;
+    border-radius: 3px;
+    color: #8998AA;
+    font-size: 7.5pt;
+    padding: 2px 6px;
+}
+.f2-btn-clear-filter:hover {
+    background: #25313D;
+    color: #F2F6FA;
+    border-color: #3489E8;
+}
+
+.f2-btn-neutral-sm {
+    background: #222D3A;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 3px 8px;
+}
+.f2-btn-neutral-sm:hover {
+    background: #25313D;
+    border-color: #3489E8;
+}
+
+.f2-lib-bottom-bar {
+    border-top: 1px solid #25313D;
+    padding-top: 6px;
+}
+
+.f2-btn-add-to-task {
+    background: #3489E8;
+    border: none;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 5px 12px;
+}
+.f2-btn-add-to-task:hover {
+    background: #2374cf;
+}
+.f2-btn-add-to-task:disabled {
+    background: #25313D;
+    color: #8998AA;
+}
+
+.f2-table-hdr {
+    background-color: #1B2532;
+    border-bottom: 1px solid #364553;
+    color: #8998AA;
+    font-size: 8pt;
+    font-weight: bold;
+    padding: 4px 6px;
+}
+
+.f2-table-row {
+    border-bottom: 1px solid #1A232E;
+    padding: 4px 6px;
+}
+
+.f2-table-cell-mono {
+    color: #F2F6FA;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8.5pt;
+}
+
+.f2-table-cell-muted {
+    color: #8998AA;
+    font-size: 8pt;
+}
+
+.f2-table-empty {
+    color: #8998AA;
+    font-size: 8.5pt;
+    padding: 12px;
+}
+
+.f2-check {
+    margin: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   5. RIGHT PANEL: TASK CONFIGURATION
+   -------------------------------------------------------------------------- */
+.f2-form-box {
+    padding: 2px;
+}
+
+.f2-card {
+    background-color: #1E2835;
+    border: 1px solid #2A3847;
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+.f2-card-title {
+    color: #F2F6FA;
+    font-size: 9.5pt;
+    font-weight: bold;
+}
+
+.f2-form-label {
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+.f2-form-entry {
+    background: #141C24;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    padding: 4px 8px;
+}
+.f2-form-entry:focus {
+    border-color: #3489E8;
+}
+
+.f2-btn-create-task {
+    background: #3489E8;
+    border: none;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 8pt;
+    font-weight: bold;
+    padding: 4px 8px;
+}
+.f2-btn-create-task:hover {
+    background: #2374cf;
+}
+
+.f2-card-id-badge {
+    background-color: #0B1017;
+    border-radius: 3px;
+    color: #3489E8;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    font-weight: bold;
+    padding: 2px 6px;
+}
+
+.f2-form-subtext {
+    color: #8998AA;
+    font-size: 7.5pt;
+}
+
+.f2-form-subtext-alert {
+    color: #EAC54F;
+    font-size: 7.5pt;
+    font-style: italic;
+}
+
+.f2-status-strip {
+    margin-top: 4px;
+}
+
+.f2-check-lg {
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+.f2-btn-link {
+    background: transparent;
+    border: none;
+    color: #3489E8;
+    font-size: 8pt;
+    padding: 1px 3px;
+}
+.f2-btn-link:hover {
+    color: #5aa1f0;
+}
+
+.f2-btn-remove {
+    background: #3a1c20;
+    border: 1px solid #E35B64;
+    border-radius: 3px;
+    color: #E35B64;
+    font-size: 7.5pt;
+    padding: 1px 6px;
+}
+.f2-btn-remove:hover {
+    background: #E35B64;
+    color: #FFFFFF;
+}
+
+.f2-table-empty-box-sm {
+    background: #141C24;
+    border: 1px dashed #2A3847;
+    border-radius: 4px;
+    padding: 12px 10px;
+}
+
+.f2-table-empty-box-compact {
+    background: #141C24;
+    border: 1px dashed #2A3847;
+    border-radius: 4px;
+    padding: 6px 10px;
+}
+
+.f2-btn-neutral {
+    background: #222D3A;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #8998AA;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 5px 12px;
+}
+
+.f2-btn-save-task-pending {
+    background: #3489E8;
+    border: none;
+    border-radius: 4px;
+    color: #F2F6FA;
+    font-size: 9pt;
+    font-weight: bold;
+    padding: 6px 16px;
+}
+.f2-btn-save-task-pending:hover {
+    background: #4a9cf5;
+}
+
+.f2-card-save {
+    background-color: #1E2835;
+    border: 1px solid #2A3847;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.f2-btn-save-task {
+    background: #27B785;
+    border: none;
+    border-radius: 4px;
+    color: #0B1017;
+    font-size: 9pt;
+    font-weight: bold;
+    padding: 6px 16px;
+}
+.f2-btn-save-task:hover {
+    background: #2ecfa0;
+}
+.f2-btn-save-task:disabled {
+    background: #25313D;
+    color: #8998AA;
+}
+
+/* --------------------------------------------------------------------------
+   6. STATUS BADGES & PILLS
+   -------------------------------------------------------------------------- */
+.f2-badge-blue {
+    background: #142a42;
+    border: 1px solid #3489E8;
+    border-radius: 10px;
+    color: #3489E8;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+.f2-pill-configured {
+    background: #142a42;
+    border: 1px solid #3489E8;
+    border-radius: 10px;
+    color: #3489E8;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+.f2-pill-incomplete {
+    background: #383017;
+    border: 1px solid #EAC54F;
+    border-radius: 10px;
+    color: #EAC54F;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+.f2-pill-enabled {
+    background: #143527;
+    border: 1px solid #27B785;
+    border-radius: 10px;
+    color: #27B785;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+.f2-pill-disabled {
+    background: #25313D;
+    border: 1px solid #364553;
+    border-radius: 10px;
+    color: #8998AA;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+.f2-pill-running {
+    background: #165339;
+    border: 1px solid #27B785;
+    border-radius: 10px;
+    color: #27B785;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+.f2-pill-not-observed {
+    background: #1E2733;
+    border: 1px solid #364553;
+    border-radius: 10px;
+    color: #8998AA;
+    font-size: 7.5pt;
+    font-weight: 600;
+    padding: 2px 7px;
+}
+
+.f2-pill-error {
+    background: #3c191e;
+    border: 1px solid #E35B64;
+    border-radius: 10px;
+    color: #E35B64;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 2px 7px;
+}
+
+/* --------------------------------------------------------------------------
+   7. GTK4 DROPDOWN & POPOVER (DARK THEME)
+   -------------------------------------------------------------------------- */
+dropdown,
+dropdown > button.toggle,
+dropdown > button {
+    background: #141C24;
+    background-color: #141C24;
+    background-image: none;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    box-shadow: none;
+    color: #F2F6FA;
+    font-size: 8.5pt;
+    padding: 3px 6px;
+}
+dropdown:hover,
+dropdown > button.toggle:hover,
+dropdown > button:hover {
+    background: #1E2835;
+    border-color: #3489E8;
+}
+dropdown label,
+dropdown > button label {
+    color: #F2F6FA;
+}
+
+popover,
+popover contents {
+    background: #1B2532;
+    background-color: #1B2532;
+    border: 1px solid #364553;
+    border-radius: 4px;
+    color: #F2F6FA;
+    padding: 4px;
+}
+
+popover listview,
+popover listview row {
+    background: #1B2532;
+    color: #F2F6FA;
+    padding: 4px 6px;
+}
+popover listview row:selected,
+popover listview row:hover {
+    background: #3489E8;
+    color: #FFFFFF;
+}

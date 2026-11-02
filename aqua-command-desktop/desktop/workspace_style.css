@@ -1,0 +1,812 @@
+/* ==========================================================================
+   AQUA COMMAND — INDUSTRIAL GRAPHITE THEME
+   Standardized Industrial Operations Palette & High-Contrast Certified
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS DEFINITION (Industrial Graphite Foundation)
+   -------------------------------------------------------------------------- */
+/*
+   Foundation Surfaces & Geometry:
+   Canvas:        #111820 (Deep Neutral Background)
+   Panel:         #1D2834 (Graphite Container Panel)
+   Inset:         #151F2A (Recessed List / Data Inset)
+   Elevated:      #26313D (Raised Headers / Controls / Toolbars)
+   Border:        #334252 (Standard Technical Outline)
+   Subtle Border: #1F2B37 (Row Divider / Subtle Separator)
+
+   Typography:
+   Primary Text:  #F0F4F8 (High-Contrast White, >11:1 against Panels)
+   Secondary Text:#A8B5C3 (Subtle Slate, >6.5:1 against Insets/Panels)
+   Muted Text:    #8899AA (Neutral Gray / Standby Quality, >5:1 against Insets)
+
+   Semantic Accents (Restrained & Functional):
+   Blue:          #4B91D4 (Selection / Primary Actions / Checkbox Checked)
+   Green:         #38B88B (Verified Success / Clean Status)
+   Orange:        #E79B50 (Scan Controls / Attention / Scan Once)
+   Yellow:        #E3C363 (Warning / Unsaved Changes)
+   Red:           #E36D76 (Error / Destructive / Delete Tag Hover)
+   Gray:          #8899AA (Unknown / Not Observed / Standby Quality)
+*/
+
+/* --------------------------------------------------------------------------
+   2. TOP COMPACT UNIFIED WORKSPACE TOOLBAR
+   -------------------------------------------------------------------------- */
+.workspace-top-ribbon {
+    background-color: #1D2834;
+    border-bottom: 1px solid #334252;
+    padding: 6px 12px;
+}
+
+.workspace-brand-title {
+    color: #F0F4F8;
+    font-size: 11pt;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.workspace-subtitle {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+}
+
+/* Mode Switcher Buttons (F1 Monitoring vs F2 Task Manager) */
+.workspace-mode-btn-active {
+    background-color: #26313D;
+    color: #F0F4F8;
+    border: 1px solid #4B91D4;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 8.5pt;
+    font-weight: 700;
+}
+
+.workspace-mode-btn-inactive {
+    background-color: #151F2A;
+    color: #A8B5C3;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 8.5pt;
+}
+.workspace-mode-btn-inactive:hover {
+    color: #F0F4F8;
+    border-color: #4B91D4;
+    background-color: #26313D;
+}
+
+/* Scan Controls in Top Ribbon */
+.f2-btn-scan-once {
+    background-color: #26313D;
+    color: #E79B50;
+    border: 1px solid #E79B50;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 8.5pt;
+    font-weight: 700;
+}
+.f2-btn-scan-once:hover {
+    background-color: #E79B50;
+    color: #111820;
+}
+
+.f2-btn-auto-start {
+    background-color: #26313D;
+    color: #F0F4F8;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+.f2-btn-auto-start:hover {
+    border-color: #4B91D4;
+    color: #FFFFFF;
+}
+
+.f2-btn-auto-stop {
+    background-color: #26313D;
+    color: #E79B50;
+    border: 1px solid #E79B50;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 8.5pt;
+    font-weight: 700;
+}
+.f2-btn-auto-stop:hover {
+    background-color: #E79B50;
+    color: #111820;
+}
+
+.f2-scan-label {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+.f2-scan-status-idle {
+    color: #8899AA;
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 8pt;
+}
+
+/* --------------------------------------------------------------------------
+   3. 3-COLUMN WORKSTATION SURFACES
+   -------------------------------------------------------------------------- */
+.workspace-col-panel {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.f1-panel-header {
+    background-color: #26313D;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+}
+
+.f1-panel-title {
+    color: #F0F4F8;
+    font-size: 9.5pt;
+    font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   4. COLUMN 1: EQUIPMENT GROUP EXPLORER (Polite Neutral & Clear Accent)
+   -------------------------------------------------------------------------- */
+.f1-group-scroll {
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-radius: 4px;
+}
+.f1-group-scroll > viewport {
+    background-color: #151F2A;
+}
+
+.f1-group-list {
+    background-color: #151F2A;
+}
+.f1-group-list row {
+    background-color: transparent;
+    border-radius: 4px;
+    margin: 2px 4px;
+    padding: 3px 6px;
+    transition: background 120ms ease;
+}
+.f1-group-list row:hover {
+    background-color: #26313D;
+}
+.f1-group-list row:selected {
+    background-color: #26313D;
+    border-left: 3px solid #4B91D4;
+}
+
+.f2-group-name {
+    color: #F0F4F8;
+    font-size: 9pt;
+    font-weight: 700;
+}
+.f2-group-desc {
+    color: #A8B5C3;
+    font-size: 8pt;
+}
+.f2-group-count {
+    background-color: #1D2834;
+    color: #A8B5C3;
+    font-size: 7.5pt;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 8px;
+    border: 1px solid #334252;
+}
+.f1-group-list row:selected .f2-group-count {
+    background-color: #1D2834;
+    color: #F0F4F8;
+    border-color: #4B91D4;
+}
+
+/* --------------------------------------------------------------------------
+   5. COLUMN 2: SHARED TAG CATALOG (High Contrast, Clean Monospace, Neutral Badges)
+   -------------------------------------------------------------------------- */
+.f2-table-header-box {
+    background-color: #26313D;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+}
+.f2-catalog-title {
+    color: #F0F4F8;
+    font-size: 10.5pt;
+    font-weight: 700;
+}
+.f2-catalog-subtitle {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+}
+
+/* Selection Badges */
+.f2-sel-badge-active {
+    background-color: #1E2D3D;
+    color: #4B91D4;
+    border: 1px solid #4B91D4;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 8pt;
+    font-weight: bold;
+}
+.f2-sel-badge-idle {
+    background-color: #151F2A;
+    color: #8899AA;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 8pt;
+}
+
+/* Search Entry Dark Overrides */
+entry.workspace-search,
+searchentry.workspace-search {
+    background-color: #151F2A;
+    color: #F0F4F8;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 9pt;
+}
+entry.workspace-search:focus,
+searchentry.workspace-search:focus {
+    border-color: #4B91D4;
+    box-shadow: 0 0 0 1px #4B91D4;
+}
+entry.workspace-search image,
+searchentry.workspace-search image {
+    color: #A8B5C3;
+}
+
+/* Filter Banner */
+.workspace-filter-banner {
+    background-color: #26313D;
+    border: 1px dashed #4B91D4;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+}
+.f2-filter-label {
+    color: #4B91D4;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+.f2-btn-clear-filter {
+    background-color: #1D2834;
+    color: #A8B5C3;
+    border: 1px solid #334252;
+    border-radius: 3px;
+    font-size: 8pt;
+    padding: 2px 8px;
+}
+.f2-btn-clear-filter:hover {
+    color: #F0F4F8;
+    border-color: #4B91D4;
+}
+
+/* Table Header Row */
+.f2-table-header-row {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    border-bottom: 1px solid #334252;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 6px 8px;
+}
+.f2-col-header {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* Table Scrollable Window & ListBox */
+.workspace-table-scroll {
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-top: none;
+    border-radius: 0px 0px 4px 4px;
+}
+.workspace-table-scroll > viewport {
+    background-color: #151F2A;
+}
+
+list.f2-table-list,
+.f2-table-list {
+    background-color: #151F2A;
+    color: #F0F4F8;
+}
+
+/* Normal Row (High Contrast >= 13:1) */
+.f2-table-list row {
+    background-color: #151F2A;
+    color: #F0F4F8;
+    border-bottom: 1px solid #1F2B37;
+    padding: 0px;
+    transition: background-color 100ms ease;
+}
+.f2-table-list row:nth-child(even) {
+    background-color: #192532;
+}
+
+/* Hover Row (Contrast >= 10:1) */
+.f2-table-list row:hover {
+    background-color: #26313D;
+    color: #FFFFFF;
+}
+
+/* Selected Row (Contrast >= 7:1) */
+.f2-table-list row:selected {
+    background-color: #1E2D3D;
+    color: #FFFFFF;
+    border-left: 3px solid #4B91D4;
+}
+
+/* Focused Row */
+.f2-table-list row:focus {
+    outline: 1px solid #4B91D4;
+    outline-offset: -1px;
+}
+
+/* Disabled Row */
+.f2-table-list row:disabled {
+    background-color: #111820;
+    color: #64748B;
+}
+
+/* Checkbox inside Table Row and Context Panel (Blue Semantic) */
+.workspace-col-panel checkbutton check,
+.f2-section-card checkbutton check,
+.f2-table-list checkbutton check {
+    background-color: #151F2A;
+    border: 1.5px solid #334252;
+    border-radius: 3px;
+    min-width: 16px;
+    min-height: 16px;
+    color: #F0F4F8;
+}
+.workspace-col-panel checkbutton check:hover,
+.f2-section-card checkbutton check:hover,
+.f2-table-list checkbutton check:hover {
+    border-color: #4B91D4;
+    background-color: #26313D;
+}
+.workspace-col-panel checkbutton check:checked,
+.f2-section-card checkbutton check:checked,
+.f2-table-list checkbutton check:checked {
+    background-color: #4B91D4;
+    border-color: #4B91D4;
+    color: #FFFFFF;
+}
+.workspace-col-panel checkbutton label,
+.f2-section-card checkbutton label {
+    color: #F0F4F8;
+    font-size: 8.5pt;
+}
+
+/* Row Cell Elements - Restrained & Clean */
+.f2-tag-name-label {
+    color: #F0F4F8;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+.f2-tag-group-label {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+}
+/* Neutral Data Type Badge (No bright blue) */
+.f2-tag-type-badge {
+    background-color: #1D2834;
+    color: #A8B5C3;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 7.5pt;
+    font-weight: 600;
+    border: 1px solid #334252;
+    border-radius: 3px;
+    padding: 1px 6px;
+}
+/* Neutral Gray Standby Quality Badge */
+.f2-tag-quality-idle {
+    background-color: #1D2834;
+    color: #8899AA;
+    font-size: 7.5pt;
+    border: 1px solid #334252;
+    border-radius: 3px;
+    padding: 1px 6px;
+}
+
+/* Scrollbars Dark Overrides */
+.workspace-table-scroll scrollbar,
+.f1-group-scroll scrollbar,
+.f2-assigned-scroll scrollbar {
+    background-color: transparent;
+}
+.workspace-table-scroll scrollbar trough,
+.f1-group-scroll scrollbar trough,
+.f2-assigned-scroll scrollbar trough {
+    background-color: #111820;
+    border-radius: 4px;
+}
+.workspace-table-scroll scrollbar slider,
+.f1-group-scroll scrollbar slider,
+.f2-assigned-scroll scrollbar slider {
+    background-color: #334252;
+    border-radius: 4px;
+    min-width: 6px;
+    min-height: 24px;
+}
+.workspace-table-scroll scrollbar slider:hover,
+.f1-group-scroll scrollbar slider:hover,
+.f2-assigned-scroll scrollbar slider:hover {
+    background-color: #4B91D4;
+}
+
+/* Bottom Action Dock Bar in Center Column */
+.workspace-dock-bar {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    border-radius: 5px;
+    padding: 6px 10px;
+    margin-top: 6px;
+}
+
+.f2-btn-add-selected {
+    background-color: #4B91D4;
+    border: 1px solid #4B91D4;
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 5px 12px;
+}
+.f2-btn-add-selected:hover {
+    background-color: #3B7BB8;
+    border-color: #3B7BB8;
+}
+
+.f2-btn-clear-selection {
+    background-color: #26313D;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    color: #A8B5C3;
+    font-size: 8.5pt;
+    padding: 5px 10px;
+}
+.f2-btn-clear-selection:hover {
+    color: #F0F4F8;
+    border-color: #4B91D4;
+}
+
+/* --------------------------------------------------------------------------
+   6. COLUMN 3: CONTEXT PANEL - TAG INSPECTOR (F1)
+   -------------------------------------------------------------------------- */
+/* Sub-mode switcher inside Context Panel header */
+.f1-mode-switcher {
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 1px;
+}
+.f1-mode-btn {
+    background-color: transparent;
+    color: #A8B5C3;
+    border: none;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 8pt;
+    font-weight: 600;
+}
+.f1-mode-btn:hover {
+    color: #F0F4F8;
+}
+.f1-mode-btn:checked {
+    background-color: #26313D;
+    color: #F0F4F8;
+    border: 1px solid #4B91D4;
+}
+
+.workspace-inspector-grid {
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+.workspace-inspector-key {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+.workspace-inspector-val {
+    color: #F0F4F8;
+    font-size: 8.5pt;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+}
+
+.f1-group-code-pill {
+    background-color: #26313D;
+    color: #F0F4F8;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 9pt;
+    font-weight: bold;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f1-badge-accent {
+    background-color: #1D2834;
+    color: #A8B5C3;
+    font-size: 8pt;
+    font-weight: 600;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.f1-badge-neutral {
+    background-color: #1D2834;
+    color: #8899AA;
+    font-size: 8pt;
+    font-weight: 600;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.f1-badge-verified {
+    background-color: rgba(56, 184, 139, 0.15);
+    color: #38B88B;
+    font-size: 8pt;
+    font-weight: bold;
+    border: 1px solid rgba(56, 184, 139, 0.4);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.f1-group-desc-th {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+}
+
+.workspace-empty-inspector {
+    background-color: #151F2A;
+    border: 1px dashed #334252;
+    border-radius: 6px;
+    padding: 20px 16px;
+}
+.workspace-empty-title {
+    color: #A8B5C3;
+    font-size: 9.5pt;
+    font-weight: 700;
+}
+.workspace-empty-sub {
+    color: #8899AA;
+    font-size: 8.5pt;
+}
+
+.f2-btn-collapse {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    color: #A8B5C3;
+    font-size: 8pt;
+    padding: 2px 8px;
+}
+.f2-btn-collapse:hover {
+    color: #F0F4F8;
+    border-color: #4B91D4;
+}
+
+/* --------------------------------------------------------------------------
+   7. COLUMN 3: CONTEXT PANEL - TASK CONFIGURATOR (F2)
+   -------------------------------------------------------------------------- */
+.f2-section-card {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+/* Section Title - Clean White (NO blue decorative styling) */
+.f2-section-title {
+    color: #F0F4F8;
+    font-size: 9.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.f2-form-label {
+    color: #A8B5C3;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+
+.f2-task-id-pill {
+    background-color: #151F2A;
+    color: #F0F4F8;
+    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
+    font-size: 8.5pt;
+    font-weight: bold;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 8px;
+}
+
+.f2-btn-new-task {
+    background-color: #26313D;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    color: #F0F4F8;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 3px 8px;
+}
+.f2-btn-new-task:hover {
+    border-color: #4B91D4;
+}
+
+/* Form DropDown & Entry scoped overrides */
+.f2-section-card dropdown button,
+.workspace-col-panel dropdown button {
+    background-color: #151F2A;
+    color: #F0F4F8;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+.f2-section-card dropdown button:hover,
+.f2-section-card dropdown button:focus,
+.workspace-col-panel dropdown button:hover,
+.workspace-col-panel dropdown button:focus {
+    border-color: #4B91D4;
+    background-color: #192532;
+}
+
+/* DropDown Popover / List styling */
+popover.menu,
+popover.background,
+popover contents {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    color: #F0F4F8;
+}
+popover listview row,
+popover list row {
+    padding: 4px 8px;
+    color: #F0F4F8;
+}
+popover listview row:hover,
+popover list row:hover {
+    background-color: #26313D;
+}
+popover listview row:selected,
+popover list row:selected {
+    background-color: #1E2D3D;
+    color: #FFFFFF;
+}
+
+.f2-section-card entry,
+.workspace-col-panel entry {
+    background-color: #151F2A;
+    color: #F0F4F8;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+.f2-section-card entry:focus,
+.workspace-col-panel entry:focus {
+    border-color: #4B91D4;
+}
+
+.f2-task-status-ready {
+    background-color: rgba(56, 184, 139, 0.15);
+    color: #38B88B;
+    font-size: 8pt;
+    font-weight: 600;
+    border: 1px solid rgba(56, 184, 139, 0.4);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.f2-action-subtitle {
+    color: #F0F4F8;
+    font-size: 8.5pt;
+    font-weight: 600;
+}
+.f2-action-hint {
+    color: #A8B5C3;
+    font-size: 8pt;
+}
+
+/* Assigned Tags List */
+.f2-assigned-scroll {
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-radius: 4px;
+}
+.f2-assigned-scroll > viewport {
+    background-color: #151F2A;
+}
+
+.f2-assigned-list {
+    background-color: #151F2A;
+}
+.f2-assigned-list row {
+    background-color: #151F2A;
+    border-bottom: 1px solid #1F2B37;
+    padding: 2px 4px;
+}
+.f2-assigned-list row:hover {
+    background-color: #26313D;
+}
+
+/* Remove Tag Button (Subtle Neutral normal, Red only on hover) */
+.f2-btn-remove-tag {
+    background-color: transparent;
+    color: #8899AA;
+    border: 1px solid #334252;
+    border-radius: 3px;
+    font-size: 7.5pt;
+    font-weight: bold;
+    padding: 1px 6px;
+}
+.f2-btn-remove-tag:hover {
+    background-color: #E36D76;
+    color: #FFFFFF;
+    border-color: #E36D76;
+}
+
+/* Sticky Save Task Bar */
+.f2-save-dock-bar {
+    background-color: #151F2A;
+    border: 1px solid #334252;
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+/* Save Feedback Status (Green on verified clean, Yellow on unsaved dirty) */
+.f2-save-status-clean {
+    color: #38B88B;
+    font-size: 8pt;
+    font-weight: 600;
+}
+.f2-save-status-dirty {
+    color: #E3C363;
+    font-size: 8pt;
+    font-weight: 600;
+}
+
+/* Save Task Button - Blue Primary Action (#4B91D4) */
+.f2-btn-save-task {
+    background-color: #4B91D4;
+    border: 1px solid #4B91D4;
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 8.5pt;
+    font-weight: bold;
+    padding: 5px 14px;
+}
+.f2-btn-save-task:hover {
+    background-color: #3B7BB8;
+    border-color: #3B7BB8;
+}
+
+/* Paned Dividers - Subtle Technical Separator */
+paned > separator {
+    background-color: #334252;
+    min-width: 1px;
+    min-height: 1px;
+}
