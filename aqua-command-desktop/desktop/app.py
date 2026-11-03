@@ -101,11 +101,19 @@ try:
     from .opcua_store import ObservableStateStore, Quality
     from .opcua_reader import ManualOpcUaReader
     from .opcua_pki import PkiManager
+    from .opcua_storage import DurableStorage, StoredObservation
+    from .task_engine import TaskEngine
+    from .notification_worker import NotificationWorker
+    from .opcua_polling_engine import OpcUaPollingEngine, PollingState
 except ImportError:
     from opcua_mapping import NodeIdMapper
     from opcua_store import ObservableStateStore, Quality
     from opcua_reader import ManualOpcUaReader
     from opcua_pki import PkiManager
+    from opcua_storage import DurableStorage, StoredObservation
+    from task_engine import TaskEngine
+    from notification_worker import NotificationWorker
+    from opcua_polling_engine import OpcUaPollingEngine, PollingState
 import urllib.request
 import urllib.error
 from urllib.parse import urlparse
@@ -1037,6 +1045,21 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.opcua_mapper = NodeIdMapper(mapping_file if mapping_file.exists() else None)
         self.opcua_store = ObservableStateStore()
         self.opcua_reader = ManualOpcUaReader(self.opcua_mapper, self.opcua_store, CONFIG_DIR, pki=self.pki)
+
+        # 5-Second Polling & Task Notification Architecture
+        self.durable_storage = DurableStorage(CONFIG_DIR / "aqua_command.db")
+        self.task_engine = TaskEngine(self.durable_storage)
+        self.task_engine.load_tasks(self.tasks)
+        self.notification_worker = NotificationWorker(self.durable_storage)
+        self.polling_engine = OpcUaPollingEngine(
+            self.opcua_mapper,
+            self.opcua_store,
+            self.durable_storage,
+            self.task_engine,
+            self.pki,
+            interval_seconds=5.0,
+            mode_task_tags_only=True
+        )
         self.opcua_discovered_nodes = []  # Strictly separated from local catalog
         self.browse_cancel_flag = threading.Event()  # Cooperative cancellation
         self.task_execution_state = "SUSPENDED_SAFETY_GATE_B1"  # Explicit suspension
@@ -2465,6 +2488,40 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.lbl_opc_status.add_css_class('badge-standby')
         opc_btn_bar.append(self.lbl_opc_status)
 
+        # 5-Second Polling Engine Controls Bar (Section A, F)
+        mon_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        mon_panel.set_margin_top(8)
+        opc_grp.append(mon_panel)
+
+        lbl_mon_title = Gtk.Label(label="⏱️ ระบบเฝ้าระวังและอ่านข้อมูลอัตโนมัติทุก 5 วินาที (5-Second Monotonic Polling Engine)")
+        lbl_mon_title.add_css_class('group-title')
+        lbl_mon_title.set_xalign(0.0)
+        mon_panel.append(lbl_mon_title)
+
+        mon_btn_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        mon_panel.append(mon_btn_bar)
+
+        self.btn_start_monitoring = Gtk.Button(label="▶️ เริ่มเฝ้าระวัง 5 วินาที (Start Monitoring)")
+        self.btn_start_monitoring.add_css_class('action-btn')
+        self.btn_start_monitoring.connect('clicked', self.on_start_monitoring_clicked)
+        mon_btn_bar.append(self.btn_start_monitoring)
+
+        self.btn_pause_monitoring = Gtk.Button(label="⏸️ พักชั่วคราว (Pause)")
+        self.btn_pause_monitoring.add_css_class('action-btn')
+        self.btn_pause_monitoring.set_sensitive(False)
+        self.btn_pause_monitoring.connect('clicked', self.on_pause_monitoring_clicked)
+        mon_btn_bar.append(self.btn_pause_monitoring)
+
+        self.btn_stop_monitoring = Gtk.Button(label="⏹️ หยุดเฝ้าระวัง (Stop)")
+        self.btn_stop_monitoring.add_css_class('action-btn')
+        self.btn_stop_monitoring.set_sensitive(False)
+        self.btn_stop_monitoring.connect('clicked', self.on_stop_monitoring_clicked)
+        mon_btn_bar.append(self.btn_stop_monitoring)
+
+        self.lbl_mon_telemetry = Gtk.Label(label="⚪ สถานะ: STOPPED (รอผู้ใช้อนุญาตเริ่มเฝ้าระวัง)")
+        self.lbl_mon_telemetry.add_css_class('badge-standby')
+        mon_btn_bar.append(self.lbl_mon_telemetry)
+
         # 2. Telegram Notification Settings Card
         tg_grp = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         tg_grp.add_css_class('wincc-group')
@@ -2646,6 +2703,72 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.add_alarm_event(now_str, "OPC_UA", "INFO", "TRUSTED", f"ผู้ดูแลระบบยืนยัน Fingerprint และอนุมัติ Server Cert: {trusted_p.name} (SHA-256: {thumb[:16]}...)")
         else:
             self.alarm_text.set_text("⚠️ ไม่พบไฟล์ Certificate ที่ถูกกักกันสำหรับอนุมัติ")
+
+    def on_start_monitoring_clicked(self, _=None):
+        raw_url = self.entry_opc_url.get_text().strip()
+        valid, result = validate_opcua_endpoint(raw_url)
+        if not valid:
+            self.lbl_mon_telemetry.set_text(f"❌ {result}")
+            return
+
+        sec_policy = 'Basic256Sha256' if self.opc_sec_combo.get_selected() == 1 else 'None'
+        auth_mode = 'Username' if self.opc_auth_combo.get_selected() == 1 else 'Anonymous'
+        username = self.entry_opc_user.get_text().strip()
+        password = self.opcua_session_password or self.entry_opc_pass.get_text()
+
+        # Sync latest tasks into task engine
+        self.task_engine.load_tasks(self.tasks)
+
+        ok, msg = self.polling_engine.start_monitoring(
+            endpoint_url=result,
+            sec_policy=sec_policy,
+            auth_mode=auth_mode,
+            username=username,
+            password=password
+        )
+
+        if ok:
+            self.notification_worker.start()
+            self.btn_start_monitoring.set_sensitive(False)
+            self.btn_pause_monitoring.set_sensitive(True)
+            self.btn_stop_monitoring.set_sensitive(True)
+            self.lbl_mon_telemetry.set_text("🟢 สถานะ: กำลังเฝ้าระวัง (5-Second Polling Active)")
+            self.lbl_mon_telemetry.remove_css_class('badge-standby')
+            self.lbl_mon_telemetry.remove_css_class('badge-nope')
+            self.lbl_mon_telemetry.add_css_class('badge-active')
+            self.alarm_text.set_text("⏱️ เริ่มต้นระบบเฝ้าระวังอัตโนมัติ (5s Polling Engine Started)")
+        else:
+            self.lbl_mon_telemetry.set_text(f"❌ ไม่สามารถเริ่มได้: {msg}")
+            self.lbl_mon_telemetry.remove_css_class('badge-active')
+            self.lbl_mon_telemetry.add_css_class('badge-nope')
+            self.alarm_text.set_text(f"❌ Preflight Failed: {msg}")
+
+    def on_pause_monitoring_clicked(self, _=None):
+        if self.polling_engine.telemetry.state == PollingState.RUNNING:
+            self.polling_engine.pause_monitoring()
+            self.btn_pause_monitoring.set_label("▶️ ทำงานต่อ (Resume)")
+            self.lbl_mon_telemetry.set_text("🟡 สถานะ: PAUSED (พักชั่วคราว)")
+            self.lbl_mon_telemetry.remove_css_class('badge-active')
+            self.lbl_mon_telemetry.add_css_class('badge-sensor')
+        elif self.polling_engine.telemetry.state == PollingState.PAUSED:
+            self.polling_engine.resume_monitoring()
+            self.btn_pause_monitoring.set_label("⏸️ พักชั่วคราว (Pause)")
+            self.lbl_mon_telemetry.set_text("🟢 สถานะ: กำลังเฝ้าระวัง (RUNNING)")
+            self.lbl_mon_telemetry.remove_css_class('badge-sensor')
+            self.lbl_mon_telemetry.add_css_class('badge-active')
+
+    def on_stop_monitoring_clicked(self, _=None):
+        self.polling_engine.stop_monitoring()
+        self.notification_worker.stop()
+        self.btn_start_monitoring.set_sensitive(True)
+        self.btn_pause_monitoring.set_sensitive(False)
+        self.btn_pause_monitoring.set_label("⏸️ พักชั่วคราว (Pause)")
+        self.btn_stop_monitoring.set_sensitive(False)
+        self.lbl_mon_telemetry.set_text("⚪ สถานะ: STOPPED (หยุดการเฝ้าระวัง)")
+        self.lbl_mon_telemetry.remove_css_class('badge-active')
+        self.lbl_mon_telemetry.remove_css_class('badge-sensor')
+        self.lbl_mon_telemetry.add_css_class('badge-standby')
+        self.alarm_text.set_text("⏹️ หยุดระบบเฝ้าระวังเรียบร้อยแล้ว (Session Disconnected)")
 
     def _update_trust_quarantined_ui(self, can_trust: bool, label_text: str, cert_info: Optional[dict] = None):
         self.btn_trust_quarantined.set_sensitive(can_trust)
