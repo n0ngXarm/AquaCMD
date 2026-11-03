@@ -26,6 +26,20 @@ import gi
 gi.require_version('Gtk', '4.0')
 from gi.repository import Gtk, Gdk, GLib, Pango
 
+try:
+    from .opcua_store import Quality
+except ImportError:
+    try:
+        from opcua_store import Quality
+    except ImportError:
+        class Quality:
+            GOOD = "GOOD"
+            BAD = "BAD"
+            UNCERTAIN = "UNCERTAIN"
+            STALE = "STALE"
+            NOT_OBSERVED = "NOT_OBSERVED"
+            DISCONNECTED = "DISCONNECTED"
+
 # Clean Data Type Mapping
 DATA_TYPE_MAPPING = {
     "Binary Tag": "Bool",
@@ -157,9 +171,12 @@ class AquaUnifiedWorkspaceView:
         self.load_current_task_to_ui()
 
     def update_layout_proportions(self, width=1366):
-        """Sets responsive 20% / 48% / 32% split according to target resolution"""
+        """Sets responsive layout giving Center Tag Table maximum space"""
         left_w = int(width * 0.20)
-        center_w = int(width * 0.48)
+        if self.current_workspace_mode == 'monitoring':
+            center_w = int(width * 0.54)
+        else:
+            center_w = int(width * 0.48)
         self.main_hpaned.set_position(left_w)
         self.sub_hpaned.set_position(center_w)
 
@@ -572,12 +589,22 @@ class AquaUnifiedWorkspaceView:
             t_type.add_css_class('f2-tag-type-badge')
             row_box.append(t_type)
 
-            # Observation Status (Factual: Standby, not raw 0x00 mock)
-            t_qual = Gtk.Label(label="Not Observed (Standby)")
-            t_qual.set_size_request(140, -1)
-            t_qual.set_xalign(0.0)
-            t_qual.add_css_class('f2-tag-quality-idle')
-            row_box.append(t_qual)
+            # Observation Status (Live Observation if available, otherwise Standby)
+            store = getattr(self.owner, 'opcua_store', None)
+            obs = store.get_observation(tag_name) if store else None
+            if obs and obs.quality != Quality.NOT_OBSERVED:
+                pres = obs.to_presentation()
+                t_qual = Gtk.Label(label=pres['display_val'])
+                t_qual.set_size_request(140, -1)
+                t_qual.set_xalign(0.0)
+                t_qual.add_css_class(pres['badge_class'])
+                row_box.append(t_qual)
+            else:
+                t_qual = Gtk.Label(label="Not Observed (Standby)")
+                t_qual.set_size_request(140, -1)
+                t_qual.set_xalign(0.0)
+                t_qual.add_css_class('f2-tag-quality-idle')
+                row_box.append(t_qual)
 
             self.catalog_listbox.append(row)
             if idx == 0:
@@ -605,11 +632,15 @@ class AquaUnifiedWorkspaceView:
             self.lbl_sel_badge.remove_css_class('f2-sel-badge-idle')
             self.lbl_sel_badge.add_css_class('f2-sel-badge-active')
             self.btn_add_selected.set_label(f"➕ เพิ่ม Tag ที่เลือกเข้าสู่ Task ({n} รายการ)")
+            self.btn_add_selected.set_sensitive(True)
+            self.btn_clear_sel.set_sensitive(True)
         else:
             self.lbl_sel_badge.set_text("ยังไม่ได้เลือก Tag")
             self.lbl_sel_badge.remove_css_class('f2-sel-badge-active')
             self.lbl_sel_badge.add_css_class('f2-sel-badge-idle')
             self.btn_add_selected.set_label("➕ เพิ่ม Tag ที่เลือกเข้าสู่ Task (0 รายการ)")
+            self.btn_add_selected.set_sensitive(False)
+            self.btn_clear_sel.set_sensitive(False)
 
     def on_clear_selection(self):
         self.selected_catalog_tags.clear()
@@ -698,6 +729,10 @@ class AquaUnifiedWorkspaceView:
             # Ensure panel is visible in task mode
             if self.inspector_collapsed:
                 self.toggle_inspector_collapse()
+
+        # Update responsive layout proportions for the active mode
+        win_w = getattr(self.owner, 'get_width', lambda: 1366)()
+        self.update_layout_proportions(win_w if win_w and win_w > 500 else 1366)
 
         # Sync bottom function keys on owner if present
         if hasattr(self.owner, 'nav_btns'):
@@ -837,15 +872,21 @@ class AquaUnifiedWorkspaceView:
         lbl_act.set_xalign(0.0)
         action_card.append(lbl_act)
 
-        btn_add_to_cur_task = Gtk.Button(label="➕ นำ Tag นี้เพิ่มเข้าสู่ Task ปัจจุบัน (F2)")
-        btn_add_to_cur_task.add_css_class('f2-btn-add-selected')
-        btn_add_to_cur_task.connect('clicked', lambda _: self.on_add_single_tag_to_task())
-        action_card.append(btn_add_to_cur_task)
+        self.btn_add_to_cur_task = Gtk.Button(label="➕ นำ Tag นี้เพิ่มเข้าสู่ Task ปัจจุบัน (F2)")
+        self.btn_add_to_cur_task.add_css_class('f2-btn-add-selected')
+        self.btn_add_to_cur_task.connect('clicked', lambda _: self.on_add_single_tag_to_task())
+        action_card.append(self.btn_add_to_cur_task)
 
-        btn_open_f6 = Gtk.Button(label="⚙️ ตั้งค่าการเชื่อมต่อ WinCC OPC UA (F6)")
-        btn_open_f6.add_css_class('f2-btn-clear-selection')
-        btn_open_f6.connect('clicked', lambda _: self.owner.switch_to_tab('alarms'))
-        action_card.append(btn_open_f6)
+        # Gate B2: Manual Single-Shot Read Button (Read-Only Live Data)
+        self.btn_read_live = Gtk.Button(label="📥 อ่านค่าสด (Read Once · Loopback)")
+        self.btn_read_live.add_css_class('f2-btn-clear-selection')
+        self.btn_read_live.connect('clicked', lambda _: self.on_read_selected_tag_once())
+        action_card.append(self.btn_read_live)
+
+        self.btn_open_f6 = Gtk.Button(label="⚙️ ตั้งค่าการเชื่อมต่อ WinCC OPC UA (F6)")
+        self.btn_open_f6.add_css_class('f2-btn-clear-selection')
+        self.btn_open_f6.connect('clicked', lambda _: self.owner.switch_to_tab('alarms'))
+        action_card.append(self.btn_open_f6)
 
         return scrolled
 
@@ -853,10 +894,27 @@ class AquaUnifiedWorkspaceView:
         if not tag:
             self.empty_inspector_box.set_visible(True)
             self.active_inspector_box.set_visible(False)
+            if hasattr(self, 'btn_add_to_cur_task'):
+                self.btn_add_to_cur_task.set_sensitive(False)
             return
 
         self.empty_inspector_box.set_visible(False)
         self.active_inspector_box.set_visible(True)
+
+        # Check if already assigned to current task
+        tasks = getattr(self.owner, 'tasks', [])
+        already_in = False
+        if 0 <= self.selected_task_index < len(tasks):
+            cur_task = tasks[self.selected_task_index]
+            already_in = tag.get('name') in cur_task.get('tags', [])
+
+        if hasattr(self, 'btn_add_to_cur_task'):
+            if already_in:
+                self.btn_add_to_cur_task.set_sensitive(False)
+                self.btn_add_to_cur_task.set_label("✓ สัญญาณนี้อยู่ใน Task ปัจจุบันแล้ว")
+            else:
+                self.btn_add_to_cur_task.set_sensitive(True)
+                self.btn_add_to_cur_task.set_label("➕ นำ Tag นี้เพิ่มเข้าสู่ Task ปัจจุบัน (F2)")
 
         self.insp_lbl_name.set_text(tag.get('name', 'UNKNOWN'))
         self.insp_lbl_type.set_text(format_data_type(tag.get('type', 'Real')))
@@ -872,10 +930,72 @@ class AquaUnifiedWorkspaceView:
         self.insp_grid_values['conn'].set_text(tag.get('conn', 'High1 (S7-300/400 ISO-on-TCP)'))
         self.insp_grid_values['addr'].set_text(tag.get('addr', 'Internal / Not Mapped'))
 
-        self.insp_grid_values['source'].set_text("WinCC Tag Management Export (Export all.txt)")
-        self.insp_grid_values['quality'].set_text("Not Observed (Standby · Zero Mock)")
-        self.insp_grid_values['live_val'].set_text("— (ยังไม่ได้เชื่อมต่อ Live Session)")
-        self.insp_grid_values['last_obs'].set_text("— (ไม่มีประวัติการอ่านสด)")
+        # Gate B2: Observable State Store Live Integration
+        tag_name = tag.get('name', 'UNKNOWN')
+        store = getattr(self.owner, 'opcua_store', None)
+        mapper = getattr(self.owner, 'opcua_mapper', None)
+        obs = store.get_observation(tag_name) if store else None
+
+        # Update Read Live Button State (Allowlist Check)
+        if hasattr(self, 'btn_read_live'):
+            if mapper and mapper.is_allowed(tag_name):
+                self.btn_read_live.set_sensitive(True)
+                self.btn_read_live.set_label("📥 อ่านค่าสด (Read Once · Loopback)")
+            else:
+                self.btn_read_live.set_sensitive(False)
+                self.btn_read_live.set_label("🔒 Tag นี้ยังไม่ได้ทำ Mapping (Refused)")
+
+        if obs and obs.quality != Quality.NOT_OBSERVED:
+            pres = obs.to_presentation()
+            self.insp_grid_values['source'].set_text("OPC UA Test Server (Loopback)")
+            self.insp_grid_values['quality'].set_text(pres['quality_text'])
+            self.insp_grid_values['live_val'].set_text(pres['display_val'])
+            arr_str = obs.arrival_time.strftime("%H:%M:%S") if obs.arrival_time else "-"
+            self.insp_grid_values['last_obs'].set_text(f"Source: {pres['timestamp_str']} | Arrival: {arr_str}")
+        else:
+            self.insp_grid_values['source'].set_text("WinCC Tag Management Export (Export all.txt)")
+            self.insp_grid_values['quality'].set_text("Not Observed (Standby · Zero Mock)")
+            self.insp_grid_values['live_val'].set_text("— (ยังไม่ได้เชื่อมต่อ Live Session)")
+            self.insp_grid_values['last_obs'].set_text("— (ไม่มีประวัติการอ่านสด)")
+
+    def on_read_selected_tag_once(self):
+        """Gate B2: Executes operator-initiated manual single-shot read for selected tag."""
+        if not self.selected_inspector_tag:
+            return
+        tag_name = self.selected_inspector_tag.get('name')
+        if not tag_name:
+            return
+
+        reader = getattr(self.owner, 'opcua_reader', None)
+        cfg = getattr(self.owner, 'opcua_config', {})
+        url = cfg.get('endpoint_url', 'opc.tcp://127.0.0.1:48460/freeopcua/b2_live_pipeline/')
+        sec_policy = cfg.get('security_policy', 'None')
+        auth_mode = cfg.get('auth_mode', 'Anonymous')
+        username = cfg.get('username', '')
+        password = getattr(self.owner, 'opcua_session_password', '')
+
+        if not reader:
+            return
+
+        self.btn_read_live.set_sensitive(False)
+        self.btn_read_live.set_label("⏳ กำลังอ่านค่าสด...")
+
+        def on_done(obs):
+            self.btn_read_live.set_sensitive(True)
+            self.btn_read_live.set_label("📥 อ่านค่าสด (Read Once · Loopback)")
+            if self.selected_inspector_tag and self.selected_inspector_tag.get('name') == tag_name:
+                self.render_inspector_tag(self.selected_inspector_tag)
+            self.render_catalog_table()
+
+        reader.read_tag_once_async(
+            tag_name=tag_name,
+            endpoint_url=url,
+            sec_policy=sec_policy,
+            auth_mode=auth_mode,
+            username=username,
+            password=password,
+            callback=on_done
+        )
 
     def on_add_single_tag_to_task(self):
         if not self.selected_inspector_tag:

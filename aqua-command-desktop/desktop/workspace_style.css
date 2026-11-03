@@ -19,6 +19,7 @@
    Primary Text:  #F0F4F8 (High-Contrast White, >11:1 against Panels)
    Secondary Text:#A8B5C3 (Subtle Slate, >6.5:1 against Insets/Panels)
    Muted Text:    #8899AA (Neutral Gray / Standby Quality, >5:1 against Insets)
+   Disabled Text: #64748B (Muted Slate for inactive states, >4.5:1 against #111820)
 
    Semantic Accents (Restrained & Functional):
    Blue:          #4B91D4 (Selection / Primary Actions / Checkbox Checked)
@@ -60,6 +61,11 @@
     font-size: 8.5pt;
     font-weight: 700;
 }
+.workspace-mode-btn-active:focus,
+.workspace-mode-btn-active:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
 
 .workspace-mode-btn-inactive {
     background-color: #151F2A;
@@ -73,6 +79,11 @@
     color: #F0F4F8;
     border-color: #4B91D4;
     background-color: #26313D;
+}
+.workspace-mode-btn-inactive:focus,
+.workspace-mode-btn-inactive:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
 }
 
 /* Scan Controls in Top Ribbon */
@@ -89,6 +100,20 @@
     background-color: #E79B50;
     color: #111820;
 }
+.f2-btn-scan-once:active {
+    background-color: #CF833C;
+    color: #111820;
+}
+.f2-btn-scan-once:focus,
+.f2-btn-scan-once:focus-visible {
+    outline: 2px solid #E79B50;
+    outline-offset: 1px;
+}
+.f2-btn-scan-once:disabled {
+    background-color: #151F2A;
+    border-color: #2A3847;
+    color: #64748B;
+}
 
 .f2-btn-auto-start {
     background-color: #26313D;
@@ -103,6 +128,19 @@
     border-color: #4B91D4;
     color: #FFFFFF;
 }
+.f2-btn-auto-start:active {
+    background-color: #1E2D3D;
+}
+.f2-btn-auto-start:focus,
+.f2-btn-auto-start:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
+.f2-btn-auto-start:disabled {
+    background-color: #151F2A;
+    border-color: #2A3847;
+    color: #64748B;
+}
 
 .f2-btn-auto-stop {
     background-color: #26313D;
@@ -116,6 +154,20 @@
 .f2-btn-auto-stop:hover {
     background-color: #E79B50;
     color: #111820;
+}
+.f2-btn-auto-stop:active {
+    background-color: #CF833C;
+    color: #111820;
+}
+.f2-btn-auto-stop:focus,
+.f2-btn-auto-stop:focus-visible {
+    outline: 2px solid #E79B50;
+    outline-offset: 1px;
+}
+.f2-btn-auto-stop:disabled {
+    background-color: #151F2A;
+    border-color: #2A3847;
+    color: #64748B;
 }
 
 .f2-scan-label {
@@ -134,7 +186,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   3. 3-COLUMN WORKSTATION SURFACES
+   3. 3-COLUMN WORKSTATION SURFACES & BUTTON BASELINE
    -------------------------------------------------------------------------- */
 .workspace-col-panel {
     background-color: #1D2834;
@@ -157,8 +209,72 @@
     font-weight: 700;
 }
 
+/* Dark Baseline for ALL buttons inside workspace (Eliminates White Button Bug) */
+.workspace-col-panel button,
+.workspace-dock-bar button,
+.workspace-top-ribbon button,
+.f2-section-card button,
+.f2-action-card button {
+    background-color: #26313D;
+    background-image: none;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    color: #F0F4F8;
+    box-shadow: none;
+    outline: none;
+}
+.workspace-col-panel button:hover,
+.workspace-dock-bar button:hover,
+.workspace-top-ribbon button:hover,
+.f2-section-card button:hover,
+.f2-action-card button:hover {
+    background-color: #334252;
+    border-color: #4B91D4;
+    color: #FFFFFF;
+}
+.workspace-col-panel button:active,
+.workspace-dock-bar button:active,
+.workspace-top-ribbon button:active,
+.f2-section-card button:active,
+.f2-action-card button:active {
+    background-color: #1E2D3D;
+    border-color: #4B91D4;
+}
+.workspace-col-panel button:focus,
+.workspace-col-panel button:focus-visible,
+.workspace-dock-bar button:focus,
+.workspace-dock-bar button:focus-visible,
+.workspace-top-ribbon button:focus,
+.workspace-top-ribbon button:focus-visible,
+.f2-section-card button:focus,
+.f2-section-card button:focus-visible,
+.f2-action-card button:focus,
+.f2-action-card button:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+    border-color: #4B91D4;
+}
+.workspace-col-panel button:disabled,
+.workspace-dock-bar button:disabled,
+.workspace-top-ribbon button:disabled,
+.f2-section-card button:disabled,
+.f2-action-card button:disabled {
+    background-color: #1A242F;
+    background-image: none;
+    border: 1px solid #2A3847;
+    color: #64748B;
+    box-shadow: none;
+}
+.workspace-col-panel button:disabled label,
+.workspace-dock-bar button:disabled label,
+.workspace-top-ribbon button:disabled label,
+.f2-section-card button:disabled label,
+.f2-action-card button:disabled label {
+    color: #64748B;
+}
+
 /* --------------------------------------------------------------------------
-   4. COLUMN 1: EQUIPMENT GROUP EXPLORER (Polite Neutral & Clear Accent)
+   4. COLUMN 1: EQUIPMENT GROUP EXPLORER
    -------------------------------------------------------------------------- */
 .f1-group-scroll {
     background-color: #151F2A;
@@ -176,7 +292,7 @@
     background-color: transparent;
     border-radius: 4px;
     margin: 2px 4px;
-    padding: 3px 6px;
+    padding: 4px 6px;
     transition: background 120ms ease;
 }
 .f1-group-list row:hover {
@@ -212,7 +328,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. COLUMN 2: SHARED TAG CATALOG (High Contrast, Clean Monospace, Neutral Badges)
+   5. COLUMN 2: SHARED TAG CATALOG
    -------------------------------------------------------------------------- */
 .f2-table-header-box {
     background-color: #26313D;
@@ -295,6 +411,16 @@ searchentry.workspace-search image {
     color: #F0F4F8;
     border-color: #4B91D4;
 }
+.f2-btn-clear-filter:focus,
+.f2-btn-clear-filter:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
+.f2-btn-clear-filter:disabled {
+    background-color: #151F2A;
+    border-color: #2A3847;
+    color: #64748B;
+}
 
 /* Table Header Row */
 .f2-table-header-row {
@@ -303,7 +429,7 @@ searchentry.workspace-search image {
     border-bottom: 1px solid #334252;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    padding: 6px 8px;
+    padding: 7px 10px;
 }
 .f2-col-header {
     color: #A8B5C3;
@@ -334,7 +460,7 @@ list.f2-table-list,
     background-color: #151F2A;
     color: #F0F4F8;
     border-bottom: 1px solid #1F2B37;
-    padding: 0px;
+    padding: 4px 6px;
     transition: background-color 100ms ease;
 }
 .f2-table-list row:nth-child(even) {
@@ -396,18 +522,18 @@ list.f2-table-list,
     font-size: 8.5pt;
 }
 
-/* Row Cell Elements - Restrained & Clean */
+/* Row Cell Elements */
 .f2-tag-name-label {
     color: #F0F4F8;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 8.5pt;
+    font-size: 9pt;
     font-weight: 600;
 }
 .f2-tag-group-label {
     color: #A8B5C3;
     font-size: 8.5pt;
 }
-/* Neutral Data Type Badge (No bright blue) */
+/* Neutral Data Type Badge */
 .f2-tag-type-badge {
     background-color: #1D2834;
     color: #A8B5C3;
@@ -476,6 +602,23 @@ list.f2-table-list,
     background-color: #3B7BB8;
     border-color: #3B7BB8;
 }
+.f2-btn-add-selected:active {
+    background-color: #2F69A0;
+    border-color: #2F69A0;
+}
+.f2-btn-add-selected:focus,
+.f2-btn-add-selected:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 1px;
+}
+.f2-btn-add-selected:disabled {
+    background-color: #1A242F;
+    border: 1px solid #2A3847;
+    color: #64748B;
+}
+.f2-btn-add-selected:disabled label {
+    color: #64748B;
+}
 
 .f2-btn-clear-selection {
     background-color: #26313D;
@@ -488,12 +631,28 @@ list.f2-table-list,
 .f2-btn-clear-selection:hover {
     color: #F0F4F8;
     border-color: #4B91D4;
+    background-color: #334252;
+}
+.f2-btn-clear-selection:active {
+    background-color: #1D2834;
+}
+.f2-btn-clear-selection:focus,
+.f2-btn-clear-selection:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
+.f2-btn-clear-selection:disabled {
+    background-color: #151F2A;
+    border: 1px solid #2A3847;
+    color: #556575;
+}
+.f2-btn-clear-selection:disabled label {
+    color: #556575;
 }
 
 /* --------------------------------------------------------------------------
    6. COLUMN 3: CONTEXT PANEL - TAG INSPECTOR (F1)
    -------------------------------------------------------------------------- */
-/* Sub-mode switcher inside Context Panel header */
 .f1-mode-switcher {
     background-color: #151F2A;
     border: 1px solid #334252;
@@ -516,6 +675,11 @@ list.f2-table-list,
     background-color: #26313D;
     color: #F0F4F8;
     border: 1px solid #4B91D4;
+}
+.f1-mode-btn:focus,
+.f1-mode-btn:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
 }
 
 .workspace-inspector-grid {
@@ -609,6 +773,29 @@ list.f2-table-list,
     color: #F0F4F8;
     border-color: #4B91D4;
 }
+.f2-btn-collapse:focus,
+.f2-btn-collapse:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
+.f2-btn-collapse:disabled {
+    background-color: #151F2A;
+    border-color: #2A3847;
+    color: #556575;
+}
+
+/* Quick Actions in F1 Inspector */
+.f2-action-card {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+.f2-action-card-title {
+    color: #F0F4F8;
+    font-size: 9pt;
+    font-weight: 700;
+}
 
 /* --------------------------------------------------------------------------
    7. COLUMN 3: CONTEXT PANEL - TASK CONFIGURATOR (F2)
@@ -620,7 +807,7 @@ list.f2-table-list,
     padding: 8px 12px;
 }
 
-/* Section Title - Clean White (NO blue decorative styling) */
+/* Section Title - Clean White */
 .f2-section-title {
     color: #F0F4F8;
     font-size: 9.5pt;
@@ -652,50 +839,95 @@ list.f2-table-list,
     color: #F0F4F8;
     font-size: 8pt;
     font-weight: 600;
-    padding: 3px 8px;
+    padding: 4px 10px;
 }
 .f2-btn-new-task:hover {
     border-color: #4B91D4;
+    background-color: #334252;
+}
+.f2-btn-new-task:active {
+    background-color: #1D2834;
+}
+.f2-btn-new-task:focus,
+.f2-btn-new-task:focus-visible {
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
+.f2-btn-new-task:disabled {
+    background-color: #151F2A;
+    border-color: #2A3847;
+    color: #64748B;
 }
 
-/* Form DropDown & Entry scoped overrides */
+/* Form DropDown & Popover Controls (Dark Theme & Explicit States) */
 .f2-section-card dropdown button,
-.workspace-col-panel dropdown button {
+.workspace-col-panel dropdown button,
+dropdown button {
     background-color: #151F2A;
+    background-image: none;
     color: #F0F4F8;
     border: 1px solid #334252;
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 5px 10px;
+    box-shadow: none;
 }
 .f2-section-card dropdown button:hover,
-.f2-section-card dropdown button:focus,
 .workspace-col-panel dropdown button:hover,
-.workspace-col-panel dropdown button:focus {
+dropdown button:hover {
     border-color: #4B91D4;
     background-color: #192532;
+    color: #FFFFFF;
+}
+.f2-section-card dropdown button:focus,
+.f2-section-card dropdown button:focus-visible,
+.workspace-col-panel dropdown button:focus,
+.workspace-col-panel dropdown button:focus-visible,
+dropdown button:focus,
+dropdown button:focus-visible {
+    border-color: #4B91D4;
+    outline: 2px solid #4B91D4;
+    outline-offset: 1px;
+}
+.f2-section-card dropdown button:disabled,
+.workspace-col-panel dropdown button:disabled,
+dropdown button:disabled {
+    background-color: #151F2A;
+    border: 1px solid #2A3847;
+    color: #64748B;
 }
 
-/* DropDown Popover / List styling */
+/* Dropdown popover list & view */
+popover,
 popover.menu,
 popover.background,
 popover contents {
     background-color: #1D2834;
     border: 1px solid #334252;
+    border-radius: 6px;
     color: #F0F4F8;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 popover listview row,
-popover list row {
-    padding: 4px 8px;
+popover list row,
+popover modelbutton {
+    padding: 5px 10px;
     color: #F0F4F8;
+    background: transparent;
+    border-radius: 4px;
+    margin: 1px 2px;
 }
 popover listview row:hover,
-popover list row:hover {
+popover list row:hover,
+popover modelbutton:hover {
     background-color: #26313D;
+    color: #FFFFFF;
 }
 popover listview row:selected,
-popover list row:selected {
+popover list row:selected,
+popover modelbutton:selected {
     background-color: #1E2D3D;
     color: #FFFFFF;
+    border-left: 2px solid #4B91D4;
 }
 
 .f2-section-card entry,
@@ -704,11 +936,12 @@ popover list row:selected {
     color: #F0F4F8;
     border: 1px solid #334252;
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 5px 10px;
 }
 .f2-section-card entry:focus,
 .workspace-col-panel entry:focus {
     border-color: #4B91D4;
+    box-shadow: 0 0 0 1px #4B91D4;
 }
 
 .f2-task-status-ready {
@@ -747,13 +980,13 @@ popover list row:selected {
 .f2-assigned-list row {
     background-color: #151F2A;
     border-bottom: 1px solid #1F2B37;
-    padding: 2px 4px;
+    padding: 3px 6px;
 }
 .f2-assigned-list row:hover {
     background-color: #26313D;
 }
 
-/* Remove Tag Button (Subtle Neutral normal, Red only on hover) */
+/* Remove Tag Button */
 .f2-btn-remove-tag {
     background-color: transparent;
     color: #8899AA;
@@ -768,6 +1001,14 @@ popover list row:selected {
     color: #FFFFFF;
     border-color: #E36D76;
 }
+.f2-btn-remove-tag:active {
+    background-color: #C8545D;
+}
+.f2-btn-remove-tag:disabled {
+    background-color: transparent;
+    border-color: #2A3847;
+    color: #556575;
+}
 
 /* Sticky Save Task Bar */
 .f2-save-dock-bar {
@@ -777,7 +1018,7 @@ popover list row:selected {
     padding: 6px 10px;
 }
 
-/* Save Feedback Status (Green on verified clean, Yellow on unsaved dirty) */
+/* Save Feedback Status */
 .f2-save-status-clean {
     color: #38B88B;
     font-size: 8pt;
@@ -802,9 +1043,24 @@ popover list row:selected {
 .f2-btn-save-task:hover {
     background-color: #3B7BB8;
     border-color: #3B7BB8;
+    color: #FFFFFF;
+}
+.f2-btn-save-task:active {
+    background-color: #2F69A0;
+    border-color: #2F69A0;
+}
+.f2-btn-save-task:focus,
+.f2-btn-save-task:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 1px;
+}
+.f2-btn-save-task:disabled {
+    background-color: #1A242F;
+    border: 1px solid #2A3847;
+    color: #64748B;
 }
 
-/* Paned Dividers - Subtle Technical Separator */
+/* Paned Dividers */
 paned > separator {
     background-color: #334252;
     min-width: 1px;

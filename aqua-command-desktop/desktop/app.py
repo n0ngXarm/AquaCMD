@@ -91,12 +91,22 @@ import threading
 import concurrent.futures
 import asyncio
 try:
-    from asyncua import Client, Server
+    from asyncua import Client, Server, ua
     HAS_ASYNCUA = True
 except ImportError:
     HAS_ASYNCUA = False
+
+try:
+    from .opcua_mapping import NodeIdMapper
+    from .opcua_store import ObservableStateStore, Quality
+    from .opcua_reader import ManualOpcUaReader
+except ImportError:
+    from opcua_mapping import NodeIdMapper
+    from opcua_store import ObservableStateStore, Quality
+    from opcua_reader import ManualOpcUaReader
 import urllib.request
 import urllib.error
+from urllib.parse import urlparse
 from datetime import datetime
 from pathlib import Path
 
@@ -157,11 +167,17 @@ def save_atomic_json(filepath, data):
             pass
         return False
 
+MAX_OPCUA_BROWSE_NODES = 500
+MAX_OPCUA_BROWSE_DEPTH = 3
+OPCUA_BROWSE_TIMEOUT = 5.0
+
 def load_opcua_config():
     if OPCUA_CONFIG_FILE.exists():
         try:
             with open(OPCUA_CONFIG_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                data.pop('password', None)  # Safety: never retain password on disk
+                return data
         except Exception:
             pass
     return {
@@ -169,12 +185,31 @@ def load_opcua_config():
         'security_policy': 'None',
         'auth_mode': 'Anonymous',
         'username': '',
-        'password': '',
         'status': 'disconnected'
     }
 
+def validate_opcua_endpoint(url):
+    """Validates OPC UA Endpoint URL format and scheme."""
+    if not url or not isinstance(url, str):
+        return False, "กรุณากรอก URL สำหรับเชื่อมต่อ OPC UA"
+    url = url.strip()
+    if not url.startswith("opc.tcp://"):
+        return False, "URL ต้องขึ้นต้นด้วย Scheme 'opc.tcp://' เท่านั้น"
+    parsed = urlparse(url)
+    if not parsed.hostname:
+        return False, "ไม่พบ Hostname หรือ IP Address ใน URL"
+    try:
+        port = parsed.port
+    except ValueError:
+        return False, "Port ไม่อยู่ในช่วงที่ถูกต้อง (1-65535)"
+    if port is not None and not (1 <= port <= 65535):
+        return False, f"Port {port} ไม่ถูกต้อง (ต้องอยู่ระหว่าง 1-65535)"
+    return True, url
+
 def save_opcua_config(cfg):
-    save_atomic_json(OPCUA_CONFIG_FILE, cfg)
+    clean_cfg = dict(cfg)
+    clean_cfg.pop('password', None)  # Safety: never save plaintext password to disk
+    return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg)
 
 def load_telegram_config():
     if TELEGRAM_CONFIG_FILE.exists():
@@ -932,6 +967,11 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.set_size_request(1024, 700)
         self.connect('close-request', self.on_close_request)
 
+        # Force GTK to prefer dark theme globally so unstyled states never fallback to Adwaita Light
+        settings = Gtk.Settings.get_default()
+        if settings:
+            settings.set_property("gtk-application-prefer-dark-theme", True)
+
         # Load WinCC Base CSS
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(CSS_DATA)
@@ -984,6 +1024,17 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.topology_data = load_topology()
         self.telegram_config = load_telegram_config()
         self.opcua_config = load_opcua_config()
+        self.opcua_session_password = ""  # Session-only credential in memory
+        # Gate B2: Observable State Store & Manual Single-Shot OPC UA Reader
+        project_mapping = Path(__file__).resolve().parent.parent / "config" / "opcua_tag_mapping.json"
+        user_mapping = CONFIG_DIR / "opcua_tag_mapping.json"
+        mapping_file = user_mapping if user_mapping.exists() else (project_mapping if project_mapping.exists() else Path("config/opcua_tag_mapping.json"))
+        self.opcua_mapper = NodeIdMapper(mapping_file if mapping_file.exists() else None)
+        self.opcua_store = ObservableStateStore()
+        self.opcua_reader = ManualOpcUaReader(self.opcua_mapper, self.opcua_store, CONFIG_DIR)
+        self.opcua_discovered_nodes = []  # Strictly separated from local catalog
+        self.browse_cancel_flag = threading.Event()  # Cooperative cancellation
+        self.task_execution_state = "SUSPENDED_SAFETY_GATE_B1"  # Explicit suspension
         self.alarm_events = [
             (datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "SYSTEM", "INFO", "READY", "ระบบ AQUA COMMAND WinCC V8.1 เริ่มต้นทำงานพร้อมตรวจวัดสถานะ")
         ]
@@ -1176,10 +1227,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.update_real_data()
         GLib.timeout_add_seconds(2, self.update_real_data)
 
-        # Background Task Runner (Runs only assigned tasks!)
-        self.running = True
-        self.task_thread = threading.Thread(target=self.task_runner_loop, daemon=True)
-        self.task_thread.start()
+        # Background Task Runner (Suspended in Gate B1)
+        self.running = False
+        self.task_thread = None  # Startup Safety: zero background task threads on window init
 
     def tick_clock(self):
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -1205,7 +1255,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.render_tags_grid()
         if hasattr(self, 'render_tags_page_grid'):
             self.render_tags_page_grid()
-        self.trigger_network_rescan()
+        # Safety: F7 strictly refreshes local catalog; zero automated network probing
         self.update_real_data()
 
     def activate_workspace_mode(self, mode):
@@ -1890,7 +1940,6 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             return True
         elif keyval == Gdk.KEY_F7:
             self.trigger_rescan()
-            self.trigger_network_rescan()
             return True
         elif keyval == Gdk.KEY_F8:
             self.close()
@@ -2299,6 +2348,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.opc_sec_combo = Gtk.DropDown.new_from_strings([
             "None (ไม่เข้ารหัส - มาตรฐานวงแลนปิด SCADA)", "Basic256Sha256 (Sign & Encrypt)"
         ])
+        if self.opcua_config.get('security_policy') == 'Basic256Sha256':
+            self.opc_sec_combo.set_selected(1)
+        else:
+            self.opc_sec_combo.set_selected(0)
         sec_row.append(self.opc_sec_combo)
 
         lbl_auth = Gtk.Label(label="การล็อกอิน:")
@@ -2308,7 +2361,32 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.opc_auth_combo = Gtk.DropDown.new_from_strings([
             "Anonymous (ไม่ใช้รหัสผ่าน)", "Username / Password"
         ])
+        if self.opcua_config.get('auth_mode') == 'Username':
+            self.opc_auth_combo.set_selected(1)
+        else:
+            self.opc_auth_combo.set_selected(0)
         sec_row.append(self.opc_auth_combo)
+
+        # Row 2: Credentials (Username & Session-Only Password)
+        lbl_cred = Gtk.Label(label="บัญชีเข้าใช้งาน:")
+        lbl_cred.add_css_class('card-header')
+        lbl_cred.set_xalign(0.0)
+        opc_grid.attach(lbl_cred, 0, 2, 1, 1)
+
+        cred_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        opc_grid.attach(cred_box, 1, 2, 1, 1)
+
+        self.entry_opc_user = Gtk.Entry()
+        self.entry_opc_user.set_placeholder_text("Username (เช่น scada_op)")
+        self.entry_opc_user.set_text(self.opcua_config.get('username', ''))
+        cred_box.append(self.entry_opc_user)
+
+        self.entry_opc_pass = Gtk.Entry()
+        self.entry_opc_pass.set_placeholder_text("Password (เก็บเฉพาะใน RAM เซสชันนี้)")
+        self.entry_opc_pass.set_visibility(False)
+        self.entry_opc_pass.set_input_purpose(Gtk.InputPurpose.PASSWORD)
+        self.entry_opc_pass.set_hexpand(True)
+        cred_box.append(self.entry_opc_pass)
 
         # Buttons Bar: Test Connection, Browse Tags, Save Settings
         opc_btn_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
@@ -2461,27 +2539,62 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.render_alarm_table()
 
     def on_save_opcua_config(self, _=None):
-        url = self.entry_opc_url.get_text().strip()
-        self.opcua_config['endpoint_url'] = url
-        save_opcua_config(self.opcua_config)
-        self.alarm_text.set_text(f"💾 บันทึกการตั้งค่า WinCC OPC UA ({url}) เรียบร้อยแล้ว")
-        self.lbl_opc_status.set_text("💾 บันทึกการตั้งค่าแล้ว")
-        self.lbl_opc_status.remove_css_class('badge-nope')
-        self.lbl_opc_status.remove_css_class('badge-active')
-        self.lbl_opc_status.add_css_class('badge-standby')
-
-    def on_test_opcua_connection(self, _=None):
-        url = self.entry_opc_url.get_text().strip()
-        if not url:
-            self.lbl_opc_status.set_text("❌ กรุณากรอก URL เช่น opc.tcp://192.168.1.11:4862")
+        raw_url = self.entry_opc_url.get_text().strip()
+        valid, result = validate_opcua_endpoint(raw_url)
+        if not valid:
+            self.lbl_opc_status.set_text(f"❌ {result}")
             self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.remove_css_class('badge-standby')
             self.lbl_opc_status.add_css_class('badge-nope')
+            self.alarm_text.set_text(f"❌ บันทึกล้มเหลว: {result}")
             return
 
+        url = result
         self.opcua_config['endpoint_url'] = url
-        save_opcua_config(self.opcua_config)
+        sec_idx = self.opc_sec_combo.get_selected()
+        self.opcua_config['security_policy'] = 'Basic256Sha256' if sec_idx == 1 else 'None'
+        auth_idx = self.opc_auth_combo.get_selected()
+        self.opcua_config['auth_mode'] = 'Username' if auth_idx == 1 else 'Anonymous'
+        self.opcua_config['username'] = self.entry_opc_user.get_text().strip()
 
-        self.lbl_opc_status.set_text("⏳ กำลังทดสอบเชื่อมต่อไปยัง WinCC OPC UA Server...")
+        # Hold Password strictly in session memory (NEVER write to json config!)
+        self.opcua_session_password = self.entry_opc_pass.get_text()
+
+        ok = save_opcua_config(self.opcua_config)
+        now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        if ok:
+            self.alarm_text.set_text(f"💾 บันทึกการตั้งค่า WinCC OPC UA ({url}) เรียบร้อยแล้ว (สถานะ: กำหนดค่าแล้ว / ยังไม่เชื่อมต่อ)")
+            self.lbl_opc_status.set_text("💾 กำหนดค่าแล้ว (Configured)")
+            self.lbl_opc_status.remove_css_class('badge-nope')
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.add_css_class('badge-standby')
+            self.add_alarm_event(now_str, "OPC_UA", "INFO", "CONFIGURED", f"บันทึกการตั้งค่า OPC UA: {url} ({self.opcua_config['security_policy']}, {self.opcua_config['auth_mode']})")
+        else:
+            self.alarm_text.set_text(f"❌ ไม่สามารถบันทึกไฟล์คอนฟิก {OPCUA_CONFIG_FILE} ได้ (Disk/Permission Error)")
+            self.lbl_opc_status.set_text("❌ บันทึกล้มเหลว (I/O Error)")
+            self.lbl_opc_status.remove_css_class('badge-standby')
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.add_css_class('badge-nope')
+            self.add_alarm_event(now_str, "OPC_UA", "WARN", "CONFIG_ERR", f"บันทึกไฟล์คอนฟิก {OPCUA_CONFIG_FILE} ล้มเหลว")
+
+    def on_test_opcua_connection(self, _=None):
+        raw_url = self.entry_opc_url.get_text().strip()
+        valid, result = validate_opcua_endpoint(raw_url)
+        if not valid:
+            self.lbl_opc_status.set_text(f"❌ {result}")
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.add_css_class('badge-nope')
+            self.alarm_text.set_text(f"❌ {result}")
+            return
+
+        url = result
+        self.opcua_config['endpoint_url'] = url
+        sec_policy = 'Basic256Sha256' if self.opc_sec_combo.get_selected() == 1 else 'None'
+        auth_mode = 'Username' if self.opc_auth_combo.get_selected() == 1 else 'Anonymous'
+        username = self.entry_opc_user.get_text().strip()
+        password = self.opcua_session_password or self.entry_opc_pass.get_text()
+
+        self.lbl_opc_status.set_text("⏳ กำลังเชื่อมต่อไปยัง WinCC OPC UA Server (Connecting)...")
         self.lbl_opc_status.remove_css_class('badge-nope')
         self.lbl_opc_status.remove_css_class('badge-active')
         self.lbl_opc_status.add_css_class('badge-sensor')
@@ -2489,44 +2602,71 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         def worker():
             success = False
+            status_name = "Error"
             msg = ""
             if not HAS_ASYNCUA:
                 success = False
+                status_name = "Error"
                 msg = "ไม่พบไลบรารี asyncua บนระบบ"
             else:
                 try:
                     async def _probe():
-                        client = Client(url=url, timeout=3.0)
+                        client = Client(url=url, timeout=4.0)
+                        if sec_policy == 'Basic256Sha256':
+                            cert_p = CONFIG_DIR / "client_cert.der"
+                            key_p = CONFIG_DIR / "client_key.pem"
+                            if not cert_p.exists() or not key_p.exists():
+                                return False, "Error", "ไม่พบ Certificate สำหรับ Basic256Sha256"
+                            await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
+
+                        if auth_mode == 'Username':
+                            if not username:
+                                return False, "Error", "โหมด Username จำเป็นต้องระบุชื่อผู้ใช้งาน"
+                            client.set_user(username)
+                            client.set_password(password)
+
                         async with client:
                             server_name = await client.nodes.server.read_browse_name()
-                            return True, f"เชื่อมต่อ WinCC OPC UA สำเร็จ! (Server Node: {server_name.Name})"
+                            return True, "Disconnected", f"เชื่อมต่อ WinCC OPC UA สำเร็จ! (Server Node: {server_name.Name}) [เซสชันปิดแล้ว]"
 
                     loop = asyncio.new_event_loop()
                     try:
-                        success, msg = loop.run_until_complete(_probe())
+                        success, status_name, msg = loop.run_until_complete(_probe())
                     finally:
                         loop.close()
                 except Exception as ex:
                     success = False
-                    msg = f"ไม่สามารถเชื่อมต่อได้: {str(ex)[:75]}"
+                    status_name = "Error"
+                    err_str = str(ex)
+                    # Privacy: sanitize secret password from any error/traceback string
+                    if password and password in err_str:
+                        err_str = err_str.replace(password, "******")
+                    if "BadUserAccessDenied" in err_str:
+                        msg = f"การยืนยันตัวตนล้มเหลว (BadUserAccessDenied) สำหรับผู้ใช้ '{username}'"
+                    elif "No matching endpoints" in err_str or "BadSecurityPolicyRejected" in err_str:
+                        msg = f"เซิร์ฟเวอร์ปฏิเสธ Security Policy '{sec_policy}'"
+                    elif isinstance(ex, (ConnectionRefusedError, asyncio.TimeoutError, OSError)):
+                        msg = f"ไม่สามารถเชื่อมต่อได้ ({type(ex).__name__})"
+                    else:
+                        msg = f"ไม่สามารถเชื่อมต่อได้: {err_str[:75]}"
 
-            GLib.idle_add(self.apply_opcua_test_result, success, msg)
+            GLib.idle_add(self.apply_opcua_test_result, success, status_name, msg)
 
         t = threading.Thread(target=worker, daemon=True)
         t.start()
 
-    def apply_opcua_test_result(self, success, detail):
+    def apply_opcua_test_result(self, success, status_name, detail):
         self.btn_test_opc.set_sensitive(True)
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         if success:
-            self.lbl_opc_status.set_text("🟢 เชื่อมต่อ WinCC OPC UA สำเร็จ!")
+            self.lbl_opc_status.set_text("🟢 ตรวจสอบสำเร็จ (Disconnected)")
             self.lbl_opc_status.remove_css_class('badge-nope')
             self.lbl_opc_status.remove_css_class('badge-sensor')
             self.lbl_opc_status.add_css_class('badge-active')
             self.alarm_text.set_text(f"🟢 {detail}")
             self.add_alarm_event(now_str, "OPC_UA", "INFO", "ONLINE", f"เชื่อมต่อ WinCC OPC UA Server สำเร็จ: {detail}")
         else:
-            self.lbl_opc_status.set_text(f"❌ {detail[:40]}")
+            self.lbl_opc_status.set_text(f"❌ {status_name}: {detail[:30]}")
             self.lbl_opc_status.remove_css_class('badge-active')
             self.lbl_opc_status.remove_css_class('badge-sensor')
             self.lbl_opc_status.add_css_class('badge-nope')
@@ -2534,27 +2674,141 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.add_alarm_event(now_str, "OPC_UA", "WARN", "OFFLINE", f"เชื่อมต่อ WinCC OPC UA ล้มเหลว: {detail}")
 
     def on_browse_opcua_tags(self, _=None):
-        url = self.entry_opc_url.get_text().strip()
+        raw_url = self.entry_opc_url.get_text().strip()
+        valid, result = validate_opcua_endpoint(raw_url)
+        if not valid:
+            self.lbl_opc_status.set_text(f"❌ {result}")
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.add_css_class('badge-nope')
+            self.alarm_text.set_text(f"❌ {result}")
+            return
+
+        url = result
+        sec_policy = 'Basic256Sha256' if self.opc_sec_combo.get_selected() == 1 else 'None'
+        auth_mode = 'Username' if self.opc_auth_combo.get_selected() == 1 else 'Anonymous'
+        username = self.entry_opc_user.get_text().strip()
+        password = self.opcua_session_password or self.entry_opc_pass.get_text()
+
         self.lbl_opc_status.set_text("⏳ กำลังสแกนหา Tag จาก WinCC ผ่าน OPC UA...")
         self.lbl_opc_status.remove_css_class('badge-nope')
+        self.lbl_opc_status.remove_css_class('badge-active')
         self.lbl_opc_status.add_css_class('badge-sensor')
         self.btn_browse_opc.set_sensitive(False)
+        self.browse_cancel_flag.clear()
 
         def worker():
-            GLib.idle_add(self.apply_opcua_browse_done)
+            success = False
+            status_name = "Error"
+            found_nodes = []
+            msg = ""
+            if not HAS_ASYNCUA:
+                success = False
+                status_name = "Error"
+                msg = "ไม่พบไลบรารี asyncua บนระบบ"
+            else:
+                try:
+                    async def _browse():
+                        client = Client(url=url, timeout=OPCUA_BROWSE_TIMEOUT)
+                        if sec_policy == 'Basic256Sha256':
+                            cert_p = CONFIG_DIR / "client_cert.der"
+                            key_p = CONFIG_DIR / "client_key.pem"
+                            if not cert_p.exists() or not key_p.exists():
+                                return False, "Error", [], "ไม่พบ Certificate สำหรับ Basic256Sha256"
+                            await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
+
+                        if auth_mode == 'Username':
+                            if not username:
+                                return False, "Error", [], "โหมด Username จำเป็นต้องระบุชื่อผู้ใช้งาน"
+                            client.set_user(username)
+                            client.set_password(password)
+
+                        async with client:
+                            nodes = []
+                            objects = client.nodes.objects
+
+                            async def _traverse(node, depth, parent_name):
+                                if depth > MAX_OPCUA_BROWSE_DEPTH or len(nodes) >= MAX_OPCUA_BROWSE_NODES:
+                                    return
+                                if self.browse_cancel_flag.is_set():
+                                    return
+                                children = await node.get_children()
+                                for c in children:
+                                    if self.browse_cancel_flag.is_set() or len(nodes) >= MAX_OPCUA_BROWSE_NODES:
+                                        break
+                                    bn = await c.read_browse_name()
+                                    if bn.Name in ('Server', 'Aliases', 'Locations'):
+                                        continue
+                                    node_class = await c.read_node_class()
+                                    if node_class == ua.NodeClass.Variable:
+                                        nodes.append({
+                                            'name': bn.Name,
+                                            'node_id': str(c.nodeid),
+                                            'parent': parent_name
+                                        })
+                                    elif node_class == ua.NodeClass.Object:
+                                        await _traverse(c, depth + 1, bn.Name)
+
+                            await _traverse(objects, depth=1, parent_name="Objects")
+
+                            if self.browse_cancel_flag.is_set():
+                                return False, "Cancelled", nodes, "การ Browse ถูกยกเลิกโดยผู้ใช้"
+
+                            capped = len(nodes) >= MAX_OPCUA_BROWSE_NODES
+                            if len(nodes) == 0:
+                                return True, "Browse Successful", [], "สแกนสำเร็จแต่ไม่พบตัวแปร (0 Nodes)"
+                            if capped:
+                                return True, "Browse Incomplete", nodes, f"สแกนพบ {len(nodes)} Nodes (PARTIAL/INCOMPLETE: ถึงขีดจำกัดความปลอดภัย {MAX_OPCUA_BROWSE_NODES} Nodes)"
+                            return True, "Browse Successful", nodes, f"สแกนพบ {len(nodes)} Nodes ผ่าน OPC UA สำเร็จ"
+
+                    loop = asyncio.new_event_loop()
+                    try:
+                        success, status_name, found_nodes, msg = loop.run_until_complete(_browse())
+                    finally:
+                        loop.close()
+                except Exception as ex:
+                    success = False
+                    status_name = "Error"
+                    err_str = str(ex)
+                    if password and password in err_str:
+                        err_str = err_str.replace(password, "******")
+                    if "BadUserAccessDenied" in err_str:
+                        msg = "การเข้าถึงล้มเหลว: ถูกปฏิเสธสิทธิ์ (BadUserAccessDenied)"
+                    elif isinstance(ex, (ConnectionRefusedError, asyncio.TimeoutError, OSError)):
+                        msg = f"การเชื่อมต่อหมดเวลาหรือไม่สามารถติดต่อได้ ({type(ex).__name__})"
+                    else:
+                        msg = f"Browse ล้มเหลว: {err_str[:70]}"
+
+            GLib.idle_add(self.apply_opcua_browse_result, success, status_name, found_nodes, msg)
 
         t = threading.Thread(target=worker, daemon=True)
         t.start()
 
-    def apply_opcua_browse_done(self):
+    def apply_opcua_browse_result(self, success, status_name, found_nodes, msg):
         self.btn_browse_opc.set_sensitive(True)
-        self.trigger_rescan()
-        self.lbl_opc_status.set_text(f"🟢 สแกนพบ {len(self.scanned_tags)} Tags จาก WinCC สำเร็จ!")
-        self.lbl_opc_status.remove_css_class('badge-nope')
-        self.lbl_opc_status.remove_css_class('badge-sensor')
-        self.lbl_opc_status.add_css_class('badge-active')
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        self.add_alarm_event(now_str, "OPC_UA", "INFO", "DISCOVERY", f"สแกนพบคลัง Tag WinCC ผ่าน OPC UA ทั้งหมด {len(self.scanned_tags)} Tags สำเร็จ")
+        if success:
+            self.opcua_discovered_nodes = found_nodes  # Strictly separate from self.scanned_tags!
+            if status_name == "Browse Incomplete":
+                self.lbl_opc_status.set_text(f"⚠️ สแกนพบ {len(found_nodes)} Nodes (Incomplete)")
+                self.lbl_opc_status.remove_css_class('badge-nope')
+                self.lbl_opc_status.remove_css_class('badge-active')
+                self.lbl_opc_status.add_css_class('badge-sensor')
+                self.alarm_text.set_text(f"⚠️ {msg}")
+                self.add_alarm_event(now_str, "OPC_UA", "WARN", "DISCOVERY_PARTIAL", msg)
+            else:
+                self.lbl_opc_status.set_text(f"🟢 Browse สำเร็จ ({len(found_nodes)} Nodes)")
+                self.lbl_opc_status.remove_css_class('badge-nope')
+                self.lbl_opc_status.remove_css_class('badge-sensor')
+                self.lbl_opc_status.add_css_class('badge-active')
+                self.alarm_text.set_text(f"🟢 {msg}")
+                self.add_alarm_event(now_str, "OPC_UA", "INFO", "DISCOVERY", f"Browse WinCC OPC UA สำเร็จ ({len(found_nodes)} Nodes)")
+        else:
+            self.lbl_opc_status.set_text(f"❌ {status_name}: {msg[:30]}")
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.remove_css_class('badge-sensor')
+            self.lbl_opc_status.add_css_class('badge-nope')
+            self.alarm_text.set_text(f"❌ {msg}")
+            self.add_alarm_event(now_str, "OPC_UA", "WARN", "DISCOVERY_ERR", f"Browse WinCC OPC UA ล้มเหลว: {msg}")
 
     def on_save_telegram_config(self, _=None):
         token = self.entry_tg_token.get_text().strip()
@@ -2708,6 +2962,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     def on_close_request(self, *args):
         """Gracefully terminate background workers on window close."""
         self.running = False
+        if hasattr(self, 'browse_cancel_flag'):
+            self.browse_cancel_flag.set()
         return False
 
 

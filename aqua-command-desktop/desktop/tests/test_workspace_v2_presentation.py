@@ -79,28 +79,32 @@ class TestWorkspaceV2Presentation(unittest.TestCase):
         self.assertGreaterEqual(contrast_gray, 4.5)
 
     def test_02_layout_proportions_20_48_32(self):
-        """Verify 20% / 48% / 32% layout proportions at 1366 and 1920"""
-        # Test 1366x768
+        """Verify dynamic layout proportions at 1366 and 1920 (giving Center table more space in F1)"""
+        # Test 1366x768 in F1 Monitoring mode (Center gets expanded 54% space)
+        self.ws.current_workspace_mode = 'monitoring'
         w1 = 1366
         self.ws.update_layout_proportions(w1)
-        left_pos1 = self.ws.main_hpaned.get_position()
-        center_pos1 = self.ws.sub_hpaned.get_position()
+        self.assertEqual(self.ws.main_hpaned.get_position(), int(w1 * 0.20))
+        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w1 * 0.54))
 
-        expected_left1 = int(w1 * 0.20)
-        expected_center1 = int(w1 * 0.48)
-        self.assertEqual(left_pos1, expected_left1)
-        self.assertEqual(center_pos1, expected_center1)
+        # Test 1366x768 in F2 Task Manager mode (Center 48%, Right 32% for Task Studio)
+        self.ws.current_workspace_mode = 'task_manager'
+        self.ws.update_layout_proportions(w1)
+        self.assertEqual(self.ws.main_hpaned.get_position(), int(w1 * 0.20))
+        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w1 * 0.48))
 
-        # Test 1920x1080
+        # Test 1920x1080 in F1 Monitoring mode
+        self.ws.current_workspace_mode = 'monitoring'
         w2 = 1920
         self.ws.update_layout_proportions(w2)
-        left_pos2 = self.ws.main_hpaned.get_position()
-        center_pos2 = self.ws.sub_hpaned.get_position()
+        self.assertEqual(self.ws.main_hpaned.get_position(), int(w2 * 0.20))
+        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w2 * 0.54))
 
-        expected_left2 = int(w2 * 0.20)
-        expected_center2 = int(w2 * 0.48)
-        self.assertEqual(left_pos2, expected_left2)
-        self.assertEqual(center_pos2, expected_center2)
+        # Test 1920x1080 in F2 Task Manager mode
+        self.ws.current_workspace_mode = 'task_manager'
+        self.ws.update_layout_proportions(w2)
+        self.assertEqual(self.ws.main_hpaned.get_position(), int(w2 * 0.20))
+        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w2 * 0.48))
 
     def test_03_inspector_collapse_and_restore(self):
         """Verify F1 Inspector collapse and expansion preserves tag selection and state"""

@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "environment": "synthetic_loopback_testbed",
+  "note": "Gate B2 Synthetic Mapping Fixture (Zero Production Data / Generic Testbed)",
+  "mappings": {
+    "High_VSD.CTM13PT_Speed": {
+      "node_id_identifier": "s=Synthetic_Plant_Alpha.CTM13PT.Speed_RPM",
+      "namespace_uri": "urn:aquacmd:gate_b2:synthetic_plant",
+      "data_type": "Float",
+      "unit": "RPM",
+      "provenance": "Synthetic_Fixture",
+      "verified": true
+    },
+    "High_VSD.CTM13PT_Run": {
+      "node_id_identifier": "s=Synthetic_Plant_Alpha.CTM13PT.Running_Status",
+      "namespace_uri": "urn:aquacmd:gate_b2:synthetic_plant",
+      "data_type": "Boolean",
+      "unit": "",
+      "provenance": "Synthetic_Fixture",
+      "verified": true
+    },
+    "High_Analog.Tank01_Level": {
+      "node_id_identifier": "s=Synthetic_Plant_Alpha.Tank01.WaterLevel_m",
+      "namespace_uri": "urn:aquacmd:gate_b2:synthetic_plant",
+      "data_type": "Float",
+      "unit": "m",
+      "provenance": "Synthetic_Fixture",
+      "verified": true
+    },
+    "High1_PT1PT.Flow_Discharge": {
+      "node_id_identifier": "s=Synthetic_Plant_Alpha.Flow_Main_Discharge",
+      "namespace_uri": "urn:aquacmd:gate_b2:synthetic_plant",
+      "data_type": "Float",
+      "unit": "m3/h",
+      "provenance": "Synthetic_Fixture",
+      "verified": true
+    },
+    "High_Analog.Turbidity_Sensor": {
+      "node_id_identifier": "s=Synthetic_Plant_Alpha.RawWater_Turbidity_Faulty",
+      "namespace_uri": "urn:aquacmd:gate_b2:synthetic_plant",
+      "data_type": "Float",
+      "unit": "NTU",
+      "provenance": "Synthetic_Fixture",
+      "verified": true
+    },
+    "High_Analog.Stale_Pressure": {
+      "node_id_identifier": "s=Synthetic_Plant_Alpha.Stale_Pressure_Sensor",
+      "namespace_uri": "urn:aquacmd:gate_b2:synthetic_plant",
+      "data_type": "Float",
+      "unit": "bar",
+      "provenance": "Synthetic_Fixture",
+      "verified": true
+    }
+  }
+}
