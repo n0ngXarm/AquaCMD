@@ -100,10 +100,12 @@ try:
     from .opcua_mapping import NodeIdMapper
     from .opcua_store import ObservableStateStore, Quality
     from .opcua_reader import ManualOpcUaReader
+    from .opcua_pki import PkiManager
 except ImportError:
     from opcua_mapping import NodeIdMapper
     from opcua_store import ObservableStateStore, Quality
     from opcua_reader import ManualOpcUaReader
+    from opcua_pki import PkiManager
 import urllib.request
 import urllib.error
 from urllib.parse import urlparse
@@ -1029,9 +1031,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         project_mapping = Path(__file__).resolve().parent.parent / "config" / "opcua_tag_mapping.json"
         user_mapping = CONFIG_DIR / "opcua_tag_mapping.json"
         mapping_file = user_mapping if user_mapping.exists() else (project_mapping if project_mapping.exists() else Path("config/opcua_tag_mapping.json"))
+        self.pki = PkiManager(pki_dir=CONFIG_DIR / "pki")
+        self.last_quarantined_server_cert = None
+        self.last_quarantined_cert_info = {}
         self.opcua_mapper = NodeIdMapper(mapping_file if mapping_file.exists() else None)
         self.opcua_store = ObservableStateStore()
-        self.opcua_reader = ManualOpcUaReader(self.opcua_mapper, self.opcua_store, CONFIG_DIR)
+        self.opcua_reader = ManualOpcUaReader(self.opcua_mapper, self.opcua_store, CONFIG_DIR, pki=self.pki)
         self.opcua_discovered_nodes = []  # Strictly separated from local catalog
         self.browse_cancel_flag = threading.Event()  # Cooperative cancellation
         self.task_execution_state = "SUSPENDED_SAFETY_GATE_B1"  # Explicit suspension
@@ -2388,6 +2393,54 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.entry_opc_pass.set_hexpand(True)
         cred_box.append(self.entry_opc_pass)
 
+        # Row 3: PKI Client Application Certificate Info
+        lbl_pki_client = Gtk.Label(label="ใบรับรองแอป (Client Cert):")
+        lbl_pki_client.add_css_class('card-header')
+        lbl_pki_client.set_xalign(0.0)
+        opc_grid.attach(lbl_pki_client, 0, 3, 1, 1)
+
+        pki_client_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        opc_grid.attach(pki_client_box, 1, 3, 1, 1)
+
+        c_thumb = "พร้อมสร้างอัตโนมัติ (On Demand)"
+        if self.pki.client_cert_der.is_file():
+            try:
+                c_cert = self.pki.load_cert_from_file(self.pki.client_cert_der)
+                c_thumb = f"RSA-2048 SHA-256 (Thumb: {self.pki.cert_thumbprint(c_cert)[:16]}...)"
+            except Exception:
+                pass
+        self.lbl_pki_client_cert = Gtk.Label(label=f"🔐 {c_thumb}")
+        self.lbl_pki_client_cert.add_css_class('badge-sensor')
+        pki_client_box.append(self.lbl_pki_client_cert)
+
+        # Row 4: Server Certificate Trust State & Manual Approval Action
+        lbl_pki_server = Gtk.Label(label="ความเชื่อถือเซิร์ฟเวอร์ (Server Trust):")
+        lbl_pki_server.add_css_class('card-header')
+        lbl_pki_server.set_xalign(0.0)
+        opc_grid.attach(lbl_pki_server, 0, 4, 1, 1)
+
+        pki_server_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        opc_grid.attach(pki_server_box, 1, 4, 1, 1)
+
+        pki_server_status_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        pki_server_box.append(pki_server_status_bar)
+
+        self.lbl_pki_server_trust = Gtk.Label(label="🛡️ ยังไม่ได้ตรวจสอบ (Standby)")
+        self.lbl_pki_server_trust.add_css_class('badge-standby')
+        pki_server_status_bar.append(self.lbl_pki_server_trust)
+
+        self.btn_trust_quarantined = Gtk.Button(label="🛡️ ยืนยัน Fingerprint & อนุมัติ (Trust Server Cert)")
+        self.btn_trust_quarantined.add_css_class('action-btn')
+        self.btn_trust_quarantined.set_sensitive(False)
+        self.btn_trust_quarantined.connect('clicked', self.on_trust_quarantined_certificate)
+        pki_server_status_bar.append(self.btn_trust_quarantined)
+
+        self.lbl_pki_server_details = Gtk.Label(label="")
+        self.lbl_pki_server_details.set_wrap(True)
+        self.lbl_pki_server_details.set_xalign(0.0)
+        self.lbl_pki_server_details.add_css_class('badge-sensor')
+        pki_server_box.append(self.lbl_pki_server_details)
+
         # Buttons Bar: Test Connection, Browse Tags, Save Settings
         opc_btn_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         opc_btn_bar.set_margin_top(4)
@@ -2577,6 +2630,49 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.lbl_opc_status.add_css_class('badge-nope')
             self.add_alarm_event(now_str, "OPC_UA", "WARN", "CONFIG_ERR", f"บันทึกไฟล์คอนฟิก {OPCUA_CONFIG_FILE} ล้มเหลว")
 
+    def on_trust_quarantined_certificate(self, _=None):
+        if self.last_quarantined_server_cert and Path(self.last_quarantined_server_cert).is_file():
+            trusted_p = self.pki.trust_certificate(Path(self.last_quarantined_server_cert))
+            thumb = self.last_quarantined_cert_info.get("thumbprint", "")
+            self.lbl_pki_server_trust.set_text("🟢 ได้รับความเชื่อถือแล้ว (TRUSTED)")
+            self.lbl_pki_server_trust.remove_css_class('badge-nope')
+            self.lbl_pki_server_trust.remove_css_class('badge-standby')
+            self.lbl_pki_server_trust.add_css_class('badge-active')
+            self.btn_trust_quarantined.set_sensitive(False)
+            if thumb:
+                self.lbl_pki_server_details.set_text(f"Server SHA-256: {thumb} (Verified & Promoted to trusted/certs/)")
+            self.alarm_text.set_text(f"🛡️ อนุมัติความเชื่อถือให้ Server Certificate เรียบร้อยแล้ว: {trusted_p.name}")
+            now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            self.add_alarm_event(now_str, "OPC_UA", "INFO", "TRUSTED", f"ผู้ดูแลระบบยืนยัน Fingerprint และอนุมัติ Server Cert: {trusted_p.name} (SHA-256: {thumb[:16]}...)")
+        else:
+            self.alarm_text.set_text("⚠️ ไม่พบไฟล์ Certificate ที่ถูกกักกันสำหรับอนุมัติ")
+
+    def _update_trust_quarantined_ui(self, can_trust: bool, label_text: str, cert_info: Optional[dict] = None):
+        self.btn_trust_quarantined.set_sensitive(can_trust)
+        self.lbl_pki_server_trust.set_text(label_text)
+        info = cert_info or self.last_quarantined_cert_info or {}
+        if info:
+            thumb = info.get("thumbprint", "Unknown")
+            subj = info.get("subject", "Unknown")
+            uris = ", ".join(info.get("san_uris", [])) or "-"
+            dns_ip = ", ".join(info.get("san_dns", []) + info.get("san_ips", [])) or "-"
+            issuer = info.get("issuer", "Unknown")
+            nb = info.get("not_before", "")[:10]
+            na = info.get("not_after", "")[:10]
+            details = f"Server SHA-256: {thumb}\nSubject: {subj} | Issuer: {issuer}\nURI: {uris} | SAN: {dns_ip} | Valid: {nb} ถึง {na}"
+            self.lbl_pki_server_details.set_text(details)
+        else:
+            self.lbl_pki_server_details.set_text("")
+
+        if can_trust:
+            self.lbl_pki_server_trust.remove_css_class('badge-active')
+            self.lbl_pki_server_trust.remove_css_class('badge-standby')
+            self.lbl_pki_server_trust.add_css_class('badge-nope')
+        elif "TRUSTED" in label_text:
+            self.lbl_pki_server_trust.remove_css_class('badge-nope')
+            self.lbl_pki_server_trust.remove_css_class('badge-standby')
+            self.lbl_pki_server_trust.add_css_class('badge-active')
+
     def on_test_opcua_connection(self, _=None):
         raw_url = self.entry_opc_url.get_text().strip()
         valid, result = validate_opcua_endpoint(raw_url)
@@ -2593,6 +2689,15 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         auth_mode = 'Username' if self.opc_auth_combo.get_selected() == 1 else 'Anonymous'
         username = self.entry_opc_user.get_text().strip()
         password = self.opcua_session_password or self.entry_opc_pass.get_text()
+
+        # Security check: Prohibit username/password over SecurityPolicy#None
+        if auth_mode == 'Username' and sec_policy == 'None':
+            self.lbl_opc_status.set_text("❌ ปฏิเสธ: ไม่อนุญาตให้ส่ง Username/Password ในโหมด None")
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.remove_css_class('badge-standby')
+            self.lbl_opc_status.add_css_class('badge-nope')
+            self.alarm_text.set_text("❌ ข้อผิดพลาดความปลอดภัย: ไม่อนุญาตให้ส่ง Username/Password ผ่านช่องทางที่ไม่เข้ารหัส (SecurityPolicy#None)")
+            return
 
         self.lbl_opc_status.set_text("⏳ กำลังเชื่อมต่อไปยัง WinCC OPC UA Server (Connecting)...")
         self.lbl_opc_status.remove_css_class('badge-nope')
@@ -2612,12 +2717,38 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 try:
                     async def _probe():
                         client = Client(url=url, timeout=4.0)
+                        client.application_uri = self.pki.DEFAULT_APP_URI
+                        parsed = urlparse(url)
+                        expected_host = parsed.hostname or "127.0.0.1"
+
                         if sec_policy == 'Basic256Sha256':
-                            cert_p = CONFIG_DIR / "client_cert.der"
-                            key_p = CONFIG_DIR / "client_key.pem"
-                            if not cert_p.exists() or not key_p.exists():
-                                return False, "Error", "ไม่พบ Certificate สำหรับ Basic256Sha256"
+                            cert_p, key_p = self.pki.ensure_client_certificate()
                             await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
+
+                            server_cert = getattr(client.security_policy, "peer_certificate", None)
+                            if not server_cert:
+                                return False, "BadSecurityChecksFailed", "ไม่พบ Server Certificate ที่รองรับ Basic256Sha256 บนเซิร์ฟเวอร์"
+
+                            server_cert_bytes = server_cert if isinstance(server_cert, bytes) else server_cert.public_bytes(serialization.Encoding.DER)
+                            val_res = self.pki.validate_server_certificate(
+                                cert_bytes=server_cert_bytes,
+                                expected_host=expected_host,
+                                check_trust_store=True,
+                            )
+                            cert_info = val_res.get("cert_info", {})
+                            if not val_res["valid"]:
+                                q_p = val_res.get("quarantine_path")
+                                if q_p:
+                                    self.last_quarantined_server_cert = Path(q_p)
+                                    self.last_quarantined_cert_info = cert_info
+                                    thumb_short = cert_info.get("thumbprint", "")[:16]
+                                    GLib.idle_add(self._update_trust_quarantined_ui, True, f"⚠️ Quarantined (SHA-256: {thumb_short}...)", cert_info)
+                                else:
+                                    GLib.idle_add(self._update_trust_quarantined_ui, False, f"❌ {val_res['status_code']}", cert_info)
+                                return False, val_res["status_code"], val_res["error"]
+                            else:
+                                self.last_quarantined_cert_info = cert_info
+                                GLib.idle_add(self._update_trust_quarantined_ui, False, "🟢 ได้รับความเชื่อถือแล้ว (TRUSTED)", cert_info)
 
                         if auth_mode == 'Username':
                             if not username:
@@ -2627,6 +2758,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
                         async with client:
                             server_name = await client.nodes.server.read_browse_name()
+                            GLib.idle_add(self._update_trust_quarantined_ui, False, "🟢 TRUSTED (เชื่อมต่อสำเร็จ)")
                             return True, "Disconnected", f"เชื่อมต่อ WinCC OPC UA สำเร็จ! (Server Node: {server_name.Name}) [เซสชันปิดแล้ว]"
 
                     loop = asyncio.new_event_loop()
@@ -2641,8 +2773,14 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                     # Privacy: sanitize secret password from any error/traceback string
                     if password and password in err_str:
                         err_str = err_str.replace(password, "******")
-                    if "BadUserAccessDenied" in err_str:
+                    if "BadUserAccessDenied" in err_str or "BadIdentityTokenRejected" in err_str:
                         msg = f"การยืนยันตัวตนล้มเหลว (BadUserAccessDenied) สำหรับผู้ใช้ '{username}'"
+                    elif "BadCertificateUntrusted" in err_str:
+                        msg = "Server Certificate ไม่ได้รับความเชื่อถือ (BadCertificateUntrusted) ถูกกักกันใน rejected/certs/"
+                    elif "BadCertificateHostNameInvalid" in err_str:
+                        msg = "Hostname/IP ใน Certificate ไม่ตรงกับ Endpoint (BadCertificateHostNameInvalid)"
+                    elif "BadCertificateTimeInvalid" in err_str:
+                        msg = "Certificate หมดอายุหรือยังไม่ถึงกำหนดใช้งาน (BadCertificateTimeInvalid)"
                     elif "No matching endpoints" in err_str or "BadSecurityPolicyRejected" in err_str:
                         msg = f"เซิร์ฟเวอร์ปฏิเสธ Security Policy '{sec_policy}'"
                     elif isinstance(ex, (ConnectionRefusedError, asyncio.TimeoutError, OSError)):
@@ -2689,6 +2827,15 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         username = self.entry_opc_user.get_text().strip()
         password = self.opcua_session_password or self.entry_opc_pass.get_text()
 
+        # Security check: Prohibit username/password over SecurityPolicy#None
+        if auth_mode == 'Username' and sec_policy == 'None':
+            self.lbl_opc_status.set_text("❌ ปฏิเสธ: ไม่อนุญาตให้ส่ง Username/Password ในโหมด None")
+            self.lbl_opc_status.remove_css_class('badge-active')
+            self.lbl_opc_status.remove_css_class('badge-standby')
+            self.lbl_opc_status.add_css_class('badge-nope')
+            self.alarm_text.set_text("❌ ข้อผิดพลาดความปลอดภัย: ไม่อนุญาตให้สแกน Tag โดยส่ง Username/Password ผ่านโหมด None")
+            return
+
         self.lbl_opc_status.set_text("⏳ กำลังสแกนหา Tag จาก WinCC ผ่าน OPC UA...")
         self.lbl_opc_status.remove_css_class('badge-nope')
         self.lbl_opc_status.remove_css_class('badge-active')
@@ -2709,12 +2856,38 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 try:
                     async def _browse():
                         client = Client(url=url, timeout=OPCUA_BROWSE_TIMEOUT)
+                        client.application_uri = self.pki.DEFAULT_APP_URI
+                        parsed = urlparse(url)
+                        expected_host = parsed.hostname or "127.0.0.1"
+
                         if sec_policy == 'Basic256Sha256':
-                            cert_p = CONFIG_DIR / "client_cert.der"
-                            key_p = CONFIG_DIR / "client_key.pem"
-                            if not cert_p.exists() or not key_p.exists():
-                                return False, "Error", [], "ไม่พบ Certificate สำหรับ Basic256Sha256"
+                            cert_p, key_p = self.pki.ensure_client_certificate()
                             await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
+
+                            server_cert = getattr(client.security_policy, "peer_certificate", None)
+                            if not server_cert:
+                                return False, "BadSecurityChecksFailed", [], "ไม่พบ Server Certificate ที่รองรับ Basic256Sha256 บนเซิร์ฟเวอร์"
+
+                            server_cert_bytes = server_cert if isinstance(server_cert, bytes) else server_cert.public_bytes(serialization.Encoding.DER)
+                            val_res = self.pki.validate_server_certificate(
+                                cert_bytes=server_cert_bytes,
+                                expected_host=expected_host,
+                                check_trust_store=True,
+                            )
+                            cert_info = val_res.get("cert_info", {})
+                            if not val_res["valid"]:
+                                q_p = val_res.get("quarantine_path")
+                                if q_p:
+                                    self.last_quarantined_server_cert = Path(q_p)
+                                    self.last_quarantined_cert_info = cert_info
+                                    thumb_short = cert_info.get("thumbprint", "")[:16]
+                                    GLib.idle_add(self._update_trust_quarantined_ui, True, f"⚠️ Quarantined (SHA-256: {thumb_short}...)", cert_info)
+                                else:
+                                    GLib.idle_add(self._update_trust_quarantined_ui, False, f"❌ {val_res['status_code']}", cert_info)
+                                return False, val_res["status_code"], [], val_res["error"]
+                            else:
+                                self.last_quarantined_cert_info = cert_info
+                                GLib.idle_add(self._update_trust_quarantined_ui, False, "🟢 ได้รับความเชื่อถือแล้ว (TRUSTED)", cert_info)
 
                         if auth_mode == 'Username':
                             if not username:

@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
 """
-AquaCMD Gate B2 — Manual OPC UA Live Data Reader Module
+AquaCMD Gate B2 + Security Gate — Manual OPC UA Live Data Reader Module
 Executes operator-initiated, non-blocking single-shot reads of verified OPC UA variables.
 Strictly Read-Only (no writes, no subscriptions, no background polling).
-Enforces explicit allowlists, clean session lifecycle, and GLib main thread safety.
+Enforces explicit allowlists, X.509 PKI certificate validation, clean session lifecycle,
+and GLib main thread safety.
 """
 
 import asyncio
 import logging
 import threading
+from urllib.parse import urlparse
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Callable, Dict, Any
 
-from opcua_mapping import NodeIdMapper, TagMapping
-from opcua_store import ObservableStateStore, TagObservation, Quality
+try:
+    from .opcua_mapping import NodeIdMapper, TagMapping
+    from .opcua_store import ObservableStateStore, TagObservation, Quality
+    from .opcua_pki import PkiManager, SUPPORTED_POLICIES, POLICY_NONE
+except ImportError:
+    from opcua_mapping import NodeIdMapper, TagMapping
+    from opcua_store import ObservableStateStore, TagObservation, Quality
+    from opcua_pki import PkiManager, SUPPORTED_POLICIES, POLICY_NONE
 
 logger = logging.getLogger("aquacmd.opcua.reader")
 
@@ -32,13 +40,14 @@ except ImportError:
 
 
 class ManualOpcUaReader:
-    """Manages manual single-shot reads of verified OPC UA tags."""
+    """Manages manual single-shot reads of verified OPC UA tags with strict PKI validation."""
 
     def __init__(self, mapper: NodeIdMapper, store: ObservableStateStore,
-                 config_dir: Optional[Path] = None):
+                 config_dir: Optional[Path] = None, pki: Optional[PkiManager] = None):
         self.mapper = mapper
         self.store = store
-        self.config_dir = config_dir or Path("/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/config")
+        self.config_dir = config_dir or (Path.home() / ".config" / "aqua-command")
+        self.pki = pki or PkiManager(pki_dir=self.config_dir / "pki")
         self._read_lock = threading.Lock()
         self.is_reading = False
 
@@ -76,7 +85,7 @@ class ManualOpcUaReader:
                            timeout: float = 4.0) -> TagObservation:
         """
         Synchronous execution of single-shot read (called inside worker thread).
-        Guarantees clean session setup and teardown.
+        Guarantees clean session setup, PKI certificate validation, and teardown.
         """
         # 1. Concurrency guard: avoid overlapping manual reads
         with self._read_lock:
@@ -111,17 +120,51 @@ class ManualOpcUaReader:
                 self.store.update_observation(obs)
                 return obs
 
-            # 3. Execute Async Reader Loop
+            # 3. Security guardrail: Prohibit plaintext username/password over SecurityPolicy#None
+            if auth_mode == "Username" and sec_policy == "None":
+                err_msg = "INSECURE_CREDENTIAL_TRANSFER: Username authentication prohibited over SecurityPolicy#None."
+                logger.error(err_msg)
+                obs = TagObservation(
+                    tag_name=tag_name,
+                    node_id=mapping.node_id_identifier if mapping else None,
+                    value=None,
+                    quality=Quality.BAD,
+                    arrival_time=datetime.now(timezone.utc),
+                    raw_status_name="BadSecurityChecksFailed",
+                    unit=unit
+                )
+                self.store.update_observation(obs)
+                return obs
+
+            # 4. Execute Async Reader Loop
             async def _do_read():
                 client = Client(url=endpoint_url, timeout=timeout)
+                client.application_uri = self.pki.DEFAULT_APP_URI
+
+                parsed = urlparse(endpoint_url)
+                expected_host = parsed.hostname or "127.0.0.1"
 
                 # Configure Security
                 if sec_policy == "Basic256Sha256":
-                    cert_p = self.config_dir / "client_cert.der"
-                    key_p = self.config_dir / "client_key.pem"
-                    if not cert_p.exists() or not key_p.exists():
-                        raise FileNotFoundError("Certificate or Private Key not found for Basic256Sha256")
+                    cert_p, key_p = self.pki.ensure_client_certificate()
                     await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
+
+                    # Validate Server Certificate discovered by set_security_string
+                    server_cert = getattr(client.security_policy, "peer_certificate", None)
+                    if not server_cert:
+                        raise ua.UaStatusCodeError(ua.StatusCodes.BadSecurityChecksFailed)
+
+                    server_cert_bytes = server_cert if isinstance(server_cert, bytes) else server_cert.public_bytes(serialization.Encoding.DER)
+                    val_res = self.pki.validate_server_certificate(
+                        cert_bytes=server_cert_bytes,
+                        expected_host=expected_host,
+                        check_trust_store=True,
+                    )
+                    if not val_res["valid"]:
+                        status_code_name = val_res["status_code"]
+                        logger.error("Server certificate validation failed: %s (%s)", status_code_name, val_res["error"])
+                        status_code = getattr(ua.StatusCodes, status_code_name, ua.StatusCodes.BadCertificateUntrusted)
+                        raise ua.UaStatusCodeError(status_code)
 
                 # Configure Authentication
                 if auth_mode == "Username":
