@@ -1,0 +1,622 @@
+{
+  "uid": "aqua-f2",
+  "title": "AQUA · F2 Events & Delivery",
+  "description": "AQUA COMMAND read-only Hybrid • RUNTIME • UTC",
+  "editable": false,
+  "schemaVersion": 41,
+  "version": 1,
+  "style": "dark",
+  "tags": [
+    "AQUA",
+    "RUNTIME",
+    "read-only"
+  ],
+  "timezone": "utc",
+  "refresh": "5s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m"
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "### AQUA COMMAND · F2 Task history / delivery diagnostics\nRUNTIME · UTC · Read only · Task creation, rules and enable/disable remain in GTK F2. **SENT describes the existing outbox record; provider acknowledgement remains UNVERIFIED.** Synthetic mock-relay events are excluded."
+      }
+    },
+    {
+      "id": 2,
+      "title": "History freshness / coverage",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 4
+      },
+      "description": "Bounded reads: at most 500 event/outbox/attempt rows per request. No fabricated completion or delivery acknowledgement.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/events?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "range_start",
+              "text": "range_start",
+              "type": "string"
+            },
+            {
+              "selector": "range_end",
+              "text": "range_end",
+              "type": "string"
+            },
+            {
+              "selector": "coverage",
+              "text": "coverage",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Task events over time · one point per persisted event",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 8
+      },
+      "description": "Discrete records only. A point does not imply an alarm remains active. Empty history remains NO DATA.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/events?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "event_marker",
+              "text": "Recorded event",
+              "type": "number"
+            },
+            {
+              "selector": "task_id",
+              "text": "Task",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false,
+            "drawStyle": "points",
+            "showPoints": "always",
+            "pointSize": 6,
+            "lineWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Task execution / event history",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 24,
+        "h": 9
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/events?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "task_id",
+              "text": "task_id",
+              "type": "string"
+            },
+            {
+              "selector": "event_type",
+              "text": "event_type",
+              "type": "string"
+            },
+            {
+              "selector": "severity",
+              "text": "severity",
+              "type": "string"
+            },
+            {
+              "selector": "acknowledgement_state",
+              "text": "acknowledgement_state",
+              "type": "string"
+            },
+            {
+              "selector": "trigger_value",
+              "text": "Trigger",
+              "type": "number"
+            },
+            {
+              "selector": "threshold_value",
+              "text": "Threshold",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Recorded trigger / threshold trends · unit not recorded",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 9
+      },
+      "description": "Raw values recorded with the event. Existing events have no engineering unit or endpoint/session binding. Compare values within the same task; use GTK F2 to inspect rules.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/events?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "trigger_value",
+              "text": "Trigger",
+              "type": "number"
+            },
+            {
+              "selector": "threshold_value",
+              "text": "Threshold",
+              "type": "number"
+            },
+            {
+              "selector": "series",
+              "text": "Task / unit",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false,
+            "drawStyle": "points",
+            "showPoints": "always",
+            "lineWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Notification queue · existing durable outbox",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 9
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/outbox?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "outbox_id",
+              "text": "outbox_id",
+              "type": "string"
+            },
+            {
+              "selector": "event_id",
+              "text": "event_id",
+              "type": "string"
+            },
+            {
+              "selector": "status",
+              "text": "status",
+              "type": "string"
+            },
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "last_attempt_at",
+              "text": "last_attempt_at",
+              "type": "string"
+            },
+            {
+              "selector": "sent_at",
+              "text": "sent_at",
+              "type": "string"
+            },
+            {
+              "selector": "acknowledgement_state",
+              "text": "acknowledgement_state",
+              "type": "string"
+            },
+            {
+              "selector": "attempt_count",
+              "text": "Attempts",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Delivery attempts / failure history",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 43,
+        "w": 24,
+        "h": 9
+      },
+      "description": "Recipient, payload, response bodies, raw errors and all credentials are excluded at the producer boundary.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/attempts?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "attempt_id",
+              "text": "attempt_id",
+              "type": "string"
+            },
+            {
+              "selector": "outbox_id",
+              "text": "outbox_id",
+              "type": "string"
+            },
+            {
+              "selector": "status",
+              "text": "status",
+              "type": "string"
+            },
+            {
+              "selector": "acknowledgement_state",
+              "text": "acknowledgement_state",
+              "type": "string"
+            },
+            {
+              "selector": "http_status",
+              "text": "HTTP status",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    }
+  ],
+  "links": [
+    {
+      "title": "F1 Monitoring",
+      "type": "link",
+      "url": "/d/aqua-f1",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F2 Events",
+      "type": "link",
+      "url": "/d/aqua-f2",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F3 Topology",
+      "type": "link",
+      "url": "/d/aqua-f3",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F4 Host",
+      "type": "link",
+      "url": "/d/aqua-f4",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "Diagnostics",
+      "type": "link",
+      "url": "/d/aqua-diagnostics",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ]
+}

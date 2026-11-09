@@ -1,0 +1,26 @@
+{
+  "stale_ms": 60000,
+  "now": "2026-11-08T09:00:00Z",
+  "nodes_via": {"s11":"sw","s12":"sw","s13":"sw","s14":"sw"},
+  "cases": [
+    {"name":"ไม่เคยตรวจ","built":true,"last":null,"expect":"UNVERIFIED"},
+    {"name":"ยังไม่สร้าง (แม้ไม่มีข้อมูล)","built":false,"last":null,"expect":"NOT_BUILT"},
+    {"name":"ยังไม่สร้าง แต่มีหลักฐานหลงเหลือ ต้องยังเป็น NOT_BUILT","built":false,"last":{"ok":true,"ts":"2026-11-08T08:59:58Z"},"expect":"NOT_BUILT"},
+    {"name":"สำเร็จ 2 วินาทีที่แล้ว","built":true,"last":{"ok":true,"ts":"2026-11-08T08:59:58Z"},"expect":"OK"},
+    {"name":"สำเร็จพอดี 60 วินาที ยังไม่เก่า","built":true,"last":{"ok":true,"ts":"2026-11-08T08:59:00Z"},"expect":"OK"},
+    {"name":"สำเร็จ 61 วินาทีที่แล้ว","built":true,"last":{"ok":true,"ts":"2026-11-08T08:58:59Z"},"expect":"STALE"},
+    {"name":"สำเร็จเมื่อ 40 นาทีที่แล้ว","built":true,"last":{"ok":true,"ts":"2026-11-08T08:20:00Z"},"expect":"STALE"},
+    {"name":"ล้มเหลวล่าสุด","built":true,"last":{"ok":false,"ts":"2026-11-08T08:59:58Z"},"expect":"FAIL"},
+    {"name":"ล้มเหลวเมื่อนานมาแล้ว ยังต้องเป็น FAIL (ไม่ใช่ STALE)","built":true,"last":{"ok":false,"ts":"2026-11-08T07:00:00Z"},"expect":"FAIL"},
+    {"name":"timestamp ในอนาคต (นาฬิกาเพี้ยน) ต้องไม่เป็น OK","built":true,"last":{"ok":true,"ts":"2026-11-08T09:10:00Z"},"expect":"STALE","note":"ให้ถือว่าหลักฐานน่าสงสัย = STALE และแสดงเตือนนาฬิกาเพี้ยน"},
+    {"name":"SCADA ปกติ แต่สวิตช์ FAIL","node":"s13","built":true,"last":{"ok":true,"ts":"2026-11-08T08:59:58Z"},"via_status":"FAIL","expect":"BLOCKED"},
+    {"name":"SCADA ล้มเหลวเอง และสวิตช์ FAIL ด้วย","node":"s13","built":true,"last":{"ok":false,"ts":"2026-11-08T08:59:58Z"},"via_status":"FAIL","expect":"BLOCKED"},
+    {"name":"SCADA ปกติ สวิตช์ STALE (ยังไม่ถือว่าล่ม)","node":"s13","built":true,"last":{"ok":true,"ts":"2026-11-08T08:59:58Z"},"via_status":"STALE","expect":"OK"},
+    {"name":"โหนดยังไม่สร้าง ไม่ถูก BLOCKED","node":"s13","built":false,"last":null,"via_status":"FAIL","expect":"NOT_BUILT"}
+  ],
+  "scenarios": [
+    {"name":"หยุดส่งหลักฐานทั้งระบบ 61 วินาที","expect_banner":"ยังยืนยันไม่ได้ว่าระบบทำงาน"},
+    {"name":"สวิตช์ล่ม","expect":{"sw":"FAIL","s11":"BLOCKED","s12":"BLOCKED","s13":"BLOCKED","s14":"BLOCKED"}},
+    {"name":"ทุกจุดที่สร้างแล้วตอบปกติ","expect_banner":"ทุกจุดที่สร้างแล้วตอบปกติ"}
+  ]
+}

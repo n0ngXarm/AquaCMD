@@ -6,6 +6,7 @@ distinct temporal domains (Source, Server, Arrival), and Industrial Graphite for
 """
 
 import threading
+from copy import copy
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, Optional
 
@@ -29,7 +30,8 @@ class TagObservation:
                  server_time: Optional[datetime] = None,
                  arrival_time: Optional[datetime] = None,
                  raw_status_name: str = "Good",
-                 unit: str = ""):
+                 unit: str = "", endpoint_url: Optional[str] = None,
+                 session_state: str = "UNKNOWN"):
         self.tag_name = tag_name
         self.node_id = node_id
         self.value = value
@@ -39,6 +41,9 @@ class TagObservation:
         self.arrival_time = arrival_time
         self.raw_status_name = raw_status_name
         self.unit = unit
+        # Private receipt binding; sanitized by the optional dashboard projection.
+        self.endpoint_url = endpoint_url
+        self.session_state = session_state
 
     def is_stale(self, max_age_seconds: float = 600.0) -> bool:
         """Determines if the observation is stale based on arrival or source time."""
@@ -153,9 +158,16 @@ class ObservableStateStore:
         with self._lock:
             self._observations[obs.tag_name] = obs
 
+    def snapshot_observations(self):
+        """Copy receipt fields without exposing mutable store entries or holding its lock during I/O."""
+        with self._lock:
+            return tuple(copy(obs) for obs in self._observations.values())
+
     def update_from_datavalue(self, tag_name: str, node_id: str,
                               data_value: Any, unit: str = "",
-                              arrival_time: Optional[datetime] = None) -> TagObservation:
+                              arrival_time: Optional[datetime] = None,
+                              *, endpoint_url: Optional[str] = None,
+                              session_state: str = "UNKNOWN") -> TagObservation:
         """
         Parses an authentic asyncua.ua.DataValue object, extracts genuine value and status,
         and records the observation in the store without data coercion.
@@ -172,7 +184,7 @@ class ObservableStateStore:
                 quality=Quality.BAD,
                 arrival_time=arrival_time,
                 raw_status_name="BadNoData",
-                unit=unit
+                unit=unit, endpoint_url=endpoint_url, session_state=session_state
             )
             self.update_observation(obs)
             return obs
@@ -203,7 +215,7 @@ class ObservableStateStore:
             server_time=getattr(data_value, 'ServerTimestamp', None),
             arrival_time=arrival_time,
             raw_status_name=status_name,
-            unit=unit
+            unit=unit, endpoint_url=endpoint_url, session_state=session_state
         )
         self.update_observation(obs)
         return obs

@@ -1,0 +1,614 @@
+{
+  "uid": "aqua-diagnostics",
+  "title": "AQUA · Native Controls / Diagnostics",
+  "description": "AQUA COMMAND read-only Hybrid • RUNTIME • UTC",
+  "editable": false,
+  "schemaVersion": 41,
+  "version": 1,
+  "style": "dark",
+  "tags": [
+    "AQUA",
+    "RUNTIME",
+    "read-only"
+  ],
+  "timezone": "utc",
+  "refresh": "5s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m"
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "### AQUA COMMAND · F6 / F7 / F8 Diagnostics\nRUNTIME · UTC · Read only · Configure endpoints, trust certificates, control monitoring and edit notifications in **native F6**. Use **native F7** for authorized refresh/probes. Grafana provides no industrial or notification control."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Producer health / freshness",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/health",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "captured_at",
+              "text": "captured_at",
+              "type": "string"
+            },
+            {
+              "selector": "stream",
+              "text": "stream",
+              "type": "string"
+            },
+            {
+              "selector": "listener",
+              "text": "listener",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "OPC UA / certificate evidence",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 9
+      },
+      "description": "Only validated current evidence is exported. Expiration is shown only when the existing owner reports EXPIRED. Full PKI details and trust decisions remain in native F6.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/devices",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "alias",
+              "text": "alias",
+              "type": "string"
+            },
+            {
+              "selector": "connection_status",
+              "text": "connection_status",
+              "type": "string"
+            },
+            {
+              "selector": "session_state",
+              "text": "session_state",
+              "type": "string"
+            },
+            {
+              "selector": "tcp_status",
+              "text": "tcp_status",
+              "type": "string"
+            },
+            {
+              "selector": "certificate_status",
+              "text": "certificate_status",
+              "type": "string"
+            },
+            {
+              "selector": "identity_source",
+              "text": "identity_source",
+              "type": "string"
+            },
+            {
+              "selector": "observed_at",
+              "text": "observed_at",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Polling diagnostics · existing counters",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 24,
+        "h": 6
+      },
+      "description": "These are polling-cycle counters. They do not imply a specific number of reads or deliveries.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/worker",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "poll_count",
+              "text": "poll_count",
+              "type": "number"
+            },
+            {
+              "selector": "successful_polls",
+              "text": "successful_polls",
+              "type": "number"
+            },
+            {
+              "selector": "failed_polls",
+              "text": "failed_polls",
+              "type": "number"
+            },
+            {
+              "selector": "last_poll_duration_ms",
+              "text": "last_poll_duration_ms",
+              "type": "number"
+            },
+            {
+              "selector": "jitter_ms",
+              "text": "jitter_ms",
+              "type": "number"
+            },
+            {
+              "selector": "reconnect_attempts",
+              "text": "reconnect_attempts",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "F7 · observed authorized receipts",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 9
+      },
+      "description": "Up to 500 existing receipts sampled by the owner projection. Each keeps its own operation/target/status. This view never starts a probe and is not a complete network scan audit.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/probes",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "device_id",
+              "text": "device_id",
+              "type": "string"
+            },
+            {
+              "selector": "event_type",
+              "text": "event_type",
+              "type": "string"
+            },
+            {
+              "selector": "status",
+              "text": "status",
+              "type": "string"
+            },
+            {
+              "selector": "target_ref",
+              "text": "target_ref",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "F7 · local catalog refresh history",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 7
+      },
+      "description": "Local catalog entries are configuration inventory, not live tag observations.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/refresh",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "event_type",
+              "text": "event_type",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            },
+            {
+              "selector": "catalog_count",
+              "text": "Catalog entries",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Delivery health · last hour of existing outbox",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 24,
+        "h": 8
+      },
+      "description": "Generic SENT is not provider acknowledgement. Payloads, recipients, tokens, raw errors and certificate keys never enter this view.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/outbox?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "status",
+              "text": "status",
+              "type": "string"
+            },
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "last_attempt_at",
+              "text": "last_attempt_at",
+              "type": "string"
+            },
+            {
+              "selector": "acknowledgement_state",
+              "text": "acknowledgement_state",
+              "type": "string"
+            },
+            {
+              "selector": "attempt_count",
+              "text": "Attempts",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    }
+  ],
+  "links": [
+    {
+      "title": "F1 Monitoring",
+      "type": "link",
+      "url": "/d/aqua-f1",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F2 Events",
+      "type": "link",
+      "url": "/d/aqua-f2",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F3 Topology",
+      "type": "link",
+      "url": "/d/aqua-f3",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F4 Host",
+      "type": "link",
+      "url": "/d/aqua-f4",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "Diagnostics",
+      "type": "link",
+      "url": "/d/aqua-diagnostics",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ]
+}

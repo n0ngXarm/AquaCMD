@@ -188,7 +188,9 @@ class ManualOpcUaReader:
             loop = asyncio.new_event_loop()
             try:
                 node_id_str, data_value = loop.run_until_complete(_do_read())
-                obs = self.store.update_from_datavalue(tag_name, node_id_str, data_value, unit=unit)
+                obs = self.store.update_from_datavalue(
+                    tag_name, node_id_str, data_value, unit=unit,
+                    endpoint_url=endpoint_url, session_state="CLOSED")
                 return obs
             except Exception as ex:
                 err_str = str(ex)

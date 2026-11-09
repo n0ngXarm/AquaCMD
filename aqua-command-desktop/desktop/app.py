@@ -132,10 +132,14 @@ USE_UNIFIED_WORKSPACE = True
 try:
     from .f1_overview import F1StationExplorerView
     from .f2_tasks import F2TaskManagerView
+    from .f3_api_view import F3ApiView
+    from .f3_evidence import local_snapshot_state
     from .workspace import AquaUnifiedWorkspaceView
 except ImportError:
     from f1_overview import F1StationExplorerView
     from f2_tasks import F2TaskManagerView
+    from f3_api_view import F3ApiView
+    from f3_evidence import local_snapshot_state
     from workspace import AquaUnifiedWorkspaceView
 
 
@@ -159,9 +163,9 @@ OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 def save_atomic_json(filepath, data):
     """Crash-resistant atomic file save: writes to .tmp before replacing target."""
     p = Path(filepath)
-    p.parent.mkdir(parents=True, exist_ok=True)
     temp_p = p.with_suffix('.tmp')
     try:
+        p.parent.mkdir(parents=True, exist_ok=True)
         with open(temp_p, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
             f.flush()
@@ -235,7 +239,7 @@ def load_telegram_config():
     }
 
 def save_telegram_config(cfg):
-    save_atomic_json(TELEGRAM_CONFIG_FILE, cfg)
+    return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg)
 
 DEFAULT_TOPOLOGY = {
     "scada_lan": {
@@ -261,8 +265,8 @@ DEFAULT_TOPOLOGY = {
                 "ip": "192.168.1.11",
                 "mac": "00:1E:67:D8:11:A1",
                 "role": "สถานีสูบน้ำแรงต่ำ 1 (แม่น้ำปิง / ชลประทาน)",
-                "status": "ONLINE (ในวงแลนปิด)",
-                "ping": "< 1 ms"
+                "status": "CONFIGURED (Reachability UNKNOWN)",
+                "ping": "—"
             },
             {
                 "id": "PC2",
@@ -272,8 +276,8 @@ DEFAULT_TOPOLOGY = {
                 "ip": "192.168.1.12",
                 "mac": "00:1E:67:D8:12:B2",
                 "role": "สถานีสูบน้ำแรงต่ำ 3 (สถานีผลิตน้ำอุโมงค์)",
-                "status": "ONLINE (ในวงแลนปิด)",
-                "ping": "< 1 ms"
+                "status": "CONFIGURED (Reachability UNKNOWN)",
+                "ping": "—"
             },
             {
                 "id": "PC3",
@@ -283,17 +287,17 @@ DEFAULT_TOPOLOGY = {
                 "ip": "192.168.1.13",
                 "mac": "00:1E:67:D8:13:C3",
                 "role": "สถานีสูบส่งน้ำแรงสูง VSD (High_VSD #13-#17)",
-                "status": "ONLINE (ในวงแลนปิด)",
-                "ping": "< 1 ms"
+                "status": "CONFIGURED (Reachability UNKNOWN)",
+                "ping": "—"
             }
         ]
     },
     "gateway_bridge": {
         "id": "PC4",
-        "name": "PC4 · Gateway (AQUA COMMAND — เครื่องนี้)",
-        "internet_status": "มี Internet",
-        "has_internet": True,
-        "badge": "🟢 มี Internet (เชื่อม 2 วงแลน Dual-Homed)",
+        "name": "PC4 · Collector (AQUA COMMAND — เครื่องนี้)",
+        "internet_status": "UNKNOWN",
+        "has_internet": False,
+        "badge": "Dual-Homed Node (เชื่อมต่อ 2 เครือข่ายแบบแยกอิสระ)",
         "nic_scada": {
             "name": "ขาใน SCADA LAN",
             "iface": "enp0s31f6",
@@ -314,7 +318,7 @@ DEFAULT_TOPOLOGY = {
     "internet_wan": {
         "zone_name": "เครือข่ายเราเตอร์ภายนอก (Internet Gateway WAN)",
         "subtitle": "เราเตอร์ 4G LTE TrueMove H (192.168.100.1) | SSID: Nong_Arm | พร้อมส่งข้อมูลออกภายนอก",
-        "has_internet": True,
+        "has_internet": False,
         "router": {
             "name": "Router Internet",
             "sub1": "TrueMove H 4G LTE Router",
@@ -323,41 +327,41 @@ DEFAULT_TOPOLOGY = {
             "operator": "TrueMove H LTE",
             "netmask": "255.255.255.0",
             "dhcp": "เปิดใช้งาน (DHCP Enabled)",
-            "status": "🟢 มีอินเทอร์เน็ตพร้อมส่งข้อมูลภายนอก",
+            "status": "CONFIGURED (Reachability UNKNOWN)",
             "mac": "e8:49:43:21:33:5b"
         },
         "clients": [
             {
                 "ip": "192.168.100.177",
                 "mac": "ba:7a:37:fe:60:6a",
-                "name": "PC4 · Gateway (เครื่องประมวลผล AQUA COMMAND นี้)",
+                "name": "PC4 · Collector (เครื่องประมวลผล AQUA COMMAND นี้)",
                 "is_this_pc": True,
-                "status": "ONLINE (Host)",
-                "ping": "0.1 ms"
+                "status": "CONFIGURED (Host)",
+                "ping": "—"
             },
             {
                 "ip": "192.168.100.135",
                 "mac": "5e:86:55:78:8a:77",
-                "name": "Client เครื่องลูกข่าย 1 (Active Wi-Fi Client)",
+                "name": "Client เครื่องลูกข่าย 1 (Unverified Client)",
                 "is_this_pc": False,
-                "status": "ONLINE",
-                "ping": "9.0 ms"
+                "status": "UNKNOWN (Unverified)",
+                "ping": "—"
             },
             {
                 "ip": "192.168.100.150",
                 "mac": "f4:d1:08:56:83:bc",
-                "name": "Client เครื่องลูกข่าย 2 (Active Device ในวง)",
+                "name": "Client เครื่องลูกข่าย 2 (Unverified Client)",
                 "is_this_pc": False,
-                "status": "ONLINE",
-                "ping": "12.4 ms"
+                "status": "UNKNOWN (Unverified)",
+                "ping": "—"
             },
             {
                 "ip": "192.168.100.178",
                 "mac": "50:2e:91:3f:77:30",
-                "name": "Client เครื่องลูกข่าย 3 (Active Device ในวง)",
+                "name": "Client เครื่องลูกข่าย 3 (Unverified Client)",
                 "is_this_pc": False,
-                "status": "ONLINE",
-                "ping": "15.1 ms"
+                "status": "UNKNOWN (Unverified)",
+                "ping": "—"
             }
         ]
     }
@@ -522,7 +526,7 @@ def ping_target_real(ip, timeout=1.0):
         return "nope"
 
 
-def read_real_machine_data():
+def read_real_machine_data(network_state=None):
     """Reads actual host system metrics safely cross-platform (Linux & Windows 11)."""
     hostname = socket.gethostname()
     os_name = f"{platform.system()} {platform.release()}"
@@ -655,19 +659,16 @@ def read_real_machine_data():
     except Exception:
         pass
 
-    # 5. IP Address
+    # 5. Reuse the background F3 snapshot; GTK metrics refresh never queries D-Bus/netlink.
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.settimeout(0.15)
-        s.connect(('8.8.8.8', 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-        data['ip_lan'] = f"{local_ip} (Active Network)"
+        network = network_state or {}
+        interfaces = network.get('interfaces', {})
+        preferred = interfaces.get(network.get('default_gw_iface'), {}).get('ipv4')
+        assigned = preferred or next((row.get('ipv4') for row in interfaces.values() if row.get('ipv4')), None)
+        status = local_snapshot_state(network)
+        data['ip_lan'] = f"{assigned} (Assigned locally)" if assigned and status == 'OBSERVED_LOCAL' else f'STALE: {assigned}' if assigned and status == 'STALE' else 'NOT OBSERVED'
     except Exception:
-        try:
-            data['ip_lan'] = socket.gethostbyname(socket.gethostname())
-        except Exception:
-            data['ip_lan'] = '127.0.0.1'
+        data['ip_lan'] = 'NOT OBSERVED'
 
     # 6. Uptime
     if IS_WINDOWS:
@@ -705,10 +706,10 @@ def load_tasks():
                 return json.load(f)
         except Exception:
             pass
-    return DEFAULT_TASKS
+    return list(DEFAULT_TASKS)
 
 def save_tasks(tasks):
-    save_atomic_json(TASKS_CONFIG_FILE, tasks)
+    return save_atomic_json(TASKS_CONFIG_FILE, tasks)
 
 
 # ---------------------------------------------------------
@@ -1026,6 +1027,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 print(f"[WS_CSS] Warning loading workspace_style.css: {e}", file=sys.stderr)
 
         # State - Fresh Default State (Preload verified catalog if file exists for instant readiness)
+        self.config_dir = CONFIG_DIR
         self.scanned_tags = []
         if DEFAULT_WINCC_EXPORT.exists():
             self.scanned_tags = scan_wincc_tags(DEFAULT_WINCC_EXPORT)
@@ -1069,7 +1071,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.current_task_idx = 0
         self.tag_checkboxes = {}
         self.selected_tags_for_task = set()
-        self.internet_online = True
+        self.internet_online = None  # Unknown until an explicitly authorized check supplies evidence.
 
         # Real Live Probed Status Cache
         self.live_status = {
@@ -1125,7 +1127,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.pill_scan.add_css_class('badge-active')
         topbar.append(self.pill_scan)
 
-        self.pill_scada_ip = Gtk.Label(label="SCADA: Standby (Offline)")
+        self.pill_scada_ip = Gtk.Label(label="Local NIC: NOT VERIFIED")
         self.pill_scada_ip.add_css_class('badge-standby')
         topbar.append(self.pill_scada_ip)
 
@@ -1133,8 +1135,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.pill_readonly.add_css_class('badge-readonly')
         topbar.append(self.pill_readonly)
 
-        self.pill_net = Gtk.Label(label="Internet: Online")
-        self.pill_net.add_css_class('badge-gateway')
+        self.pill_net = Gtk.Label(label="Internet: ยังไม่ได้ตรวจสอบ")
+        self.pill_net.add_css_class('badge-standby')
         topbar.append(self.pill_net)
 
         self.clock_label = Gtk.Label(label="--:--:--")
@@ -1171,6 +1173,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         # 3. Stack Pages
         self.stack = Gtk.Stack()
+        self.stack.set_hhomogeneous(False)
         self.stack.set_vexpand(True)
         self.stack.set_hexpand(True)
         self.stack.set_transition_type(Gtk.StackTransitionType.NONE)
@@ -1191,16 +1194,22 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         self.nav_btns = {}
         pages_def = [
-            ('overview', 'F1  ภาพรวมสถานีสูบน้ำ'),
-            ('tasks', 'F2  ตัวจัดการ Task (WinCC Task Manager)'),
+            ('overview', 'F1  ภาพรวม Tag' if USE_UNIFIED_WORKSPACE else 'F1  ภาพรวมสถานีสูบน้ำ'),
+            ('tasks', 'F2  จัดการ Task' if USE_UNIFIED_WORKSPACE else 'F2  ตัวจัดการ Task (WinCC Task Manager)'),
             ('network', 'F3  ผังเครือข่าย 2 วงแลน & หลายเราเตอร์'),
             ('machine', 'F4  ข้อมูลเครื่องจริง (Host)'),
             ('tags', f"F5  คลัง Tag ที่สแกนพบ ({len(self.scanned_tags)} Tags)"),
-            ('alarms', 'F6  เชื่อมต่อ WinCC OPC UA & Telegram'),
+            ('alarms', 'F6  ตั้งค่าการเชื่อมต่อ'),
         ]
 
         group_btn = None
         for key, text in pages_def:
+            if USE_UNIFIED_WORKSPACE and key == 'tasks':
+                button = Gtk.Button(label=text)
+                button.add_css_class('fkey-btn')
+                button.connect('clicked', lambda _: self.activate_workspace_mode('task_manager'))
+                fkey_bar.append(button)
+                continue
             b = Gtk.ToggleButton(label=text)
             b.add_css_class('fkey-btn')
             if isinstance(b.get_child(), Gtk.Label):
@@ -1212,8 +1221,6 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 b.set_active(True)
             if USE_UNIFIED_WORKSPACE and key == 'overview':
                 b.connect('toggled', lambda btn: self.activate_workspace_mode('monitoring') if btn.get_active() else None)
-            elif USE_UNIFIED_WORKSPACE and key == 'tasks':
-                b.connect('toggled', lambda btn: self.activate_workspace_mode('task_manager') if btn.get_active() else None)
             else:
                 b.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
             fkey_bar.append(b)
@@ -1259,12 +1266,26 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.running = False
         self.task_thread = None  # Startup Safety: zero background task threads on window init
 
+        # Optional consumer projection; no new industrial client or control ownership.
+        self.hybrid_ui = None
+        try:
+            from observability.ui import DashboardUI
+            self.hybrid_ui = DashboardUI(self)
+            topbar.append(self.hybrid_ui.menu)
+            if self.hybrid_ui.bridge:
+                self.render_tags_page_grid()
+        except Exception:
+            pass  # Grafana integration failure cannot prevent native startup.
+
     def tick_clock(self):
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         self.clock_label.set_text(now_str)
         return True
 
     def switch_to_tab(self, tab_key):
+        if USE_UNIFIED_WORKSPACE and tab_key == 'tasks':
+            self.activate_workspace_mode('task_manager')
+            return
         self.stack.set_visible_child_name(tab_key)
         if tab_key in self.nav_btns:
             self.nav_btns[tab_key].set_active(True)
@@ -1285,11 +1306,17 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.render_tags_page_grid()
         # Safety: F7 strictly refreshes local catalog; zero automated network probing
         self.update_real_data()
+        if getattr(self, 'hybrid_ui', None) and self.hybrid_ui.bridge:
+            self.hybrid_ui.bridge.record_refresh(len(self.scanned_tags))
 
     def activate_workspace_mode(self, mode):
         self.stack.set_visible_child_name('overview')
         if hasattr(self, 'unified_workspace'):
-            self.unified_workspace.set_workspace_mode(mode)
+            if mode == 'task_manager':
+                self.nav_btns['overview'].set_active(True)
+                self.unified_workspace.open_task_dialog()
+            else:
+                self.unified_workspace.set_workspace_mode('monitoring')
 
     # ---------------------------------------------------------
     # TAB 1: Real WinCC Plant Groups Overview (F1 Industrial Precision / Unified Workspace)
@@ -1353,13 +1380,13 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.f2_tasks_view.on_create_new_task(None)
 
     def save_tasks(self):
-        save_tasks(self.tasks)
-        return True
+        return save_tasks(self.tasks)
 
     def save_all_tasks(self):
-        save_tasks(self.tasks)
+        saved = self.save_tasks()
         if hasattr(self, 'alarm_text'):
-            self.alarm_text.set_text("บันทึกการตั้งค่า Task ทั้งหมดเรียบร้อยแล้ว")
+            self.alarm_text.set_text("บันทึกการตั้งค่า Task ทั้งหมดเรียบร้อยแล้ว" if saved else "บันทึกการตั้งค่า Task ไม่สำเร็จ")
+        return saved
 
     def add_selected_tags_to_current_task(self, _=None):
         if hasattr(self, 'f2_tasks_view'):
@@ -1370,373 +1397,17 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.f2_tasks_view.on_remove_tag_from_task(tag_name)
 
     # ---------------------------------------------------------
-    # TAB 3: Dual-Router Network Topology & Multi-IP View
+    # TAB 3: Dual-Router Network Topology & Multi-IP View (F3 Reconstructed)
     # ---------------------------------------------------------
     def build_network_topology_page(self):
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_hexpand(True)
-        scrolled.set_vexpand(True)
-
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        vbox.set_margin_start(12)
-        vbox.set_margin_end(12)
-        vbox.set_margin_top(8)
-        vbox.set_margin_bottom(8)
-        scrolled.set_child(vbox)
-
-        # 1. Clean Top Header Bar (No squished colored pills)
-        top_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        top_bar.add_css_class('wincc-group')
-        vbox.append(top_bar)
-
-        top_title = Gtk.Label(label="🌐 ผังเครือข่าย 2 ฝั่ง: วงแลน SCADA ภายใน (ไม่มีเน็ต) VS วงเราเตอร์ภายนอก (มีเน็ต)")
-        top_title.add_css_class('group-title')
-        top_bar.append(top_title)
-
-        spacer = Gtk.Box()
-        spacer.set_hexpand(True)
-        top_bar.append(spacer)
-
-        rescan_net_btn = Gtk.Button(label="🔍 สแกนสด (Scan Now)")
-        rescan_net_btn.add_css_class('action-btn')
-        rescan_net_btn.connect('clicked', lambda _: self.trigger_single_scan(silent=False))
-        top_bar.append(rescan_net_btn)
-
-        config_net_btn = Gtk.Button(label="⚙️ ปรับแต่ง IP (Config IP)")
-        config_net_btn.add_css_class('action-btn')
-        config_net_btn.connect('clicked', self.show_network_config_dialog)
-        top_bar.append(config_net_btn)
-
-        opc_net_btn = Gtk.Button(label="🏭 เชื่อมต่อ WinCC OPC UA")
-        opc_net_btn.add_css_class('action-btn')
-        opc_net_btn.connect('clicked', lambda _: self.switch_to_tab('alarms'))
-        top_bar.append(opc_net_btn)
-
-        reset_def_btn = Gtk.Button(label="🔄 คืนค่าเริ่มต้น (Reset Default)")
-        reset_def_btn.add_css_class('action-btn')
-        reset_def_btn.connect('clicked', lambda _: self.reset_to_factory_defaults())
-        top_bar.append(reset_def_btn)
-
-        # 2. Ultra-Clean Topology Canvas
-        canvas_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        canvas_group.add_css_class('wincc-group')
-        vbox.append(canvas_group)
-
-        self.topology_canvas = Gtk.DrawingArea()
-        self.topology_canvas.set_content_width(1100)
-        self.topology_canvas.set_content_height(480)
-        self.topology_canvas.set_draw_func(self.draw_topology_canvas)
-        canvas_group.append(self.topology_canvas)
-
-        # 3. Simple & Clean IP Table (5 Columns, No redundant duplicate cards!)
-        tbl_group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        tbl_group.add_css_class('wincc-group')
-        vbox.append(tbl_group)
-
-        tbl_title = Gtk.Label(label="📋 ตารางสรุปหมายเลข IP และสถานะทุกเครื่องในระบบ (IP Summary)")
-        tbl_title.add_css_class('group-title')
-        tbl_title.set_xalign(0.0)
-        tbl_group.append(tbl_title)
-
-        self.net_grid = Gtk.Grid(column_spacing=1, row_spacing=1)
-        self.net_grid.add_css_class('data-table')
-        tbl_group.append(self.net_grid)
-
-        self.render_network_table()
-
-        self.stack.add_named(scrolled, 'network')
-
-    # ---------------------------------------------------------
-    # Cairo Drawing for Network Topology Canvas
-    # ---------------------------------------------------------
-    def draw_topology_canvas(self, area, cr, width, height):
-        # 1. Dark Clean Industrial Background
-        cr.set_source_rgb(0.11, 0.13, 0.16)
-        cr.paint()
-
-        data = self.topology_data
-        scada_info = data.get('scada_lan', {})
-        gw_info = data.get('gateway_bridge', {})
-        wan_info = data.get('internet_wan', {})
-        rt_info = wan_info.get('router', {})
-
-        # Live Real Status Probes
-        scada_carrier = self.live_status.get('scada_carrier', False)
-        pings = self.live_status.get('pings', {})
-
-        # Zone 1 (Left): Isolated SCADA LAN
-        draw_rounded_rect(cr, 20, 20, 520, height - 40, 12)
-        cr.set_source_rgba(0.15, 0.17, 0.22, 0.7)
-        cr.fill_preserve()
-        cr.set_source_rgba(0.30, 0.40, 0.52, 0.6)
-        cr.set_line_width(1.5)
-        cr.stroke()
-
-        # Zone 2 (Right): Internet Router WAN
-        z2_w = max(400, width - 580)
-        draw_rounded_rect(cr, 560, 20, z2_w, height - 40, 12)
-        cr.set_source_rgba(0.13, 0.19, 0.16, 0.7)
-        cr.fill_preserve()
-        cr.set_source_rgba(0.20, 0.60, 0.38, 0.6)
-        cr.set_line_width(1.5)
-        cr.stroke()
-
-        # Zone Headers
-        draw_pango_text(cr, "🔒 วงแลนภายใน SCADA (มีวงแลนของตนเอง — ไม่มีเน็ต)", 
-                        40, 35, "Noto Sans Thai, Sans Bold 13", (0.65, 0.82, 1.0))
-        draw_pango_text(cr, f"Subnet: {scada_info.get('subnet', '192.168.1.0/24')}  |  Air-Gapped ปลอดภัย 100% ไม่ต่ออินเทอร์เน็ต", 
-                        40, 58, "Noto Sans Thai, Sans 10", (0.75, 0.80, 0.88))
-
-        draw_pango_text(cr, "🌐 วงเราเตอร์ภายนอก (เราเตอร์ 4G LTE — มีเน็ต)", 
-                        580, 35, "Noto Sans Thai, Sans Bold 13", (0.40, 0.95, 0.65))
-        rt_ip = rt_info.get('gateway_ip', '192.168.100.1')
-        draw_pango_text(cr, f"Router Gateway: {rt_ip}  |  SSID: {rt_info.get('ssid', 'Nong_Arm')}  (พร้อมส่งข้อมูล)", 
-                        580, 58, "Noto Sans Thai, Sans 10", (0.75, 0.90, 0.82))
-
-        # Coordinates
-        pc_x = 35
-        pc_w = 235
-        pc_h = 75
-        pc_y = [90, 185, 280]
-
-        bus_x = 295
-
-        sw_x = 330
-        sw_y = 170
-        sw_w = 195
-        sw_h = 105
-
-        gw_x = 205
-        gw_y = 375
-        gw_w = 345
-        gw_h = 75
-
-        rt_x = 600
-        rt_y = 130
-        rt_w = 270
-        rt_h = 95
-
-        cl_x = 600
-        cl_y = 255
-        cl_w = min(460, z2_w - 60)
-        cl_h = 175
-
-        # 1. Connecting Bus Line: PC1-3 to LAN Switch
-        cr.set_line_width(2.5)
-        cr.set_source_rgb(0.40, 0.50, 0.65)
-        bus_x = 285
-
-        for y in pc_y:
-            cr.move_to(pc_x + pc_w, y + pc_h / 2)
-            cr.line_to(bus_x, y + pc_h / 2)
-            cr.stroke()
-
-        cr.move_to(bus_x, pc_y[0] + pc_h / 2)
-        cr.line_to(bus_x, pc_y[2] + pc_h / 2)
-        cr.stroke()
-
-        cr.move_to(bus_x, sw_y + sw_h / 2)
-        cr.line_to(sw_x, sw_y + sw_h / 2)
-        cr.stroke()
-
-        # 2. Connecting Lines: Green Links
-        cr.set_line_width(3.0)
-        cr.set_source_rgb(0.0, 0.90, 0.45) # Bright green
-
-        # Line from LAN Switch down to PC4 Gateway
-        cr.move_to(sw_x + sw_w / 2, sw_y + sw_h)
-        cr.line_to(sw_x + sw_w / 2, 350)
-        cr.line_to(gw_x + 130, 350)
-        cr.line_to(gw_x + 130, gw_y)
-        cr.stroke()
-
-        # Line from PC4 Gateway to Router Internet
-        cr.move_to(gw_x + gw_w, gw_y + gw_h / 2)
-        cr.line_to(580, gw_y + gw_h / 2)
-        cr.line_to(580, rt_y + rt_h / 2)
-        cr.line_to(rt_x, rt_y + rt_h / 2)
-        cr.stroke()
-
-        # Line from Router down to Clients box
-        cr.set_source_rgba(0.2, 0.80, 0.50, 0.8)
-        cr.set_line_width(2.0)
-        cr.move_to(rt_x + rt_w / 2, rt_y + rt_h)
-        cr.line_to(rt_x + rt_w / 2, cl_y)
-        cr.stroke()
-
-        # 3. Draw Nodes: PC1, PC2, PC3
-        scada_devices = scada_info.get('devices', [])
-        for i, dev in enumerate(scada_devices[:3]):
-            y = pc_y[i]
-            dev_ip = dev.get('ip', '192.168.1.x')
-            draw_rounded_rect(cr, pc_x, y, pc_w, pc_h, 8)
-            cr.set_source_rgb(0.16, 0.19, 0.25)
-            cr.fill_preserve()
-            cr.set_source_rgb(0.35, 0.45, 0.58)
-            cr.set_line_width(1.8)
-            cr.stroke()
-
-            draw_pango_text(cr, dev.get('name', 'PC · SCADA'), pc_x + 14, y + 10, "Noto Sans Thai, Sans Bold 12", (1.0, 1.0, 1.0))
-            draw_pango_text(cr, "⚠️ ไม่มี Internet", pc_x + 14, y + 31, "Noto Sans Thai, Sans Bold 10", (1.0, 0.45, 0.45))
-            role_short = dev.get('role', '').split('(')[0].strip()
-            draw_pango_text(cr, f"IP: {dev_ip}  •  {role_short}", pc_x + 14, y + 50, "Noto Sans Thai, Sans 9.5", (0.55, 0.80, 1.0))
-
-        # 4. Draw Node: LAN Switch
-        sw = scada_info.get('switch', {})
-        draw_rounded_rect(cr, sw_x, sw_y, sw_w, sw_h, 8)
-        cr.set_source_rgb(0.15, 0.20, 0.28)
-        cr.fill_preserve()
-        cr.set_source_rgb(0.40, 0.55, 0.75)
-        cr.set_line_width(2.0)
-        cr.stroke()
-
-        draw_pango_text(cr, f"🖧 {sw.get('name', 'LAN Switch')}", sw_x + 15, sw_y + 12, "Noto Sans Thai, Sans Bold 12.5", (1.0, 1.0, 1.0))
-        draw_pango_text(cr, "เครือข่ายภายใน", sw_x + 15, sw_y + 35, "Noto Sans Thai, Sans 11", (0.80, 0.90, 1.0))
-        draw_pango_text(cr, "ไม่ใช่อินเทอร์เน็ต", sw_x + 15, sw_y + 55, "Noto Sans Thai, Sans Bold 11", (1.0, 0.70, 0.45))
-        draw_pango_text(cr, f"Switch 8-Port ({sw.get('ip', '192.168.1.254')})", sw_x + 15, sw_y + 76, "Noto Sans Thai, Sans 9", (0.60, 0.75, 0.90))
-
-        # 5. Draw Node: PC4 · Gateway (THE BRIDGING NODE — BOLD GREEN BORDER!)
-        nic_in = gw_info.get('nic_scada', {})
-        nic_out = gw_info.get('nic_wan', {})
-        draw_rounded_rect(cr, gw_x, gw_y, gw_w, gw_h, 10)
-        cr.set_source_rgb(0.10, 0.20, 0.15)
-        cr.fill_preserve()
-        cr.set_source_rgb(0.0, 0.90, 0.45) # Vivid Green
-        cr.set_line_width(2.8)
-        cr.stroke()
-
-        draw_pango_text(cr, f"💻 {gw_info.get('name', 'PC4 · Gateway')}", gw_x + 14, gw_y + 10, "Noto Sans Thai, Sans Bold 12", (1.0, 1.0, 1.0))
-        draw_pango_text(cr, "🟢 มี Internet (บริดจ์ 2 วงแลน)", gw_x + 14, gw_y + 31, "Noto Sans Thai, Sans Bold 10.5", (0.0, 0.95, 0.50))
-        draw_pango_text(cr, f"LAN ขาใน: {nic_in.get('ip', '192.168.1.14')}  |  WAN ขานอก: {nic_out.get('ip', '192.168.100.177')}", gw_x + 14, gw_y + 51, "Noto Sans Thai, Sans 9.5", (0.80, 0.95, 0.85))
-
-        # 6. Draw Node: Router Internet
-        draw_rounded_rect(cr, rt_x, rt_y, rt_w, rt_h, 8)
-        cr.set_source_rgb(0.13, 0.22, 0.17)
-        cr.fill_preserve()
-        cr.set_source_rgb(0.25, 0.75, 0.45)
-        cr.set_line_width(2.0)
-        cr.stroke()
-
-        draw_pango_text(cr, f"📶 {rt_info.get('name', 'Router Internet')}", rt_x + 14, rt_y + 10, "Noto Sans Thai, Sans Bold 12.5", (1.0, 1.0, 1.0))
-        draw_pango_text(cr, "🟢 มี Internet (TrueMove H 4G)", rt_x + 14, rt_y + 32, "Noto Sans Thai, Sans Bold 10.5", (0.35, 0.95, 0.60))
-        draw_pango_text(cr, f"Gateway IP: {rt_ip}", rt_x + 14, rt_y + 52, "Noto Sans Thai, Sans 10", (0.90, 0.95, 0.90))
-        draw_pango_text(cr, f"SSID: {rt_info.get('ssid', 'Nong_Arm')} (ออนไลน์ปกติ)", rt_x + 14, rt_y + 71, "Noto Sans Thai, Sans 9", (0.75, 0.90, 0.80))
-
-        # 7. Draw Node: Wi-Fi Clients
-        draw_rounded_rect(cr, cl_x, cl_y, cl_w, cl_h, 8)
-        cr.set_source_rgb(0.12, 0.17, 0.15)
-        cr.fill_preserve()
-        cr.set_source_rgba(0.25, 0.55, 0.38, 0.8)
-        cr.set_line_width(1.5)
-        cr.stroke()
-
-        draw_pango_text(cr, "📋 เครื่องลูกข่ายที่เชื่อมต่อในวงเราเตอร์ (Wi-Fi Clients):", 
-                        cl_x + 14, cl_y + 12, "Noto Sans Thai, Sans Bold 11", (0.45, 0.95, 0.70))
-
-        wan_clients = wan_info.get('clients', [])
-        for idx, c in enumerate(wan_clients[:4]):
-            yy = cl_y + 38 + idx * 32
-            cip = c.get('ip')
-            is_this = c.get('is_this_pc', False)
-            cr.arc(cl_x + 22, yy + 6, 4.0, 0, 2*math.pi)
-            cr.set_source_rgb(0.0, 0.95, 0.50)
-            cr.fill()
-
-            prefix = "👉 [เครื่องนี้] " if is_this else ""
-            draw_pango_text(cr, f"{prefix}{cip}  —  {c.get('name')}", cl_x + 34, yy, 
-                            "Noto Sans Thai, Sans Bold 9.5" if is_this else "Noto Sans Thai, Sans 9.5",
-                            (0.0, 0.95, 0.50) if is_this else (0.90, 0.95, 0.92))
+        self.f3_network_view = F3ApiView(self)
+        self.topology_canvas = self.f3_network_view.canvas
+        self.stack.add_named(self.f3_network_view.root_widget, 'network')
 
     def render_network_table(self):
-        while self.net_grid.get_first_child():
-            self.net_grid.remove(self.net_grid.get_first_child())
+        if hasattr(self, 'f3_network_view'):
+            self.f3_network_view.render_ip_summary_table()
 
-        # Clean 5 Columns (Easy to read, no clutter!)
-        headers = [
-            "อุปกรณ์ / โหนด", "หมายเลข IP", "วงเครือข่าย", "การเชื่อมต่ออินเทอร์เน็ต", "หน้าที่ในระบบ SCADA"
-        ]
-        for col, h in enumerate(headers):
-            th = Gtk.Label(label=h)
-            th.add_css_class('table-th')
-            th.set_xalign(0.0)
-            self.net_grid.attach(th, col, 0, 1, 1)
-
-        row_idx = 1
-        data = self.topology_data
-
-        # 1. SCADA Devices (Internal - No Internet)
-        for dev in data.get('scada_lan', {}).get('devices', []):
-            vals = [
-                dev.get('name', ''),
-                dev.get('ip', ''),
-                "🔒 SCADA (วงแลนภายใน)",
-                "⚠️ ไม่มี Internet",
-                dev.get('role', '')
-            ]
-            self.attach_table_row(vals, row_idx, is_internet=False)
-            row_idx += 1
-
-        # 2. LAN Switch
-        sw = data.get('scada_lan', {}).get('switch', {})
-        sw_vals = [
-            sw.get('name', 'LAN Switch'),
-            sw.get('ip', '192.168.1.254'),
-            "🔒 SCADA (วงแลนภายใน)",
-            "⚠️ ไม่มี Internet",
-            "ชุมสายแลนเชื่อมต่อ PC1, PC2, PC3 และ PC4"
-        ]
-        self.attach_table_row(sw_vals, row_idx, is_internet=False)
-        row_idx += 1
-
-        # 3. PC4 Gateway (Bridging Node)
-        gw = data.get('gateway_bridge', {})
-        gw_vals = [
-            gw.get('name', 'PC4 · Gateway (เครื่องนี้)'),
-            f"LAN: {gw.get('nic_scada', {}).get('ip')}  |  WAN: {gw.get('nic_wan', {}).get('ip')}",
-            "⚡ บริดจ์ 2 วงแลน (Dual-Homed)",
-            "🟢 มี Internet",
-            "รวบรวม Tag จากวงภายใน ส่งแจ้งเตือนผ่าน Internet"
-        ]
-        self.attach_table_row(gw_vals, row_idx, is_internet=True, is_highlight=True)
-        row_idx += 1
-
-        # 4. Router Internet
-        rt = data.get('internet_wan', {}).get('router', {})
-        rt_vals = [
-            rt.get('name', 'Router Internet (TrueMove H)'),
-            rt.get('gateway_ip', '192.168.100.1'),
-            "🌐 WAN (เราเตอร์ภายนอก)",
-            "🟢 มี Internet",
-            "เราเตอร์ 4G LTE TrueMove H (SSID: Nong_Arm)"
-        ]
-        self.attach_table_row(rt_vals, row_idx, is_internet=True)
-        row_idx += 1
-
-        # 5. Wi-Fi Clients
-        for c in data.get('internet_wan', {}).get('clients', []):
-            if c.get('is_this_pc'):
-                continue
-            c_vals = [
-                c.get('name', 'Client'),
-                c.get('ip', ''),
-                "🌐 WAN (วงเราเตอร์)",
-                "🟢 มี Internet",
-                "อุปกรณ์ลูกข่ายในวง Wi-Fi เราเตอร์"
-            ]
-            self.attach_table_row(c_vals, row_idx, is_internet=True)
-            row_idx += 1
-
-    def attach_table_row(self, vals, row_idx, is_internet=False, is_highlight=False, is_nope=False):
-        for col, val in enumerate(vals):
-            td = Gtk.Label(label=str(val))
-            td.add_css_class('table-td')
-            td.set_xalign(0.0)
-            td.set_selectable(True)
-            if col == 3: # Internet Status col
-                td.add_css_class('badge-has-net' if is_internet else 'badge-no-net')
-            elif is_highlight and col == 0:
-                td.add_css_class('badge-gateway')
-            self.net_grid.attach(td, col, row_idx, 1, 1)
 
     def reset_to_factory_defaults(self):
         """Resets all tasks, network topology, and configurations to factory defaults (empty like fresh install)."""
@@ -1850,7 +1521,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             rt['ssid'] = entries['rt_ssid'].get_text()
 
             save_topology(self.topology_data)
-            self.topology_canvas.queue_draw()
+            if hasattr(self, 'f3_network_view'):
+                self.f3_network_view.topology_data = self.topology_data
+                self.f3_network_view.canvas.queue_draw()
+                self.f3_network_view.render_ip_summary_table()
+            elif hasattr(self, 'topology_canvas'):
+                self.topology_canvas.queue_draw()
             self.render_network_table()
             if hasattr(self, 'pill_scada_ip'):
                 self.pill_scada_ip.set_text(f"🔒 SCADA: {scada['subnet']} (ไม่มีเน็ต)")
@@ -1875,31 +1551,19 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     # Trigger Network Rescan (Non-blocking background thread)
     # ---------------------------------------------------------
     def trigger_network_rescan(self):
-        self.alarm_text.set_text("กำลังสแกนเครือข่ายสด (ARP Table, Ping & Internet Status)...")
+        self.alarm_text.set_text("กำลังอ่านสถานะเครือข่ายของเครื่องนี้...")
         t = threading.Thread(target=self.network_rescan_worker, daemon=True)
         t.start()
 
     def network_rescan_worker(self):
-        # 1. Real Carrier Check for SCADA LAN (enp0s31f6)
+        # 1. Real Carrier Check for SCADA LAN (enp0s31f6) — strictly read-only sysfs
         scada_carrier = check_interface_carrier('enp0s31f6')
 
-        # 2. Real Pings across all devices
-        ping_targets = [
-            '192.168.1.11', '192.168.1.12', '192.168.1.13', '192.168.1.254',
-            '192.168.100.1', '192.168.100.135', '192.168.100.150', '192.168.100.178'
-        ]
+        # 2. Zero network pings (Safety: No automated probes on OT LAN)
         pings = {}
-        for tip in ping_targets:
-            pings[tip] = ping_target_real(tip, timeout=1)
 
-        # 3. Test Internet
-        has_net = False
-        try:
-            s = socket.create_connection(('8.8.8.8', 53), timeout=1.5)
-            s.close()
-            has_net = True
-        except Exception:
-            pass
+        # 3. Internet state (Read current known state; no automated outbound socket)
+        has_net = self.internet_online
 
         # Store in live_status
         self.live_status['scada_carrier'] = scada_carrier
@@ -1908,27 +1572,41 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         # Dispatch UI update
         GLib.idle_add(self.apply_network_rescan_results, has_net)
 
+    def update_local_nic_badge(self, carrier):
+        network = getattr(getattr(self, 'f3_network_view', None), 'local_state', {})
+        status = local_snapshot_state(network)
+        name = network.get('active_interface') or network.get('default_gw_iface')
+        item = network.get('interfaces', {}).get(name, {})
+        observed = item.get('carrier')
+        link = ('LINK' if observed is True else 'NO-CARRIER' if observed is False else 'UNKNOWN') if status == 'OBSERVED_LOCAL' else status
+        self.pill_scada_ip.set_text(f"Local NIC {name or ''}: {link}")
+        self.pill_scada_ip.set_tooltip_text(f"{name or 'UNKNOWN'}: {item.get('ipv4') or 'IPv4 UNKNOWN'} · {status}\nPassive local carrier only; independent from OPC UA, PLC health and tag quality.")
+        for style in ('badge-active', 'badge-nope'):
+            self.pill_scada_ip.remove_css_class(style)
+        self.pill_scada_ip.add_css_class('badge-standby')
+
     def apply_network_rescan_results(self, has_net):
         self.internet_online = has_net
         scada_carrier = self.live_status.get('scada_carrier', False)
         if hasattr(self, 'pill_scada_ip'):
-            if scada_carrier:
-                self.pill_scada_ip.set_text("🔒 SCADA: ONLINE")
-                self.pill_scada_ip.remove_css_class('badge-nope')
-                self.pill_scada_ip.add_css_class('badge-standby')
-            else:
-                self.pill_scada_ip.set_text("🔒 SCADA: ❌ nope")
-                self.pill_scada_ip.remove_css_class('badge-standby')
-                self.pill_scada_ip.add_css_class('badge-nope')
+            self.update_local_nic_badge(scada_carrier)
 
         if hasattr(self, 'pill_net'):
-            if has_net:
+            if has_net is None:
+                self.pill_net.set_text("Internet: ยังไม่ได้ตรวจสอบ")
+                self.pill_net.remove_css_class('badge-gateway')
+                self.pill_net.remove_css_class('badge-no-net')
+                self.pill_net.add_css_class('badge-standby')
+                self.alarm_text.set_text("อัปเดตข้อมูลเครือข่ายเครื่องนี้แล้ว • Internet ยังไม่ได้ตรวจสอบ")
+            elif has_net:
                 self.pill_net.set_text("🟢 Internet Online")
+                self.pill_net.remove_css_class('badge-standby')
                 self.pill_net.remove_css_class('badge-no-net')
                 self.pill_net.add_css_class('badge-gateway')
                 self.alarm_text.set_text("สถานะจริง: วงเราเตอร์ 4G ONLINE | วง SCADA (enp0s31f6): nope (ไม่พบการต่อสาย)")
             else:
                 self.pill_net.set_text("⚠️ Internet Offline")
+                self.pill_net.remove_css_class('badge-standby')
                 self.pill_net.remove_css_class('badge-gateway')
                 self.pill_net.add_css_class('badge-no-net')
                 self.alarm_text.set_text("สถานะจริง: ไม่สามารถออกเน็ตได้ | วง SCADA: nope (ไม่พบการต่อสาย)")
@@ -1948,8 +1626,6 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             return True
         elif USE_UNIFIED_WORKSPACE and keyval == Gdk.KEY_F2:
             self.activate_workspace_mode('task_manager')
-            if 'tasks' in self.nav_btns:
-                self.nav_btns['tasks'].set_active(True)
             return True
 
         key_map = {
@@ -2097,26 +1773,16 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         t.start()
 
     def async_full_scan_worker(self, silent):
-        """Runs strictly in background daemon thread."""
+        """Runs strictly in background daemon thread (Zero automated network probes)."""
         try:
-            # 1. Parallel pings to all devices (takes ~0.8s total in background)
-            ping_targets = [
-                '192.168.1.11', '192.168.1.12', '192.168.1.13', '192.168.1.254',
-                '192.168.100.1', '192.168.100.135', '192.168.100.150', '192.168.100.178'
-            ]
-            pings = parallel_ping_all(ping_targets, timeout=0.8)
+            # 1. Zero network ping probes (Safety: Strictly passive local discovery)
+            pings = {}
 
             # 2. Check Carrier
             scada_carrier = check_interface_carrier('enp0s31f6')
 
-            # 3. Test Internet
-            has_net = False
-            try:
-                s = socket.create_connection(('8.8.8.8', 53), timeout=0.8)
-                s.close()
-                has_net = True
-            except Exception:
-                pass
+            # 3. Internet status (Preserves current known state, zero auto probes)
+            has_net = self.internet_online
 
             # 4. Check if Tag file modified
             tag_file_changed = False
@@ -2130,7 +1796,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
             new_tags = scan_wincc_tags(DEFAULT_WINCC_EXPORT) if tag_file_changed else None
 
-            # 5. Read host metrics
+            # 5. Read host metrics (passive, safe local metrics)
             metrics = read_real_machine_data()
 
             # Package and deliver to main thread
@@ -2169,25 +1835,25 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                     self.render_tags_page_grid()
 
             # Update top pills (Zero emojis, no raw IP in header)
-            if res['scada_carrier']:
-                self.pill_scada_ip.set_text("SCADA: Online")
-                self.pill_scada_ip.remove_css_class('badge-nope')
-                self.pill_scada_ip.remove_css_class('badge-standby')
-                self.pill_scada_ip.add_css_class('badge-active')
-            else:
-                self.pill_scada_ip.set_text("SCADA: Standby (Offline)")
-                self.pill_scada_ip.remove_css_class('badge-active')
-                self.pill_scada_ip.remove_css_class('badge-nope')
-                self.pill_scada_ip.add_css_class('badge-standby')
+            self.update_local_nic_badge(res['scada_carrier'])
 
-            if res['has_net']:
+            if res['has_net'] is None:
+                self.pill_net.set_text("Internet: ยังไม่ได้ตรวจสอบ")
+                self.pill_net.remove_css_class('badge-gateway')
+                self.pill_net.remove_css_class('badge-no-net')
+                self.pill_net.add_css_class('badge-standby')
+                if hasattr(self, 'pill_net_status'):
+                    self.pill_net_status.set_text("Internet: ยังไม่ได้ตรวจสอบ")
+            elif res['has_net']:
                 self.pill_net.set_text("Internet: Online")
+                self.pill_net.remove_css_class('badge-standby')
                 self.pill_net.remove_css_class('badge-no-net')
                 self.pill_net.add_css_class('badge-gateway')
                 if hasattr(self, 'pill_net_status'):
                     self.pill_net_status.set_text("Internet: Online")
             else:
                 self.pill_net.set_text("Internet: Offline")
+                self.pill_net.remove_css_class('badge-standby')
                 self.pill_net.remove_css_class('badge-gateway')
                 self.pill_net.add_css_class('badge-no-net')
                 if hasattr(self, 'pill_net_status'):
@@ -2295,7 +1961,11 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if hasattr(self, 'tags_page_title'):
             self.tags_page_title.set_text(f"🏷️ ตารางสัญญาณ Tag ทั้งหมดที่สแกนพบ ({len(self.scanned_tags)} Tags Inventory)")
 
+        hybrid = getattr(self, 'hybrid_ui', None)
+        show_trends = bool(hybrid and hybrid.bridge)
         headers = ["Tag Name", "กลุ่ม (Group)", "PLC Address", "ชนิดข้อมูล", "การเชื่อมต่อ"]
+        if show_trends:
+            headers.append("ประวัติ")
         for col, h in enumerate(headers):
             th = Gtk.Label(label=h)
             th.add_css_class('table-th')
@@ -2316,311 +1986,220 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 td.set_xalign(0.0)
                 td.set_selectable(True)
                 self.tags_page_grid.attach(td, col, row, 1, 1)
+            if show_trends:
+                trend = Gtk.Button(label="Trend")
+                trend.set_tooltip_text("เปิดประวัติ Tag ใน Grafana แบบอ่านอย่างเดียว")
+                trend.connect('clicked', lambda _, name=t['name']: hybrid.open('tags', tag=name))
+                self.tags_page_grid.attach(trend, 5, row, 1, 1)
 
     # ---------------------------------------------------------
     # TAB 5: WinCC Alarm & Event Logging
     # ---------------------------------------------------------
     def build_alarms_page(self):
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_hexpand(True)
-        scrolled.set_vexpand(True)
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        vbox.set_margin_start(14)
-        vbox.set_margin_end(14)
-        vbox.set_margin_top(10)
-        vbox.set_margin_bottom(10)
-        scrolled.set_child(vbox)
+        def label(text, css=''):
+            widget = Gtk.Label(label=text, xalign=0, wrap=True)
+            widget.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+            if css:
+                widget.add_css_class(css)
+            return widget
 
-        # 1. WinCC OPC UA Server Connection Card (เส้นทางที่ 2)
-        opc_grp = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        opc_grp.add_css_class('wincc-group')
-        vbox.append(opc_grp)
+        def status(text):
+            return label(text, 'badge-standby')
 
-        opc_title = Gtk.Label(label="🏭 เชื่อมต่อ WinCC V8.1 ในวงแลนผ่าน OPC UA (เส้นทางที่ 2 — ไม่ต้องลงโปรแกรมที่ SCADA)")
-        opc_title.add_css_class('group-title')
-        opc_title.set_xalign(0.0)
-        opc_grp.append(opc_title)
+        def action(text, handler, primary=False):
+            button = Gtk.Button(label=text)
+            button.add_css_class('f6-primary' if primary else 'f6-action')
+            button.connect('clicked', handler)
+            return button
 
-        opc_desc = Gtk.Label(
-            label="ดึงข้อมูล Tag และสถานะเครื่องจักรโดยตรงจาก WinCC V8.1 ในวงแลนเดียวกัน ผ่านโปรโตคอลมาตรฐานสากล OPC UA (Port 4862/4840)\n"
-                  "ระบบจะส่งคำขอไปยังพอร์ตมาตรฐานของ WinCC V8.1 (opc.tcp://<WinCC_IP>:4862) เพื่ออ่านค่าแบบ Real-time โดยไม่ต้องแก้ไขเครื่อง SCADA"
-        )
-        opc_desc.set_xalign(0.0)
-        opc_desc.set_wrap(True)
-        opc_grp.append(opc_desc)
+        def grid_row(grid, row, caption, widget):
+            grid.attach(label(caption, 'f6-field-label'), 0, row, 1, 1)
+            widget.set_hexpand(True)
+            grid.attach(widget, 1, row, 1, 1)
 
-        opc_grid = Gtk.Grid(column_spacing=12, row_spacing=8)
-        opc_grp.append(opc_grid)
+        def add_section(key, title):
+            scroll = Gtk.ScrolledWindow()
+            scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+            body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+            body.add_css_class('f6-body')
+            scroll.set_child(body)
+            self.f6_sections.add_titled(scroll, key, title)
+            return body
 
-        # Row 0: Endpoint URL
-        lbl_ep = Gtk.Label(label="WinCC OPC UA URL:")
-        lbl_ep.add_css_class('card-header')
-        lbl_ep.set_xalign(0.0)
-        opc_grid.attach(lbl_ep, 0, 0, 1, 1)
+        def add_columns(body, left_span=1):
+            grid = Gtk.Grid(column_spacing=14, column_homogeneous=True)
+            body.append(grid)
+            left = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, valign=Gtk.Align.START)
+            right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14, valign=Gtk.Align.START)
+            grid.attach(left, 0, 0, left_span, 1)
+            grid.attach(right, left_span, 0, 1, 1)
+            return left, right
 
-        self.entry_opc_url = Gtk.Entry()
-        self.entry_opc_url.set_placeholder_text("opc.tcp://192.168.1.11:4862 (พอร์ตมาตรฐาน WinCC)")
-        self.entry_opc_url.set_text(self.opcua_config.get('endpoint_url', 'opc.tcp://192.168.1.11:4862'))
-        self.entry_opc_url.set_hexpand(True)
-        opc_grid.attach(self.entry_opc_url, 1, 0, 1, 1)
+        def add_card(body, title, description):
+            card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+            card.add_css_class('f6-card')
+            body.append(card)
+            card.append(label(title, 'f6-card-title'))
+            if description:
+                card.append(label(description, 'f6-help'))
+            return card
 
-        # Row 1: Security & Auth
-        lbl_sec = Gtk.Label(label="ความปลอดภัย & สิทธิ์:")
-        lbl_sec.add_css_class('card-header')
-        lbl_sec.set_xalign(0.0)
-        opc_grid.attach(lbl_sec, 0, 1, 1, 1)
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        page.add_css_class('f6-settings')
 
-        sec_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        opc_grid.attach(sec_row, 1, 1, 1, 1)
+        header = Gtk.Box(spacing=20)
+        header.add_css_class('f6-header')
+        page.append(header)
+        title = label('ตั้งค่าการเชื่อมต่อ', 'f6-page-title')
+        title.set_hexpand(True)
+        header.append(title)
+
+        self.f6_sections = Gtk.Stack(vexpand=True)
+        self.f6_sections.set_hhomogeneous(False)
+        self.f6_sections.set_vhomogeneous(False)
+        switcher = Gtk.StackSwitcher(stack=self.f6_sections)
+        header.append(switcher)
+        page.append(self.f6_sections)
+
+        opc = add_section('opcua', 'WinCC OPC UA')
+        connection_column, monitoring_column = add_columns(opc, left_span=2)
+        connection = add_card(connection_column, 'เชื่อมต่อ WinCC',
+                              'กรอก URL ของเซิร์ฟเวอร์เพื่ออ่านข้อมูลผ่าน OPC UA แบบอ่านอย่างเดียว')
+        monitoring = add_card(monitoring_column, 'อ่านค่าอัตโนมัติ', 'เริ่มอ่านทุก 5 วินาทีเมื่อกดเริ่ม')
+        certificates = add_card(monitoring_column, 'ใบรับรอง OPC UA', '')
+        fields = Gtk.Grid(column_spacing=16, row_spacing=8)
+        connection.append(fields)
+        self.entry_opc_url = Gtk.Entry(placeholder_text='opc.tcp://ชื่อเซิร์ฟเวอร์:พอร์ต')
+        self.entry_opc_url.set_text(self.opcua_config.get('endpoint_url', ''))
+        grid_row(fields, 0, 'URL เซิร์ฟเวอร์', self.entry_opc_url)
 
         self.opc_sec_combo = Gtk.DropDown.new_from_strings([
-            "None (ไม่เข้ารหัส - มาตรฐานวงแลนปิด SCADA)", "Basic256Sha256 (Sign & Encrypt)"
+            'None · ไม่เข้ารหัส', 'Basic256Sha256 · ลงนามและเข้ารหัส',
         ])
-        if self.opcua_config.get('security_policy') == 'Basic256Sha256':
-            self.opc_sec_combo.set_selected(1)
-        else:
-            self.opc_sec_combo.set_selected(0)
-        sec_row.append(self.opc_sec_combo)
-
-        lbl_auth = Gtk.Label(label="การล็อกอิน:")
-        lbl_auth.add_css_class('card-header')
-        sec_row.append(lbl_auth)
+        self.opc_sec_combo.set_selected(int(self.opcua_config.get('security_policy') == 'Basic256Sha256'))
+        grid_row(fields, 1, 'ความปลอดภัย', self.opc_sec_combo)
 
         self.opc_auth_combo = Gtk.DropDown.new_from_strings([
-            "Anonymous (ไม่ใช้รหัสผ่าน)", "Username / Password"
+            'Anonymous · ไม่ใช้บัญชี', 'Username · ใช้บัญชี',
         ])
-        if self.opcua_config.get('auth_mode') == 'Username':
-            self.opc_auth_combo.set_selected(1)
-        else:
-            self.opc_auth_combo.set_selected(0)
-        sec_row.append(self.opc_auth_combo)
+        self.opc_auth_combo.set_selected(int(self.opcua_config.get('auth_mode') == 'Username'))
+        grid_row(fields, 2, 'เข้าสู่ระบบ', self.opc_auth_combo)
 
-        # Row 2: Credentials (Username & Session-Only Password)
-        lbl_cred = Gtk.Label(label="บัญชีเข้าใช้งาน:")
-        lbl_cred.add_css_class('card-header')
-        lbl_cred.set_xalign(0.0)
-        opc_grid.attach(lbl_cred, 0, 2, 1, 1)
-
-        cred_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        opc_grid.attach(cred_box, 1, 2, 1, 1)
-
-        self.entry_opc_user = Gtk.Entry()
-        self.entry_opc_user.set_placeholder_text("Username (เช่น scada_op)")
+        self.f6_opc_credentials = Gtk.Box(spacing=8)
+        fields.attach(self.f6_opc_credentials, 1, 3, 1, 1)
+        self.entry_opc_user = Gtk.Entry(placeholder_text='ชื่อผู้ใช้', hexpand=True)
         self.entry_opc_user.set_text(self.opcua_config.get('username', ''))
-        cred_box.append(self.entry_opc_user)
-
-        self.entry_opc_pass = Gtk.Entry()
-        self.entry_opc_pass.set_placeholder_text("Password (เก็บเฉพาะใน RAM เซสชันนี้)")
+        self.f6_opc_credentials.append(self.entry_opc_user)
+        self.entry_opc_pass = Gtk.Entry(placeholder_text='รหัสผ่าน · ใช้เฉพาะรอบนี้', hexpand=True)
         self.entry_opc_pass.set_visibility(False)
         self.entry_opc_pass.set_input_purpose(Gtk.InputPurpose.PASSWORD)
-        self.entry_opc_pass.set_hexpand(True)
-        cred_box.append(self.entry_opc_pass)
+        self.f6_opc_credentials.append(self.entry_opc_pass)
+        self.f6_opc_credentials.set_visible(self.opc_auth_combo.get_selected() == 1)
+        self.opc_auth_combo.connect(
+            'notify::selected', lambda combo, _: self.f6_opc_credentials.set_visible(combo.get_selected() == 1)
+        )
 
-        # Row 3: PKI Client Application Certificate Info
-        lbl_pki_client = Gtk.Label(label="ใบรับรองแอป (Client Cert):")
-        lbl_pki_client.add_css_class('card-header')
-        lbl_pki_client.set_xalign(0.0)
-        opc_grid.attach(lbl_pki_client, 0, 3, 1, 1)
+        self.lbl_pki_server_trust = status('ยังไม่ได้ตรวจใบรับรองเซิร์ฟเวอร์')
+        certificates.append(self.lbl_pki_server_trust)
+        self.f6_certificate = Gtk.Expander(label='ดูรายละเอียดใบรับรอง')
+        self.f6_certificate.add_css_class('f6-disclosure')
+        certificates.append(self.f6_certificate)
+        cert_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        cert_panel.add_css_class('f6-certificate')
+        self.f6_certificate.set_child(cert_panel)
 
-        pki_client_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        opc_grid.attach(pki_client_box, 1, 3, 1, 1)
-
-        c_thumb = "พร้อมสร้างอัตโนมัติ (On Demand)"
+        client_description = 'ระบบจะสร้างใบรับรองแอปเมื่อจำเป็น'
         if self.pki.client_cert_der.is_file():
             try:
-                c_cert = self.pki.load_cert_from_file(self.pki.client_cert_der)
-                c_thumb = f"RSA-2048 SHA-256 (Thumb: {self.pki.cert_thumbprint(c_cert)[:16]}...)"
+                cert = self.pki.load_cert_from_file(self.pki.client_cert_der)
+                client_description = f'ใบรับรองแอป · SHA-256 {self.pki.cert_thumbprint(cert)[:16]}…'
             except Exception:
                 pass
-        self.lbl_pki_client_cert = Gtk.Label(label=f"🔐 {c_thumb}")
-        self.lbl_pki_client_cert.add_css_class('badge-sensor')
-        pki_client_box.append(self.lbl_pki_client_cert)
-
-        # Row 4: Server Certificate Trust State & Manual Approval Action
-        lbl_pki_server = Gtk.Label(label="ความเชื่อถือเซิร์ฟเวอร์ (Server Trust):")
-        lbl_pki_server.add_css_class('card-header')
-        lbl_pki_server.set_xalign(0.0)
-        opc_grid.attach(lbl_pki_server, 0, 4, 1, 1)
-
-        pki_server_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        opc_grid.attach(pki_server_box, 1, 4, 1, 1)
-
-        pki_server_status_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        pki_server_box.append(pki_server_status_bar)
-
-        self.lbl_pki_server_trust = Gtk.Label(label="🛡️ ยังไม่ได้ตรวจสอบ (Standby)")
-        self.lbl_pki_server_trust.add_css_class('badge-standby')
-        pki_server_status_bar.append(self.lbl_pki_server_trust)
-
-        self.btn_trust_quarantined = Gtk.Button(label="🛡️ ยืนยัน Fingerprint & อนุมัติ (Trust Server Cert)")
-        self.btn_trust_quarantined.add_css_class('action-btn')
+        self.lbl_pki_client_cert = label(client_description, 'f6-help')
+        cert_panel.append(self.lbl_pki_client_cert)
+        self.lbl_pki_server_details = label('', 'f6-help')
+        self.lbl_pki_server_details.set_selectable(True)
+        cert_panel.append(self.lbl_pki_server_details)
+        self.btn_trust_quarantined = action('ยืนยัน Fingerprint และอนุมัติ', self.on_trust_quarantined_certificate)
         self.btn_trust_quarantined.set_sensitive(False)
-        self.btn_trust_quarantined.connect('clicked', self.on_trust_quarantined_certificate)
-        pki_server_status_bar.append(self.btn_trust_quarantined)
+        self.btn_trust_quarantined.set_halign(Gtk.Align.START)
+        cert_panel.append(self.btn_trust_quarantined)
 
-        self.lbl_pki_server_details = Gtk.Label(label="")
-        self.lbl_pki_server_details.set_wrap(True)
-        self.lbl_pki_server_details.set_xalign(0.0)
-        self.lbl_pki_server_details.add_css_class('badge-sensor')
-        pki_server_box.append(self.lbl_pki_server_details)
+        self.lbl_opc_status = status('ยังไม่ได้ทดสอบการเชื่อมต่อ')
+        connection.append(self.lbl_opc_status)
+        opc_actions = Gtk.Box(spacing=8, halign=Gtk.Align.END)
+        connection.append(opc_actions)
+        self.btn_test_opc = action('ทดสอบการเชื่อมต่อ', self.on_test_opcua_connection)
+        self.btn_browse_opc = action('ค้นหา Tag', self.on_browse_opcua_tags)
+        opc_actions.append(self.btn_test_opc)
+        opc_actions.append(self.btn_browse_opc)
+        opc_actions.append(action('บันทึก WinCC', self.on_save_opcua_config, primary=True))
 
-        # Buttons Bar: Test Connection, Browse Tags, Save Settings
-        opc_btn_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        opc_btn_bar.set_margin_top(4)
-        opc_grp.append(opc_btn_bar)
-
-        self.btn_test_opc = Gtk.Button(label="🔌 ทดสอบเชื่อมต่อ WinCC OPC UA (Test Connection)")
-        self.btn_test_opc.add_css_class('action-btn')
-        self.btn_test_opc.connect('clicked', self.on_test_opcua_connection)
-        opc_btn_bar.append(self.btn_test_opc)
-
-        self.btn_browse_opc = Gtk.Button(label="🔍 สแกนดึง Tag สดผ่าน OPC UA (Browse & Sync Tags)")
-        self.btn_browse_opc.add_css_class('action-btn')
-        self.btn_browse_opc.connect('clicked', self.on_browse_opcua_tags)
-        opc_btn_bar.append(self.btn_browse_opc)
-
-        save_opc_btn = Gtk.Button(label="💾 บันทึกการตั้งค่า OPC UA")
-        save_opc_btn.add_css_class('action-btn')
-        save_opc_btn.connect('clicked', self.on_save_opcua_config)
-        opc_btn_bar.append(save_opc_btn)
-
-        self.lbl_opc_status = Gtk.Label(label="⚪ ยังไม่ได้เชื่อมต่อ")
-        self.lbl_opc_status.add_css_class('badge-standby')
-        opc_btn_bar.append(self.lbl_opc_status)
-
-        # 5-Second Polling Engine Controls Bar (Section A, F)
-        mon_panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        mon_panel.set_margin_top(8)
-        opc_grp.append(mon_panel)
-
-        lbl_mon_title = Gtk.Label(label="⏱️ ระบบเฝ้าระวังและอ่านข้อมูลอัตโนมัติทุก 5 วินาที (5-Second Monotonic Polling Engine)")
-        lbl_mon_title.add_css_class('group-title')
-        lbl_mon_title.set_xalign(0.0)
-        mon_panel.append(lbl_mon_title)
-
-        mon_btn_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        mon_panel.append(mon_btn_bar)
-
-        self.btn_start_monitoring = Gtk.Button(label="▶️ เริ่มเฝ้าระวัง 5 วินาที (Start Monitoring)")
-        self.btn_start_monitoring.add_css_class('action-btn')
-        self.btn_start_monitoring.connect('clicked', self.on_start_monitoring_clicked)
-        mon_btn_bar.append(self.btn_start_monitoring)
-
-        self.btn_pause_monitoring = Gtk.Button(label="⏸️ พักชั่วคราว (Pause)")
-        self.btn_pause_monitoring.add_css_class('action-btn')
+        self.lbl_mon_telemetry = status('หยุดอยู่')
+        monitoring.append(self.lbl_mon_telemetry)
+        monitoring_actions = Gtk.Box(spacing=8, halign=Gtk.Align.END)
+        monitoring.append(monitoring_actions)
+        self.btn_start_monitoring = action('เริ่มอ่าน', self.on_start_monitoring_clicked)
+        self.btn_pause_monitoring = action('พัก', self.on_pause_monitoring_clicked)
+        self.btn_stop_monitoring = action('หยุด', self.on_stop_monitoring_clicked)
         self.btn_pause_monitoring.set_sensitive(False)
-        self.btn_pause_monitoring.connect('clicked', self.on_pause_monitoring_clicked)
-        mon_btn_bar.append(self.btn_pause_monitoring)
-
-        self.btn_stop_monitoring = Gtk.Button(label="⏹️ หยุดเฝ้าระวัง (Stop)")
-        self.btn_stop_monitoring.add_css_class('action-btn')
         self.btn_stop_monitoring.set_sensitive(False)
-        self.btn_stop_monitoring.connect('clicked', self.on_stop_monitoring_clicked)
-        mon_btn_bar.append(self.btn_stop_monitoring)
+        monitoring_actions.append(self.btn_pause_monitoring)
+        monitoring_actions.append(self.btn_stop_monitoring)
+        monitoring_actions.append(self.btn_start_monitoring)
 
-        self.lbl_mon_telemetry = Gtk.Label(label="⚪ สถานะ: STOPPED (รอผู้ใช้อนุญาตเริ่มเฝ้าระวัง)")
-        self.lbl_mon_telemetry.add_css_class('badge-standby')
-        mon_btn_bar.append(self.lbl_mon_telemetry)
-
-        # 2. Telegram Notification Settings Card
-        tg_grp = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        tg_grp.add_css_class('wincc-group')
-        vbox.append(tg_grp)
-
-        tg_title = Gtk.Label(label="⚙️ ตั้งค่าการแจ้งเตือนผ่าน Telegram Bot (Telegram Alert Config & Live Test)")
-        tg_title.add_css_class('group-title')
-        tg_title.set_xalign(0.0)
-        tg_grp.append(tg_title)
-
-        tg_desc = Gtk.Label(
-            label="กำหนดค่า Bot Token และ Chat ID สำหรับส่งข้อความแจ้งเตือนอัตโนมัติเมื่อสถานะเครื่องจักรหรือ Task มีการเปลี่ยนแปลง\n"
-                  "สามารถกดปุ่ม [🚀 ทดสอบส่งข้อความ (Test Send)] เพื่อทดลองยิงข้อความจริงเข้า Telegram ได้ทันที"
-        )
-        tg_desc.set_xalign(0.0)
-        tg_desc.set_wrap(True)
-        tg_grp.append(tg_desc)
-
-        # Grid for Inputs
-        tg_grid = Gtk.Grid(column_spacing=12, row_spacing=8)
-        tg_grp.append(tg_grid)
-
-        # Row 0: Bot Token
-        lbl_token = Gtk.Label(label="Telegram Bot Token:")
-        lbl_token.add_css_class('card-header')
-        lbl_token.set_xalign(0.0)
-        tg_grid.attach(lbl_token, 0, 0, 1, 1)
-
-        self.entry_tg_token = Gtk.Entry()
-        self.entry_tg_token.set_placeholder_text("ใส่ Bot Token ที่ได้จาก @BotFather (เช่น 7123456789:AAHk...)")
+        telegram = add_section('telegram', 'Telegram')
+        destination_column, test_column = add_columns(telegram)
+        destination = add_card(destination_column, 'ปลายทางแจ้งเตือน', 'ระบุ Bot Token และ Chat ID ที่จะรับข้อความ')
+        tg_fields = Gtk.Grid(column_spacing=16, row_spacing=8)
+        destination.append(tg_fields)
+        self.entry_tg_token = Gtk.Entry(placeholder_text='Token จาก BotFather')
+        self.entry_tg_token.set_visibility(False)
+        self.entry_tg_token.set_input_purpose(Gtk.InputPurpose.PASSWORD)
         self.entry_tg_token.set_text(self.telegram_config.get('bot_token', ''))
-        self.entry_tg_token.set_hexpand(True)
-        tg_grid.attach(self.entry_tg_token, 1, 0, 1, 1)
-
-        # Row 1: Chat ID
-        lbl_chat = Gtk.Label(label="Telegram Chat ID:")
-        lbl_chat.add_css_class('card-header')
-        lbl_chat.set_xalign(0.0)
-        tg_grid.attach(lbl_chat, 0, 1, 1, 1)
-
-        self.entry_tg_chat_id = Gtk.Entry()
-        self.entry_tg_chat_id.set_placeholder_text("ใส่ Chat ID ของผู้ใช้ หรือ Group ID (เช่น 123456789 หรือ -100123456789)")
+        grid_row(tg_fields, 0, 'Bot Token', self.entry_tg_token)
+        self.entry_tg_chat_id = Gtk.Entry(placeholder_text='Chat ID ของผู้ใช้หรือกลุ่ม')
         self.entry_tg_chat_id.set_text(self.telegram_config.get('chat_id', ''))
-        self.entry_tg_chat_id.set_hexpand(True)
-        tg_grid.attach(self.entry_tg_chat_id, 1, 1, 1, 1)
+        grid_row(tg_fields, 1, 'Chat ID', self.entry_tg_chat_id)
 
-        # Row 2: Test Message
-        lbl_msg = Gtk.Label(label="ข้อความทดสอบ:")
-        lbl_msg.add_css_class('card-header')
-        lbl_msg.set_xalign(0.0)
-        tg_grid.attach(lbl_msg, 0, 2, 1, 1)
+        save_tg = action('บันทึกปลายทาง', self.on_save_telegram_config, primary=True)
+        save_tg.set_halign(Gtk.Align.END)
+        destination.append(save_tg)
 
-        self.entry_tg_test_msg = Gtk.Entry()
-        self.entry_tg_test_msg.set_text("🧪 [AQUA COMMAND WinCC V8.1] ทดสอบยิงข้อความแจ้งเตือน SCADA สำเร็จ!")
-        self.entry_tg_test_msg.set_hexpand(True)
-        tg_grid.attach(self.entry_tg_test_msg, 1, 2, 1, 1)
+        test = add_card(test_column, 'ทดสอบการแจ้งเตือน',
+                        'เมื่อกดส่ง ระบบจะบันทึกปลายทางและส่งข้อความจริงไปยัง Chat ID ที่กรอก')
+        self.entry_tg_test_msg = Gtk.Entry(placeholder_text='ข้อความที่จะส่ง')
+        self.entry_tg_test_msg.set_text('ข้อความทดสอบจาก AQUA COMMAND')
+        test.append(self.entry_tg_test_msg)
+        self.btn_test_tg = action('ส่งข้อความทดสอบจริง', self.on_test_telegram_send)
+        self.btn_test_tg.set_halign(Gtk.Align.END)
+        test.append(self.btn_test_tg)
+        self.lbl_tg_status = status('ยังไม่ได้ทดสอบส่ง')
+        telegram.append(self.lbl_tg_status)
 
-        # Buttons Bar: Save & Test Send
-        btn_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        btn_bar.set_margin_top(4)
-        tg_grp.append(btn_bar)
-
-        self.btn_test_tg = Gtk.Button(label="🚀 ทดสอบส่งข้อความ (Test Send)")
-        self.btn_test_tg.add_css_class('action-btn')
-        self.btn_test_tg.connect('clicked', self.on_test_telegram_send)
-        btn_bar.append(self.btn_test_tg)
-
-        save_tg_btn = Gtk.Button(label="💾 บันทึกการตั้งค่า (Save Settings)")
-        save_tg_btn.add_css_class('action-btn')
-        save_tg_btn.connect('clicked', self.on_save_telegram_config)
-        btn_bar.append(save_tg_btn)
-
-        self.lbl_tg_status = Gtk.Label(label="⚪ ยังไม่ได้ทดสอบ")
-        self.lbl_tg_status.add_css_class('badge-standby')
-        btn_bar.append(self.lbl_tg_status)
-
-        # 2. Alarm & Notification Event Log
-        grp_log = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        grp_log.add_css_class('wincc-group')
-        vbox.append(grp_log)
-
-        title_log = Gtk.Label(label="🔔 บันทึกประวัติเหตุการณ์และการเตือน (Alarm & Event Logging)")
-        title_log.add_css_class('group-title')
-        title_log.set_xalign(0.0)
-        grp_log.append(title_log)
-
+        history = add_section('history', 'ประวัติเหตุการณ์')
+        events = add_card(history, 'ประวัติเหตุการณ์', 'แสดงเหตุการณ์ล่าสุดของโปรแกรม สูงสุด 25 รายการ')
+        self.f6_history_empty = label('ยังไม่มีเหตุการณ์', 'f6-help')
+        events.append(self.f6_history_empty)
         self.alarm_grid = Gtk.Grid(column_spacing=1, row_spacing=1)
         self.alarm_grid.add_css_class('data-table')
-        grp_log.append(self.alarm_grid)
-
+        events.append(self.alarm_grid)
         self.render_alarm_table()
 
-        self.stack.add_named(scrolled, 'alarms')
+        self.f6_sections.set_visible_child_name('opcua')
+        self.stack.add_named(page, 'alarms')
 
     def render_alarm_table(self):
         while self.alarm_grid.get_first_child():
             self.alarm_grid.remove(self.alarm_grid.get_first_child())
 
-        headers = ["วันที่ / เวลา", "รหัสอุปกรณ์", "ระดับ (Class)", "สถานะ", "ข้อความแจ้งเตือน"]
+        has_events = bool(self.alarm_events)
+        self.f6_history_empty.set_visible(not has_events)
+        self.alarm_grid.set_visible(has_events)
+        if not has_events:
+            return
+
+        headers = ["เวลา", "แหล่งที่มา", "ระดับ", "สถานะ", "รายละเอียด"]
         for col, h in enumerate(headers):
             th = Gtk.Label(label=h)
             th.add_css_class('table-th')
@@ -2633,6 +2212,11 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 td.add_css_class('table-td')
                 td.set_xalign(0.0)
                 td.set_selectable(True)
+                td.set_wrap(True)
+                td.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+                if col == 4:
+                    td.set_max_width_chars(54)
+                    td.set_hexpand(True)
                 if col == 2 and val == 'WARN':
                     td.add_css_class('badge-nope')
                 elif col == 2 and val == 'INFO':
@@ -2674,7 +2258,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         if ok:
             self.alarm_text.set_text(f"💾 บันทึกการตั้งค่า WinCC OPC UA ({url}) เรียบร้อยแล้ว (สถานะ: กำหนดค่าแล้ว / ยังไม่เชื่อมต่อ)")
-            self.lbl_opc_status.set_text("💾 กำหนดค่าแล้ว (Configured)")
+            self.lbl_opc_status.set_text("บันทึกค่า WinCC แล้ว")
             self.lbl_opc_status.remove_css_class('badge-nope')
             self.lbl_opc_status.remove_css_class('badge-active')
             self.lbl_opc_status.add_css_class('badge-standby')
@@ -2732,7 +2316,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.btn_start_monitoring.set_sensitive(False)
             self.btn_pause_monitoring.set_sensitive(True)
             self.btn_stop_monitoring.set_sensitive(True)
-            self.lbl_mon_telemetry.set_text("🟢 สถานะ: กำลังเฝ้าระวัง (5-Second Polling Active)")
+            self.lbl_mon_telemetry.set_text("เปิดการอ่านอัตโนมัติแล้ว")
             self.lbl_mon_telemetry.remove_css_class('badge-standby')
             self.lbl_mon_telemetry.remove_css_class('badge-nope')
             self.lbl_mon_telemetry.add_css_class('badge-active')
@@ -2746,14 +2330,14 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     def on_pause_monitoring_clicked(self, _=None):
         if self.polling_engine.telemetry.state == PollingState.RUNNING:
             self.polling_engine.pause_monitoring()
-            self.btn_pause_monitoring.set_label("▶️ ทำงานต่อ (Resume)")
-            self.lbl_mon_telemetry.set_text("🟡 สถานะ: PAUSED (พักชั่วคราว)")
+            self.btn_pause_monitoring.set_label("อ่านต่อ")
+            self.lbl_mon_telemetry.set_text("พักการอ่านชั่วคราว")
             self.lbl_mon_telemetry.remove_css_class('badge-active')
             self.lbl_mon_telemetry.add_css_class('badge-sensor')
         elif self.polling_engine.telemetry.state == PollingState.PAUSED:
             self.polling_engine.resume_monitoring()
-            self.btn_pause_monitoring.set_label("⏸️ พักชั่วคราว (Pause)")
-            self.lbl_mon_telemetry.set_text("🟢 สถานะ: กำลังเฝ้าระวัง (RUNNING)")
+            self.btn_pause_monitoring.set_label("พัก")
+            self.lbl_mon_telemetry.set_text("เปิดการอ่านอัตโนมัติแล้ว")
             self.lbl_mon_telemetry.remove_css_class('badge-sensor')
             self.lbl_mon_telemetry.add_css_class('badge-active')
 
@@ -2762,9 +2346,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.notification_worker.stop()
         self.btn_start_monitoring.set_sensitive(True)
         self.btn_pause_monitoring.set_sensitive(False)
-        self.btn_pause_monitoring.set_label("⏸️ พักชั่วคราว (Pause)")
+        self.btn_pause_monitoring.set_label("พัก")
         self.btn_stop_monitoring.set_sensitive(False)
-        self.lbl_mon_telemetry.set_text("⚪ สถานะ: STOPPED (หยุดการเฝ้าระวัง)")
+        self.lbl_mon_telemetry.set_text("หยุดอยู่")
         self.lbl_mon_telemetry.remove_css_class('badge-active')
         self.lbl_mon_telemetry.remove_css_class('badge-sensor')
         self.lbl_mon_telemetry.add_css_class('badge-standby')
@@ -2772,6 +2356,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
     def _update_trust_quarantined_ui(self, can_trust: bool, label_text: str, cert_info: Optional[dict] = None):
         self.btn_trust_quarantined.set_sensitive(can_trust)
+        if can_trust:
+            self.f6_certificate.set_expanded(True)
         self.lbl_pki_server_trust.set_text(label_text)
         info = cert_info or self.last_quarantined_cert_info or {}
         if info:
@@ -2920,7 +2506,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.btn_test_opc.set_sensitive(True)
         now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         if success:
-            self.lbl_opc_status.set_text("🟢 ตรวจสอบสำเร็จ (Disconnected)")
+            self.lbl_opc_status.set_text("ทดสอบผ่าน · ปิดการเชื่อมต่อแล้ว")
             self.lbl_opc_status.remove_css_class('badge-nope')
             self.lbl_opc_status.remove_css_class('badge-sensor')
             self.lbl_opc_status.add_css_class('badge-active')
@@ -3107,16 +2693,23 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.add_alarm_event(now_str, "OPC_UA", "WARN", "DISCOVERY_ERR", f"Browse WinCC OPC UA ล้มเหลว: {msg}")
 
     def on_save_telegram_config(self, _=None):
-        token = self.entry_tg_token.get_text().strip()
-        chat_id = self.entry_tg_chat_id.get_text().strip()
-        self.telegram_config['bot_token'] = token
-        self.telegram_config['chat_id'] = chat_id
-        save_telegram_config(self.telegram_config)
-        self.alarm_text.set_text("💾 บันทึกการตั้งค่า Telegram Bot Token และ Chat ID เรียบร้อยแล้ว")
-        self.lbl_tg_status.set_text("💾 บันทึกค่าเรียบร้อย")
-        self.lbl_tg_status.remove_css_class('badge-nope')
-        self.lbl_tg_status.remove_css_class('badge-active')
-        self.lbl_tg_status.add_css_class('badge-standby')
+        config = {
+            **self.telegram_config,
+            'bot_token': self.entry_tg_token.get_text().strip(),
+            'chat_id': self.entry_tg_chat_id.get_text().strip(),
+        }
+        if not save_telegram_config(config):
+            message = 'บันทึกไม่สำเร็จ · ไม่สามารถเขียนไฟล์ตั้งค่า Telegram'
+            self.lbl_tg_status.set_text(message)
+            self.lbl_tg_status.set_css_classes(['badge-nope'])
+            self.alarm_text.set_text(message)
+            return False
+
+        self.telegram_config.update(config)
+        self.lbl_tg_status.set_text('บันทึกปลายทางแล้ว')
+        self.lbl_tg_status.set_css_classes(['badge-standby'])
+        self.alarm_text.set_text('บันทึกปลายทาง Telegram แล้ว')
+        return True
 
     def on_test_telegram_send(self, _=None):
         token = self.entry_tg_token.get_text().strip()
@@ -3131,9 +2724,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.alarm_text.set_text("❌ ไม่สามารถทดสอบส่งได้: ยังไม่ได้ระบุ Telegram Bot Token หรือ Chat ID")
             return
 
-        self.telegram_config['bot_token'] = token
-        self.telegram_config['chat_id'] = chat_id
-        save_telegram_config(self.telegram_config)
+        if not self.on_save_telegram_config():
+            return
 
         self.lbl_tg_status.set_text("⏳ กำลังส่งข้อความทดสอบไปยัง Telegram...")
         self.lbl_tg_status.remove_css_class('badge-nope')
@@ -3219,7 +2811,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     def update_real_data(self):
         """Fetches real host machine metrics and updates UI cleanly."""
         try:
-            m = read_real_machine_data()
+            m = read_real_machine_data(getattr(getattr(self, 'f3_network_view', None), 'local_state', {}))
             if hasattr(self, 'machine_labels') and 'hostname' in self.machine_labels:
                 self.machine_labels['hostname'].set_text(m['hostname'])
                 self.machine_labels['os_name'].set_text(m['os_name'])
@@ -3239,17 +2831,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 gw = self.topology_data.get('gateway_bridge', {})
                 nic_in = gw.get('nic_scada', {})
                 carrier = check_interface_carrier('enp0s31f6')
-                if carrier:
-                    self.pill_scada_ip.set_text("SCADA: Online")
-                    self.pill_scada_ip.remove_css_class('badge-nope')
-                    self.pill_scada_ip.remove_css_class('badge-standby')
-                    self.pill_scada_ip.add_css_class('badge-active')
-                else:
-                    self.pill_scada_ip.set_text("SCADA: Standby (Offline)")
-                    self.pill_scada_ip.remove_css_class('badge-active')
-                    self.pill_scada_ip.remove_css_class('badge-nope')
-                    self.pill_scada_ip.add_css_class('badge-standby')
+                self.update_local_nic_badge(carrier)
                 self.pill_wan_ip.set_text(f"WAN: {m['ip_lan']}")
+            if hasattr(self, 'f3_network_view'):
+                self.f3_network_view.tick_live()
         except Exception as e:
             print(f"Update error: {e}", file=sys.stderr)
         return True
@@ -3260,6 +2845,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.running = False
         if hasattr(self, 'browse_cancel_flag'):
             self.browse_cancel_flag.set()
+        if getattr(self, 'hybrid_ui', None):
+            self.hybrid_ui.stop()
+        if hasattr(self, 'f3_network_view'):
+            self.f3_network_view.close()
         return False
 
 

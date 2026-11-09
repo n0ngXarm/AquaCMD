@@ -1,26 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-AQUA COMMAND — UNIFIED MONITORING & TASK WORKSPACE V2
-Professional Presentation Layer with High-Contrast Dark Surfaces & 20/48/32 Layout
+"""GTK Tag overview with contextual Inspector and Task dialogs."""
 
-Architecture:
-- Top Header: SCADA Status Bar & Compact Scan Operations Toolbar
-- 3-Column Interactive Layout:
-    1. Left Column (~20%, 270–380px): Shared Equipment Group Explorer (All Groups + 10 Catalog Groups)
-    2. Center Column (~48%, 650–920px): Shared Searchable Tag Catalog with Checkboxes & Filter Banner
-    3. Right Column (~32%, 430–620px): Contextual Panel switched via F1 / F2:
-        - Mode F1: Tag Properties & Technical Grid Inspector (with Collapse/Expand support)
-        - Mode F2: 3-Section Task Configurator (Details, Actions, Assigned Tags, Sticky Save)
-- Bottom Navigation: F1 (Monitoring), F2 (Task Mode), F3-F6, F7 (Scan In-Place), F8 (Exit)
-"""
-
-import os
-import sys
-import json
-import time
-from pathlib import Path
-from datetime import datetime
+import re
 
 import gi
 gi.require_version('Gtk', '4.0')
@@ -65,7 +47,7 @@ def format_data_type(raw_type):
 
 # Group Display Metadata (Catalog-Driven & Factual)
 GROUP_METADATA = {
-    "All": ("ทุกกลุ่มอุปกรณ์ (All Groups)", "รวมสัญญาณทั้งหมด 457 รายการในระบบ SCADA"),
+    "All": ("ทุกกลุ่มอุปกรณ์ (All Groups)", "รวมสัญญาณจากแคตตาล็อก WinCC"),
     "High_VSD": ("ปั๊มน้ำแรงดันสูง VSD", "ระบบสูบน้ำหลักปรับความเร็วรอบอัตโนมัติ"),
     "High_Valve": ("วาล์วท่อส่งแรงดันสูง", "วาล์วควบคุมการจ่ายน้ำแรงดันสูง"),
     "High1_PT1PT": ("เซนเซอร์วัดแรงดัน PT", "เพรชเชอร์ทรานสมิตเตอร์วัดแรงดันน้ำ"),
@@ -84,15 +66,31 @@ CYCLE_OPTIONS = [
     (5, "5 วินาที (มาตรฐาน WinCC V8.1)"),
     (10, "10 วินาที (General Monitoring)"),
     (30, "30 วินาที (Slow Sampling)"),
-    (60, "60 วินาที (Hourly Batch)")
+    (60, "60 วินาที")
 ]
 
 
+# One set of widths for both headings and data rows.
+CATALOG_COLUMNS = (
+    ('เลือก', 36, False),
+    ('ชื่อ Tag / ที่อยู่ PLC', 138, True),
+    ('กลุ่มอุปกรณ์', 110, False),
+    ('ชนิดข้อมูล', 78, False),
+    ('สถานะตรวจวัด', 152, False),
+    ('Task ที่ผูก', 122, True),
+)
+
+
+ASSIGNED_COLUMNS = (
+    ('เลือก', 36, False),
+    ('ชื่อ Tag', 136, True),
+    ('กลุ่มอุปกรณ์', 110, False),
+    ('ชนิดข้อมูล', 84, False),
+)
+
+
 class AquaUnifiedWorkspaceView:
-    """
-    AQUA COMMAND Unified Monitoring & Task Workspace V2
-    Professional UI Pass: High Contrast, 20/48/32 Proportions, WCAG AA Compliance
-    """
+    """Shares one Tag catalog between monitoring and Task management."""
 
     def __init__(self, owner, root_box):
         self.owner = owner
@@ -100,12 +98,25 @@ class AquaUnifiedWorkspaceView:
 
         # State Variables
         self.current_workspace_mode = 'monitoring'  # 'monitoring' (F1) or 'task_manager' (F2)
-        self.selected_group_key = "High_VSD"
+        self.selected_group_key = "All"
         self.search_query = ""
         self.selected_catalog_tags = set()  # set of tag names selected in library
         self.has_unsaved_changes = False
         self.selected_task_index = getattr(self.owner, 'current_task_idx', 0)
-        self.inspector_collapsed = False
+        self._task_draft = None
+        self._new_task = False
+        self._pending_close = None
+        self._undo_add = None
+        self._toast_timeout = None
+        self._observation_tick = None
+        self._range_anchor = None
+        self._range_requested = False
+        self._syncing_checks = False
+        self._rendered_catalog = ()
+        self.catalog_rows = {}
+        self.inspector_dialog = None
+        self.task_dialog = None
+        self.bulk_dialog = None
 
         self.catalog_tags_cache = []
         self.group_counts = {}
@@ -115,6 +126,10 @@ class AquaUnifiedWorkspaceView:
         # Widget references
         self.group_list_items = {}
         self.catalog_checkboxes = {}
+        self.selected_assigned_tags = set()
+        self.assigned_checkboxes = {}
+        self.assigned_rows = {}
+        self._syncing_assigned_checks = False
         self.task_selector_updating = False
 
         # Build UI
@@ -125,64 +140,61 @@ class AquaUnifiedWorkspaceView:
     # =========================================================================
 
     def build_ui(self):
-        """Constructs Root Layout: Scan Toolbar Top + 20/48/32 3-Column Paned View"""
-        while True:
-            first = self.root_box.get_first_child()
-            if not first:
-                break
-            self.root_box.remove(first)
-
-        # 1. Top Compact Unified Workspace Toolbar
+        self.root_box.add_css_class('tag-overview')
         self.build_top_header()
 
-        # 2. Main 3-Column Workspace Paned (Proportion Target: 20% / 48% / 32%)
         self.main_hpaned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
         self.main_hpaned.set_hexpand(True)
         self.main_hpaned.set_vexpand(True)
-        self.main_hpaned.set_position(275)  # Left Column ~20% of 1366
+        self.main_hpaned.set_resize_start_child(False)
+        self.main_hpaned.set_shrink_end_child(False)
+        self.main_hpaned.set_position(262)
         self.root_box.append(self.main_hpaned)
 
-        # Column 1: Equipment Group Explorer (Left ~20%)
         self.left_col = self.build_left_group_explorer()
-        self.left_col.set_size_request(240, -1)
+        self.left_col.set_size_request(206, -1)
         self.main_hpaned.set_start_child(self.left_col)
-
-        # Sub Paned (Center ~48% + Right ~32% = 80% remaining)
-        self.sub_hpaned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
-        self.sub_hpaned.set_hexpand(True)
-        self.sub_hpaned.set_vexpand(True)
-        self.sub_hpaned.set_position(655)  # Center ~48% of 1366
-        self.main_hpaned.set_end_child(self.sub_hpaned)
-
-        # Column 2: Shared Searchable Tag Catalog (Center ~48%)
         self.center_col = self.build_center_tag_catalog()
-        self.center_col.set_size_request(450, -1)
-        self.sub_hpaned.set_start_child(self.center_col)
+        self.main_hpaned.set_end_child(self.center_col)
 
-        # Column 3: Context Panel (Right ~32%)
-        self.right_col = self.build_right_context_panel()
-        self.right_col.set_size_request(330, -1)
-        self.sub_hpaned.set_end_child(self.right_col)
-
-        # 3. Synchronize Initial Data
+        # Keep the existing editor and engineering details, hosted in dialogs.
+        self.inspector_view = self.build_inspector_view()
+        self.task_config_view = self.build_task_config_view()
         self.sync_catalog_data()
         self.refresh_group_explorer()
         self.render_catalog_table()
         self.load_current_task_to_ui()
 
-    def update_layout_proportions(self, width=1366):
-        """Sets responsive layout giving Center Tag Table maximum space"""
-        left_w = int(width * 0.20)
-        if self.current_workspace_mode == 'monitoring':
-            center_w = int(width * 0.54)
-        else:
-            center_w = int(width * 0.48)
-        self.main_hpaned.set_position(left_w)
-        self.sub_hpaned.set_position(center_w)
+        keys = Gtk.EventControllerKey()
+        keys.connect('key-pressed', self._on_catalog_key)
+        self.root_box.add_controller(keys)
+        self.root_box.connect('map', self._on_map)
+        self.root_box.connect('unmap', self._on_unmap)
 
-    # =========================================================================
-    # 1. TOP COMPACT TOOLBAR
-    # =========================================================================
+    def _on_map(self, *_args):
+        if self._observation_tick is None:
+            self._observation_tick = GLib.timeout_add_seconds(1, self._refresh_observations)
+        self._refresh_observations()
+
+    def _on_unmap(self, *_args):
+        if self._observation_tick is not None:
+            GLib.source_remove(self._observation_tick)
+            self._observation_tick = None
+        if self._toast_timeout is not None:
+            GLib.source_remove(self._toast_timeout)
+            self._hide_toast()
+
+    def _refresh_observations(self):
+        for row in self.catalog_rows.values():
+            if row.get_child_visible():
+                self._update_observation_cell(row)
+        if self.inspector_dialog is not None and self.inspector_dialog.get_visible():
+            self._update_inspector_observation()
+        return GLib.SOURCE_CONTINUE
+
+    def update_layout_proportions(self, width=1366):
+        self.main_hpaned.set_position(max(206, min(300, int(width * .18))))
+
 
     def build_top_header(self):
         self.top_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
@@ -193,12 +205,12 @@ class AquaUnifiedWorkspaceView:
         brand_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
         self.top_box.append(brand_vbox)
 
-        lbl_brand = Gtk.Label(label="AQUA COMMAND · UNIFIED WORKSPACE")
+        lbl_brand = Gtk.Label(label="ภาพรวม Tag")
         lbl_brand.add_css_class('workspace-brand-title')
         lbl_brand.set_xalign(0.0)
         brand_vbox.append(lbl_brand)
 
-        lbl_sub = Gtk.Label(label="Station Monitoring & Task Studio · Single Source of Truth")
+        lbl_sub = Gtk.Label(label="คลัง WinCC · ตรวจสอบและจัดการ Task")
         lbl_sub.add_css_class('workspace-subtitle')
         lbl_sub.set_xalign(0.0)
         brand_vbox.append(lbl_sub)
@@ -234,32 +246,10 @@ class AquaUnifiedWorkspaceView:
         spacer.set_hexpand(True)
         self.top_box.append(spacer)
 
-        # Mode Indicator / Switcher in Top Bar
-        mode_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-        self.top_box.append(mode_box)
-
-        lbl_m = Gtk.Label(label="โหมดทำงาน:")
-        lbl_m.add_css_class('workspace-subtitle')
-        mode_box.append(lbl_m)
-
-        self.btn_top_f1 = Gtk.Button(label="👁 F1 ตรวจสอบ (Inspector)")
-        self.btn_top_f1.add_css_class('workspace-mode-btn-active')
-        self.btn_top_f1.connect('clicked', lambda _: self.set_workspace_mode('monitoring'))
-        mode_box.append(self.btn_top_f1)
-
-        self.btn_top_f2 = Gtk.Button(label="⚙️ F2 จัดการ Task (Config)")
-        self.btn_top_f2.add_css_class('workspace-mode-btn-inactive')
-        self.btn_top_f2.connect('clicked', lambda _: self.set_workspace_mode('task_manager'))
-        mode_box.append(self.btn_top_f2)
-
-        # Factual Network Badges
-        lan_b = Gtk.Label(label="🟢 LAN: 192.168.1.14")
-        lan_b.add_css_class('badge-active')
-        self.top_box.append(lan_b)
-
-        wan_b = Gtk.Label(label="🟢 WAN: 192.168.100.177")
-        wan_b.add_css_class('badge-active')
-        self.top_box.append(wan_b)
+        self.btn_top_f2 = Gtk.Button(label='จัดการ Task  ·  F2')
+        self.btn_top_f2.add_css_class('workspace-mode-btn-active')
+        self.btn_top_f2.connect('clicked', lambda _: self.open_task_dialog())
+        self.top_box.append(self.btn_top_f2)
 
     # =========================================================================
     # 2. COLUMN 1: SHARED EQUIPMENT GROUP EXPLORER (LEFT ~20%)
@@ -274,13 +264,13 @@ class AquaUnifiedWorkspaceView:
         hdr.add_css_class('f1-panel-header')
         left_box.append(hdr)
 
-        lbl_title = Gtk.Label(label="กลุ่มอุปกรณ์ (Equipment Groups)")
+        lbl_title = Gtk.Label(label="กลุ่มอุปกรณ์")
         lbl_title.add_css_class('f1-panel-title')
         lbl_title.set_hexpand(True)
         lbl_title.set_xalign(0.0)
         hdr.append(lbl_title)
 
-        self.lbl_group_count_badge = Gtk.Label(label="10 กลุ่ม")
+        self.lbl_group_count_badge = Gtk.Label(label="")
         self.lbl_group_count_badge.add_css_class('f1-badge-accent')
         hdr.append(self.lbl_group_count_badge)
 
@@ -332,9 +322,12 @@ class AquaUnifiedWorkspaceView:
             vbox.set_hexpand(True)
             row_box.append(vbox)
 
-            lbl_gname = Gtk.Label(label=meta[0])
+            title = 'ทุกกลุ่มอุปกรณ์' if g_key == 'All' else meta[0]
+            lbl_gname = Gtk.Label(label=title, wrap=True, lines=2)
+            lbl_gname.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
             lbl_gname.set_xalign(0.0)
             lbl_gname.add_css_class('f2-group-name')
+            lbl_gname.set_ellipsize(Pango.EllipsizeMode.END)
             vbox.append(lbl_gname)
 
             lbl_gdesc = Gtk.Label(label=meta[1])
@@ -343,7 +336,8 @@ class AquaUnifiedWorkspaceView:
             lbl_gdesc.set_ellipsize(Pango.EllipsizeMode.END)
             vbox.append(lbl_gdesc)
 
-            cnt_pill = Gtk.Label(label=f"{count}")
+            row.set_tooltip_text(f"{meta[0]} · {meta[1]}")
+            cnt_pill = Gtk.Label(label=str(count), width_chars=3, valign=Gtk.Align.CENTER)
             cnt_pill.add_css_class('f2-group-count')
             row_box.append(cnt_pill)
 
@@ -372,7 +366,7 @@ class AquaUnifiedWorkspaceView:
         else:
             self.filter_banner_box.set_visible(False)
 
-        self.render_catalog_table()
+        self._apply_catalog_filter()
 
     # =========================================================================
     # 3. COLUMN 2: SHARED SEARCHABLE TAG CATALOG (CENTER ~48%)
@@ -401,11 +395,6 @@ class AquaUnifiedWorkspaceView:
         self.lbl_catalog_sub.set_xalign(0.0)
         title_vbox.append(self.lbl_catalog_sub)
 
-        # Selection Badge
-        self.lbl_sel_badge = Gtk.Label(label="ยังไม่ได้เลือก Tag")
-        self.lbl_sel_badge.add_css_class('f2-sel-badge-idle')
-        summary_box.append(self.lbl_sel_badge)
-
         # Search Bar
         search_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         center_box.append(search_box)
@@ -413,7 +402,7 @@ class AquaUnifiedWorkspaceView:
         self.entry_search = Gtk.SearchEntry()
         self.entry_search.set_hexpand(True)
         self.entry_search.add_css_class('workspace-search')
-        self.entry_search.set_placeholder_text("🔍 ค้นหา Tag Name / Equipment Group / Data Type / S7 Address...")
+        self.entry_search.set_placeholder_text("ค้นหาชื่อ Tag กลุ่ม หรือที่อยู่ PLC  ·  /")
         self.entry_search.connect('search-changed', self.on_search_changed)
         search_box.append(self.entry_search)
 
@@ -434,529 +423,558 @@ class AquaUnifiedWorkspaceView:
         btn_clear_f.connect('clicked', lambda _: self.on_select_group("All"))
         self.filter_banner_box.append(btn_clear_f)
 
-        # Table Column Headers (High Contrast WCAG Certified)
-        col_hdr = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        table = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        table.set_vexpand(True)
+        center_box.append(table)
+
+        headings = [self._catalog_label(caption, 'f2-col-header') for caption, _, _ in CATALOG_COLUMNS]
+        col_hdr = self._catalog_columns(headings)
         col_hdr.add_css_class('f2-table-header-row')
-        center_box.append(col_hdr)
+        table.append(col_hdr)
 
-        lbl_c0 = Gtk.Label(label="เลือก")
-        lbl_c0.set_size_request(42, -1)
-        lbl_c0.add_css_class('f2-col-header')
-        col_hdr.append(lbl_c0)
-
-        lbl_c1 = Gtk.Label(label="Tag Name (ชื่อสัญญาณ)")
-        lbl_c1.set_hexpand(True)
-        lbl_c1.set_xalign(0.0)
-        lbl_c1.add_css_class('f2-col-header')
-        col_hdr.append(lbl_c1)
-
-        lbl_c2 = Gtk.Label(label="กลุ่มอุปกรณ์")
-        lbl_c2.set_size_request(110, -1)
-        lbl_c2.set_xalign(0.0)
-        lbl_c2.add_css_class('f2-col-header')
-        col_hdr.append(lbl_c2)
-
-        lbl_c3 = Gtk.Label(label="Data Type")
-        lbl_c3.set_size_request(80, -1)
-        lbl_c3.set_xalign(0.0)
-        lbl_c3.add_css_class('f2-col-header')
-        col_hdr.append(lbl_c3)
-
-        lbl_c4 = Gtk.Label(label="สถานะตรวจวัด")
-        lbl_c4.set_size_request(140, -1)
-        lbl_c4.set_xalign(0.0)
-        lbl_c4.add_css_class('f2-col-header')
-        col_hdr.append(lbl_c4)
-
-        # Scrolled Table Body (Dark Background Scoped)
         tbl_scroll = Gtk.ScrolledWindow()
         tbl_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        tbl_scroll.set_hexpand(True)
         tbl_scroll.set_vexpand(True)
         tbl_scroll.add_css_class('workspace-table-scroll')
-        center_box.append(tbl_scroll)
+        table.append(tbl_scroll)
 
         self.catalog_listbox = Gtk.ListBox()
         self.catalog_listbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.catalog_listbox.add_css_class('f2-table-list')
-        self.catalog_listbox.connect('row-selected', self.on_catalog_row_selected)
+        self.catalog_listbox.set_activate_on_single_click(False)
+        self.catalog_listbox.set_filter_func(self._row_matches)
+        self.catalog_listbox.connect('row-activated', self._on_row_activated)
+        clicks = Gtk.GestureClick(button=Gdk.BUTTON_PRIMARY, propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        clicks.connect('pressed', self._on_catalog_row_pressed)
+        clicks.connect('released', self._on_catalog_row_released)
+        clicks.connect('stopped', self._clear_catalog_press)
+        self.catalog_listbox.add_controller(clicks)
+        keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        keys.connect('key-pressed', self._on_catalog_selection_key)
+        self.catalog_listbox.add_controller(keys)
         tbl_scroll.set_child(self.catalog_listbox)
 
-        # Bottom Action Dock Bar
         self.dock_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         self.dock_box.add_css_class('workspace-dock-bar')
-        center_box.append(self.dock_box)
+        center_box.insert_child_after(self.dock_box, self.filter_banner_box)
 
-        # F2 Mode Controls
-        self.btn_add_selected = Gtk.Button(label="➕ เพิ่ม Tag ที่เลือกเข้าสู่ Task (0 รายการ)")
-        self.btn_add_selected.add_css_class('f2-btn-add-selected')
-        self.btn_add_selected.set_hexpand(True)
-        self.btn_add_selected.connect('clicked', lambda _: self.on_add_selected_to_task())
-        self.dock_box.append(self.btn_add_selected)
+        self.lbl_sel_badge = Gtk.Label(xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.END)
+        self.lbl_sel_badge.add_css_class('tag-flow-hint')
+        self.dock_box.append(self.lbl_sel_badge)
 
-        self.btn_clear_sel = Gtk.Button(label="ล้างการเลือก")
+        self.btn_catalog_details = Gtk.Button(label='ดูรายละเอียด', sensitive=False)
+        self.btn_catalog_details.set_tooltip_text('เลือกแถวแล้วกดปุ่ม หรือดับเบิลคลิกที่แถว')
+        self.btn_catalog_details.connect('clicked', self._open_selected_catalog_row)
+        self.dock_box.append(self.btn_catalog_details)
+        self.catalog_listbox.connect('row-selected', self._update_catalog_details)
+
+        self.btn_clear_sel = Gtk.Button(label='ล้างการเลือก')
         self.btn_clear_sel.add_css_class('f2-btn-clear-selection')
         self.btn_clear_sel.connect('clicked', lambda _: self.on_clear_selection())
         self.dock_box.append(self.btn_clear_sel)
 
-        # F1 Mode Guidance
-        self.lbl_dock_guide = Gtk.Label(label="👁 โหมดตรวจสอบ: คลิกแถวสัญญาณเพื่อดู Engineering Properties ทางขวา")
-        self.lbl_dock_guide.add_css_class('workspace-subtitle')
-        self.lbl_dock_guide.set_hexpand(True)
-        self.lbl_dock_guide.set_xalign(0.0)
-        self.lbl_dock_guide.set_visible(False)
-        self.dock_box.append(self.lbl_dock_guide)
+        self.btn_add_selected = Gtk.Button(label='เพิ่มเข้า Task')
+        self.btn_add_selected.add_css_class('tag-flow-primary')
+        self.btn_add_selected.connect('clicked', lambda _: self.on_add_selected_to_task())
+        self.dock_box.append(self.btn_add_selected)
 
-        # Inspector Collapse Button (F1)
-        self.btn_collapse_inspector = Gtk.Button(label="◀ ยุบ Inspector")
-        self.btn_collapse_inspector.add_css_class('f2-btn-collapse')
-        self.btn_collapse_inspector.connect('clicked', self.toggle_inspector_collapse)
-        self.dock_box.append(self.btn_collapse_inspector)
-
+        self.toast = Gtk.Revealer()
+        self.toast.set_transition_type(Gtk.RevealerTransitionType.SLIDE_UP)
+        self.toast.set_transition_duration(160 if Gtk.Settings.get_default().get_property('gtk-enable-animations') else 0)
+        center_box.append(self.toast)
+        toast_body = Gtk.Box(spacing=12)
+        toast_body.add_css_class('tag-overview-toast')
+        self.toast.set_child(toast_body)
+        self.toast_label = Gtk.Label(xalign=0, hexpand=True, wrap=True)
+        toast_body.append(self.toast_label)
+        self.undo_button = Gtk.Button(label='ย้อนกลับ')
+        self.undo_button.connect('clicked', self._undo_last_add)
+        toast_body.append(self.undo_button)
         return center_box
 
-    def toggle_inspector_collapse(self, _=None):
-        self.inspector_collapsed = not self.inspector_collapsed
-        if self.inspector_collapsed:
-            self.right_col.set_visible(False)
-            self.btn_collapse_inspector.set_label("▶ แสดง Inspector (F1)")
-            self.btn_collapse_inspector.set_tooltip_text("ขยายแผงคุณสมบัติสัญญาณ")
-        else:
-            self.right_col.set_visible(True)
-            self.btn_collapse_inspector.set_label("◀ ยุบ Inspector")
-            self.btn_collapse_inspector.set_tooltip_text("ยุบแผงคุณสมบัติสัญญาณเพื่อให้ตารางขยายเต็มพื้นที่")
+    def _row_matches(self, row, *_):
+        group = row._tag_data.get('group', 'Default')
+        return (self.selected_group_key == 'All' or group == self.selected_group_key) and self.search_query in row._search_text
 
     def on_search_changed(self, entry):
         self.search_query = entry.get_text().strip().lower()
-        self.render_catalog_table()
+        self._apply_catalog_filter()
+
+    def _apply_catalog_filter(self):
+        self._range_anchor = None
+        self.catalog_listbox.invalidate_filter()
+        self.currently_filtered_tags = [
+            row._tag_data for row in self.catalog_rows.values() if self._row_matches(row)
+        ]
+        for row in self.catalog_rows.values():
+            if not self._row_matches(row):
+                continue
+            self._update_observation_cell(row)
+            name = row._tag_data.get('name', '')
+            match = re.search(re.escape(self.search_query), name, re.IGNORECASE) if self.search_query else None
+            if match:
+                start, end = match.span()
+                row._name_label.set_markup(
+                    GLib.markup_escape_text(name[:start]) +
+                    '<span foreground="#96c9ff" weight="bold">' +
+                    GLib.markup_escape_text(name[start:end]) + '</span>' +
+                    GLib.markup_escape_text(name[end:])
+                )
+            else:
+                row._name_label.set_text(name)
+        self.update_selection_badges()
+
+    def _present_observation(self, name):
+        store = getattr(self.owner, 'opcua_store', None)
+        obs = store.get_observation(name) if store else None
+        if obs is None or obs.quality == Quality.NOT_OBSERVED:
+            return '？ ยังไม่ได้สังเกต', 'badge-standby', '—', '—', None
+        data = obs.to_presentation(stale_threshold_sec=60)
+        if obs.quality in (Quality.BAD, Quality.DISCONNECTED):
+            status = '✕ คุณภาพเสีย' if obs.quality == Quality.BAD else '✕ ไม่ตอบ'
+            badge = 'badge-nope'
+        elif obs.quality == Quality.STALE or obs.is_stale(60):
+            status, badge = '◔ ข้อมูลเก่า', 'badge-sensor'
+        elif obs.quality == Quality.GOOD:
+            status, badge = '✓ ปกติ', 'badge-active'
+        else:
+            status, badge = '⚠ คุณภาพไม่แน่นอน', 'badge-sensor'
+        return status, badge, data['display_val'], data['timestamp_str'], obs
+
+    @staticmethod
+    def _catalog_label(text, css=None):
+        label = Gtk.Label(label=text, xalign=0, ellipsize=Pango.EllipsizeMode.END)
+        # Keep long content from changing the natural width of a single row.
+        label.set_max_width_chars(1)
+        if css:
+            label.add_css_class(css)
+        return label
+
+    @staticmethod
+    def _catalog_columns(cells, columns=CATALOG_COLUMNS):
+        box = Gtk.Box(spacing=8)
+        for cell, (_, width, expand) in zip(cells, columns):
+            cell.set_size_request(width, -1)
+            cell.set_hexpand(expand)
+            box.append(cell)
+        return box
+
+    def _make_catalog_row(self, tag):
+        name = tag.get('name', '')
+        row = Gtk.ListBoxRow()
+        row.set_cursor_from_name('pointer')
+        row._tag_data = tag
+        row._search_text = ' '.join(str(tag.get(key, '')) for key in ('name', 'group', 'type', 'addr', 'conn')).lower()
+        checkbox = Gtk.CheckButton(valign=Gtk.Align.CENTER)
+        checkbox.set_size_request(-1, 36)
+        checkbox.set_tooltip_text(f'เลือก {name} · Shift เพื่อเลือกช่วง')
+        gesture = Gtk.GestureClick.new()
+        gesture.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
+        gesture.connect('pressed', self._on_checkbox_pressed)
+        checkbox.add_controller(gesture)
+        checkbox.connect('toggled', self.make_chk_callback(name))
+        self.catalog_checkboxes[name] = checkbox
+        identity = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, valign=Gtk.Align.CENTER)
+        row._name_label = self._catalog_label(name, 'f2-tag-name-label')
+        identity.append(row._name_label)
+        address = tag.get('addr') or '—'
+        identity.append(self._catalog_label(address, 'tag-cell-secondary'))
+        identity.set_tooltip_text(f'{name} · {address}')
+
+        group = tag.get('group', 'Default')
+        group_label = self._catalog_label(group, 'f2-tag-group-label')
+        group_label.set_tooltip_text(group)
+        data_type = format_data_type(tag.get('type'))
+        type_label = self._catalog_label(data_type, 'tag-cell-secondary')
+        type_label.set_tooltip_text(data_type)
+
+        observation = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, valign=Gtk.Align.CENTER)
+        row._quality_label = self._catalog_label('')
+        row._value_label = self._catalog_label('', 'tag-cell-secondary')
+        observation.append(row._quality_label)
+        observation.append(row._value_label)
+
+        row._task_label = self._catalog_label('—', 'tag-cell-secondary')
+        box = self._catalog_columns((
+            checkbox, identity, group_label, type_label, observation, row._task_label,
+        ))
+        box.set_margin_start(6)
+        box.set_margin_end(6)
+        box.set_size_request(-1, 48)
+        row.set_child(box)
+        return row
 
     def render_catalog_table(self):
-        """Filters and renders Tag rows into catalog_listbox with high contrast"""
-        while self.catalog_listbox.get_first_child():
-            self.catalog_listbox.remove(self.catalog_listbox.get_first_child())
+        """Build rows once per catalog change and refresh observation/Task cells."""
+        if self._rendered_catalog != tuple(self.catalog_tags_cache):
+            while self.catalog_listbox.get_first_child():
+                self.catalog_listbox.remove(self.catalog_listbox.get_first_child())
+            self.catalog_rows.clear()
+            self.catalog_checkboxes.clear()
+            self._rendered_catalog = tuple(self.catalog_tags_cache)
+            for tag in self.catalog_tags_cache:
+                row = self._make_catalog_row(tag)
+                self.catalog_rows[tag.get('name', '')] = row
+                self.catalog_listbox.append(row)
+            self.selected_catalog_tags.intersection_update(self.catalog_rows)
+            self._apply_catalog_filter()
 
-        # Filter by group and search query
-        filtered = []
-        for t in self.catalog_tags_cache:
-            if self.selected_group_key != "All" and t.get('group', 'Default') != self.selected_group_key:
-                continue
-            if self.search_query:
-                combined = f"{t.get('name', '')} {t.get('group', '')} {t.get('type', '')} {t.get('addr', '')}".lower()
-                if self.search_query not in combined:
-                    continue
-            filtered.append(t)
-
-        self.currently_filtered_tags = filtered
-
-        first_row = None
-        for idx, tag in enumerate(filtered):
-            row = Gtk.ListBoxRow()
-            row._tag_data = tag
-            row_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-            row_box.set_margin_start(6)
-            row_box.set_margin_end(6)
-            row_box.set_margin_top(4)
-            row_box.set_margin_bottom(4)
-            row.set_child(row_box)
-
-            # Checkbox
-            chk = Gtk.CheckButton()
-            chk.set_size_request(42, -1)
-            tag_name = tag.get('name', '')
-            chk.set_active(tag_name in self.selected_catalog_tags)
-            chk.connect('toggled', self.make_chk_callback(tag_name))
-            row_box.append(chk)
-
-            # Tag Name (Monospace, Bright White #F8FAFC)
-            t_name = Gtk.Label(label=tag_name)
-            t_name.set_hexpand(True)
-            t_name.set_xalign(0.0)
-            t_name.add_css_class('f2-tag-name-label')
-            t_name.set_ellipsize(Pango.EllipsizeMode.END)
-            row_box.append(t_name)
-
-            # Group
-            t_grp = Gtk.Label(label=tag.get('group', 'Default'))
-            t_grp.set_size_request(110, -1)
-            t_grp.set_xalign(0.0)
-            t_grp.add_css_class('f2-tag-group-label')
-            row_box.append(t_grp)
-
-            # Type
-            t_type = Gtk.Label(label=format_data_type(tag.get('type', 'Real')))
-            t_type.set_size_request(80, -1)
-            t_type.set_xalign(0.0)
-            t_type.add_css_class('f2-tag-type-badge')
-            row_box.append(t_type)
-
-            # Observation Status (Live Observation if available, otherwise Standby)
-            store = getattr(self.owner, 'opcua_store', None)
-            obs = store.get_observation(tag_name) if store else None
-            if obs and obs.quality != Quality.NOT_OBSERVED:
-                pres = obs.to_presentation()
-                t_qual = Gtk.Label(label=pres['display_val'])
-                t_qual.set_size_request(140, -1)
-                t_qual.set_xalign(0.0)
-                t_qual.add_css_class(pres['badge_class'])
-                row_box.append(t_qual)
-            else:
-                t_qual = Gtk.Label(label="Not Observed (Standby)")
-                t_qual.set_size_request(140, -1)
-                t_qual.set_xalign(0.0)
-                t_qual.add_css_class('f2-tag-quality-idle')
-                row_box.append(t_qual)
-
-            self.catalog_listbox.append(row)
-            if idx == 0:
-                first_row = row
-
-        if first_row and not self.selected_inspector_tag:
-            self.catalog_listbox.select_row(first_row)
-            self.on_catalog_row_selected(self.catalog_listbox, first_row)
-
+        tasks = getattr(self.owner, 'tasks', [])
+        assigned = {}
+        for task in tasks:
+            for name in task.get('tags', []):
+                assigned.setdefault(name, []).append(task.get('name') or task.get('id', 'Task'))
+        for name, row in self.catalog_rows.items():
+            self._update_observation_cell(row)
+            task_names = ', '.join(assigned.get(name, []))
+            row._task_label.set_text(task_names or '—')
+            row._task_label.set_tooltip_text(task_names or None)
         self.update_selection_badges()
+
+    def _update_observation_cell(self, row):
+        status, badge, value, stamp, _ = self._present_observation(row._tag_data.get('name', ''))
+        if row._quality_label.get_text() != status:
+            row._quality_label.set_text(status)
+            row._quality_label.set_css_classes([badge, 'tag-state'])
+        label = value if stamp == '—' else f'{value} · {stamp}'
+        if row._value_label.get_text() != label:
+            row._value_label.set_text(label)
+            row._value_label.set_tooltip_text(label if label != '—' else None)
+
+    def _on_checkbox_pressed(self, gesture, *_):
+        self._range_requested = bool(gesture.get_current_event_state() & Gdk.ModifierType.SHIFT_MASK)
+
+    def _catalog_row_at(self, x, y):
+        row = self.catalog_listbox.get_row_at_y(int(y))
+        picked = self.catalog_listbox.pick(x, y, Gtk.PickFlags.DEFAULT)
+        if row is not None and picked is not None:
+            # Leave the native checkbox to handle its own click.
+            checkbox = self.catalog_checkboxes[row._tag_data['name']]
+            if picked != checkbox and not picked.is_ancestor(checkbox):
+                return row
+        return None
+
+    def _on_catalog_row_pressed(self, gesture, n_press, x, y):
+        gesture._catalog_press_row = self._catalog_row_at(x, y) if n_press == 1 else None
+        gesture._catalog_press_state = gesture.get_current_event_state()
+
+    def _clear_catalog_press(self, gesture):
+        gesture._catalog_press_row = None
+
+    def _on_catalog_row_released(self, gesture, n_press, x, y):
+        row = getattr(gesture, '_catalog_press_row', None)
+        self._clear_catalog_press(gesture)
+        if n_press == 1 and row is not None and row == self._catalog_row_at(x, y):
+            self._toggle_catalog_row(row, gesture._catalog_press_state)
+
+    def _on_catalog_selection_key(self, controller, key, _code, state):
+        if key != Gdk.KEY_space or state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.ALT_MASK):
+            return False
+        focus = self.catalog_listbox.get_root().get_focus()
+        if isinstance(focus, Gtk.ListBoxRow) and focus.get_parent() == self.catalog_listbox:
+            self._toggle_catalog_row(focus, state)
+            return True
+        self._range_requested = False
+        return False
+
+    def _toggle_catalog_row(self, row, state):
+        checkbox = self.catalog_checkboxes[row._tag_data['name']]
+        self._range_requested = bool(state & Gdk.ModifierType.SHIFT_MASK)
+        checkbox.set_active(not checkbox.get_active())
 
     def make_chk_callback(self, tag_name):
         def cb(button):
+            if self._syncing_checks:
+                return
+            names = [tag.get('name') for tag in self.currently_filtered_tags]
+            selected = [tag_name]
+            if self._range_requested and self._range_anchor in names and tag_name in names:
+                a, b = sorted((names.index(self._range_anchor), names.index(tag_name)))
+                selected = names[a:b + 1]
+            self._range_requested = False
+            self._range_anchor = tag_name
             if button.get_active():
-                self.selected_catalog_tags.add(tag_name)
+                self.selected_catalog_tags.update(selected)
             else:
-                self.selected_catalog_tags.discard(tag_name)
+                self.selected_catalog_tags.difference_update(selected)
             self.update_selection_badges()
         return cb
 
     def update_selection_badges(self):
-        n = len(self.selected_catalog_tags)
-        if n > 0:
-            self.lbl_sel_badge.set_text(f"เลือกอยู่ {n} รายการ")
-            self.lbl_sel_badge.remove_css_class('f2-sel-badge-idle')
-            self.lbl_sel_badge.add_css_class('f2-sel-badge-active')
-            self.btn_add_selected.set_label(f"➕ เพิ่ม Tag ที่เลือกเข้าสู่ Task ({n} รายการ)")
-            self.btn_add_selected.set_sensitive(True)
-            self.btn_clear_sel.set_sensitive(True)
+        self._syncing_checks = True
+        try:
+            for name, checkbox in self.catalog_checkboxes.items():
+                active = name in self.selected_catalog_tags
+                checkbox.set_active(active)
+                row = self.catalog_rows[name]
+                if active:
+                    row.add_css_class('tag-row-checked')
+                else:
+                    row.remove_css_class('tag-row-checked')
+        finally:
+            self._syncing_checks = False
+        count = len(self.selected_catalog_tags)
+        shown = sum(tag['name'] in self.selected_catalog_tags for tag in self.currently_filtered_tags)
+        hidden = count - shown
+        if count:
+            message = f'เลือกแล้ว {count} Tag'
+            if hidden:
+                message += f' · อยู่นอกผลค้นหาหรือกลุ่มนี้ {hidden}'
         else:
-            self.lbl_sel_badge.set_text("ยังไม่ได้เลือก Tag")
-            self.lbl_sel_badge.remove_css_class('f2-sel-badge-active')
-            self.lbl_sel_badge.add_css_class('f2-sel-badge-idle')
-            self.btn_add_selected.set_label("➕ เพิ่ม Tag ที่เลือกเข้าสู่ Task (0 รายการ)")
-            self.btn_add_selected.set_sensitive(False)
-            self.btn_clear_sel.set_sensitive(False)
+            message = 'คลิกแถวเพื่อเลือก Tag · Shift + คลิกเพื่อเลือกช่วง'
+        self.lbl_sel_badge.set_text(message)
+        tasks = getattr(self.owner, 'tasks', [])
+        button_text = 'เพิ่มเข้า Task'
+        if count:
+            button_text = f'เพิ่ม {count} Tag เข้า Task' if tasks else 'สร้าง Task ก่อน'
+        self.btn_add_selected.set_label(button_text)
+        self.btn_add_selected.set_sensitive(bool(count))
+        self.btn_clear_sel.set_visible(bool(count))
+        self._update_catalog_details(self.catalog_listbox, self.catalog_listbox.get_selected_row())
 
     def on_clear_selection(self):
         self.selected_catalog_tags.clear()
-        self.render_catalog_table()
+        self._range_anchor = None
+        self.update_selection_badges()
 
-    def on_catalog_row_selected(self, listbox, row):
-        if row and hasattr(row, '_tag_data'):
-            self.selected_inspector_tag = row._tag_data
-            self.render_inspector_tag(self.selected_inspector_tag)
+    def _update_catalog_details(self, _listbox, row):
+        self.btn_catalog_details.set_sensitive(row is not None and self._row_matches(row))
 
-    # =========================================================================
-    # 4. COLUMN 3: CONTEXT PANEL (RIGHT ~32%)
-    # =========================================================================
+    def _open_selected_catalog_row(self, _button):
+        row = self.catalog_listbox.get_selected_row()
+        if row is not None and self._row_matches(row):
+            self._on_row_activated(self.catalog_listbox, row)
 
-    def build_right_context_panel(self):
-        right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        right_box.add_css_class('workspace-col-panel')
+    def _on_row_activated(self, listbox, row):
+        self.selected_inspector_tag = row._tag_data
+        self.open_tag_dialog()
 
-        # Header with Mode Switcher
-        mode_hdr = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        mode_hdr.add_css_class('f1-panel-header')
-        right_box.append(mode_hdr)
+    def _on_catalog_key(self, controller, key, _code, state):
+        focus = self.owner.get_focus() if isinstance(self.owner, Gtk.Window) else None
+        if key == Gdk.KEY_slash and not (state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.ALT_MASK)):
+            if not isinstance(focus, Gtk.Editable):
+                self.entry_search.grab_focus()
+                return True
+        if key == Gdk.KEY_Down and isinstance(focus, Gtk.Editable) and self.currently_filtered_tags:
+            row = self.catalog_rows[self.currently_filtered_tags[0]['name']]
+            self.catalog_listbox.select_row(row)
+            row.grab_focus()
+            return True
+        return False
 
-        lbl_hdr_title = Gtk.Label(label="Context Panel")
-        lbl_hdr_title.add_css_class('f1-panel-title')
-        lbl_hdr_title.set_hexpand(True)
-        lbl_hdr_title.set_xalign(0.0)
-        mode_hdr.append(lbl_hdr_title)
+    def _make_popup(self, title, content, width, height, close_handler=None):
+        popup = Gtk.Window(title=title, modal=True, default_width=width, default_height=height)
+        if isinstance(self.owner, Gtk.Window):
+            popup.set_transient_for(self.owner)
+            popup.set_destroy_with_parent(True)
+        popup.add_css_class('tag-overview-popup')
+        popup.set_child(content)
+        popup.set_hide_on_close(True)
+        if close_handler is not None:
+            popup.connect('close-request', close_handler)
 
-        tab_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
-        tab_box.add_css_class('f1-mode-switcher')
-        mode_hdr.append(tab_box)
+        keys = Gtk.EventControllerKey()
+        def on_key(controller, key, _code, state):
+            if key == Gdk.KEY_Escape:
+                popup.close()
+                return True
+            return False
+        keys.connect('key-pressed', on_key)
+        popup.add_controller(keys)
+        return popup
 
-        self.btn_tab_f1 = Gtk.ToggleButton(label="F1 Inspector")
-        self.btn_tab_f1.add_css_class('f1-mode-btn')
-        self.btn_tab_f1.set_active(True)
-        self.btn_tab_f1.connect('toggled', lambda btn: self.set_workspace_mode('monitoring') if btn.get_active() else None)
-        tab_box.append(self.btn_tab_f1)
+    def open_tag_dialog(self):
+        if self.selected_inspector_tag is None:
+            return
+        if self.inspector_dialog is None:
+            self.inspector_dialog = self._make_popup('รายละเอียด Tag', self.inspector_view, 620, 400)
+            self.inspector_dialog.connect('notify::visible', self._restore_tag_focus)
+        self._populate_task_picker(self.inspector_task_selector)
+        self.inspector_action_error.set_visible(False)
+        self.inspector_technical.set_expanded(False)
+        self.render_inspector_tag(self.selected_inspector_tag)
+        self.inspector_dialog.present()
+        self.btn_close_inspector.grab_focus()
 
-        self.btn_tab_f2 = Gtk.ToggleButton(label="F2 Task Config")
-        self.btn_tab_f2.add_css_class('f1-mode-btn')
-        self.btn_tab_f2.set_group(self.btn_tab_f1)
-        self.btn_tab_f2.connect('toggled', lambda btn: self.set_workspace_mode('task_manager') if btn.get_active() else None)
-        tab_box.append(self.btn_tab_f2)
+    def _restore_tag_focus(self, popup, _):
+        if not popup.get_visible() and self.selected_inspector_tag:
+            row = self.catalog_rows.get(self.selected_inspector_tag.get('name'))
+            if row is not None:
+                row.grab_focus()
 
-        # Context Stack
-        self.context_stack = Gtk.Stack()
-        self.context_stack.set_hexpand(True)
-        self.context_stack.set_vexpand(True)
-        right_box.append(self.context_stack)
-
-        # Sub-view 1: Inspector (F1)
-        self.inspector_scroll = self.build_inspector_view()
-        self.context_stack.add_named(self.inspector_scroll, 'monitoring')
-
-        # Sub-view 2: Task Configurator (F2)
-        self.task_config_scroll = self.build_task_config_view()
-        self.context_stack.add_named(self.task_config_scroll, 'task_manager')
-
-        self.context_stack.set_visible_child_name('monitoring')
-        return right_box
+    def open_task_dialog(self):
+        if self.task_dialog is None:
+            width, height = 1000, 650
+            if isinstance(self.owner, Gtk.Window):
+                width = max(900, min(1180, int(self.owner.get_width() * .86)))
+                height = max(540, min(800, int(self.owner.get_height() * .86)))
+            self.task_dialog = self._make_popup(
+                'จัดการ Task', self.task_config_view, width, height, self._on_close_task_dialog
+            )
+        if not self.task_dialog.get_visible():
+            self.load_current_task_to_ui()
+        self.current_workspace_mode = 'task_manager'
+        self.task_dialog.present()
+        self.task_selector_combo.grab_focus()
 
     def set_workspace_mode(self, mode_name):
-        """Switches Context Panel between 'monitoring' (F1) and 'task_manager' (F2)"""
-        self.current_workspace_mode = mode_name
-        self.context_stack.set_visible_child_name(mode_name)
-
-        is_m = (mode_name == 'monitoring')
-        self.btn_top_f1.set_css_classes(['workspace-mode-btn-active' if is_m else 'workspace-mode-btn-inactive'])
-        self.btn_top_f2.set_css_classes(['workspace-mode-btn-inactive' if is_m else 'workspace-mode-btn-active'])
-
-        if is_m:
-            if not self.btn_tab_f1.get_active():
-                self.btn_tab_f1.set_active(True)
-            self.btn_add_selected.set_visible(False)
-            self.btn_clear_sel.set_visible(False)
-            self.lbl_dock_guide.set_visible(True)
-            self.btn_collapse_inspector.set_visible(True)
+        if mode_name == 'task_manager':
+            self.open_task_dialog()
         else:
-            if not self.btn_tab_f2.get_active():
-                self.btn_tab_f2.set_active(True)
-            self.btn_add_selected.set_visible(True)
-            self.btn_clear_sel.set_visible(True)
-            self.lbl_dock_guide.set_visible(False)
-            self.btn_collapse_inspector.set_visible(False)
-            # Ensure panel is visible in task mode
-            if self.inspector_collapsed:
-                self.toggle_inspector_collapse()
+            self.current_workspace_mode = 'monitoring'
 
-        # Update responsive layout proportions for the active mode
-        win_w = getattr(self.owner, 'get_width', lambda: 1366)()
-        self.update_layout_proportions(win_w if win_w and win_w > 500 else 1366)
-
-        # Sync bottom function keys on owner if present
-        if hasattr(self.owner, 'nav_btns'):
-            if is_m and 'overview' in self.owner.nav_btns:
-                self.owner.nav_btns['overview'].set_active(True)
-            elif not is_m and 'tasks' in self.owner.nav_btns:
-                self.owner.nav_btns['tasks'].set_active(True)
 
     # -------------------------------------------------------------------------
     # SUB-VIEW: F1 INSPECTOR (HIGH CONTRAST & STRUCTURED)
     # -------------------------------------------------------------------------
 
     def build_inspector_view(self):
-        scrolled = Gtk.ScrolledWindow()
+        panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        scrolled = Gtk.ScrolledWindow(vexpand=True)
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled.set_hexpand(True)
-        scrolled.set_vexpand(True)
+        panel.append(scrolled)
 
-        self.inspector_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.inspector_vbox.set_margin_start(4)
-        self.inspector_vbox.set_margin_end(4)
-        scrolled.set_child(self.inspector_vbox)
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        scrolled.set_child(body)
+        self.insp_lbl_name = Gtk.Label(xalign=0, selectable=True, wrap=True)
+        self.insp_lbl_name.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        self.insp_lbl_name.add_css_class('tag-dialog-name')
+        body.append(self.insp_lbl_name)
 
-        # Empty State Placeholder
-        self.empty_inspector_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.empty_inspector_box.add_css_class('workspace-empty-inspector')
-        self.empty_inspector_box.set_visible(False)
-        self.inspector_vbox.append(self.empty_inspector_box)
+        self.insp_lbl_comment = Gtk.Label(xalign=0, wrap=True)
+        self.insp_lbl_comment.add_css_class('tag-flow-hint')
+        body.append(self.insp_lbl_comment)
 
-        lbl_emp_icon = Gtk.Label(label="👁 โหมดตรวจสอบคุณสมบัติสัญญาณ (Tag Inspector)")
-        lbl_emp_icon.add_css_class('workspace-empty-title')
-        self.empty_inspector_box.append(lbl_emp_icon)
-
-        lbl_emp_sub = Gtk.Label(label="กรุณาคลิกเลือกสัญญาณในตาราง Tag Catalog เพื่อตรวจสอบข้อมูลทางวิศวกรรม")
-        lbl_emp_sub.add_css_class('workspace-empty-sub')
-        self.empty_inspector_box.append(lbl_emp_sub)
-
-        # Active Inspector Content Box
-        self.active_inspector_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.inspector_vbox.append(self.active_inspector_box)
-
-        # Tag Header Pill
-        self.insp_hdr_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        self.active_inspector_box.append(self.insp_hdr_box)
-
-        self.insp_lbl_name = Gtk.Label(label="High_VSD_01_Speed_Feedback")
-        self.insp_lbl_name.add_css_class('f1-group-code-pill')
-        self.insp_lbl_name.set_selectable(True)
-        self.insp_hdr_box.append(self.insp_lbl_name)
-
-        self.insp_lbl_type = Gtk.Label(label="Float")
-        self.insp_lbl_type.add_css_class('f1-badge-accent')
-        self.insp_hdr_box.append(self.insp_lbl_type)
-
-        self.insp_lbl_addr = Gtk.Label(label="PLC: DB13.DBD0")
-        self.insp_lbl_addr.add_css_class('f1-badge-neutral')
-        self.insp_hdr_box.append(self.insp_lbl_addr)
-
-        # Comment
-        self.insp_lbl_comment = Gtk.Label(label="สัญญาณความเร็วรอบปั๊มน้ำแรงดันสูง VSD ชุดที่ 1")
-        self.insp_lbl_comment.add_css_class('f1-group-desc-th')
-        self.insp_lbl_comment.set_xalign(0.0)
-        self.active_inspector_box.append(self.insp_lbl_comment)
-
-        # Technical Grid 1: ข้อมูลการระบุสัญญาณ
-        grid_frame1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        grid_frame1.add_css_class('workspace-inspector-grid')
-        self.active_inspector_box.append(grid_frame1)
-
-        t1 = Gtk.Label(label="1. ข้อมูลการระบุสัญญาณ (Identification)")
-        t1.add_css_class('f2-section-title')
-        t1.set_xalign(0.0)
-        grid_frame1.append(t1)
-
-        self.insp_grid1 = Gtk.Grid(column_spacing=12, row_spacing=6)
-        grid_frame1.append(self.insp_grid1)
-
+        summary = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        summary.add_css_class('workspace-inspector-grid')
+        body.append(summary)
         self.insp_grid_values = {}
-        spec_keys1 = [
-            ("group", "กลุ่มอุปกรณ์ (Group):"),
-            ("type", "ประเภทข้อมูล (Data Type):"),
-            ("conn", "การเชื่อมต่อ (Connection):"),
-            ("addr", "S7 PLC Offset:")
-        ]
-        for r_idx, (k, title) in enumerate(spec_keys1):
-            lbl_k = Gtk.Label(label=title)
-            lbl_k.add_css_class('workspace-inspector-key')
-            lbl_k.set_xalign(0.0)
-            self.insp_grid1.attach(lbl_k, 0, r_idx, 1, 1)
+        summary.append(self._build_inspector_fields((
+            ('live_val', 'ค่าล่าสุด'),
+            ('quality', 'สถานะการอ่าน'),
+            ('last_obs', 'เวลาอ่านล่าสุด'),
+            ('source', 'แหล่งข้อมูล'),
+        )))
+        self.insp_grid_values['live_val'].add_css_class('tag-dialog-reading')
 
-            lbl_v = Gtk.Label(label="—")
-            lbl_v.add_css_class('workspace-inspector-val')
-            lbl_v.set_xalign(0.0)
-            lbl_v.set_selectable(True)
-            self.insp_grid1.attach(lbl_v, 1, r_idx, 1, 1)
-            self.insp_grid_values[k] = lbl_v
+        self.inspector_technical = Gtk.Expander(label='ข้อมูลทางเทคนิค')
+        self.inspector_technical.add_css_class('tag-technical-disclosure')
+        body.append(self.inspector_technical)
+        self.inspector_technical.set_child(self._build_inspector_fields((
+            ('group', 'กลุ่มอุปกรณ์'),
+            ('type', 'ชนิดข้อมูล'),
+            ('conn', 'การเชื่อมต่อ'),
+            ('addr', 'ที่อยู่ PLC'),
+        )))
 
-        # Technical Grid 2: สถานะการตรวจวัด
-        grid_frame2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        grid_frame2.add_css_class('workspace-inspector-grid')
-        self.active_inspector_box.append(grid_frame2)
+        footer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        footer.add_css_class('tag-dialog-footer')
+        panel.append(footer)
 
-        t2 = Gtk.Label(label="2. สถานะสัญญาณและการตรวจวัด (Observation)")
-        t2.add_css_class('f2-section-title')
-        t2.set_xalign(0.0)
-        grid_frame2.append(t2)
+        self.inspector_action_error = Gtk.Label(xalign=0, wrap=True, visible=False)
+        self.inspector_action_error.add_css_class('badge-nope')
+        footer.append(self.inspector_action_error)
 
-        self.insp_grid2 = Gtk.Grid(column_spacing=12, row_spacing=6)
-        grid_frame2.append(self.insp_grid2)
-
-        spec_keys2 = [
-            ("source", "แหล่งข้อมูล (Source):"),
-            ("quality", "คุณภาพสัญญาณ (Quality):"),
-            ("live_val", "ค่าล่าสุด (Live Value):"),
-            ("last_obs", "ตรวจวัดล่าสุด (Last Seen):")
-        ]
-        for r_idx, (k, title) in enumerate(spec_keys2):
-            lbl_k = Gtk.Label(label=title)
-            lbl_k.add_css_class('workspace-inspector-key')
-            lbl_k.set_xalign(0.0)
-            self.insp_grid2.attach(lbl_k, 0, r_idx, 1, 1)
-
-            lbl_v = Gtk.Label(label="—")
-            lbl_v.add_css_class('workspace-inspector-val')
-            lbl_v.set_xalign(0.0)
-            lbl_v.set_selectable(True)
-            self.insp_grid2.attach(lbl_v, 1, r_idx, 1, 1)
-            self.insp_grid_values[k] = lbl_v
-
-        # Quick Actions Card
-        action_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        action_card.add_css_class('f2-action-card')
-        self.active_inspector_box.append(action_card)
-
-        lbl_act = Gtk.Label(label="การดำเนินการกับสัญญาณนี้ (Quick Actions)")
-        lbl_act.add_css_class('f2-action-card-title')
-        lbl_act.set_xalign(0.0)
-        action_card.append(lbl_act)
-
-        self.btn_add_to_cur_task = Gtk.Button(label="➕ นำ Tag นี้เพิ่มเข้าสู่ Task ปัจจุบัน (F2)")
-        self.btn_add_to_cur_task.add_css_class('f2-btn-add-selected')
+        task_row = Gtk.Box(spacing=8)
+        footer.append(task_row)
+        self.inspector_task_prompt = Gtk.Label(label='Task ปลายทาง', xalign=0, hexpand=True)
+        task_row.append(self.inspector_task_prompt)
+        self.inspector_task_selector = Gtk.DropDown(hexpand=True)
+        self.inspector_task_selector.connect('notify::selected', self._on_inspector_task_selected)
+        task_row.append(self.inspector_task_selector)
+        self.btn_add_to_cur_task = Gtk.Button(label='เพิ่ม Tag นี้')
+        self.btn_add_to_cur_task.add_css_class('tag-flow-primary')
         self.btn_add_to_cur_task.connect('clicked', lambda _: self.on_add_single_tag_to_task())
-        action_card.append(self.btn_add_to_cur_task)
+        task_row.append(self.btn_add_to_cur_task)
 
-        # Gate B2: Manual Single-Shot Read Button (Read-Only Live Data)
-        self.btn_read_live = Gtk.Button(label="📥 อ่านค่าสด (Read Once · Loopback)")
-        self.btn_read_live.add_css_class('f2-btn-clear-selection')
+        actions = Gtk.Box(spacing=8)
+        footer.append(actions)
+        self.btn_read_live = Gtk.Button(label='อ่านค่า 1 ครั้ง')
         self.btn_read_live.connect('clicked', lambda _: self.on_read_selected_tag_once())
-        action_card.append(self.btn_read_live)
+        actions.append(self.btn_read_live)
+        self.btn_open_f6 = Gtk.Button(label='ตั้งค่า OPC UA · F6')
+        self.btn_open_f6.connect('clicked', self._open_f6_from_inspector)
+        actions.append(self.btn_open_f6)
+        actions.append(Gtk.Box(hexpand=True))
 
-        self.btn_open_f6 = Gtk.Button(label="⚙️ ตั้งค่าการเชื่อมต่อ WinCC OPC UA (F6)")
-        self.btn_open_f6.add_css_class('f2-btn-clear-selection')
-        self.btn_open_f6.connect('clicked', lambda _: self.owner.switch_to_tab('alarms'))
-        action_card.append(self.btn_open_f6)
+        self.btn_close_inspector = Gtk.Button(label='ปิด')
+        self.btn_close_inspector.connect('clicked', lambda _: self.inspector_dialog.close())
+        actions.append(self.btn_close_inspector)
+        return panel
 
-        return scrolled
+    def _build_inspector_fields(self, fields):
+        grid = Gtk.Grid(column_spacing=16, row_spacing=7)
+        for row, (key, caption) in enumerate(fields):
+            label = Gtk.Label(label=caption, xalign=0)
+            label.add_css_class('workspace-inspector-key')
+            grid.attach(label, 0, row, 1, 1)
+            value = Gtk.Label(label='—', xalign=0, selectable=True, wrap=True, hexpand=True)
+            value.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+            value.add_css_class('workspace-inspector-val')
+            grid.attach(value, 1, row, 1, 1)
+            self.insp_grid_values[key] = value
+        return grid
 
     def render_inspector_tag(self, tag):
         if not tag:
-            self.empty_inspector_box.set_visible(True)
-            self.active_inspector_box.set_visible(False)
-            if hasattr(self, 'btn_add_to_cur_task'):
-                self.btn_add_to_cur_task.set_sensitive(False)
             return
-
-        self.empty_inspector_box.set_visible(False)
-        self.active_inspector_box.set_visible(True)
-
-        # Check if already assigned to current task
-        tasks = getattr(self.owner, 'tasks', [])
-        already_in = False
-        if 0 <= self.selected_task_index < len(tasks):
-            cur_task = tasks[self.selected_task_index]
-            already_in = tag.get('name') in cur_task.get('tags', [])
-
-        if hasattr(self, 'btn_add_to_cur_task'):
-            if already_in:
-                self.btn_add_to_cur_task.set_sensitive(False)
-                self.btn_add_to_cur_task.set_label("✓ สัญญาณนี้อยู่ใน Task ปัจจุบันแล้ว")
-            else:
-                self.btn_add_to_cur_task.set_sensitive(True)
-                self.btn_add_to_cur_task.set_label("➕ นำ Tag นี้เพิ่มเข้าสู่ Task ปัจจุบัน (F2)")
+        self._update_inspector_add()
 
         self.insp_lbl_name.set_text(tag.get('name', 'UNKNOWN'))
-        self.insp_lbl_type.set_text(format_data_type(tag.get('type', 'Real')))
-        self.insp_lbl_addr.set_text(f"PLC: {tag.get('addr', 'Internal')}")
-
-        comment = tag.get('comment', '').strip() or "สัญญาณควบคุมและสถานะการทำงานของสถานีสูบน้ำ"
+        comment = tag.get('comment', '').strip()
         self.insp_lbl_comment.set_text(comment)
+        self.insp_lbl_comment.set_visible(bool(comment))
 
         grp_name = tag.get('group', 'Default')
-        meta = GROUP_METADATA.get(grp_name, ('', ''))[0]
-        self.insp_grid_values['group'].set_text(f"{grp_name} ({meta})")
+        group_title = GROUP_METADATA.get(grp_name, (grp_name, ''))[0]
+        self.insp_grid_values['group'].set_text(f'{group_title} · {grp_name}' if grp_name != group_title else grp_name)
         self.insp_grid_values['type'].set_text(f"{format_data_type(tag.get('type', 'Real'))} ({tag.get('type', 'Real')})")
-        self.insp_grid_values['conn'].set_text(tag.get('conn', 'High1 (S7-300/400 ISO-on-TCP)'))
-        self.insp_grid_values['addr'].set_text(tag.get('addr', 'Internal / Not Mapped'))
+        self.insp_grid_values['conn'].set_text(tag.get('conn') or '—')
+        self.insp_grid_values['addr'].set_text(tag.get('addr') or '—')
 
-        # Gate B2: Observable State Store Live Integration
-        tag_name = tag.get('name', 'UNKNOWN')
-        store = getattr(self.owner, 'opcua_store', None)
+        tag_name = tag.get('name', '')
         mapper = getattr(self.owner, 'opcua_mapper', None)
-        obs = store.get_observation(tag_name) if store else None
+        reader = getattr(self.owner, 'opcua_reader', None)
+        can_read = bool(reader and mapper and mapper.is_allowed(tag_name))
+        self.btn_read_live.set_sensitive(can_read)
+        self.btn_read_live.set_label('อ่านค่า 1 ครั้ง' if can_read else 'ยังอ่านค่าไม่ได้')
+        self.btn_read_live.set_tooltip_text(None if can_read else 'Tag นี้ยังไม่ได้ตั้งค่าให้อ่านผ่าน OPC UA')
+        self._update_inspector_observation()
 
-        # Update Read Live Button State (Allowlist Check)
-        if hasattr(self, 'btn_read_live'):
-            if mapper and mapper.is_allowed(tag_name):
-                self.btn_read_live.set_sensitive(True)
-                self.btn_read_live.set_label("📥 อ่านค่าสด (Read Once · Loopback)")
-            else:
-                self.btn_read_live.set_sensitive(False)
-                self.btn_read_live.set_label("🔒 Tag นี้ยังไม่ได้ทำ Mapping (Refused)")
+    def _update_inspector_observation(self):
+        tag = self.selected_inspector_tag
+        if not tag:
+            return
+        status, badge, value, stamp, obs = self._present_observation(tag.get('name', ''))
+        self.insp_grid_values['source'].set_text('OPC UA · ค่าที่โปรแกรมบันทึก' if obs else 'WinCC Export · ข้อมูล Tag')
+        quality = self.insp_grid_values['quality']
+        quality.set_text(status)
+        quality.set_css_classes(['workspace-inspector-val', 'tag-dialog-quality', badge])
+        self.insp_grid_values['live_val'].set_text(value)
+        self.insp_grid_values['last_obs'].set_text(stamp)
 
-        if obs and obs.quality != Quality.NOT_OBSERVED:
-            pres = obs.to_presentation()
-            self.insp_grid_values['source'].set_text("OPC UA Test Server (Loopback)")
-            self.insp_grid_values['quality'].set_text(pres['quality_text'])
-            self.insp_grid_values['live_val'].set_text(pres['display_val'])
-            arr_str = obs.arrival_time.strftime("%H:%M:%S") if obs.arrival_time else "-"
-            self.insp_grid_values['last_obs'].set_text(f"Source: {pres['timestamp_str']} | Arrival: {arr_str}")
-        else:
-            self.insp_grid_values['source'].set_text("WinCC Tag Management Export (Export all.txt)")
-            self.insp_grid_values['quality'].set_text("Not Observed (Standby · Zero Mock)")
-            self.insp_grid_values['live_val'].set_text("— (ยังไม่ได้เชื่อมต่อ Live Session)")
-            self.insp_grid_values['last_obs'].set_text("— (ไม่มีประวัติการอ่านสด)")
+    def _open_f6_from_inspector(self, _button):
+        self.inspector_dialog.close()
+        self.owner.switch_to_tab('alarms')
+
+    def _on_inspector_task_selected(self, *_args):
+        self._update_inspector_add()
+
+    def _update_inspector_add(self):
+        if not hasattr(self, 'btn_add_to_cur_task'):
+            return
+        tasks = getattr(self.owner, 'tasks', [])
+        idx = self.inspector_task_selector.get_selected()
+        name = (self.selected_inspector_tag or {}).get('name')
+        already_assigned = 0 <= idx < len(tasks) and name in tasks[idx].get('tags', [])
+        self.inspector_task_prompt.set_hexpand(not tasks)
+        self.inspector_task_selector.set_visible(bool(tasks))
+        self.inspector_task_prompt.set_text('Task ปลายทาง' if tasks else 'สร้าง Task ก่อนเพิ่ม Tag')
+        self.btn_add_to_cur_task.set_label(
+            'สร้าง Task' if not tasks else 'อยู่ใน Task นี้แล้ว' if already_assigned else 'เพิ่ม Tag นี้'
+        )
+        self.btn_add_to_cur_task.set_sensitive(bool(name) and not already_assigned)
+
 
     def on_read_selected_tag_once(self):
         """Gate B2: Executes operator-initiated manual single-shot read for selected tag."""
@@ -978,11 +996,11 @@ class AquaUnifiedWorkspaceView:
             return
 
         self.btn_read_live.set_sensitive(False)
-        self.btn_read_live.set_label("⏳ กำลังอ่านค่าสด...")
+        self.btn_read_live.set_label('กำลังอ่านค่า…')
 
         def on_done(obs):
             self.btn_read_live.set_sensitive(True)
-            self.btn_read_live.set_label("📥 อ่านค่าสด (Read Once · Loopback)")
+            self.btn_read_live.set_label('อ่านค่า 1 ครั้ง')
             if self.selected_inspector_tag and self.selected_inspector_tag.get('name') == tag_name:
                 self.render_inspector_tag(self.selected_inspector_tag)
             self.render_catalog_table()
@@ -998,44 +1016,111 @@ class AquaUnifiedWorkspaceView:
         )
 
     def on_add_single_tag_to_task(self):
-        if not self.selected_inspector_tag:
+        if not getattr(self.owner, 'tasks', []):
+            self.inspector_dialog.close()
+            self.open_task_dialog()
+            self.on_create_new_task()
             return
-        tn = self.selected_inspector_tag.get('name')
-        if not tn:
-            return
-        tasks = getattr(self.owner, 'tasks', [])
-        if 0 <= self.selected_task_index < len(tasks):
-            cur_task = tasks[self.selected_task_index]
-            cur_tags = cur_task.setdefault('tags', [])
-            if tn not in cur_tags:
-                cur_tags.append(tn)
-                self.has_unsaved_changes = True
-                self.render_assigned_tags_table(cur_task)
-                self.update_dirty_status()
-                # Switch to F2 so user sees the addition
-                self.set_workspace_mode('task_manager')
+        if self.selected_inspector_tag and self._add_tags(
+                self.inspector_task_selector.get_selected(), [self.selected_inspector_tag['name']]):
+            self.inspector_dialog.close()
 
-    # -------------------------------------------------------------------------
-    # SUB-VIEW: F2 TASK CONFIGURATOR (3 BALANCED SECTIONS)
-    # -------------------------------------------------------------------------
+    def _current_task_index(self):
+        tasks = getattr(self.owner, 'tasks', [])
+        if not tasks:
+            return Gtk.INVALID_LIST_POSITION
+        return max(0, min(self.selected_task_index, len(tasks) - 1))
+
+    def _populate_task_picker(self, picker):
+        tasks = getattr(self.owner, 'tasks', [])
+        picker.set_model(Gtk.StringList.new([f"{task.get('id', '')} · {task.get('name', '')}" for task in tasks]))
+        picker.set_selected(self._current_task_index())
+
+    def _add_tags(self, idx, names):
+        tasks = getattr(self.owner, 'tasks', [])
+        if not 0 <= idx < len(tasks):
+            return False
+        task = tasks[idx]
+        added = list(dict.fromkeys(name for name in names if name not in task.get('tags', [])))
+        if not added:
+            self._show_add_error('Tag ที่เลือกอยู่ใน Task นี้แล้ว')
+            return False
+        had_tags = 'tags' in task
+        previous = task.get('tags', [])
+        task['tags'] = [*previous, *added]
+        if not self.owner.save_tasks():
+            if had_tags:
+                task['tags'] = previous
+            else:
+                task.pop('tags')
+            self._show_add_error('บันทึก Task ไม่สำเร็จ')
+            return False
+        self.selected_task_index = idx
+        self.owner.current_task_idx = idx
+        self._undo_add = (task, tuple(added))
+        self.render_catalog_table()
+        self._show_toast(f"เพิ่ม {len(added)} Tag เข้า {task.get('name', 'Task')}", undo=True)
+        return True
+
+    def _show_add_error(self, message):
+        if self.inspector_dialog is not None and self.inspector_dialog.get_visible():
+            label = self.inspector_action_error
+        elif self.bulk_dialog is not None and self.bulk_dialog.get_visible():
+            label = self.bulk_action_error
+        else:
+            self._show_toast(message)
+            return
+        label.set_text(message)
+        label.set_visible(True)
+
+    def _show_toast(self, text, *, undo=False):
+        if self._toast_timeout is not None:
+            GLib.source_remove(self._toast_timeout)
+        self.toast_label.set_text(text)
+        self.undo_button.set_visible(undo)
+        self.toast.set_reveal_child(True)
+        self._toast_timeout = GLib.timeout_add_seconds(8, self._hide_toast)
+
+    def _hide_toast(self):
+        self._toast_timeout = None
+        self._undo_add = None
+        self.toast.set_reveal_child(False)
+        return GLib.SOURCE_REMOVE
+
+    def _undo_last_add(self, *_args):
+        if self._undo_add is None:
+            return
+        task, added = self._undo_add
+        if not any(current is task for current in getattr(self.owner, 'tasks', [])):
+            self._undo_add = None
+            self._show_toast('Task นี้ไม่อยู่ในรายการแล้ว')
+            return
+        previous = task.get('tags', [])
+        task['tags'] = [name for name in previous if name not in added]
+        if not self.owner.save_tasks():
+            task['tags'] = previous
+            self._show_toast('ย้อนกลับไม่สำเร็จ ลองอีกครั้งได้', undo=True)
+            return
+        self._undo_add = None
+        self.render_catalog_table()
+        self._show_toast(f'ย้อนกลับการเพิ่ม {len(added)} Tag แล้ว')
+
 
     def build_task_config_view(self):
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled.set_hexpand(True)
-        scrolled.set_vexpand(True)
+        panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        body = Gtk.Box(spacing=12, vexpand=True)
+        body.add_css_class('tag-task-body')
+        panel.append(body)
 
-        self.task_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.task_vbox.set_margin_start(2)
-        self.task_vbox.set_margin_end(2)
-        scrolled.set_child(self.task_vbox)
+        settings = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, valign=Gtk.Align.START)
+        body.append(settings)
 
         # SECTION 1: ข้อมูลและการระบุตัวตนของ Task
         sec1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         sec1.add_css_class('f2-section-card')
-        self.task_vbox.append(sec1)
+        settings.append(sec1)
 
-        s1_title = Gtk.Label(label="1. ข้อมูลและการระบุตัวตนของ Task")
+        s1_title = Gtk.Label(label="ตั้งค่า Task")
         s1_title.add_css_class('f2-section-title')
         s1_title.set_xalign(0.0)
         sec1.append(s1_title)
@@ -1053,7 +1138,8 @@ class AquaUnifiedWorkspaceView:
         self.task_selector_combo.connect('notify::selected', self.on_task_selector_changed)
         sel_row.append(self.task_selector_combo)
 
-        btn_new = Gtk.Button(label="➕ สร้าง Task")
+        btn_new = Gtk.Button(label="สร้าง Task")
+        btn_new.set_size_request(-1, 40)
         btn_new.add_css_class('f2-btn-new-task')
         btn_new.connect('clicked', lambda _: self.on_create_new_task())
         sel_row.append(btn_new)
@@ -1111,19 +1197,14 @@ class AquaUnifiedWorkspaceView:
         # SECTION 2: การทำงานเมื่อตรวจพบสัญญาณ (Task Actions)
         sec2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         sec2.add_css_class('f2-section-card')
-        self.task_vbox.append(sec2)
+        settings.append(sec2)
 
-        s2_title = Gtk.Label(label="2. การทำงานเมื่อตรวจพบสัญญาณ (Task Actions)")
+        s2_title = Gtk.Label(label="เมื่อ Task ทำงาน")
         s2_title.add_css_class('f2-section-title')
         s2_title.set_xalign(0.0)
         sec2.append(s2_title)
 
-        lbl_s2_sub = Gtk.Label(label="เมื่อ Task ทำงาน ให้ระบบทำอะไร?:")
-        lbl_s2_sub.add_css_class('f2-action-subtitle')
-        lbl_s2_sub.set_xalign(0.0)
-        sec2.append(lbl_s2_sub)
-
-        self.chk_action_log = Gtk.CheckButton(label="บันทึกข้อมูลประวัติ (Local CSV / SQLite Archive)")
+        self.chk_action_log = Gtk.CheckButton(label="บันทึกประวัติในเครื่อง", height_request=36)
         self.chk_action_log.set_active(True)
         self.chk_action_log.connect('toggled', self.on_task_field_changed)
         sec2.append(self.chk_action_log)
@@ -1131,59 +1212,106 @@ class AquaUnifiedWorkspaceView:
         tg_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         sec2.append(tg_row)
 
-        self.chk_action_notify = Gtk.CheckButton(label="ส่งแจ้งเตือนผ่าน Telegram Bot")
+        self.chk_action_notify = Gtk.CheckButton(label="แจ้งเตือนผ่าน Telegram", height_request=36, hexpand=True)
         self.chk_action_notify.set_active(True)
         self.chk_action_notify.connect('toggled', self.on_task_field_changed)
         tg_row.append(self.chk_action_notify)
 
-        lbl_f6_hint = Gtk.Label(label="(⚙️ ต้องตั้งค่า Token & Chat ID ที่ F6 ก่อนใช้งาน)")
-        lbl_f6_hint.add_css_class('f2-action-hint')
-        tg_row.append(lbl_f6_hint)
+        btn_f6_hint = Gtk.Button(label="ตั้งค่าปลายทางที่ F6 →")
+        btn_f6_hint.set_cursor_from_name('pointer')
+        btn_f6_hint.add_css_class('f2-action-hint-btn')
+        btn_f6_hint.set_tooltip_text('เปิดหน้า F6 เพื่อตั้งค่า Telegram Token & Chat ID')
+        btn_f6_hint.connect('clicked', self._on_navigate_to_f6)
+        tg_row.append(btn_f6_hint)
 
-        self.chk_task_enabled = Gtk.CheckButton(label="เปิดใช้งาน Task นี้ (Enable Task)")
+        self.chk_task_enabled = Gtk.CheckButton(label="เปิดใช้งาน Task นี้", height_request=36)
         self.chk_task_enabled.set_active(True)
         self.chk_task_enabled.connect('toggled', self.on_task_field_changed)
         sec2.append(self.chk_task_enabled)
+        for option in (self.chk_action_log, self.chk_action_notify, self.chk_task_enabled):
+            option.set_cursor_from_name('pointer')
+            option.add_css_class('tag-task-option')
 
-        # SECTION 3: สัญญาณที่ถูกผูกกับ Task (Assigned Tags)
-        sec3 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        sec3.add_css_class('f2-section-card')
-        self.task_vbox.append(sec3)
+        assigned = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, hexpand=True)
+        assigned.add_css_class('f2-section-card')
+        body.append(assigned)
 
-        self.lbl_assigned_title = Gtk.Label(label="3. สัญญาณที่ถูกผูกกับ Task (0 รายการ)")
+        toolbar = Gtk.Box(spacing=8)
+        assigned.append(toolbar)
+        self.lbl_assigned_title = Gtk.Label(label='Tag ใน Task (0 รายการ)', xalign=0, hexpand=True)
         self.lbl_assigned_title.add_css_class('f2-section-title')
-        self.lbl_assigned_title.set_xalign(0.0)
-        sec3.append(self.lbl_assigned_title)
+        toolbar.append(self.lbl_assigned_title)
+        self.btn_clear_all_assigned = Gtk.Button(label='ล้าง Tag ทั้งหมด', sensitive=False)
+        self.btn_clear_all_assigned.add_css_class('f2-btn-clear-selection')
+        self.btn_clear_all_assigned.connect('clicked', self._clear_all_assigned)
+        toolbar.append(self.btn_clear_all_assigned)
+        self.btn_remove_assigned = Gtk.Button(label='เอา Tag ที่เลือกออก', sensitive=False)
+        self.btn_remove_assigned.set_tooltip_text('การเอาออกจะมีผลเมื่อกดบันทึก Task')
+        self.btn_remove_assigned.connect('clicked', self._remove_selected_assigned)
+        toolbar.append(self.btn_remove_assigned)
 
-        as_scroll = Gtk.ScrolledWindow()
+        table = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True)
+        assigned.append(table)
+        self.chk_assigned_select_all = Gtk.CheckButton(valign=Gtk.Align.CENTER)
+        self.chk_assigned_select_all.set_tooltip_text('เลือกทั้งหมด / ยกเลิกการเลือก')
+        self.chk_assigned_select_all.connect('toggled', self._on_assigned_select_all_toggled)
+        headings = [
+            self.chk_assigned_select_all,
+            self._catalog_label('ชื่อ Tag', 'f2-col-header'),
+            self._catalog_label('กลุ่มอุปกรณ์', 'f2-col-header'),
+            self._catalog_label('ชนิดข้อมูล', 'f2-col-header'),
+        ]
+        header = self._catalog_columns(headings, ASSIGNED_COLUMNS)
+        header.add_css_class('tag-assigned-header')
+        table.append(header)
+
+        as_scroll = Gtk.ScrolledWindow(vexpand=True)
         as_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        as_scroll.set_propagate_natural_height(True)
-        as_scroll.set_max_content_height(160)
         as_scroll.add_css_class('f2-assigned-scroll')
-        sec3.append(as_scroll)
+        table.append(as_scroll)
 
-        self.assigned_listbox = Gtk.ListBox()
-        self.assigned_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.assigned_listbox = Gtk.ListBox(selection_mode=Gtk.SelectionMode.SINGLE)
+        self.assigned_listbox.set_activate_on_single_click(False)
         self.assigned_listbox.add_css_class('f2-assigned-list')
+        self.assigned_listbox.connect(
+            'row-selected', lambda _list, _row: self._update_assigned_selection_ui()
+        )
+        assigned_clicks = Gtk.GestureClick(button=Gdk.BUTTON_PRIMARY, propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        assigned_clicks.connect('pressed', self._on_assigned_row_pressed)
+        assigned_clicks.connect('released', self._on_assigned_row_released)
+        assigned_clicks.connect('stopped', self._clear_assigned_press)
+        self.assigned_listbox.add_controller(assigned_clicks)
+        assigned_keys = Gtk.EventControllerKey(propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        assigned_keys.connect('key-pressed', self._on_assigned_key_pressed)
+        self.assigned_listbox.add_controller(assigned_keys)
+        placeholder = Gtk.Label(label='ยังไม่มี Tag ใน Task นี้', xalign=0)
+        placeholder.add_css_class('tag-assigned-placeholder')
+        self.assigned_listbox.set_placeholder(placeholder)
         as_scroll.set_child(self.assigned_listbox)
 
         # STICKY BOTTOM SAVE TASK BAR
         save_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        save_bar.add_css_class('f2-save-dock-bar')
-        self.task_vbox.append(save_bar)
+        save_bar.add_css_class('tag-dialog-footer')
+        panel.append(save_bar)
 
         self.lbl_save_status = Gtk.Label(label="พร้อมใช้งาน · ข้อมูลได้รับการบันทึกแล้ว")
         self.lbl_save_status.add_css_class('f2-save-status-clean')
         self.lbl_save_status.set_hexpand(True)
+        self.lbl_save_status.set_wrap(True)
         self.lbl_save_status.set_xalign(0.0)
         save_bar.append(self.lbl_save_status)
 
-        self.btn_save_task = Gtk.Button(label="💾 บันทึก Task (Save Task)")
-        self.btn_save_task.add_css_class('f2-btn-save-task')
+        back = Gtk.Button(label='กลับไปหน้า Tag')
+        back.connect('clicked', lambda _: self.task_dialog.close())
+        save_bar.append(back)
+
+        self.btn_save_task = Gtk.Button(label="บันทึก Task")
+        self.btn_save_task.set_size_request(-1, 42)
+        self.btn_save_task.add_css_class('tag-flow-primary')
         self.btn_save_task.connect('clicked', lambda _: self.on_save_task())
         save_bar.append(self.btn_save_task)
 
-        return scrolled
+        return panel
 
     # -------------------------------------------------------------------------
     # TASK OPERATIONS & PERSISTENCE
@@ -1191,45 +1319,76 @@ class AquaUnifiedWorkspaceView:
 
     def load_current_task_to_ui(self):
         tasks = getattr(self.owner, 'tasks', [])
-        if not tasks:
-            return
+        if not self._new_task:
+            if tasks:
+                self.selected_task_index = self._current_task_index()
+                task = tasks[self.selected_task_index]
+                self._task_draft = {**task, 'tags': list(task.get('tags', []))}
+            else:
+                self._task_draft = None
+        self._render_task_form()
 
-        if self.selected_task_index >= len(tasks):
-            self.selected_task_index = 0
-
-        # Update combo list
+    def _render_task_form(self):
         self.task_selector_updating = True
-        str_items = [f"{t.get('id', 'TASK')} — {t.get('name', '')[:25]}" for t in tasks]
-        self.task_selector_combo.set_model(Gtk.StringList.new(str_items))
-        self.task_selector_combo.set_selected(self.selected_task_index)
-        self.task_selector_updating = False
+        try:
+            tasks = getattr(self.owner, 'tasks', [])
+            labels = [f"{task.get('id', '')} · {task.get('name', '')}" for task in tasks]
+            if self._new_task:
+                labels.append('Task ใหม่ · ยังไม่ได้บันทึก')
+            self.task_selector_combo.set_model(Gtk.StringList.new(labels))
+            self.task_selector_combo.set_selected(
+                self.selected_task_index if self._task_draft else Gtk.INVALID_LIST_POSITION
+            )
+            draft = self._task_draft or {}
+            self.lbl_task_id_val.set_text(draft.get('id', '—'))
+            self.entry_task_name.set_text(draft.get('name', ''))
+            cycle_idx = next(
+                (idx for idx, (seconds, _) in enumerate(CYCLE_OPTIONS)
+                 if seconds == draft.get('cycle_sec')), 1
+            )
+            # Keep nonstandard intervals already stored in Task JSON.
+            cycles = list(CYCLE_OPTIONS)
+            cycle = draft.get('cycle_sec')
+            if isinstance(cycle, int) and cycle > 0 and all(seconds != cycle for seconds, _ in cycles):
+                cycle_idx = len(cycles)
+                cycles.append((cycle, f'{cycle} วินาที'))
+            self._editor_cycles = cycles
+            self.combo_cycle.set_model(Gtk.StringList.new([label for _, label in cycles]))
+            self.combo_cycle.set_selected(cycle_idx)
+            self.chk_action_log.set_active(draft.get('action_log', False))
+            self.chk_action_notify.set_active(draft.get('action_notify', False))
+            self.chk_task_enabled.set_active(draft.get('active', False))
+            for widget in (self.entry_task_name, self.combo_cycle, self.chk_action_log,
+                           self.chk_action_notify, self.chk_task_enabled, self.btn_save_task):
+                widget.set_sensitive(self._task_draft is not None)
+            self.render_assigned_tags_table(draft)
+            self.has_unsaved_changes = self._new_task
+            self.update_dirty_status()
+        finally:
+            self.task_selector_updating = False
 
-        task = tasks[self.selected_task_index]
-        self.lbl_task_id_val.set_text(task.get('id', f'TASK-{self.selected_task_index+1:02d}'))
-        self.entry_task_name.set_text(task.get('name', ''))
-
-        cycle_sec = task.get('cycle_sec', 5)
-        cycle_idx = 1
-        for i, (sec, _) in enumerate(CYCLE_OPTIONS):
-            if sec == cycle_sec:
-                cycle_idx = i
-                break
-        self.combo_cycle.set_selected(cycle_idx)
-
-        self.chk_action_log.set_active(task.get('action_log', True))
-        self.chk_action_notify.set_active(task.get('action_notify', True))
-        self.chk_task_enabled.set_active(task.get('active', True))
-
-        self.render_assigned_tags_table(task)
-        self.has_unsaved_changes = False
-        self.update_dirty_status()
 
     def render_assigned_tags_table(self, task):
-        while self.assigned_listbox.get_first_child():
-            self.assigned_listbox.remove(self.assigned_listbox.get_first_child())
+        while row := self.assigned_listbox.get_row_at_index(0):
+            self.assigned_listbox.remove(row)
+
+        self.selected_assigned_tags.clear()
+        self.assigned_checkboxes.clear()
+        self.assigned_rows.clear()
 
         assigned = task.get('tags', [])
-        self.lbl_assigned_title.set_text(f"3. สัญญาณที่ถูกผูกกับ Task ({len(assigned)} รายการ)")
+        self.lbl_assigned_title.set_text(f"Tag ใน Task ({len(assigned)} รายการ)")
+
+        if hasattr(self, 'chk_assigned_select_all'):
+            self.chk_assigned_select_all.set_active(False)
+            self.chk_assigned_select_all.set_sensitive(len(assigned) > 0)
+
+        if hasattr(self, 'btn_clear_all_assigned'):
+            self.btn_clear_all_assigned.set_sensitive(len(assigned) > 0)
+
+        if hasattr(self, 'btn_remove_assigned'):
+            self.btn_remove_assigned.set_label('เอา Tag ที่เลือกออก')
+            self.btn_remove_assigned.set_sensitive(False)
 
         if len(assigned) > 0:
             self.lbl_task_state_badge.set_text(f"พร้อมทำงาน · มี {len(assigned)} Tags")
@@ -1240,158 +1399,345 @@ class AquaUnifiedWorkspaceView:
             self.lbl_task_state_badge.remove_css_class('f2-task-status-ready')
             self.lbl_task_state_badge.add_css_class('f2-scan-status-idle')
 
-        for tn in assigned:
-            tag_info = next((t for t in self.catalog_tags_cache if t['name'] == tn), {'name': tn, 'group': 'Unknown', 'type': 'Float'})
-
+        for name in assigned:
+            catalog_row = self.catalog_rows.get(name)
+            tag = catalog_row._tag_data if catalog_row is not None else {}
+            data_type = tag.get('type')
             row = Gtk.ListBoxRow()
-            rbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-            rbox.set_margin_start(4)
-            rbox.set_margin_end(4)
-            rbox.set_margin_top(3)
-            rbox.set_margin_bottom(3)
-            row.set_child(rbox)
+            row._tag_name = name
+            row.set_tooltip_text(name)
+            row.set_cursor_from_name('pointer')
 
-            lbl_n = Gtk.Label(label=tn)
-            lbl_n.set_hexpand(True)
-            lbl_n.set_xalign(0.0)
-            lbl_n.add_css_class('f2-tag-name-label')
-            lbl_n.set_ellipsize(Pango.EllipsizeMode.END)
-            rbox.append(lbl_n)
+            checkbox = Gtk.CheckButton(valign=Gtk.Align.CENTER)
+            checkbox.set_size_request(-1, 32)
+            checkbox.set_tooltip_text(f'เลือก {name}')
 
-            lbl_g = Gtk.Label(label=tag_info.get('group', 'Unknown'))
-            lbl_g.add_css_class('f2-tag-group-label')
-            rbox.append(lbl_g)
+            def make_assigned_cb(tag_name):
+                def cb(btn):
+                    if getattr(self, '_syncing_assigned_checks', False):
+                        return
+                    if btn.get_active():
+                        self.selected_assigned_tags.add(tag_name)
+                    else:
+                        self.selected_assigned_tags.discard(tag_name)
+                    self._update_assigned_selection_ui()
+                return cb
 
-            lbl_tp = Gtk.Label(label=format_data_type(tag_info.get('type', 'Real')))
-            lbl_tp.add_css_class('f2-tag-type-badge')
-            rbox.append(lbl_tp)
+            checkbox.connect('toggled', make_assigned_cb(name))
+            self.assigned_checkboxes[name] = checkbox
+            self.assigned_rows[name] = row
 
-            lbl_q = Gtk.Label(label="Not Observed")
-            lbl_q.add_css_class('f2-tag-quality-idle')
-            rbox.append(lbl_q)
-
-            btn_del = Gtk.Button(label="✕")
-            btn_del.add_css_class('f2-btn-remove-tag')
-            btn_del.connect('clicked', self.make_delete_callback(tn))
-            rbox.append(btn_del)
-
+            row.set_child(self._catalog_columns((
+                checkbox,
+                self._catalog_label(name, 'f2-tag-name-label'),
+                self._catalog_label(tag.get('group') or '—', 'tag-cell-secondary'),
+                self._catalog_label(format_data_type(data_type) if data_type else '—', 'tag-cell-secondary'),
+            ), ASSIGNED_COLUMNS))
             self.assigned_listbox.append(row)
 
-    def make_delete_callback(self, tag_name):
-        def cb(button):
-            tasks = getattr(self.owner, 'tasks', [])
-            if 0 <= self.selected_task_index < len(tasks):
-                cur_task = tasks[self.selected_task_index]
-                if tag_name in cur_task.get('tags', []):
-                    cur_task['tags'].remove(tag_name)
-                    self.has_unsaved_changes = True
-                    self.render_assigned_tags_table(cur_task)
-                    self.update_dirty_status()
-        return cb
+    def _update_assigned_selection_ui(self):
+        self._syncing_assigned_checks = True
+        try:
+            for name, chk in self.assigned_checkboxes.items():
+                active = name in self.selected_assigned_tags
+                if chk.get_active() != active:
+                    chk.set_active(active)
+                row = self.assigned_rows.get(name)
+                if row is not None:
+                    if active:
+                        row.add_css_class('tag-row-checked')
+                    else:
+                        row.remove_css_class('tag-row-checked')
+        finally:
+            self._syncing_assigned_checks = False
+
+        count = len(self.selected_assigned_tags)
+        if count > 0:
+            self.btn_remove_assigned.set_label(f"เอา Tag ที่เลือกออก ({count})")
+            self.btn_remove_assigned.set_sensitive(True)
+        else:
+            row = self.assigned_listbox.get_selected_row()
+            if row is not None:
+                self.btn_remove_assigned.set_label('เอา Tag ที่เลือกออก')
+                self.btn_remove_assigned.set_sensitive(True)
+            else:
+                self.btn_remove_assigned.set_label('เอา Tag ที่เลือกออก')
+                self.btn_remove_assigned.set_sensitive(False)
+
+        if hasattr(self, 'chk_assigned_select_all'):
+            total = len(self._task_draft.get('tags', [])) if self._task_draft else 0
+            if total > 0 and count == total:
+                self.chk_assigned_select_all.set_active(True)
+            elif count == 0:
+                self.chk_assigned_select_all.set_active(False)
+
+        if hasattr(self, 'btn_clear_all_assigned'):
+            total = len(self._task_draft.get('tags', [])) if self._task_draft else 0
+            self.btn_clear_all_assigned.set_sensitive(total > 0)
+
+    def _on_assigned_select_all_toggled(self, checkbutton):
+        if getattr(self, '_syncing_assigned_checks', False):
+            return
+        active = checkbutton.get_active()
+        if active:
+            if self._task_draft:
+                self.selected_assigned_tags = set(self._task_draft.get('tags', []))
+        else:
+            self.selected_assigned_tags.clear()
+        self._update_assigned_selection_ui()
+
+    def _assigned_row_at(self, x, y):
+        row = self.assigned_listbox.get_row_at_y(int(y))
+        picked = self.assigned_listbox.pick(x, y, Gtk.PickFlags.DEFAULT)
+        if row is not None and picked is not None:
+            tag_name = getattr(row, '_tag_name', None)
+            if tag_name and tag_name in self.assigned_checkboxes:
+                checkbox = self.assigned_checkboxes[tag_name]
+                if picked != checkbox and not picked.is_ancestor(checkbox):
+                    return row
+        return None
+
+    def _on_assigned_row_pressed(self, gesture, n_press, x, y):
+        gesture._assigned_press_row = self._assigned_row_at(x, y) if n_press == 1 else None
+
+    def _clear_assigned_press(self, gesture):
+        gesture._assigned_press_row = None
+
+    def _on_assigned_row_released(self, gesture, n_press, x, y):
+        row = getattr(gesture, '_assigned_press_row', None)
+        self._clear_assigned_press(gesture)
+        if n_press == 1 and row is not None and row == self._assigned_row_at(x, y):
+            self._toggle_assigned_row(row)
+
+    def _on_assigned_key_pressed(self, controller, key, _code, state):
+        if key != Gdk.KEY_space or state & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.ALT_MASK):
+            return False
+        focus = self.assigned_listbox.get_root().get_focus()
+        if isinstance(focus, Gtk.ListBoxRow) and focus.get_parent() == self.assigned_listbox:
+            self._toggle_assigned_row(focus)
+            return True
+        return False
+
+    def _toggle_assigned_row(self, row):
+        name = getattr(row, '_tag_name', None)
+        if name and name in self.assigned_checkboxes:
+            checkbox = self.assigned_checkboxes[name]
+            checkbox.set_active(not checkbox.get_active())
+
+    def _on_navigate_to_f6(self, _button):
+        def navigate():
+            if self.task_dialog is not None and self.task_dialog.get_visible():
+                self.task_dialog.set_visible(False)
+            nav_btn = getattr(self.owner, 'nav_btns', {}).get('alarms')
+            if nav_btn is not None:
+                nav_btn.set_active(True)
+            elif hasattr(self.owner, 'stack'):
+                self.owner.stack.set_visible_child_name('alarms')
+        self._guard_task_changes(navigate)
+
+    def _remove_selected_assigned(self, _button):
+        if self._task_draft is None:
+            return
+        to_remove = set(self.selected_assigned_tags)
+        if not to_remove:
+            row = self.assigned_listbox.get_selected_row()
+            if row and getattr(row, '_tag_name', None):
+                to_remove.add(row._tag_name)
+        if not to_remove:
+            return
+        self._task_draft['tags'] = [t for t in self._task_draft.get('tags', []) if t not in to_remove]
+        self.selected_assigned_tags.clear()
+        self.has_unsaved_changes = True
+        self.render_assigned_tags_table(self._task_draft)
+        self.update_dirty_status()
+
+    def _clear_all_assigned(self, _button):
+        if self._task_draft is None:
+            return
+        self._task_draft['tags'] = []
+        self.selected_assigned_tags.clear()
+        self.has_unsaved_changes = True
+        self.render_assigned_tags_table(self._task_draft)
+        self.update_dirty_status()
 
     def on_add_selected_to_task(self):
         if not self.selected_catalog_tags:
             return
-        tasks = getattr(self.owner, 'tasks', [])
-        if not tasks:
+        if not getattr(self.owner, 'tasks', []):
+            self.open_task_dialog()
+            self.on_create_new_task()
             return
-        cur_task = tasks[self.selected_task_index]
-        cur_tags = cur_task.setdefault('tags', [])
+        if self.bulk_dialog is None:
+            panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+            panel.set_margin_start(18)
+            panel.set_margin_end(18)
+            panel.set_margin_top(18)
+            panel.set_margin_bottom(18)
+            self.bulk_label = Gtk.Label(xalign=0, wrap=True)
+            panel.append(self.bulk_label)
+            self.bulk_task_selector = Gtk.DropDown()
+            self.bulk_task_selector.set_size_request(-1, 40)
+            panel.append(self.bulk_task_selector)
+            self.bulk_action_error = Gtk.Label(xalign=0, wrap=True)
+            self.bulk_action_error.add_css_class('badge-nope')
+            panel.append(self.bulk_action_error)
+            actions = Gtk.Box(spacing=8, halign=Gtk.Align.END)
+            panel.append(actions)
+            cancel = Gtk.Button(label='ยกเลิก')
+            cancel.connect('clicked', lambda _: self.bulk_dialog.close())
+            actions.append(cancel)
+            self.bulk_submit_button = Gtk.Button(label='ยืนยันเพิ่ม Tag')
+            self.bulk_submit_button.set_size_request(-1, 40)
+            self.bulk_submit_button.add_css_class('tag-flow-primary')
+            self.bulk_submit_button.connect('clicked', self._submit_bulk_add)
+            actions.append(self.bulk_submit_button)
+            self.bulk_dialog = self._make_popup('เพิ่ม Tag เข้า Task', panel, 480, 175)
+        self.bulk_label.set_text(f'เลือก Task ปลายทางสำหรับ {len(self.selected_catalog_tags)} Tag ที่ติ๊กไว้')
+        self._populate_task_picker(self.bulk_task_selector)
+        self.bulk_action_error.set_visible(False)
+        self.bulk_dialog.present()
+        self.bulk_task_selector.grab_focus()
 
-        added_count = 0
-        for tn in self.selected_catalog_tags:
-            if tn not in cur_tags:
-                cur_tags.append(tn)
-                added_count += 1
+    def _submit_bulk_add(self, _button):
+        names = [name for name in self.catalog_rows if name in self.selected_catalog_tags]
+        if self._add_tags(self.bulk_task_selector.get_selected(), names):
+            self.on_clear_selection()
+            self.bulk_dialog.close()
 
-        if added_count > 0:
+    def on_task_field_changed(self, *_args):
+        if not self.task_selector_updating and self._task_draft is not None:
             self.has_unsaved_changes = True
-            self.render_assigned_tags_table(cur_task)
             self.update_dirty_status()
-            self.selected_catalog_tags.clear()
-            self.render_catalog_table()
-
-    def on_task_field_changed(self, *args):
-        if self.task_selector_updating:
-            return
-        self.has_unsaved_changes = True
-        self.update_dirty_status()
 
     def update_dirty_status(self):
         if self.has_unsaved_changes:
-            self.lbl_save_status.set_text("⚠️ มีข้อมูลที่ยังไม่ได้บันทึก (Unsaved Changes)")
-            self.lbl_save_status.remove_css_class('f2-save-status-clean')
-            self.lbl_save_status.add_css_class('f2-save-status-dirty')
+            self.lbl_save_status.set_text('มีการแก้ไขที่ยังไม่ได้บันทึก')
+            self.lbl_save_status.set_css_classes(['f2-save-status-dirty'])
         else:
-            self.lbl_save_status.set_text("พร้อมใช้งาน · ข้อมูลได้รับการบันทึกแล้ว")
-            self.lbl_save_status.remove_css_class('f2-save-status-dirty')
-            self.lbl_save_status.add_css_class('f2-save-status-clean')
+            self.lbl_save_status.set_text('บันทึกแล้ว' if self._task_draft else 'สร้าง Task เพื่อเริ่มใช้งาน')
+            self.lbl_save_status.set_css_classes(['f2-save-status-clean'])
 
-    def on_task_selector_changed(self, drop_down, param_spec):
-        if self.task_selector_updating:
-            return
-        new_idx = drop_down.get_selected()
-        self.switch_to_task(new_idx)
+    def on_task_selector_changed(self, drop_down, _param_spec):
+        if not self.task_selector_updating:
+            self.switch_to_task(drop_down.get_selected())
 
     def switch_to_task(self, idx):
         tasks = getattr(self.owner, 'tasks', [])
-        if 0 <= idx < len(tasks):
-            if self.has_unsaved_changes:
-                self.on_save_task()  # Auto-save safeguard before switching
-            self.selected_task_index = idx
-            self.owner.current_task_idx = idx
-            self.load_current_task_to_ui()
+        if not 0 <= idx < len(tasks) or idx == self.selected_task_index:
+            return
+        if self.has_unsaved_changes:
+            self.task_selector_updating = True
+            self.task_selector_combo.set_selected(self.selected_task_index)
+            self.task_selector_updating = False
+        self._guard_task_changes(lambda: self._select_saved_task(idx))
+
+    def _select_saved_task(self, idx):
+        self._new_task = False
+        self.selected_task_index = idx
+        self.owner.current_task_idx = idx
+        self.load_current_task_to_ui()
+        self.render_catalog_table()
+
+    def _guard_task_changes(self, proceed):
+        if not self.has_unsaved_changes:
+            proceed()
+            return
+        if self._pending_close is not None:
+            return
+        dialog = Gtk.MessageDialog(
+            transient_for=self.task_dialog,
+            modal=True,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.NONE,
+            text='ยังมีการแก้ Task ที่ไม่ได้บันทึก',
+        )
+        dialog.add_button('กลับไปแก้', Gtk.ResponseType.CANCEL)
+        dialog.add_button('ละทิ้งการแก้ไข', Gtk.ResponseType.REJECT)
+        dialog.add_button('บันทึก', Gtk.ResponseType.ACCEPT)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        self._pending_close = dialog
+
+        def response(widget, choice):
+            self._pending_close = None
+            widget.destroy()
+            if choice == Gtk.ResponseType.REJECT:
+                self._new_task = False
+                self.load_current_task_to_ui()
+                proceed()
+            elif choice == Gtk.ResponseType.ACCEPT and self.on_save_task():
+                proceed()
+
+        dialog.connect('response', response)
+        dialog.present()
+
+    def _on_close_task_dialog(self, _window):
+        def close():
+            self.task_dialog.set_visible(False)
+            self.current_workspace_mode = 'monitoring'
+            self.btn_top_f2.grab_focus()
+        self._guard_task_changes(close)
+        return True
 
     def on_save_task(self):
+        if self._task_draft is None:
+            return False
         tasks = getattr(self.owner, 'tasks', [])
-        if not (0 <= self.selected_task_index < len(tasks)):
-            return
-
-        cur_task = tasks[self.selected_task_index]
-        cur_task['name'] = self.entry_task_name.get_text().strip() or f"Task {self.selected_task_index+1}"
+        idx = self.selected_task_index
+        if not self._new_task and not 0 <= idx < len(tasks):
+            return False
 
         cycle_idx = self.combo_cycle.get_selected()
-        cur_task['cycle_sec'] = CYCLE_OPTIONS[cycle_idx][0] if 0 <= cycle_idx < len(CYCLE_OPTIONS) else 5
+        cycle = self._editor_cycles[cycle_idx][0] if 0 <= cycle_idx < len(self._editor_cycles) else 5
+        updates = dict(
+            name=self.entry_task_name.get_text().strip() or self._task_draft['id'],
+            cycle_sec=cycle,
+            action_log=self.chk_action_log.get_active(),
+            action_notify=self.chk_action_notify.get_active(),
+            active=self.chk_task_enabled.get_active(),
+            tags=list(self._task_draft.get('tags', [])),
+        )
+        if self._new_task:
+            task = {**self._task_draft, **updates}
+            tasks.append(task)
+            idx = len(tasks) - 1
+        else:
+            previous = tasks[idx]
+            task = {**previous, **updates}
+            tasks[idx] = task
+        if not self.owner.save_tasks():
+            if self._new_task:
+                tasks.pop()
+            else:
+                tasks[idx] = previous
+            self.has_unsaved_changes = True
+            self.update_dirty_status()
+            self.lbl_save_status.set_text('บันทึกไม่สำเร็จ · การแก้ไขยังอยู่ในหน้าต่างนี้')
+            return False
 
-        cur_task['action_log'] = self.chk_action_log.get_active()
-        cur_task['action_notify'] = self.chk_action_notify.get_active()
-        cur_task['active'] = self.chk_task_enabled.get_active()
-
-        # Atomic JSON Save to TASKS_CONFIG_FILE
-        saved = self.owner.save_tasks() if hasattr(self.owner, 'save_tasks') else False
-        self.has_unsaved_changes = False
-        self.update_dirty_status()
-
-        # Update combo title
-        self.task_selector_updating = True
-        str_items = [f"{t.get('id', 'TASK')} — {t.get('name', '')[:25]}" for t in tasks]
-        self.task_selector_combo.set_model(Gtk.StringList.new(str_items))
-        self.task_selector_combo.set_selected(self.selected_task_index)
-        self.task_selector_updating = False
+        self._select_saved_task(idx)
+        return True
 
     def on_create_new_task(self):
-        tasks = getattr(self.owner, 'tasks', [])
-        if self.has_unsaved_changes:
-            self.on_save_task()
+        self._guard_task_changes(self._create_task_draft)
 
-        new_id_num = len(tasks) + 1
-        new_task = {
-            "id": f"TASK-{new_id_num:02d}",
-            "name": f"Task เฝ้าระวังใหม่ TASK-{new_id_num:02d}",
-            "cycle_sec": 5,
-            "action_log": True,
-            "action_notify": True,
-            "active": True,
-            "tags": [],
-            "scan_count": 0,
-            "log_count": 0,
-            "alert_count": 0
+    def _create_task_draft(self):
+        tasks = getattr(self.owner, 'tasks', [])
+        existing_ids = {task.get('id') for task in tasks}
+        number = 1
+        while f'TASK-{number:02d}' in existing_ids:
+            number += 1
+        identifier = f'TASK-{number:02d}'
+        self._new_task = True
+        self.selected_task_index = len(tasks)
+        self._task_draft = {
+            'id': identifier, 'name': f'Task ใหม่ {identifier}', 'cycle_sec': 5,
+            'action_log': True, 'action_notify': False, 'active': False, 'tags': [],
+            'scan_count': 0, 'log_count': 0, 'alert_count': 0,
         }
-        tasks.append(new_task)
-        self.selected_task_index = len(tasks) - 1
-        self.owner.current_task_idx = self.selected_task_index
-        self.on_save_task()
-        self.load_current_task_to_ui()
+        self._render_task_form()
+        self.entry_task_name.grab_focus()
+        self.entry_task_name.select_region(0, -1)
+
 
     def on_toggle_auto_scan(self, button):
         if hasattr(self.owner, 'auto_scan_active'):

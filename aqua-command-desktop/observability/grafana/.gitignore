@@ -1,0 +1,10 @@
+.private/
+/private/
+lab-state.json
+*.db
+*.db-*
+*.token
+*.key
+downloads/
+plugins/
+bin/

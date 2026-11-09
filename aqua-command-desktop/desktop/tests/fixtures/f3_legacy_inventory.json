@@ -1,0 +1,73 @@
+{
+  "devices": [
+    {
+      "device_id": "dev-scada-01",
+      "type": "wincc",
+      "configured_ip": "192.168.1.11",
+      "port": 4862,
+      "endpoint_url": "opc.tcp://192.168.1.11:4862",
+      "test_tag": "High_Analog.Tank01_Level",
+      "network_zone": "SCADA_OT",
+      "device_role": "Legacy fixture source 1",
+      "enabled": true
+    },
+    {
+      "device_id": "dev-scada-02",
+      "type": "wincc",
+      "configured_ip": "192.168.1.12",
+      "port": 4862,
+      "endpoint_url": "opc.tcp://192.168.1.12:4862",
+      "test_tag": "High_Analog.Tank02_Level",
+      "network_zone": "SCADA_OT",
+      "device_role": "Legacy fixture source 2",
+      "enabled": true
+    },
+    {
+      "device_id": "dev-scada-03",
+      "type": "wincc",
+      "configured_ip": "192.168.1.13",
+      "port": 4862,
+      "endpoint_url": "opc.tcp://192.168.1.13:4862",
+      "test_tag": "High_VSD.CTM13PT_Run",
+      "network_zone": "SCADA_OT",
+      "device_role": "Legacy fixture source 3",
+      "enabled": true
+    },
+    {
+      "device_id": "dev-switch-01",
+      "type": "switch",
+      "configured_ip": "192.168.1.254",
+      "port": 80,
+      "network_zone": "SCADA_OT",
+      "device_role": "Legacy fixture switch",
+      "enabled": true
+    },
+    {
+      "device_id": "dev-collector-01",
+      "type": "local_host",
+      "configured_ip": "",
+      "port": null,
+      "network_zone": "UNASSIGNED",
+      "device_role": "Legacy fixture local_host",
+      "enabled": true
+    },
+    {
+      "device_id": "dev-router-01",
+      "type": "router",
+      "configured_ip": "192.168.100.1",
+      "port": 80,
+      "network_zone": "EXTERNAL_WAN",
+      "device_role": "Legacy fixture router",
+      "enabled": true
+    },
+    {
+      "device_id": "dev-service-tg",
+      "type": "service",
+      "configured_ip": "",
+      "port": null,
+      "network_zone": "EXTERNAL_WAN",
+      "device_role": "Legacy fixture service",
+      "enabled": true
+    }
+  ]
+}

@@ -25,3 +25,5 @@ storage/state.json*
 *.log
 *.tmp
 .DS_Store
+MagicMock/
+mock.config_dir/

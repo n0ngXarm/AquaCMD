@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>F3 ผังการสื่อสาร</title>
+<style>/*F3_CSS*/</style>
+</head>
+<body data-demo="__F3_DEMO_MODE__" data-demo-error="__F3_DEMO_ERROR__">
+<div id="f3-glow" aria-hidden="true"></div>
+<aside id="f3-demo-rail" aria-label="สถานะการจำลอง">กำลังจำลองข้อมูล · SIMULATED</aside>
+<div id="f3-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<main>
+<header class="page-title">
+  <h1>F3 ผังการสื่อสาร</h1>
+  <p>SCADA → LAN Switch → AQUA COMMAND → Router → Telegram</p>
+  <button type="button" id="f3-demo" class="demo-button" __F3_DEMO_ATTR__>จำลองและส่ง Telegram</button>
+</header>
+
+<div class="banner" id="banner" aria-live="polite"></div>
+
+<div class="diagram-frame"><div id="dia">
+  <svg id="lines" aria-hidden="true"><defs><filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g id="tr"></g><g id="pt"></g></svg>
+  <section class="zone a"><h2>วง OT (ปิด ไม่มีอินเทอร์เน็ต)</h2><p>เครื่อง SCADA ที่ AQUA COMMAND ต้องอ่านค่า</p>
+    <div class="in"><div class="stack" id="zA1"></div><div class="stack" id="zA2"></div></div></section>
+  <section class="zone b">
+    <h2>เครื่อง AQUA COMMAND <span class="read-only">อ่านอย่างเดียว</span></h2>
+    <p>อ่านค่า → เก็บหลักฐาน → ประเมินเงื่อนไข → จัดคิว</p>
+    <div class="stack" id="zB"></div>
+  </section>
+  <section class="zone c"><h2>ฝั่งอินเทอร์เน็ต</h2><p>ทางออกไปแจ้งเตือน</p><div class="stack" id="zC"></div></section>
+</div></div>
+
+<div class="legend" id="legend"></div>
+<dialog class="pop" id="pop" aria-labelledby="ptitle"><div class="card"><button class="x" data-close aria-label="ปิดหน้าต่าง">✕</button><div class="detail" id="detail" aria-live="polite"></div></div></dialog>
+</main>
+
+<script id="f3-metadata" type="application/json">__F3_METADATA__</script>
+<script>/*F3_JS*/</script>
+</body></html>

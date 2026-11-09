@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 AQUA COMMAND — UNIFIED WORKSPACE PROFESSIONAL UI PASS V2
-Automated Verification for Table Contrast, Layout Proportions & Inspector Collapse
+Palette contrast and catalog group labels. Native popup/layout checks live in test_workspace_production.py.
 """
 
-import os
 import sys
 import math
 import unittest
@@ -16,10 +15,7 @@ sys.path.insert(0, str(desktop_dir))
 
 import gi
 gi.require_version('Gtk', '4.0')
-from gi.repository import Gtk
-
-import app
-from workspace import AquaUnifiedWorkspaceView, GROUP_METADATA
+from workspace import GROUP_METADATA
 
 def hex_to_rgb(hex_str):
     hex_str = hex_str.lstrip('#')
@@ -40,13 +36,6 @@ def get_contrast_ratio(hex1, hex2):
 
 
 class TestWorkspaceV2Presentation(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.gtk_app = Gtk.Application(application_id='org.aqua.test.workspace.v2')
-        cls.win = app.AquaWinCCWindow(cls.gtk_app)
-        cls.win.auto_scan_active = False
-        cls.ws = cls.win.unified_workspace
-
     def test_01_wcag_aa_table_contrast(self):
         """Verify contrast ratios for all table states meet WCAG AA (>= 4.5:1) with Industrial Graphite tokens"""
         # Normal Row: Text #F0F4F8 on Background #151F2A
@@ -77,78 +66,6 @@ class TestWorkspaceV2Presentation(unittest.TestCase):
         # Neutral Gray Standby: Text #8899AA on Background #151F2A
         contrast_gray = get_contrast_ratio("#8899AA", "#151F2A")
         self.assertGreaterEqual(contrast_gray, 4.5)
-
-    def test_02_layout_proportions_20_48_32(self):
-        """Verify dynamic layout proportions at 1366 and 1920 (giving Center table more space in F1)"""
-        # Test 1366x768 in F1 Monitoring mode (Center gets expanded 54% space)
-        self.ws.current_workspace_mode = 'monitoring'
-        w1 = 1366
-        self.ws.update_layout_proportions(w1)
-        self.assertEqual(self.ws.main_hpaned.get_position(), int(w1 * 0.20))
-        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w1 * 0.54))
-
-        # Test 1366x768 in F2 Task Manager mode (Center 48%, Right 32% for Task Studio)
-        self.ws.current_workspace_mode = 'task_manager'
-        self.ws.update_layout_proportions(w1)
-        self.assertEqual(self.ws.main_hpaned.get_position(), int(w1 * 0.20))
-        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w1 * 0.48))
-
-        # Test 1920x1080 in F1 Monitoring mode
-        self.ws.current_workspace_mode = 'monitoring'
-        w2 = 1920
-        self.ws.update_layout_proportions(w2)
-        self.assertEqual(self.ws.main_hpaned.get_position(), int(w2 * 0.20))
-        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w2 * 0.54))
-
-        # Test 1920x1080 in F2 Task Manager mode
-        self.ws.current_workspace_mode = 'task_manager'
-        self.ws.update_layout_proportions(w2)
-        self.assertEqual(self.ws.main_hpaned.get_position(), int(w2 * 0.20))
-        self.assertEqual(self.ws.sub_hpaned.get_position(), int(w2 * 0.48))
-
-    def test_03_inspector_collapse_and_restore(self):
-        """Verify F1 Inspector collapse and expansion preserves tag selection and state"""
-        self.ws.set_workspace_mode('monitoring')
-        self.ws.on_select_group("High_VSD")
-        selected_tag = self.ws.selected_inspector_tag
-        self.assertIsNotNone(selected_tag)
-        tag_name = selected_tag.get('name')
-
-        # Collapse Inspector
-        self.ws.toggle_inspector_collapse()
-        self.assertTrue(self.ws.inspector_collapsed)
-        self.assertFalse(self.ws.right_col.get_visible(), "Right context panel must be hidden when collapsed")
-        self.assertIn("แสดง", self.ws.btn_collapse_inspector.get_label())
-
-        # Verify selected tag is unchanged
-        self.assertEqual(self.ws.selected_inspector_tag.get('name'), tag_name)
-
-        # Restore Inspector
-        self.ws.toggle_inspector_collapse()
-        self.assertFalse(self.ws.inspector_collapsed)
-        self.assertTrue(self.ws.right_col.get_visible(), "Right context panel must be restored")
-        self.assertEqual(self.ws.selected_inspector_tag.get('name'), tag_name)
-
-    def test_04_factual_status_not_mock_hex(self):
-        """Verify status column uses factual 'Not Observed (Standby)' and not misleading 0x00 mock"""
-        row_count = 0
-        child = self.ws.catalog_listbox.get_first_child()
-        while child:
-            row_count += 1
-            # Search inside row for quality label
-            rbox = child.get_child()
-            quality_label = None
-            c = rbox.get_first_child()
-            while c:
-                if isinstance(c, Gtk.Label) and "Not Observed" in c.get_text():
-                    quality_label = c.get_text()
-                    break
-                c = c.get_next_sibling()
-            self.assertIsNotNone(quality_label, "Row must contain factual observation status")
-            self.assertNotIn("0x00000000", quality_label, "Status must not show mock hex as live telemetry")
-            child = child.get_next_sibling()
-            if row_count >= 5:
-                break
 
     def test_05_verified_group_metadata(self):
         """Verify all 10 real equipment groups have factual Thai translations without guesswork"""

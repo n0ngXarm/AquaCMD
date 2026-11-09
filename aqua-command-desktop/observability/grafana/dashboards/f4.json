@@ -1,0 +1,1000 @@
+{
+  "uid": "aqua-f4",
+  "title": "AQUA · F4 Host Performance",
+  "description": "AQUA COMMAND read-only Hybrid • RUNTIME • UTC",
+  "editable": false,
+  "schemaVersion": 41,
+  "version": 1,
+  "style": "dark",
+  "tags": [
+    "AQUA",
+    "RUNTIME",
+    "read-only"
+  ],
+  "timezone": "utc",
+  "refresh": "5s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m"
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "description": "",
+      "targets": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "### AQUA COMMAND · F4 Host performance\nRUNTIME · UTC · Actual Fedora host and AQUA owner process. First CPU/rate sample is WARMING_UP. A NIC link state describes the interface only."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Host sample freshness",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 3,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "CPU",
+      "type": "stat",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 7,
+        "w": 6,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "cpu_percent",
+              "text": "cpu_percent",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Memory",
+      "type": "stat",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 7,
+        "w": 6,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "memory_percent",
+              "text": "memory_percent",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Root disk used",
+      "type": "stat",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 7,
+        "w": 6,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "disk_percent",
+              "text": "disk_percent",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "title": "AQUA process RSS",
+      "type": "stat",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 7,
+        "w": 6,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "process_rss_bytes",
+              "text": "process_rss_bytes",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "title": "CPU · host / AQUA process",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 12,
+        "h": 8
+      },
+      "description": "Actual 5s samples from this host. Gaps stay gaps; no historical backfill. First CPU/rate sample warms up.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host-history",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "cpu_percent",
+              "text": "Host CPU",
+              "type": "number"
+            },
+            {
+              "selector": "process_cpu_percent",
+              "text": "AQUA process CPU",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Memory / root disk usage",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 11,
+        "w": 12,
+        "h": 8
+      },
+      "description": "Actual 5s samples from this host. Gaps stay gaps; no historical backfill. First CPU/rate sample warms up.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host-history",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "memory_percent",
+              "text": "Memory",
+              "type": "number"
+            },
+            {
+              "selector": "disk_percent",
+              "text": "Root disk",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "Disk I/O",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 19,
+        "w": 12,
+        "h": 8
+      },
+      "description": "Actual 5s samples from this host. Gaps stay gaps; no historical backfill. First CPU/rate sample warms up.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host-history",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "disk_read_bytes_per_sec",
+              "text": "Read",
+              "type": "number"
+            },
+            {
+              "selector": "disk_write_bytes_per_sec",
+              "text": "Write",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "NIC counters · all-interface aggregate",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 19,
+        "w": 12,
+        "h": 8
+      },
+      "description": "Actual 5s samples from this host. Gaps stay gaps; no historical backfill. First CPU/rate sample warms up.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/host-history",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "network_rx_bytes_per_sec",
+              "text": "Receive",
+              "type": "number"
+            },
+            {
+              "selector": "network_tx_bytes_per_sec",
+              "text": "Transmit",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "Interfaces · sanitized IDs / observed link state",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 27,
+        "w": 24,
+        "h": 8
+      },
+      "description": "Includes virtual and loopback interfaces. Aggregate traffic may count bridged traffic more than once. A counter reset yields NO DATA for that rate interval.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/interfaces",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "interface_id",
+              "text": "interface_id",
+              "type": "string"
+            },
+            {
+              "selector": "link_state",
+              "text": "link_state",
+              "type": "string"
+            },
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "rx_bytes_per_sec",
+              "text": "RX B/s",
+              "type": "number"
+            },
+            {
+              "selector": "tx_bytes_per_sec",
+              "text": "TX B/s",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 12,
+      "title": "SQLite projection health · bounded read",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 35,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/history?from=${__from}&to=${__to}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "checked_at",
+              "text": "checked_at",
+              "type": "string"
+            },
+            {
+              "selector": "range_start",
+              "text": "range_start",
+              "type": "string"
+            },
+            {
+              "selector": "range_end",
+              "text": "range_end",
+              "type": "string"
+            },
+            {
+              "selector": "coverage",
+              "text": "coverage",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 13,
+      "title": "Existing polling worker",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 24,
+        "h": 5
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/worker",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "interval_seconds",
+              "text": "interval_seconds",
+              "type": "number"
+            },
+            {
+              "selector": "poll_count",
+              "text": "poll_count",
+              "type": "number"
+            },
+            {
+              "selector": "failed_polls",
+              "text": "failed_polls",
+              "type": "number"
+            },
+            {
+              "selector": "last_poll_duration_ms",
+              "text": "last_poll_duration_ms",
+              "type": "number"
+            },
+            {
+              "selector": "reconnect_attempts",
+              "text": "reconnect_attempts",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    }
+  ],
+  "links": [
+    {
+      "title": "F1 Monitoring",
+      "type": "link",
+      "url": "/d/aqua-f1",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F2 Events",
+      "type": "link",
+      "url": "/d/aqua-f2",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F3 Topology",
+      "type": "link",
+      "url": "/d/aqua-f3",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F4 Host",
+      "type": "link",
+      "url": "/d/aqua-f4",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "Diagnostics",
+      "type": "link",
+      "url": "/d/aqua-diagnostics",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ]
+}

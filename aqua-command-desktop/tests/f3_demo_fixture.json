@@ -1,0 +1,20 @@
+{
+  "station": {
+    "host": "127.0.0.1",
+    "port": 4850,
+    "ua": {
+      "endpoint": "opc.tcp://127.0.0.1:4850",
+      "nodes": {"DemoWaterLevel": "ns=2;s=DemoWaterLevel"},
+      "security_policy": "None"
+    },
+    "value": 73.25,
+    "unit": "%",
+    "quality": "Good"
+  },
+  "tasks": [
+    {"id": "SIM-TASK-01", "name": "เฝ้าระวังระดับน้ำ", "tags": ["DemoWaterLevel"], "threshold": 70},
+    {"id": "SIM-TASK-02", "name": "แจ้งเตือนถังพัก", "tags": ["DemoWaterLevel"], "threshold": 72}
+  ],
+  "switch": "192.0.2.254",
+  "router": "198.51.100.1"
+}

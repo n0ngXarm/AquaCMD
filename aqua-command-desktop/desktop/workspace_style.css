@@ -305,17 +305,17 @@
 
 .f2-group-name {
     color: #F0F4F8;
-    font-size: 9pt;
+    font-size: 14px;
     font-weight: 700;
 }
 .f2-group-desc {
-    color: #A8B5C3;
-    font-size: 8pt;
+    color: #c3cfdd;
+    font-size: 12px;
 }
 .f2-group-count {
     background-color: #1D2834;
-    color: #A8B5C3;
-    font-size: 7.5pt;
+    color: #c3cfdd;
+    font-size: 12px;
     font-weight: 600;
     padding: 2px 6px;
     border-radius: 8px;
@@ -345,25 +345,6 @@
 .f2-catalog-subtitle {
     color: #A8B5C3;
     font-size: 8.5pt;
-}
-
-/* Selection Badges */
-.f2-sel-badge-active {
-    background-color: #1E2D3D;
-    color: #4B91D4;
-    border: 1px solid #4B91D4;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 8pt;
-    font-weight: bold;
-}
-.f2-sel-badge-idle {
-    background-color: #151F2A;
-    color: #8899AA;
-    border: 1px solid #334252;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 8pt;
 }
 
 /* Search Entry Dark Overrides */
@@ -429,13 +410,12 @@ searchentry.workspace-search image {
     border-bottom: 1px solid #334252;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    padding: 7px 10px;
+    padding: 9px 11px;
 }
 .f2-col-header {
-    color: #A8B5C3;
-    font-size: 8.5pt;
+    color: #d0dbe7;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.3px;
 }
 
 /* Table Scrollable Window & ListBox */
@@ -525,20 +505,19 @@ list.f2-table-list,
 /* Row Cell Elements */
 .f2-tag-name-label {
     color: #F0F4F8;
-    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 9pt;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 650;
 }
-.f2-tag-group-label {
-    color: #A8B5C3;
-    font-size: 8.5pt;
+.f2-tag-group-label,
+.tag-cell-secondary {
+    color: #c3cfdd;
+    font-size: 13px;
 }
 /* Neutral Data Type Badge */
 .f2-tag-type-badge {
     background-color: #1D2834;
-    color: #A8B5C3;
-    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 7.5pt;
+    color: #c3cfdd;
+    font-size: 13px;
     font-weight: 600;
     border: 1px solid #334252;
     border-radius: 3px;
@@ -580,44 +559,16 @@ list.f2-table-list,
     background-color: #4B91D4;
 }
 
-/* Bottom Action Dock Bar in Center Column */
+/* Keep the selection and its next action together above the table. */
 .workspace-dock-bar {
     background-color: #1D2834;
     border: 1px solid #334252;
     border-radius: 5px;
     padding: 6px 10px;
-    margin-top: 6px;
 }
-
-.f2-btn-add-selected {
-    background-color: #4B91D4;
-    border: 1px solid #4B91D4;
-    border-radius: 4px;
-    color: #FFFFFF;
-    font-size: 8.5pt;
-    font-weight: bold;
-    padding: 5px 12px;
-}
-.f2-btn-add-selected:hover {
-    background-color: #3B7BB8;
-    border-color: #3B7BB8;
-}
-.f2-btn-add-selected:active {
-    background-color: #2F69A0;
-    border-color: #2F69A0;
-}
-.f2-btn-add-selected:focus,
-.f2-btn-add-selected:focus-visible {
-    outline: 2px solid #FFFFFF;
-    outline-offset: 1px;
-}
-.f2-btn-add-selected:disabled {
-    background-color: #1A242F;
-    border: 1px solid #2A3847;
-    color: #64748B;
-}
-.f2-btn-add-selected:disabled label {
-    color: #64748B;
+.tag-flow-hint {
+    color: #d0dbe7;
+    font-size: 13px;
 }
 
 .f2-btn-clear-selection {
@@ -696,13 +647,11 @@ list.f2-table-list,
 .workspace-inspector-val {
     color: #F0F4F8;
     font-size: 8.5pt;
-    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
 }
 
 .f1-group-code-pill {
     background-color: #26313D;
     color: #F0F4F8;
-    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
     font-size: 9pt;
     font-weight: bold;
     border: 1px solid #334252;
@@ -824,7 +773,6 @@ list.f2-table-list,
 .f2-task-id-pill {
     background-color: #151F2A;
     color: #F0F4F8;
-    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
     font-size: 8.5pt;
     font-weight: bold;
     border: 1px solid #334252;
@@ -979,11 +927,54 @@ popover modelbutton:selected {
 }
 .f2-assigned-list row {
     background-color: #151F2A;
-    border-bottom: 1px solid #1F2B37;
-    padding: 3px 6px;
+    border-bottom: 1px solid #263544;
+    min-height: 32px;
+    padding: 5px 8px;
 }
 .f2-assigned-list row:hover {
     background-color: #26313D;
+}
+.f2-assigned-list row:selected {
+    background-color: #253e59;
+}
+.f2-assigned-list row.tag-row-checked,
+.f2-assigned-list row.tag-row-checked:hover {
+    background-color: #233b51;
+}
+.f2-assigned-list checkbutton check {
+    background-image: none;
+    box-shadow: none;
+    border-color: #60768e;
+}
+
+button.f2-action-hint-btn {
+    background: transparent;
+    color: #38bdf8;
+    border: 1px solid #334252;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 8.5pt;
+    font-weight: 500;
+}
+button.f2-action-hint-btn:hover {
+    background: #1e293b;
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+button.f2-action-hint-btn:active {
+    background: #0f172a;
+}
+.tag-task-body {
+    padding: 12px;
+}
+.tag-assigned-header {
+    background-color: #1D2834;
+    border: 1px solid #334252;
+    padding: 8px;
+}
+.tag-assigned-placeholder {
+    color: #a8b5c3;
+    padding: 12px;
 }
 
 /* Remove Tag Button */
@@ -1065,4 +1056,235 @@ paned > separator {
     background-color: #334252;
     min-width: 1px;
     min-height: 1px;
+}
+
+/* Use the same digits in counts, technical fields and observed values. */
+.tag-overview,
+.tag-overview-popup {
+    font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    font-variant-numeric: tabular-nums;
+}
+.tag-overview .workspace-subtitle,
+.tag-overview .f2-catalog-subtitle,
+.tag-overview .f2-scan-label {
+    color: #c3cfdd;
+    font-size: 12px;
+}
+.tag-overview .workspace-top-ribbon {
+    border-radius: 8px;
+}
+.tag-overview .workspace-col-panel,
+.tag-overview .workspace-search {
+    border-radius: 8px;
+}
+.tag-overview .workspace-search,
+.tag-overview .workspace-top-ribbon button,
+.tag-overview .workspace-dock-bar button,
+.tag-overview-popup button,
+.tag-overview-popup dropdown {
+    min-height: 32px;
+}
+.tag-overview .f2-table-list row {
+    margin: 2px 4px;
+    padding: 1px 0;
+    border: 1px solid transparent;
+    border-radius: 8px;
+}
+.tag-overview .f2-table-list row:hover,
+.tag-overview .f2-table-list row:selected {
+    border-color: #426487;
+}
+.tag-overview .f2-table-list row.tag-row-checked,
+.tag-overview .f2-table-list row.tag-row-checked:hover {
+    background-color: #233b51;
+}
+.tag-overview .f2-table-list checkbutton check {
+    background-image: none;
+    box-shadow: none;
+    border-color: #60768e;
+}
+.tag-overview .tag-state {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+}
+.tag-overview .tag-state.badge-standby,
+.tag-overview .tag-state.badge-sensor {
+    color: #c3cfdd;
+}
+.tag-overview button.tag-flow-primary,
+.tag-overview-popup button.tag-flow-primary {
+    background: #307cd0;
+    border: 1px solid #6bacf4;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 12px;
+}
+.tag-overview button.tag-flow-primary:hover,
+.tag-overview-popup button.tag-flow-primary:hover {
+    background: #286bb7;
+}
+.tag-overview button.tag-flow-primary:focus-visible,
+.tag-overview-popup button.tag-flow-primary:focus-visible {
+    outline: 2px solid #d0e7ff;
+    outline-offset: 1px;
+}
+.tag-overview button.tag-flow-primary:disabled,
+.tag-overview-popup button.tag-flow-primary:disabled {
+    background: #1a242f;
+    border-color: #334252;
+    color: #9aaabd;
+}
+.tag-overview button.tag-flow-primary:disabled label {
+    color: #9aaabd;
+}
+.tag-overview .tag-overview-toast {
+    background: #253c53;
+    color: #f0f4f8;
+    border: 1px solid #426487;
+    border-radius: 8px;
+    padding: 4px 10px;
+    margin: 4px;
+}
+.tag-overview-popup {
+    background: #1d2834;
+    color: #f0f4f8;
+}
+.tag-overview-popup scrolledwindow > viewport > box {
+    margin: 12px;
+}
+
+.tag-overview-popup .tag-dialog-name {
+    color: #f0f4f8;
+    font-size: 19px;
+    font-weight: 700;
+}
+.tag-overview-popup .workspace-inspector-key {
+    color: #bdcad8;
+    font-size: 13px;
+}
+.tag-overview-popup .workspace-inspector-val {
+    font-size: 13px;
+}
+.tag-overview-popup .tag-dialog-reading {
+    font-size: 17px;
+    font-weight: 700;
+}
+.tag-overview-popup .tag-dialog-quality {
+    font-size: 13px;
+}
+.tag-overview-popup .tag-technical-disclosure {
+    color: #a9d4ff;
+    font-size: 13px;
+    font-weight: 600;
+}
+.tag-overview-popup .tag-dialog-footer {
+    background: #151f2a;
+    border-top: 1px solid #334252;
+    padding: 10px 12px;
+}
+.tag-overview-popup .tag-task-option {
+    padding: 0 6px;
+    border-radius: 6px;
+}
+.tag-overview-popup .tag-task-option:hover:not(:disabled) {
+    background-color: #253b50;
+}
+
+/* F6 settings use separate tabs for the two destinations and their history. */
+.f6-settings {
+    font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+}
+.f6-header {
+    background: #1d2834;
+    border: 1px solid #334252;
+    border-radius: 8px;
+    margin: 8px 14px 0;
+    padding: 8px 14px;
+}
+.f6-page-title {
+    color: #f0f4f8;
+    font-size: 20px;
+    font-weight: 700;
+}
+.f6-header stackswitcher button,
+.f6-settings button.f6-action,
+.f6-settings button.f6-primary {
+    background: #253343;
+    color: #eef4fb;
+    border: 1px solid #40536a;
+    min-height: 32px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+.f6-header stackswitcher button:checked {
+    background: #24486d;
+    border-color: #6496c9;
+}
+.f6-settings button.f6-primary {
+    background: #2e72bc;
+    border-color: #659bd3;
+}
+.f6-header stackswitcher button:hover,
+.f6-settings button.f6-action:hover,
+.f6-settings button.f6-primary:hover {
+    background: #34516f;
+}
+.f6-settings button.f6-action:disabled,
+.f6-settings button.f6-primary:disabled {
+    background: #19242f;
+    color: #8798ab;
+    border-color: #334252;
+}
+.f6-body {
+    background: #131c26;
+    border: 1px solid #283847;
+    border-radius: 8px;
+    margin: 10px 14px 8px;
+    padding: 8px;
+}
+.f6-card {
+    background: #1d2834;
+    border: 1px solid #334252;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.f6-card-title {
+    color: #f0f4f8;
+    font-size: 16px;
+    font-weight: 700;
+}
+.f6-help,
+.f6-field-label {
+    color: #c0cddd;
+    font-size: 13px;
+}
+.f6-field-label {
+    font-weight: 600;
+}
+.f6-settings entry,
+.f6-settings dropdown button {
+    min-height: 28px;
+}
+.f6-disclosure {
+    color: #a9d4ff;
+    font-size: 13px;
+    font-weight: 600;
+}
+.f6-certificate {
+    margin-top: 8px;
+    background: #151f2a;
+    border: 1px solid #334252;
+    border-radius: 6px;
+    padding: 10px;
+}
+.f6-settings .table-th {
+    background: #263648;
+    border-bottom-color: #41556a;
 }

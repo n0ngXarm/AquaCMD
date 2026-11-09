@@ -461,7 +461,8 @@ class OpcUaPollingEngine:
                     node_id=node_id_str,
                     data_value=dv,
                     unit=mapping.unit,
-                    arrival_time=now_utc
+                    arrival_time=now_utc,
+                    endpoint_url=self.endpoint_url, session_state="CONNECTED"
                 )
 
             except Exception as ex:

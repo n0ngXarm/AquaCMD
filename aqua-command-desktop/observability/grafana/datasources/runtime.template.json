@@ -1,0 +1,22 @@
+{
+  "apiVersion": 1,
+  "datasources": [{
+    "name": "AQUA Runtime (read only)",
+    "uid": "aqua-runtime",
+    "orgId": 1,
+    "type": "yesoreyeram-infinity-datasource",
+    "access": "proxy",
+    "isDefault": true,
+    "editable": false,
+    "jsonData": {
+      "allowedHosts": ["${AQUA_PROJECTION_URL}"],
+      "httpHeaderName1": "Authorization",
+      "oauthPassThru": false,
+      "allowDangerousHTTPMethods": false,
+      "customHealthCheckEnabled": true,
+      "customHealthCheckUrl": "${AQUA_PROJECTION_URL}/v1/runtime/health",
+      "customHealthCheckUrlOptions": {"method": "GET"}
+    },
+    "secureJsonData": {"httpHeaderValue1": "Bearer ${AQUA_PROJECTION_TOKEN}"}
+  }]
+}

@@ -1,0 +1,688 @@
+{
+  "uid": "aqua-f1",
+  "title": "AQUA · F1 Monitoring & History",
+  "description": "AQUA COMMAND read-only Hybrid • RUNTIME • UTC",
+  "editable": false,
+  "schemaVersion": 41,
+  "version": 1,
+  "style": "dark",
+  "tags": [
+    "AQUA",
+    "RUNTIME",
+    "read-only"
+  ],
+  "timezone": "utc",
+  "refresh": "5s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m"
+    ],
+    "time_options": [
+      "1h",
+      "24h",
+      "7d"
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "tag",
+        "label": "Tag ID · native F5 context (empty = all)",
+        "type": "textbox",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [],
+        "hide": 0,
+        "skipUrlSync": false
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "",
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "### AQUA COMMAND · F1 Monitoring\nRUNTIME · UTC · Read only · Select a Tag in GTK F5 to open its history. Use the time picker for **1h / 24h / 7d** (maximum query span: 7d). No observations are backfilled. Catalog entries alone supply no measurements."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Current producer freshness",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/health",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "captured_at",
+              "text": "captured_at",
+              "type": "string"
+            },
+            {
+              "selector": "stream",
+              "text": "stream",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Live values · GOOD values / explicit digital or analog type",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 9
+      },
+      "description": "Numeric and boolean values are displayed as text to preserve false/zero. Missing, BAD, unbound or stale current values display NO DATA; quality remains visible.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/tags",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "tag_id",
+              "text": "tag_id",
+              "type": "string"
+            },
+            {
+              "selector": "value",
+              "text": "value",
+              "type": "string"
+            },
+            {
+              "selector": "engineering_unit",
+              "text": "engineering_unit",
+              "type": "string"
+            },
+            {
+              "selector": "data_type",
+              "text": "data_type",
+              "type": "string"
+            },
+            {
+              "selector": "quality",
+              "text": "quality",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Quality / timestamps / provenance",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 24,
+        "h": 7
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/tags",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "tag_id",
+              "text": "tag_id",
+              "type": "string"
+            },
+            {
+              "selector": "quality",
+              "text": "quality",
+              "type": "string"
+            },
+            {
+              "selector": "source_timestamp",
+              "text": "source_timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "arrival_timestamp",
+              "text": "arrival_timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Recorded history · selected time range",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 10
+      },
+      "description": "Only recorded observations. Unit appears in each series label. BAD/unknown values remain NULL. Old rows lack endpoint/session binding and remain UNBOUND_LOCAL_RUNTIME.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/history?from=${__from}&to=${__to}&tag_id=${tag}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            },
+            {
+              "selector": "series",
+              "text": "Tag / unit",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Historical comparison · time shifted 1h earlier",
+      "type": "timeseries",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 10
+      },
+      "description": "Only recorded observations. Unit appears in each series label. BAD/unknown values remain NULL. Old rows lack endpoint/session binding and remain UNBOUND_LOCAL_RUNTIME.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/history?from=${__from}&to=${__to}&tag_id=${tag}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "timeseries",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "timestamp",
+              "text": "Time",
+              "type": "timestamp"
+            },
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            },
+            {
+              "selector": "series",
+              "text": "Tag / unit",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "timeShift": "1h"
+    },
+    {
+      "id": 7,
+      "title": "Historical observations · actual unit and quality",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 9
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/history?from=${__from}&to=${__to}&tag_id=${tag}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "data",
+          "columns": [
+            {
+              "selector": "tag_id",
+              "text": "tag_id",
+              "type": "string"
+            },
+            {
+              "selector": "unit",
+              "text": "unit",
+              "type": "string"
+            },
+            {
+              "selector": "quality",
+              "text": "quality",
+              "type": "string"
+            },
+            {
+              "selector": "source_timestamp",
+              "text": "source_timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "timestamp",
+              "text": "timestamp",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            },
+            {
+              "selector": "value",
+              "text": "value",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "History read boundary / coverage",
+      "type": "table",
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aqua-runtime"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 43,
+        "w": 24,
+        "h": 4
+      },
+      "description": "Up to 2,000 recent rows in the selected interval. An empty result is NO DATA, not an OFF or zero reading. Historic source/session correlation was not recorded by the existing schema.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aqua-runtime"
+          },
+          "type": "json",
+          "source": "url",
+          "url": "http://aqua-projection:8080/v1/runtime/history?from=${__from}&to=${__to}&tag_id=${tag}",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend",
+          "format": "table",
+          "root_selector": "",
+          "columns": [
+            {
+              "selector": "state",
+              "text": "state",
+              "type": "string"
+            },
+            {
+              "selector": "range_start",
+              "text": "range_start",
+              "type": "string"
+            },
+            {
+              "selector": "range_end",
+              "text": "range_end",
+              "type": "string"
+            },
+            {
+              "selector": "coverage",
+              "text": "coverage",
+              "type": "string"
+            },
+            {
+              "selector": "provenance",
+              "text": "provenance",
+              "type": "string"
+            },
+            {
+              "selector": "limit",
+              "text": "row_limit",
+              "type": "number"
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "noValue": "NO DATA",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    }
+  ],
+  "links": [
+    {
+      "title": "F1 Monitoring",
+      "type": "link",
+      "url": "/d/aqua-f1",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F2 Events",
+      "type": "link",
+      "url": "/d/aqua-f2",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F3 Topology",
+      "type": "link",
+      "url": "/d/aqua-f3",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "F4 Host",
+      "type": "link",
+      "url": "/d/aqua-f4",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    },
+    {
+      "title": "Diagnostics",
+      "type": "link",
+      "url": "/d/aqua-diagnostics",
+      "targetBlank": false,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ]
+}

@@ -29,6 +29,11 @@ label {
 /* --------------------------------------------------------------------------
    Global Shell: Header (Section A)
    -------------------------------------------------------------------------- */
+.wincc-topbar,
+.alarm-banner {
+    font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    font-variant-numeric: tabular-nums;
+}
 .wincc-topbar {
     background: #1B2532;
     border-bottom: 1px solid #364553;
@@ -113,8 +118,9 @@ label {
 }
 
 .wincc-clock {
-    font-family: 'JetBrains Mono', 'Liberation Mono', 'Source Code Pro', monospace;
-    font-size: 12.5px;
+    font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
     font-weight: 700;
     background: #0B1017;
     color: #3489E8;
