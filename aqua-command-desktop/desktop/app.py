@@ -419,25 +419,49 @@ def scan_wincc_tags(file_path):
     """
     tags = []
     p = Path(file_path)
-    if not p.exists():
+    if not p.exists() or not p.is_file():
         return tags
 
+    try:
+        raw_bytes = p.read_bytes()
+    except OSError as e:
+        print(f"Error reading WinCC export {file_path}: {e}", file=sys.stderr)
+        return tags
+
+    if not raw_bytes:
+        return []
+
     content = None
-    for enc in ('utf-16-le', 'utf-16', 'utf-8-sig', 'utf-8'):
+    if raw_bytes.startswith(b'\xef\xbb\xbf'):
         try:
-            raw_bytes = p.read_bytes()
-            if not raw_bytes:
-                return []
-            content = raw_bytes.decode(enc)
-            if content.startswith('\ufeff'):
-                content = content[1:]
-            break
-        except (UnicodeDecodeError, OSError):
-            continue
+            content = raw_bytes[3:].decode('utf-8')
+        except UnicodeDecodeError:
+            pass
+    elif raw_bytes.startswith(b'\xff\xfe'):
+        try:
+            content = raw_bytes[2:].decode('utf-16-le')
+        except UnicodeDecodeError:
+            pass
+    elif raw_bytes.startswith(b'\xfe\xff'):
+        try:
+            content = raw_bytes[2:].decode('utf-16-be')
+        except UnicodeDecodeError:
+            pass
+
+    if content is None:
+        for enc in ('utf-8', 'utf-16-le', 'utf-16', 'cp1252'):
+            try:
+                content = raw_bytes.decode(enc)
+                break
+            except (UnicodeDecodeError, OSError):
+                continue
 
     if content is None:
         print(f"Error decoding WinCC export {file_path}: unsupported encoding", file=sys.stderr)
         return tags
+
+    if content.startswith('\ufeff'):
+        content = content[1:]
 
     lines = content.splitlines()
     if len(lines) < 3:
@@ -2179,7 +2203,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         opc_actions.append(self.btn_browse_opc)
         opc_actions.append(action('บันทึก WinCC', self.on_save_opcua_config, primary=True))
 
-        self.lbl_mon_telemetry = status('หยุดอยู่')
+        self.lbl_mon_telemetry = status('STOPPED (หยุดอยู่)')
         monitoring.append(self.lbl_mon_telemetry)
         monitoring_actions = Gtk.Box(spacing=8, halign=Gtk.Align.END)
         monitoring.append(monitoring_actions)
@@ -2392,7 +2416,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.btn_pause_monitoring.set_sensitive(False)
         self.btn_pause_monitoring.set_label("พัก")
         self.btn_stop_monitoring.set_sensitive(False)
-        self.lbl_mon_telemetry.set_text("หยุดอยู่")
+        self.lbl_mon_telemetry.set_text("STOPPED (หยุดอยู่)")
         self.lbl_mon_telemetry.remove_css_class('badge-active')
         self.lbl_mon_telemetry.remove_css_class('badge-sensor')
         self.lbl_mon_telemetry.add_css_class('badge-standby')

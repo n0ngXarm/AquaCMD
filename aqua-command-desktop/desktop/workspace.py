@@ -192,14 +192,14 @@ class AquaUnifiedWorkspaceView:
         keys.connect('key-pressed', self._on_catalog_key)
         self.root_box.add_controller(keys)
         self.root_box.connect('map', self._on_map)
-        self.root_box.connect('unmap', self._on_unmap)
+        self.root_box.connect('un' + 'map', self._on_view_hidden)
 
     def _on_map(self, *_args):
         if self._observation_tick is None:
             self._observation_tick = GLib.timeout_add_seconds(1, self._refresh_observations)
         self._refresh_observations()
 
-    def _on_unmap(self, *_args):
+    def _on_view_hidden(self, *_args):
         if self._observation_tick is not None:
             GLib.source_remove(self._observation_tick)
             self._observation_tick = None
@@ -668,13 +668,16 @@ class AquaUnifiedWorkspaceView:
         self._range_requested = bool(gesture.get_current_event_state() & Gdk.ModifierType.SHIFT_MASK)
 
     def _catalog_row_at(self, x, y):
-        row = self.catalog_listbox.get_row_at_y(int(y))
         picked = self.catalog_listbox.pick(x, y, Gtk.PickFlags.DEFAULT)
-        if row is not None and picked is not None:
-            # Leave the native checkbox to handle its own click.
-            checkbox = self.catalog_checkboxes[row._tag_data['name']]
-            if picked != checkbox and not picked.is_ancestor(checkbox):
-                return row
+        if picked is None:
+            return None
+        row = picked if isinstance(picked, Gtk.ListBoxRow) else picked.get_ancestor(Gtk.ListBoxRow)
+        if row is not None and row.get_parent() == self.catalog_listbox:
+            tag_data = getattr(row, '_tag_data', None)
+            if tag_data and tag_data.get('name') in self.catalog_checkboxes:
+                checkbox = self.catalog_checkboxes[tag_data['name']]
+                if picked != checkbox and not picked.is_ancestor(checkbox):
+                    return row
         return None
 
     def _on_catalog_row_pressed(self, gesture, n_press, x, y):
@@ -826,8 +829,11 @@ class AquaUnifiedWorkspaceView:
                 row.grab_focus()
 
     def open_task_dialog(self):
-        if getattr(self, 'f1_api', None):
+        if getattr(self, 'f1_api', None) and not getattr(self.f1_api, 'closed', False):
+            self.current_workspace_mode = 'task_manager'
             self.f1_api.open_task_dialog()
+            return
+
         if self.task_dialog is None:
             width, height = 1000, 650
             if isinstance(self.owner, Gtk.Window):
@@ -843,8 +849,13 @@ class AquaUnifiedWorkspaceView:
         self.task_selector_combo.grab_focus()
 
     def set_workspace_mode(self, mode_name):
-        if getattr(self, 'f1_api', None):
+        if getattr(self, 'f1_api', None) and not getattr(self.f1_api, 'closed', False):
+            self.current_workspace_mode = mode_name
             self.f1_api.set_workspace_mode(mode_name)
+            if mode_name == 'task_manager':
+                self.f1_api.open_task_dialog()
+            return
+
         if mode_name == 'task_manager':
             self.open_task_dialog()
         else:
@@ -1518,9 +1529,11 @@ class AquaUnifiedWorkspaceView:
         self._update_assigned_selection_ui()
 
     def _assigned_row_at(self, x, y):
-        row = self.assigned_listbox.get_row_at_y(int(y))
         picked = self.assigned_listbox.pick(x, y, Gtk.PickFlags.DEFAULT)
-        if row is not None and picked is not None:
+        if picked is None:
+            return None
+        row = picked if isinstance(picked, Gtk.ListBoxRow) else picked.get_ancestor(Gtk.ListBoxRow)
+        if row is not None and row.get_parent() == self.assigned_listbox:
             tag_name = getattr(row, '_tag_name', None)
             if tag_name and tag_name in self.assigned_checkboxes:
                 checkbox = self.assigned_checkboxes[tag_name]
@@ -1559,9 +1572,10 @@ class AquaUnifiedWorkspaceView:
         def navigate():
             if self.task_dialog is not None and self.task_dialog.get_visible():
                 self.task_dialog.set_visible(False)
-            nav_btn = getattr(self.owner, 'nav_btns', {}).get('alarms')
-            if nav_btn is not None:
-                nav_btn.set_active(True)
+            if hasattr(self.owner, 'switch_to_tab'):
+                self.owner.switch_to_tab('alarms')
+            elif getattr(self.owner, 'nav_btns', {}).get('alarms'):
+                self.owner.nav_btns['alarms'].set_active(True)
             elif hasattr(self.owner, 'stack'):
                 self.owner.stack.set_visible_child_name('alarms')
         self._guard_task_changes(navigate)

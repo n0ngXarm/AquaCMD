@@ -46,9 +46,16 @@ def snap_widget(widget, filepath):
         w = widget.get_allocated_width()
         h = widget.get_allocated_height()
 
-    snapshot = Gtk.Snapshot()
-    paintable.snapshot(snapshot, w, h)
-    node = snapshot.to_node()
+    deadline = time.monotonic() + 3.0
+    node = None
+    while node is None and time.monotonic() < deadline:
+        spin(0.05)
+        snapshot = Gtk.Snapshot()
+        paintable.snapshot(snapshot, w, h)
+        node = snapshot.to_node()
+        if node is None:
+            widget.queue_draw()
+
     if node is None:
         raise RuntimeError(f"Failed to generate render node for widget {widget}")
 
@@ -79,29 +86,24 @@ def capture_all():
     spin(0.6)
     snap_widget(win1366, out_dir / "f1_tag_overview_1366x768.png")
 
-    # Open Task Manager Dialog (F2)
+    # Open WebKit Task Manager Dialog (F2)
     win1366.activate_workspace_mode('task_manager')
-    spin(0.5)
+    spin(0.6)
     ws = win1366.unified_workspace
-    if getattr(ws, 'task_dialog', None) and ws.task_dialog.get_visible():
-        snap_widget(ws.task_dialog, out_dir / "f1_task_manager_dialog_1366x768.png")
-        ws.task_dialog.close()
-        spin(0.2)
+    # When F1ApiView is active, Task Manager is rendered inside the WebKit workspace
+    snap_widget(win1366, out_dir / "f1_task_manager_dialog_1366x768.png")
 
-    win1366.close()
-    spin(0.2)
+    # Close modal and return to monitoring (F1 -> F2 -> Close -> F1 lifecycle)
+    win1366.activate_workspace_mode('monitoring')
+    spin(0.5)
 
     print("Capturing 1920x1080...")
-    win1920 = AquaWinCCWindow(app)
-    win1920.set_default_size(1920, 1080)
-    win1920.set_size_request(1920, 1080)
-    win1920.present()
-    spin(0.5)
-    win1920.switch_to_tab('overview')
-    spin(0.6)
-    snap_widget(win1920, out_dir / "f1_tag_overview_1920x1080.png")
+    win1366.set_default_size(1920, 1080)
+    win1366.set_size_request(1920, 1080)
+    spin(0.8)
+    snap_widget(win1366, out_dir / "f1_tag_overview_1920x1080.png")
 
-    win1920.close()
+    win1366.close()
     spin(0.2)
 
 if __name__ == '__main__':

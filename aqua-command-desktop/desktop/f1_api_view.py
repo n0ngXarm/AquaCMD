@@ -1,14 +1,17 @@
 """F1 Unified Tag Overview & Task Manager WebKit Presentation.
 Interfaces between the GTK host and the WebKit-rendered F1 workspace.
-Enforces explicit action allowlist, Python payload validation, and atomic task persistence.
+Enforces explicit action allowlist, Python payload validation, transactional task persistence,
+and genuine observation state from ObservableStateStore.
 """
 
+from copy import deepcopy
+from datetime import datetime, timezone
 from html import escape
 import json
 import logging
-import sys
-import threading
 from pathlib import Path
+import re
+import sys
 from urllib.parse import urlsplit
 
 import gi
@@ -16,6 +19,20 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Gdk', '4.0')
 gi.require_version('WebKit', '6.0')
 from gi.repository import Gdk, Gio, GLib, Gtk, WebKit
+
+try:
+    from .opcua_store import Quality
+except (ImportError, ValueError):
+    try:
+        from opcua_store import Quality
+    except ImportError:
+        class Quality:
+            GOOD = "GOOD"
+            BAD = "BAD"
+            UNCERTAIN = "UNCERTAIN"
+            STALE = "STALE"
+            NOT_OBSERVED = "NOT_OBSERVED"
+            DISCONNECTED = "DISCONNECTED"
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = Path(__file__).with_name('f1_api')
@@ -106,7 +123,7 @@ def validate_payload(action, payload):
         return True, None
 
     if action == 'delete_task':
-        if not isinstance(payload.get('task_id'), str):
+        if not isinstance(payload.get('task_id'), str) or not payload.get('task_id'):
             return False, "Invalid task_id"
         return True, None
 
@@ -136,12 +153,18 @@ def build_html():
 class F1ApiView:
     """GTK WebKit Controller for F1 Unified Tag Overview & Task Manager."""
 
+    revision = 0
+    recent_task_id = 'TASK-01'
+    live_mode = False
+    closed = False
+
     def __init__(self, owner):
         self.owner = owner
         self.closed = False
         self._undo_stack = []
         self.recent_task_id = 'TASK-01'
         self.live_mode = False
+        self.revision = 0
 
         # WebKit Setup
         session = WebKit.NetworkSession.new_ephemeral()
@@ -166,6 +189,9 @@ class F1ApiView:
         settings.props.default_font_family = 'IBM Plex Sans Thai'
         settings.props.monospace_font_family = 'IBM Plex Mono'
 
+        # Security sandbox: strictly block arbitrary network navigation
+        self.web.connect('decide-policy', self._on_decide_policy)
+
         self.root_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         self.root_widget.append(self.web)
 
@@ -173,25 +199,85 @@ class F1ApiView:
         html_markup = build_html()
         self.web.load_html(html_markup, 'http://127.0.0.1/f1/')
 
+    def _on_decide_policy(self, webview, decision, decision_type):
+        if decision_type == WebKit.PolicyDecisionType.NAVIGATION_ACTION:
+            action = decision.get_navigation_action()
+            uri = action.get_request().get_uri()
+            parts = urlsplit(uri)
+            if parts.scheme in ('http', 'https') and parts.netloc in ('127.0.0.1', 'localhost'):
+                decision.use()
+                return True
+            decision.ignore()
+            return True
+        return False
+
+    def _next_task_id(self):
+        """Finds next truly unused TASK-XX identifier."""
+        tasks = getattr(self.owner, 'tasks', []) or []
+        existing_ids = {str(t.get('id', '')) for t in tasks}
+        num = 1
+        while f"TASK-{num:02d}" in existing_ids:
+            num += 1
+        return f"TASK-{num:02d}"
+
     def _get_serializable_tags(self):
-        """Converts owner scanned_tags to clean serializable list with Not Observed status."""
+        """Converts owner scanned_tags to clean serializable list with authentic observations.
+        Uses public ObservableStateStore API. Quality, freshness, and age are strictly evaluated.
+        """
         scanned = getattr(self.owner, 'scanned_tags', []) or []
         obs_store = getattr(self.owner, 'opcua_store', None)
+        tasks = getattr(self.owner, 'tasks', []) or []
+        now_utc = datetime.now(timezone.utc)
 
         res = []
         for t in scanned:
             name = t.get('name', '')
             status = 'NO'
             observed_val = None
-            quality = 'NOT_OBSERVED'
+            quality_code = 'NOT_OBSERVED'
+            age_text = 'ยังไม่ได้สังเกต'
 
-            # If live session is active in owner's store
-            if obs_store and hasattr(obs_store, 'get_latest_observation'):
-                obs = obs_store.get_latest_observation(name)
-                if obs:
-                    status = 'OK' if obs.quality == 'GOOD' else ('STALE' if obs.quality == 'STALE' else 'FAIL')
-                    observed_val = obs.value
-                    quality = obs.quality
+            if obs_store and hasattr(obs_store, 'get_observation'):
+                obs = obs_store.get_observation(name)
+                if obs is not None:
+                    # Evaluate observation quality and timestamp
+                    q = getattr(obs, 'quality', Quality.NOT_OBSERVED)
+                    ref_time = getattr(obs, 'source_time', None) or getattr(obs, 'arrival_time', None)
+
+                    if q in (Quality.NOT_OBSERVED, None) or ref_time is None:
+                        status = 'NO'
+                        quality_code = 'NOT_OBSERVED'
+                        observed_val = None
+                        age_text = 'ยังไม่ได้สังเกต'
+                    elif q in (Quality.DISCONNECTED, Quality.BAD):
+                        status = 'FAIL'
+                        quality_code = 'BAD'
+                        observed_val = getattr(obs, 'value', None)
+                        age_text = 'สัญญาณขัดข้อง'
+                    else:
+                        # Good or Uncertain: evaluate staleness dynamically
+                        if ref_time.tzinfo is None:
+                            ref_time = ref_time.replace(tzinfo=timezone.utc)
+                        delta_sec = max(0.0, (now_utc - ref_time).total_seconds())
+
+                        is_stale = obs.is_stale(60.0) if hasattr(obs, 'is_stale') else (delta_sec > 60.0)
+                        if is_stale or q == Quality.STALE:
+                            status = 'STALE'
+                            quality_code = 'STALE'
+                        else:
+                            status = 'OK'
+                            quality_code = 'GOOD'
+
+                        observed_val = getattr(obs, 'value', None)
+                        if delta_sec < 60:
+                            age_text = f"{int(delta_sec)} วินาทีที่แล้ว"
+                        elif delta_sec < 3600:
+                            age_text = f"{int(delta_sec // 60)} นาทีที่แล้ว"
+                        else:
+                            age_text = f"{int(delta_sec // 3600)} ชม. ที่แล้ว"
+
+            # Multi-task association list
+            tag_tasks = [t['id'] for t in tasks if name in t.get('tags', [])]
 
             res.append({
                 'name': name,
@@ -204,7 +290,9 @@ class F1ApiView:
                 'addr': t.get('addr', 'Internal'),
                 'status': status,
                 'observed_value': observed_val,
-                'quality': quality,
+                'quality': quality_code,
+                'age_text': age_text,
+                'tasks': tag_tasks,
                 'raw_metadata': t.get('raw_metadata', {})
             })
         return res
@@ -227,17 +315,79 @@ class F1ApiView:
             })
         return res
 
-    def push_state_to_webview(self):
-        if self.closed or not self.web:
-            return
-        state_payload = {
+    def _get_serializable_state(self):
+        return {
             'tags': self._get_serializable_tags(),
             'tasks': self._get_serializable_tasks(),
             'recentTaskId': self.recent_task_id,
-            'liveMode': self.live_mode
+            'liveMode': self.live_mode,
+            'revision': self.revision
         }
+
+    def push_state_to_webview(self):
+        if self.closed or not getattr(self, 'web', None):
+            return
+        state_payload = self._get_serializable_state()
         json_str = json.dumps(state_payload, ensure_ascii=False)
         self.web.evaluate_javascript(f'window.F1?.onStateUpdated({json_str})', -1, None, None, None, None, None)
+
+    def _send_bridge_response(self, request_id, ok, error=None, revision=0, state=None):
+        """Explicit bridge response contract for transactional operations."""
+        if self.closed or not getattr(self, 'web', None):
+            return
+        resp = {
+            'request_id': request_id,
+            'ok': bool(ok),
+            'error': str(error) if error else None,
+            'revision': revision,
+            'state': state
+        }
+        json_str = json.dumps(resp, ensure_ascii=False)
+        self.web.evaluate_javascript(f'window.F1?.onBridgeResponse({json_str})', -1, None, None, None, None, None)
+
+    def _apply_mutation(self, action_name, mutation_fn, request_id=None, undo_action=None):
+        """Transactional mutation helper.
+        Backs up owner.tasks, applies mutation, saves atomically, and rolls back on any failure.
+        Updates undo stack and sends success response ONLY after disk persistence succeeds.
+        """
+        orig_tasks = getattr(self.owner, 'tasks', [])
+        backup_tasks = deepcopy(orig_tasks)
+
+        try:
+            mutation_result = mutation_fn()
+            if mutation_result is False:
+                self.owner.tasks = backup_tasks
+                self._send_bridge_response(request_id, ok=False, error="Mutation rejected or not found", revision=self.revision)
+                return False
+
+            saved = self.owner.save_tasks() if hasattr(self.owner, 'save_tasks') else False
+            if not saved:
+                # Rollback on disk / persistence failure
+                self.owner.tasks = backup_tasks
+                logger.error(f"Transactional save failed for {action_name}; state rolled back.")
+                self._send_bridge_response(
+                    request_id,
+                    ok=False,
+                    error=f"บันทึกไม่สำเร็จ ({action_name}) · ระบบคืนค่าเดิมเรียบร้อยแล้ว",
+                    revision=self.revision
+                )
+                return False
+
+            # Success path
+            self.revision += 1
+            if undo_action is not None:
+                self._undo_stack.append(undo_action)
+
+            current_state = self._get_serializable_state()
+            self._send_bridge_response(request_id, ok=True, revision=self.revision, state=current_state)
+            self.push_state_to_webview()
+            return True
+
+        except Exception as e:
+            self.owner.tasks = backup_tasks
+            logger.exception(f"Unexpected error in {action_name}: {e}")
+            self._send_bridge_response(request_id, ok=False, error=str(e), revision=self.revision)
+            return False
 
     def _on_bridge_message(self, manager, value):
         if self.closed:
@@ -257,124 +407,158 @@ class F1ApiView:
             logger.warning(f"Error parsing bridge message: {e}")
             return
 
+        if not isinstance(message, dict):
+            logger.warning("Bridge message must be a JSON object")
+            return
+
         action = message.get('action')
         payload = message.get('payload', {})
+        request_id = message.get('request_id') or payload.get('request_id')
 
         if action not in ALLOWLISTED_ACTIONS:
             logger.warning(f"Rejected unallowlisted action: {action}")
+            self._send_bridge_response(request_id, ok=False, error=f"Action not allowlisted: {action}", revision=self.revision)
             return
 
         valid, err = validate_payload(action, payload)
         if not valid:
             logger.warning(f"Payload validation failed for {action}: {err}")
+            self._send_bridge_response(request_id, ok=False, error=err, revision=self.revision)
             return
 
-        self._dispatch_action(action, payload)
+        self._dispatch_action(action, payload, request_id)
 
-    def _dispatch_action(self, action, payload):
+    def _dispatch_action(self, action, payload, request_id=None):
         if action == 'get_state':
+            self._send_bridge_response(request_id, ok=True, revision=self.revision, state=self._get_serializable_state())
             self.push_state_to_webview()
 
         elif action == 'add_tag_to_task':
             tag_name = payload['tag_name']
             task_id = payload['task_id']
             self.recent_task_id = task_id
-            task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
-            if task is not None:
+
+            def mut():
+                task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
+                if task is None:
+                    return False
                 if 'tags' not in task:
                     task['tags'] = []
                 if tag_name not in task['tags']:
                     task['tags'].append(tag_name)
-                    self._undo_stack.append({'action': 'add', 'task_id': task_id, 'tags': [tag_name]})
-                    self.owner.save_tasks()
-            self.push_state_to_webview()
+                    return True
+                return False  # Duplicate action: tag already in task
+
+            undo = {'action': 'add', 'task_id': task_id, 'tags': [tag_name]}
+            self._apply_mutation('add_tag_to_task', mut, request_id, undo)
 
         elif action == 'add_tags_to_task':
             tag_names = payload['tag_names']
             task_id = payload['task_id']
             self.recent_task_id = task_id
-            task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
-            if task is not None:
+            added = []
+
+            def mut():
+                task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
+                if task is None:
+                    return False
                 if 'tags' not in task:
                     task['tags'] = []
-                added = []
                 for tn in tag_names:
                     if tn not in task['tags']:
                         task['tags'].append(tn)
                         added.append(tn)
-                if added:
-                    self._undo_stack.append({'action': 'add', 'task_id': task_id, 'tags': added})
-                    self.owner.save_tasks()
-            self.push_state_to_webview()
+                return bool(added)
+
+            undo = {'action': 'add', 'task_id': task_id, 'tags': added}
+            self._apply_mutation('add_tags_to_task', mut, request_id, undo)
 
         elif action == 'remove_tag_from_task':
             tag_name = payload['tag_name']
             task_id = payload['task_id']
-            task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
-            if task is not None and 'tags' in task and tag_name in task['tags']:
-                task['tags'].remove(tag_name)
-                self._undo_stack.append({'action': 'remove', 'task_id': task_id, 'tags': [tag_name]})
-                self.owner.save_tasks()
-            self.push_state_to_webview()
+
+            def mut():
+                task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
+                if task is not None and 'tags' in task and tag_name in task['tags']:
+                    task['tags'].remove(tag_name)
+                    return True
+                return False
+
+            undo = {'action': 'remove', 'task_id': task_id, 'tags': [tag_name]}
+            self._apply_mutation('remove_tag_from_task', mut, request_id, undo)
 
         elif action == 'remove_tags_from_task':
             tag_names = payload['tag_names']
             task_id = payload['task_id']
-            task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
-            if task is not None and 'tags' in task:
-                removed = []
-                for tn in tag_names:
-                    if tn in task['tags']:
-                        task['tags'].remove(tn)
-                        removed.append(tn)
-                if removed:
-                    self._undo_stack.append({'action': 'remove', 'task_id': task_id, 'tags': removed})
-                    self.owner.save_tasks()
-            self.push_state_to_webview()
+            removed = []
+
+            def mut():
+                task = next((t for t in self.owner.tasks if t.get('id') == task_id), None)
+                if task is not None and 'tags' in task:
+                    for tn in tag_names:
+                        if tn in task['tags']:
+                            task['tags'].remove(tn)
+                            removed.append(tn)
+                    return bool(removed)
+                return False
+
+            undo = {'action': 'remove', 'task_id': task_id, 'tags': removed}
+            self._apply_mutation('remove_tags_from_task', mut, request_id, undo)
 
         elif action == 'undo_last_action':
-            if self._undo_stack:
+            if not self._undo_stack:
+                self._send_bridge_response(request_id, ok=False, error="ไม่มีการกระทำที่สามารถยกเลิกได้", revision=self.revision)
+                return
+
+            last_item = self._undo_stack[-1]
+
+            def mut():
                 item = self._undo_stack.pop()
                 task = next((t for t in self.owner.tasks if t.get('id') == item['task_id']), None)
-                if task is not None:
-                    if item['action'] == 'add':
-                        for tn in item['tags']:
-                            if tn in task.get('tags', []):
-                                task['tags'].remove(tn)
-                    elif item['action'] == 'remove':
-                        if 'tags' not in task:
-                            task['tags'] = []
-                        for tn in item['tags']:
-                            if tn not in task['tags']:
-                                task['tags'].append(tn)
-                    self.owner.save_tasks()
-            self.push_state_to_webview()
+                if task is None:
+                    return False
+                if item['action'] == 'add':
+                    for tn in item['tags']:
+                        if tn in task.get('tags', []):
+                            task['tags'].remove(tn)
+                elif item['action'] == 'remove':
+                    if 'tags' not in task:
+                        task['tags'] = []
+                    for tn in item['tags']:
+                        if tn not in task['tags']:
+                            task['tags'].append(tn)
+                return True
+
+            self._apply_mutation('undo_last_action', mut, request_id, None)
 
         elif action == 'save_task':
             updated_info = payload['task']
-            task = next((t for t in self.owner.tasks if t.get('id') == updated_info['id']), None)
-            if task is not None:
-                # Keep draft copy for rollback
-                draft_backup = dict(task)
+
+            def mut():
+                task = next((t for t in self.owner.tasks if t.get('id') == updated_info['id']), None)
+                if task is None:
+                    return False
                 task['name'] = updated_info['name']
                 task['cycle_sec'] = updated_info['cycle_sec']
-                task['action_log'] = updated_info['action_log']
-                task['action_notify'] = updated_info['action_notify']
-                task['active'] = updated_info['active']
+                task['action_log'] = bool(updated_info['action_log'])
+                task['action_notify'] = bool(updated_info['action_notify'])
+                task['active'] = bool(updated_info['active'])
+                if 'tags' in updated_info and isinstance(updated_info['tags'], list):
+                    task['tags'] = list(updated_info['tags'])
+                return True
 
-                saved = self.owner.save_tasks()
-                if not saved:
-                    # Rollback in memory
-                    task.clear()
-                    task.update(draft_backup)
-                    logger.error(f"Failed to atomic save task {updated_info['id']}")
-            self.push_state_to_webview()
+            self._apply_mutation('save_task', mut, request_id, None)
 
         elif action == 'create_task':
             new_task_data = payload['task']
+            new_id = new_task_data.get('id')
+            existing_ids = {t.get('id') for t in self.owner.tasks}
+            if not new_id or new_id in existing_ids:
+                new_id = self._next_task_id()
+
             new_task = {
-                'id': new_task_data['id'],
-                'name': new_task_data.get('name', f"Task ใหม่ {new_task_data['id']}"),
+                'id': new_id,
+                'name': new_task_data.get('name') or f"Task ใหม่ {new_id}",
                 'cycle_sec': new_task_data.get('cycle_sec', 5),
                 'action_log': bool(new_task_data.get('action_log', True)),
                 'action_notify': bool(new_task_data.get('action_notify', False)),
@@ -384,20 +568,30 @@ class F1ApiView:
                 'log_count': 0,
                 'alert_count': 0
             }
-            self.owner.tasks.append(new_task)
-            self.recent_task_id = new_task['id']
-            self.owner.save_tasks()
-            self.push_state_to_webview()
+
+            def mut():
+                self.owner.tasks.append(new_task)
+                self.recent_task_id = new_id
+                return True
+
+            self._apply_mutation('create_task', mut, request_id, None)
 
         elif action == 'delete_task':
             task_id = payload['task_id']
-            self.owner.tasks = [t for t in self.owner.tasks if t.get('id') != task_id]
-            self.owner.save_tasks()
-            self.push_state_to_webview()
+
+            def mut():
+                orig_len = len(self.owner.tasks)
+                self.owner.tasks = [t for t in self.owner.tasks if t.get('id') != task_id]
+                return len(self.owner.tasks) < orig_len
+
+            self._apply_mutation('delete_task', mut, request_id, None)
 
         elif action == 'navigate_f6':
             if hasattr(self.owner, 'switch_to_tab'):
                 self.owner.switch_to_tab('alarms')
+            elif getattr(self.owner, 'nav_btns', {}).get('alarms'):
+                self.owner.nav_btns['alarms'].set_active(True)
+            self._send_bridge_response(request_id, ok=True, revision=self.revision)
 
         elif action == 'key_event':
             key_name = payload.get('key')
@@ -405,6 +599,7 @@ class F1ApiView:
                 keyval = getattr(Gdk, f'KEY_{key_name}', None)
                 if keyval:
                     self.owner.on_global_key_pressed(None, keyval, 0, 0)
+            self._send_bridge_response(request_id, ok=True, revision=self.revision)
 
     # Public Methods Expected by app.py
     def open_task_dialog(self, task_id=None):
@@ -432,11 +627,10 @@ class F1ApiView:
             self.open_task_dialog(self.recent_task_id)
 
     def on_create_new_task(self):
-        next_num = len(getattr(self.owner, 'tasks', [])) + 1
-        new_id = f"TASK-{next_num:02d}"
+        new_id = self._next_task_id()
         new_task = {
             'id': new_id,
-            'name': f"Task เฝ้าระวังใหม่ {next_num:02d}",
+            'name': f"Task เฝ้าระวังใหม่ {new_id}",
             'cycle_sec': 5,
             'action_log': True,
             'action_notify': False,
@@ -446,16 +640,21 @@ class F1ApiView:
             'log_count': 0,
             'alert_count': 0
         }
-        self.owner.tasks.append(new_task)
-        self.recent_task_id = new_id
-        self.owner.save_tasks()
-        self.push_state_to_webview()
+        def mut():
+            self.owner.tasks.append(new_task)
+            self.recent_task_id = new_id
+            return True
+
+        self._apply_mutation('create_task', mut, None, None)
         self.open_task_dialog(new_id)
 
     def close(self):
         if self.closed:
             return
         self.closed = True
-        if self.web:
-            self.web.stop_loading()
-            self.web.terminate_web_process()
+        if getattr(self, 'web', None):
+            try:
+                self.web.stop_loading()
+                self.web.terminate_web_process()
+            except Exception:
+                pass

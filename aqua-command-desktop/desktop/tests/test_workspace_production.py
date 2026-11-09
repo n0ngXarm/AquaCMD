@@ -59,6 +59,7 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         ))
         cleanup.enter_context(patch.object(app.AquaWinCCWindow, 'update_real_data', lambda self: False))
         cleanup.enter_context(patch.object(app.F3ApiView, 'refresh_local_state', lambda self: None))
+        cleanup.enter_context(patch('workspace.F1ApiView', None))
         cls.application = Gtk.Application(application_id='org.aquacommand.F1Test',
                                           flags=Gio.ApplicationFlags.NON_UNIQUE)
         assert cls.application.register(None)

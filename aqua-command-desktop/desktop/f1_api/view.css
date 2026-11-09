@@ -477,6 +477,46 @@ html, body {
   border-color: var(--accent);
 }
 
+.btn-inspect {
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 4px 6px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--mut);
+  cursor: pointer;
+  min-height: 32px;
+  min-width: 32px;
+  white-space: nowrap;
+  transition: background 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out;
+}
+
+.btn-inspect:hover {
+  background: var(--surface-3);
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+#btnF6Link {
+  cursor: pointer;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  color: var(--accent);
+  padding: 3px 8px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out;
+}
+
+#btnF6Link:hover {
+  background: var(--accent-tint);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
 /* Floating Multi-select Action Bar */
 .floating-action-bar {
   display: flex;

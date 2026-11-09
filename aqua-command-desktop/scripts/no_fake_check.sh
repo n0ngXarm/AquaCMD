@@ -2,7 +2,7 @@
 set -euo pipefail
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 roots=()
-for name in src server collector desktop/f3_api desktop/f3_api_view.py desktop/f3_projection.py; do
+for name in src server collector desktop/f1_api desktop/f1_api_view.py desktop/f3_api desktop/f3_api_view.py desktop/f3_projection.py; do
     if [[ -d "$root/$name" || -f "$root/$name" ]]; then roots+=("$root/$name"); fi
 done
 if [[ ${#roots[@]} -eq 0 ]]; then

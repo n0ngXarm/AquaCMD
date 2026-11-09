@@ -1,10 +1,10 @@
 """Unit and contract tests for F1 Unified Tag Overview & Task Manager WebKit View."""
+from datetime import datetime, timezone, timedelta
 import json
-import re
-import tempfile
-import unittest
 from pathlib import Path
-from unittest.mock import MagicMock
+import re
+import unittest
+from unittest.mock import MagicMock, patch
 
 from f1_api_view import F1ApiView, build_html, validate_payload, ALLOWLISTED_ACTIONS
 
@@ -84,6 +84,7 @@ class TestF1ApiViewContracts(unittest.TestCase):
             self.assertEqual(t['status'], 'NO', "Default status must be NOT_OBSERVED (NO)")
             self.assertEqual(t['quality'], 'NOT_OBSERVED')
             self.assertIsNone(t['observed_value'], "Must not invent observed values")
+            self.assertEqual(t['age_text'], 'ยังไม่ได้สังเกต')
         self.assertEqual(tags[0]['raw_metadata'], {'Col': 'Val'})
 
     def test_05_add_tag_undo_roundtrip(self):
@@ -101,19 +102,23 @@ class TestF1ApiViewContracts(unittest.TestCase):
         view._undo_stack = []
         view.recent_task_id = 'TASK-01'
         view.live_mode = False
+        view.revision = 0
         view.push_state_to_webview = MagicMock()
+        view._send_bridge_response = MagicMock()
 
         # Add single tag
-        view._dispatch_action('add_tag_to_task', {'tag_name': 'BVEC1PT.AUTO_C', 'task_id': 'TASK-01'})
+        view._dispatch_action('add_tag_to_task', {'tag_name': 'BVEC1PT.AUTO_C', 'task_id': 'TASK-01'}, 'req_001')
         self.assertIn('BVEC1PT.AUTO_C', owner.tasks[0]['tags'])
         self.assertFalse(owner.tasks[0]['action_notify'], "Must not auto-enable action_notify")
         self.assertFalse(owner.tasks[0]['active'], "Must not auto-enable active")
         self.assertEqual(len(view._undo_stack), 1)
+        self.assertEqual(view.revision, 1)
 
         # Undo addition
-        view._dispatch_action('undo_last_action', {})
+        view._dispatch_action('undo_last_action', {}, 'req_002')
         self.assertNotIn('BVEC1PT.AUTO_C', owner.tasks[0]['tags'])
         self.assertEqual(len(view._undo_stack), 0)
+        self.assertEqual(view.revision, 2)
 
     def test_06_bulk_add_and_remove_tags(self):
         owner = MagicMock()
@@ -130,18 +135,20 @@ class TestF1ApiViewContracts(unittest.TestCase):
         view._undo_stack = []
         view.recent_task_id = 'TASK-01'
         view.live_mode = False
+        view.revision = 0
         view.push_state_to_webview = MagicMock()
+        view._send_bridge_response = MagicMock()
 
         # Bulk add
-        view._dispatch_action('add_tags_to_task', {'tag_names': ['T1', 'T2', 'T3'], 'task_id': 'TASK-01'})
+        view._dispatch_action('add_tags_to_task', {'tag_names': ['T1', 'T2', 'T3'], 'task_id': 'TASK-01'}, 'req_001')
         self.assertEqual(owner.tasks[0]['tags'], ['T1', 'T2', 'T3'])
 
         # Remove subset
-        view._dispatch_action('remove_tags_from_task', {'tag_names': ['T1', 'T3'], 'task_id': 'TASK-01'})
+        view._dispatch_action('remove_tags_from_task', {'tag_names': ['T1', 'T3'], 'task_id': 'TASK-01'}, 'req_002')
         self.assertEqual(owner.tasks[0]['tags'], ['T2'])
 
         # Undo remove
-        view._dispatch_action('undo_last_action', {})
+        view._dispatch_action('undo_last_action', {}, 'req_003')
         self.assertIn('T1', owner.tasks[0]['tags'])
         self.assertIn('T3', owner.tasks[0]['tags'])
 
@@ -151,7 +158,7 @@ class TestF1ApiViewContracts(unittest.TestCase):
             {'id': 'TASK-01', 'name': 'Original Name', 'cycle_sec': 5, 'action_log': True, 'action_notify': False, 'active': False, 'tags': []}
         ]
         owner.scanned_tags = []
-        owner.save_tasks.return_value = False  # Simulate atomic save failure (e.g. disk error)
+        owner.save_tasks.return_value = False  # Simulate atomic save failure (e.g. disk full)
 
         view = F1ApiView.__new__(F1ApiView)
         view.owner = owner
@@ -160,7 +167,9 @@ class TestF1ApiViewContracts(unittest.TestCase):
         view._undo_stack = []
         view.recent_task_id = 'TASK-01'
         view.live_mode = False
+        view.revision = 0
         view.push_state_to_webview = MagicMock()
+        view._send_bridge_response = MagicMock()
 
         view._dispatch_action('save_task', {
             'task': {
@@ -171,12 +180,162 @@ class TestF1ApiViewContracts(unittest.TestCase):
                 'action_notify': True,
                 'active': True
             }
-        })
+        }, 'req_save_fail')
 
         # When save fails, task in memory must roll back to original state
         self.assertEqual(owner.tasks[0]['name'], 'Original Name')
         self.assertEqual(owner.tasks[0]['cycle_sec'], 5)
         self.assertFalse(owner.tasks[0]['active'])
+        self.assertEqual(view.revision, 0, "Revision must not increment on failure")
+        self.assertEqual(len(view._undo_stack), 0, "Undo stack must not be updated on failure")
+
+        # Bridge response must indicate failure
+        view._send_bridge_response.assert_called_with(
+            'req_save_fail',
+            ok=False,
+            error="บันทึกไม่สำเร็จ (save_task) · ระบบคืนค่าเดิมเรียบร้อยแล้ว",
+            revision=0
+        )
+
+    def test_08_duplicate_add_rejection(self):
+        owner = MagicMock()
+        owner.tasks = [
+            {'id': 'TASK-01', 'name': 'Task 1', 'cycle_sec': 5, 'action_log': True, 'action_notify': False, 'active': False, 'tags': ['EXISTING_TAG']}
+        ]
+        owner.scanned_tags = []
+        owner.save_tasks.return_value = True
+
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = owner
+        view.closed = False
+        view.web = None
+        view._undo_stack = []
+        view.recent_task_id = 'TASK-01'
+        view.live_mode = False
+        view.revision = 0
+        view.push_state_to_webview = MagicMock()
+        view._send_bridge_response = MagicMock()
+
+        # Try to add duplicate tag
+        view._dispatch_action('add_tag_to_task', {'tag_name': 'EXISTING_TAG', 'task_id': 'TASK-01'}, 'req_dup')
+        # Mutation rejected because tag already exists
+        self.assertEqual(len(owner.tasks[0]['tags']), 1)
+        self.assertEqual(view.revision, 0)
+        view._send_bridge_response.assert_called_with('req_dup', ok=False, error="Mutation rejected or not found", revision=0)
+
+    def test_09_observable_state_store_integration_and_dynamic_age(self):
+        owner = MagicMock()
+        owner.scanned_tags = [
+            {'name': 'TAG_GOOD', 'comment': 'C1', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD0'},
+            {'name': 'TAG_STALE', 'comment': 'C2', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD4'},
+            {'name': 'TAG_BAD', 'comment': 'C3', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD8'},
+            {'name': 'TAG_NOT_OBSERVED', 'comment': 'C4', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD12'},
+        ]
+        owner.tasks = []
+
+        now = datetime.now(timezone.utc)
+        obs_good = MagicMock()
+        obs_good.quality = 'GOOD'
+        obs_good.value = 1450.5
+        obs_good.source_time = now - timedelta(seconds=12)
+        obs_good.is_stale.return_value = False
+
+        obs_stale = MagicMock()
+        obs_stale.quality = 'GOOD'
+        obs_stale.value = 1200.0
+        obs_stale.source_time = now - timedelta(seconds=180)
+        obs_stale.is_stale.return_value = True
+
+        obs_bad = MagicMock()
+        obs_bad.quality = 'BAD'
+        obs_bad.value = None
+        obs_bad.source_time = now - timedelta(seconds=5)
+        obs_bad.is_stale.return_value = False
+
+        obs_store = MagicMock()
+        obs_store.get_observation.side_effect = lambda name: {
+            'TAG_GOOD': obs_good,
+            'TAG_STALE': obs_stale,
+            'TAG_BAD': obs_bad,
+        }.get(name, None)
+        owner.opcua_store = obs_store
+
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = owner
+
+        tags = view._get_serializable_tags()
+        self.assertEqual(len(tags), 4)
+
+        tag_map = {t['name']: t for t in tags}
+        # Good tag: status OK, age dynamic
+        self.assertEqual(tag_map['TAG_GOOD']['status'], 'OK')
+        self.assertEqual(tag_map['TAG_GOOD']['quality'], 'GOOD')
+        self.assertEqual(tag_map['TAG_GOOD']['observed_value'], 1450.5)
+        self.assertIn('วินาทีที่แล้ว', tag_map['TAG_GOOD']['age_text'])
+
+        # Stale tag: status STALE
+        self.assertEqual(tag_map['TAG_STALE']['status'], 'STALE')
+        self.assertEqual(tag_map['TAG_STALE']['quality'], 'STALE')
+        self.assertIn('นาทีที่แล้ว', tag_map['TAG_STALE']['age_text'])
+
+        # Bad tag: status FAIL
+        self.assertEqual(tag_map['TAG_BAD']['status'], 'FAIL')
+        self.assertEqual(tag_map['TAG_BAD']['quality'], 'BAD')
+        self.assertEqual(tag_map['TAG_BAD']['age_text'], 'สัญญาณขัดข้อง')
+
+        # Not observed tag: status NO
+        self.assertEqual(tag_map['TAG_NOT_OBSERVED']['status'], 'NO')
+        self.assertEqual(tag_map['TAG_NOT_OBSERVED']['quality'], 'NOT_OBSERVED')
+        self.assertEqual(tag_map['TAG_NOT_OBSERVED']['age_text'], 'ยังไม่ได้สังเกต')
+
+    def test_10_multiple_task_association(self):
+        owner = MagicMock()
+        owner.scanned_tags = [
+            {'name': 'VALVE_01', 'comment': 'Main Valve', 'type': 'Binary Tag', 'group': 'High_Valve', 'addr': 'DB1,D0.0'}
+        ]
+        # Same tag belongs to both TASK-01 and TASK-02
+        owner.tasks = [
+            {'id': 'TASK-01', 'name': 'Scan Task 1', 'tags': ['VALVE_01']},
+            {'id': 'TASK-02', 'name': 'Alarm Task 2', 'tags': ['VALVE_01', 'OTHER_TAG']}
+        ]
+        owner.opcua_store = None
+
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = owner
+
+        tags = view._get_serializable_tags()
+        self.assertEqual(len(tags), 1)
+        self.assertEqual(tags[0]['tasks'], ['TASK-01', 'TASK-02'], "Must report all bound task IDs")
+
+    def test_11_next_task_id_no_collision(self):
+        owner = MagicMock()
+        owner.tasks = [
+            {'id': 'TASK-01'},
+            {'id': 'TASK-02'},
+            {'id': 'TASK-04'},  # TASK-03 is free
+        ]
+
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = owner
+
+        # Next id should be TASK-03 (filling lowest available slot)
+        self.assertEqual(view._next_task_id(), 'TASK-03')
+
+    def test_12_f2_single_dialog_delegation(self):
+        from workspace import AquaUnifiedWorkspaceView
+        owner = MagicMock()
+        root = MagicMock()
+
+        ws = AquaUnifiedWorkspaceView.__new__(AquaUnifiedWorkspaceView)
+        ws.owner = owner
+        ws.task_dialog = None
+        ws.f1_api = MagicMock()
+        ws.f1_api.closed = False
+
+        # When f1_api is present, open_task_dialog must delegate to f1_api and NOT instantiate GTK dialog
+        ws.open_task_dialog()
+        ws.f1_api.open_task_dialog.assert_called_once()
+        self.assertIsNone(ws.task_dialog, "GTK task_dialog must NOT be instantiated when f1_api is active")
 
 
 if __name__ == '__main__':
