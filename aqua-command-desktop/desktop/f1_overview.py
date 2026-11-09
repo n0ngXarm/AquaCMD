@@ -25,7 +25,7 @@ EQUIPMENT_GROUPS_DEF = {
     '__ALL__': {
         'name_en': 'All Equipment Groups & Signals',
         'short_en': 'All Groups',
-        'desc_th': 'รวมสัญญาณทั้งหมดทุกกลุ่มอุปกรณ์ในสถานีผลิตน้ำอุโมงค์',
+        'desc_th': 'รวมสัญญาณทั้งหมดทุกกลุ่มอุปกรณ์ในระบบ SCADA',
         'eq_class': 'all_groups',
         'icon_name': 'view-grid-symbolic',
         'db_ref': 'Multiple S7 DBs',
@@ -894,7 +894,7 @@ class F1StationExplorerView:
         self.lbl_group_name_en.set_xalign(0.0)
         title_v.append(self.lbl_group_name_en)
 
-        self.lbl_group_desc_th = Gtk.Label(label="รวมสัญญาณทั้งหมดทุกกลุ่มอุปกรณ์ในสถานีผลิตน้ำอุโมงค์")
+        self.lbl_group_desc_th = Gtk.Label(label="รวมสัญญาณทั้งหมดทุกกลุ่มอุปกรณ์ในระบบ SCADA")
         self.lbl_group_desc_th.add_css_class('f1-group-desc-th')
         self.lbl_group_desc_th.set_xalign(0.0)
         title_v.append(self.lbl_group_desc_th)
@@ -1163,7 +1163,7 @@ class F1StationExplorerView:
         if is_all:
             def_item = EQUIPMENT_GROUPS_DEF.get('__ALL__', {
                 'name_en': 'All Equipment Groups & Signals',
-                'desc_th': 'รวมสัญญาณทั้งหมดทุกกลุ่มอุปกรณ์ในสถานีผลิตน้ำอุโมงค์'
+                'desc_th': 'รวมสัญญาณทั้งหมดทุกกลุ่มอุปกรณ์ในระบบ SCADA'
             })
             tags_in_scope = getattr(self, 'all_tags', [])
             tag_count = len(tags_in_scope)

@@ -10,8 +10,8 @@ def get_dynamic_plant_groups(scanned_tags):
 
     # Defined plant areas from real WinCC project
     defined_sections = [
-        ('High_VSD', '⚡ สถานีสูบส่งน้ำแรงสูง VSD (High_VSD — ปั๊ม Inverter CTM13PT ถึง CTM17PT)'),
-        ('High1_PT1PT', '💧 โรงสูบน้ำแรงต่ำ 1 (High1_PT1PT — สถานีสูบน้ำดิบแม่น้ำปิง)'),
+        ('High_VSD', '⚡ ปั๊มน้ำแรงดันสูง VSD (High_VSD — ปั๊ม Inverter CTM13PT ถึง CTM17PT)'),
+        ('High1_PT1PT', '💧 เซนเซอร์วัดแรงดันน้ำ (High1_PT1PT)'),
         ('High_Analog', '📊 ระบบเครื่องวัดอนาล็อก (High_Analog — Pressure & Flow Transmitters)'),
         ('High_Valve', '🚪 ประตูน้ำและวาล์วไฟฟ้า (High_Valve — Motorized Valves & Penstocks)'),
         ('High_DPM', '⚡ มิเตอร์วัดกำลังไฟฟ้าดิจิทัล (High_DPM — Digital Power Meters)'),
@@ -244,7 +244,7 @@ def save_telegram_config(cfg):
 DEFAULT_TOPOLOGY = {
     "scada_lan": {
         "zone_name": "เครือข่ายภายใน SCADA (Isolated OT LAN)",
-        "subtitle": "วงแลนอิสระของสถานีผลิตน้ำอุโมงค์ (192.168.1.0/24) | ปลอดภัย 100% ไม่เชื่อมต่อภายนอก",
+        "subtitle": "วงแลนภายในระบบ SCADA (192.168.1.0/24) | เครือข่าย OT แบบปิด",
         "has_internet": False,
         "subnet": "192.168.1.0/24",
         "netmask": "255.255.255.0",
@@ -264,7 +264,7 @@ DEFAULT_TOPOLOGY = {
                 "has_internet": False,
                 "ip": "192.168.1.11",
                 "mac": "00:1E:67:D8:11:A1",
-                "role": "สถานีสูบน้ำแรงต่ำ 1 (แม่น้ำปิง / ชลประทาน)",
+                "role": "SCADA โหนด 1 (พอร์ต 4840)",
                 "status": "CONFIGURED (Reachability UNKNOWN)",
                 "ping": "—"
             },
@@ -275,7 +275,7 @@ DEFAULT_TOPOLOGY = {
                 "has_internet": False,
                 "ip": "192.168.1.12",
                 "mac": "00:1E:67:D8:12:B2",
-                "role": "สถานีสูบน้ำแรงต่ำ 3 (สถานีผลิตน้ำอุโมงค์)",
+                "role": "SCADA โหนด 2 (พอร์ต 4840)",
                 "status": "CONFIGURED (Reachability UNKNOWN)",
                 "ping": "—"
             },
@@ -286,7 +286,7 @@ DEFAULT_TOPOLOGY = {
                 "has_internet": False,
                 "ip": "192.168.1.13",
                 "mac": "00:1E:67:D8:13:C3",
-                "role": "สถานีสูบส่งน้ำแรงสูง VSD (High_VSD #13-#17)",
+                "role": "SCADA โหนด 3 (พอร์ต 4840)",
                 "status": "CONFIGURED (Reachability UNKNOWN)",
                 "ping": "—"
             }
@@ -1111,7 +1111,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         logo_label.add_css_class('wincc-logo')
         topbar.append(logo_label)
 
-        title_label = Gtk.Label(label="WINCC V8.1 / INDUSTRIAL OPERATIONS · สถานีผลิตน้ำอุโมงค์")
+        title_label = Gtk.Label(label="WINCC V8.1 / INDUSTRIAL OPERATIONS · ระบบส่วนกลาง (CENTRAL GATEWAY)")
         title_label.add_css_class('wincc-title')
         title_label.set_hexpand(True)
         title_label.set_xalign(0.0)

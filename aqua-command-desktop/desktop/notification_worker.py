@@ -162,7 +162,7 @@ class NotificationWorker:
         msg = (
             f"{sev_icon} [AQUA COMMAND SCADA ALERT]\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
-            f"📍 สถานี: ผลิตน้ำอุโมงค์ (กปภ. เชียงใหม่)\n"
+            f"📍 ระบบ: AQUA COMMAND SCADA Gateway\n"
             f"⚙️ งานเฝ้าระวัง: {payload.get('task_name', 'SCADA Task')}\n"
             f"🏷️ จุดวัด (Tag): {payload.get('tag_name', '-')}\n"
             f"📊 ค่าที่ตรวจวัด: {payload.get('value', '-')} {payload.get('unit', '')}\n"
