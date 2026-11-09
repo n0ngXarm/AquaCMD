@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+<title>ภาพรวม Tag &amp; จัดการ Task (AQUA COMMAND)</title>
+<style>
+/*F1_CSS*/
+</style>
+</head>
+<body>
+<div class="app-container">
+  <!-- Top Navigation & Mode Switcher -->
+  <header class="top-header">
+    <div class="header-title">
+      <h1>ภาพรวม Tag &amp; จัดการ Task</h1>
+      <span class="sub">· ระบบส่วนกลาง (CENTRAL GATEWAY) · แคตตาล็อกสัญญาณ WinCC V8.1</span>
+    </div>
+    <div class="header-actions">
+      <div class="segmented-control" role="group" aria-label="โหมดการสังเกต">
+        <button id="btnModeReal" aria-pressed="true" type="button">ข้อมูลจริง (ยังไม่เชื่อมต่อ)</button>
+        <button id="btnModeSim" aria-pressed="false" type="button">จำลองสัญญาณสด</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 6 KPIs Overview -->
+  <section class="kpis-row" id="kpisRow" aria-label="สถิติภาพรวมสถานะ Tag"></section>
+
+  <!-- Main Workspace Grid -->
+  <div class="workspace-grid">
+    <!-- Groups Sidebar (10 Groups) -->
+    <aside class="groups-panel">
+      <div class="panel-header">
+        <span>กลุ่มอุปกรณ์</span>
+        <span class="mono" style="font-size:11.5px">10 กลุ่ม</span>
+      </div>
+      <div class="groups-list" id="groupsList" role="region" aria-label="รายการกลุ่มอุปกรณ์"></div>
+    </aside>
+
+    <!-- Tag Catalog & Task Association Table -->
+    <main class="catalog-panel">
+      <div class="catalog-tools">
+        <div class="search-box-wrapper">
+          <input type="search" id="searchInput" placeholder="ค้นหาชื่อ Tag, กลุ่มอุปกรณ์, ชนิดข้อมูล หรือที่อยู่ PLC..." aria-label="ค้นหา Tag">
+          <span class="kbd-hint">/</span>
+        </div>
+        <span class="catalog-counter mono" id="catalogCounter">แสดง 457 จาก 457 รายการ</span>
+      </div>
+
+      <div class="table-viewport" id="tableViewport">
+        <div class="table-header" role="row">
+          <span>เลือก</span>
+          <span>ชื่อ Tag</span>
+          <span>กลุ่มอุปกรณ์</span>
+          <span>ชนิด</span>
+          <span>สถานะการสังเกต</span>
+          <span>Task ที่ผูก</span>
+          <span style="text-align:right">จัดการ</span>
+        </div>
+        <div id="tableBody" role="rowgroup"></div>
+      </div>
+
+      <!-- Floating Multi-select Action Bar -->
+      <div class="floating-action-bar" id="floatingActionBar" hidden>
+        <span class="selected-count-label mono" id="selectedCountLabel">เลือกแล้ว 0 รายการ</span>
+        <button class="btn btn-primary" id="btnBulkAdd">+ เพิ่มเข้า Task</button>
+        <button class="btn btn-secondary" id="btnBulkRemove">- เอาออกจาก Task</button>
+        <button class="btn btn-ghost" id="btnClearSelection">ล้างการเลือก</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal Dialogs Overlay -->
+<div class="modal-overlay" id="modalOverlay" hidden role="dialog" aria-modal="true">
+  <div id="modalContent"></div>
+</div>
+
+<!-- Toast Notifications with Undo -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script>
+/*F1_JS*/
+</script>
+</body>
+</html>

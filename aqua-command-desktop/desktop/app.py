@@ -400,8 +400,6 @@ def draw_pango_text(cr, text, x, y, font_desc_str="Noto Sans Thai, Sans 10", col
     PangoCairo.show_layout(cr, layout)
 
 DEFAULT_WINCC_EXPORT = Path.home() / 'Downloads' / 'Export all.txt'
-if not IS_WINDOWS and not DEFAULT_WINCC_EXPORT.exists() and Path('/home/nong_ing/Downloads/Export all.txt').exists():
-    DEFAULT_WINCC_EXPORT = Path('/home/nong_ing/Downloads/Export all.txt')
 repo_export1 = Path(__file__).resolve().parent.parent / 'docs' / 'tags' / 'Export all.txt'
 repo_export2 = Path(__file__).resolve().parent.parent.parent / 'docs' / 'tags' / 'Export all.txt'
 if not DEFAULT_WINCC_EXPORT.exists():
@@ -409,37 +407,83 @@ if not DEFAULT_WINCC_EXPORT.exists():
         DEFAULT_WINCC_EXPORT = repo_export1
     elif repo_export2.exists():
         DEFAULT_WINCC_EXPORT = repo_export2
+    elif Path('/home/nong_ing/Downloads/Export all.txt').exists():
+        DEFAULT_WINCC_EXPORT = Path('/home/nong_ing/Downloads/Export all.txt')
 
 # ---------------------------------------------------------
 # WinCC Tag Scanner (Parses full Siemens WinCC Tag Export)
 # ---------------------------------------------------------
 def scan_wincc_tags(file_path):
-    """Parses standard Siemens WinCC V8.1 Tag Management Export files (UTF-16 LE)."""
+    """Parses standard Siemens WinCC V8.1 Tag Management Export files (33 columns).
+    Supports UTF-16 LE and UTF-8 BOM, separates UI fields from raw metadata without losing original columns.
+    """
     tags = []
     p = Path(file_path)
     if not p.exists():
         return tags
 
-    try:
-        with open(p, 'r', encoding='utf-16') as f:
-            for i, line in enumerate(f):
-                if i < 3:
-                    continue
-                parts = line.strip().split('\t')
-                if len(parts) >= 8:
-                    name, comment, dtype, length, fmt, conn, group, addr = parts[:8]
-                    name = name.strip()
-                    if name:
-                        tags.append({
-                            'name': name,
-                            'comment': comment.strip(),
-                            'type': dtype.strip(),
-                            'conn': conn.strip(),
-                            'group': group.strip() or 'Default',
-                            'addr': addr.strip() or 'Internal'
-                        })
-    except Exception as e:
-        print(f"Error scanning WinCC export: {e}", file=sys.stderr)
+    content = None
+    for enc in ('utf-16-le', 'utf-16', 'utf-8-sig', 'utf-8'):
+        try:
+            raw_bytes = p.read_bytes()
+            if not raw_bytes:
+                return []
+            content = raw_bytes.decode(enc)
+            if content.startswith('\ufeff'):
+                content = content[1:]
+            break
+        except (UnicodeDecodeError, OSError):
+            continue
+
+    if content is None:
+        print(f"Error decoding WinCC export {file_path}: unsupported encoding", file=sys.stderr)
+        return tags
+
+    lines = content.splitlines()
+    if len(lines) < 3:
+        return tags
+
+    tech_headers = [h.strip() for h in lines[1].split('\t')]
+    human_headers = [h.strip() for h in lines[2].split('\t')]
+    num_cols = max(len(tech_headers), len(human_headers), 33)
+
+    for line in lines[3:]:
+        line = line.strip('\r\n')
+        if not line:
+            continue
+        parts = line.split('\t')
+        if not parts or not parts[0].strip():
+            continue
+
+        raw_metadata = {}
+        for col_idx in range(num_cols):
+            val = parts[col_idx].strip() if col_idx < len(parts) else ''
+            h_name = human_headers[col_idx] if col_idx < len(human_headers) and human_headers[col_idx] else f'Col_{col_idx}'
+            raw_metadata[h_name] = val
+            if col_idx < len(tech_headers) and tech_headers[col_idx]:
+                raw_metadata[tech_headers[col_idx]] = val
+
+        name = parts[0].strip() if len(parts) > 0 else ''
+        comment = parts[1].strip() if len(parts) > 1 else ''
+        dtype = parts[2].strip() if len(parts) > 2 else ''
+        length = parts[3].strip() if len(parts) > 3 else ''
+        fmt = parts[4].strip() if len(parts) > 4 else ''
+        conn = parts[5].strip() if len(parts) > 5 else ''
+        group = parts[6].strip() if len(parts) > 6 else ''
+        addr = parts[7].strip() if len(parts) > 7 else ''
+
+        tags.append({
+            'name': name,
+            'comment': comment,
+            'type': dtype,
+            'length': length,
+            'fmt': fmt,
+            'conn': conn,
+            'group': group or 'Default',
+            'addr': addr or 'Internal',
+            'raw_metadata': raw_metadata
+        })
+
     return tags
 
 

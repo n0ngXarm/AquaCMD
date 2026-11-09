@@ -22,6 +22,14 @@ except ImportError:
             NOT_OBSERVED = "NOT_OBSERVED"
             DISCONNECTED = "DISCONNECTED"
 
+try:
+    from .f1_api_view import F1ApiView
+except ImportError:
+    try:
+        from f1_api_view import F1ApiView
+    except ImportError:
+        F1ApiView = None
+
 # Clean Data Type Mapping
 DATA_TYPE_MAPPING = {
     "Binary Tag": "Bool",
@@ -164,6 +172,21 @@ class AquaUnifiedWorkspaceView:
         self.refresh_group_explorer()
         self.render_catalog_table()
         self.load_current_task_to_ui()
+
+        # Modernized F1 WebKit Presentation
+        if F1ApiView is not None:
+            try:
+                self.f1_api = F1ApiView(self.owner)
+                self.root_box.append(self.f1_api.root_widget)
+                self.main_hpaned.set_visible(False)
+                if hasattr(self, 'top_header_box'):
+                    self.top_header_box.set_visible(False)
+            except Exception as e:
+                import sys
+                print(f"[AquaUnifiedWorkspaceView] F1ApiView fallback: {e}", file=sys.stderr)
+                self.f1_api = None
+        else:
+            self.f1_api = None
 
         keys = Gtk.EventControllerKey()
         keys.connect('key-pressed', self._on_catalog_key)
@@ -803,6 +826,8 @@ class AquaUnifiedWorkspaceView:
                 row.grab_focus()
 
     def open_task_dialog(self):
+        if getattr(self, 'f1_api', None):
+            self.f1_api.open_task_dialog()
         if self.task_dialog is None:
             width, height = 1000, 650
             if isinstance(self.owner, Gtk.Window):
@@ -818,6 +843,8 @@ class AquaUnifiedWorkspaceView:
         self.task_selector_combo.grab_focus()
 
     def set_workspace_mode(self, mode_name):
+        if getattr(self, 'f1_api', None):
+            self.f1_api.set_workspace_mode(mode_name)
         if mode_name == 'task_manager':
             self.open_task_dialog()
         else:
@@ -1059,6 +1086,8 @@ class AquaUnifiedWorkspaceView:
         self.owner.current_task_idx = idx
         self._undo_add = (task, tuple(added))
         self.render_catalog_table()
+        if getattr(self, 'f1_api', None):
+            self.f1_api.push_state_to_webview()
         self._show_toast(f"เพิ่ม {len(added)} Tag เข้า {task.get('name', 'Task')}", undo=True)
         return True
 
@@ -1103,6 +1132,8 @@ class AquaUnifiedWorkspaceView:
             return
         self._undo_add = None
         self.render_catalog_table()
+        if getattr(self, 'f1_api', None):
+            self.f1_api.push_state_to_webview()
         self._show_toast(f'ย้อนกลับการเพิ่ม {len(added)} Tag แล้ว')
 
 
@@ -1764,3 +1795,5 @@ class AquaUnifiedWorkspaceView:
         for t in self.catalog_tags_cache:
             g = t.get('group', 'Default')
             self.group_counts[g] = self.group_counts.get(g, 0) + 1
+        if getattr(self, 'f1_api', None):
+            self.f1_api.sync_catalog_data()
