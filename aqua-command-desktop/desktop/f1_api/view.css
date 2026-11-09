@@ -201,50 +201,68 @@ html, body {
   gap: 2px;
 }
 
-.group-btn {
+.group-btn,
+.group-item {
   display: block;
   width: 100%;
   text-align: left;
   font: inherit;
   color: var(--ink);
-  background: transparent;
-  border: 1px solid transparent;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 8px 10px;
   cursor: pointer;
   min-height: 48px;
   transition: background 0.15s ease-out, border-color 0.15s ease-out;
+  box-sizing: border-box;
 }
 
-.group-btn:hover {
+.group-btn:hover,
+.group-item:hover {
   background: var(--surface-3);
+  border-color: var(--line-strong);
 }
 
-.group-btn[aria-pressed="true"] {
+.group-btn.is-selected,
+.group-btn[aria-selected="true"],
+.group-btn[aria-pressed="true"],
+.group-item.is-selected,
+.group-item[aria-selected="true"] {
   background: var(--selected);
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
-.group-btn .title-row {
+.group-btn .title-row,
+.group-item .title-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   font-weight: 500;
   font-size: 13px;
+  color: var(--ink);
 }
 
-.group-btn .title-row em {
+.group-btn.is-selected .title-row,
+.group-item.is-selected .title-row {
+  color: var(--accent);
+}
+
+.group-btn .title-row em,
+.group-item .title-row em {
   font-style: normal;
   font-size: 11.5px;
   color: var(--mut);
-  background: var(--surface-2);
+  background: var(--surface);
   padding: 1px 6px;
   border-radius: var(--radius);
   border: 1px solid var(--line);
 }
 
-.group-btn small {
+.group-btn small,
+.group-item small {
   display: block;
   color: var(--mut);
   font-size: 11.5px;
@@ -252,6 +270,61 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Sidebar Footer & Program Settings Button */
+.groups-footer {
+  padding: 8px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  flex-shrink: 0;
+}
+
+.btn-settings-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out;
+  box-sizing: border-box;
+}
+
+.btn-settings-sidebar:hover {
+  background: var(--surface-3);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-settings-sidebar:active {
+  background: var(--surface-2);
+}
+
+.btn-settings-sidebar .settings-icon {
+  font-size: 14px;
+}
+
+.btn-settings-sidebar .settings-label {
+  flex: 1;
+  text-align: left;
+}
+
+.btn-settings-sidebar .kbd-shortcut {
+  font-size: 10.5px;
+  padding: 1px 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--mut);
+  font-family: inherit;
 }
 
 .group-bar {

@@ -337,6 +337,38 @@ class TestF1ApiViewContracts(unittest.TestCase):
         ws.f1_api.open_task_dialog.assert_called_once()
         self.assertIsNone(ws.task_dialog, "GTK task_dialog must NOT be instantiated when f1_api is active")
 
+    def test_13_sidebar_settings_button_and_group_styling(self):
+        index_html = (ASSETS_DIR / 'index.html').read_text(encoding='utf-8')
+        view_css = (ASSETS_DIR / 'view.css').read_text(encoding='utf-8')
+        view_js = (ASSETS_DIR / 'view.js').read_text(encoding='utf-8')
+
+        # Sidebar footer button
+        self.assertIn('btnOpenSettings', index_html)
+        self.assertIn('groups-footer', index_html)
+        self.assertIn('ตั้งค่าโปรแกรม', index_html)
+
+        # CSS styling uses variables and covers both group-btn and group-item
+        self.assertIn('.group-btn', view_css)
+        self.assertIn('.group-item', view_css)
+        self.assertIn('.btn-settings-sidebar', view_css)
+        self.assertIn('.groups-footer', view_css)
+
+        # JS bindings
+        self.assertIn('btnOpenSettings', view_js)
+        self.assertIn('navigate_f6', view_js)
+
+    def test_14_navigate_f6_dispatches_to_alarms(self):
+        owner = MagicMock()
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = owner
+        view.revision = 1
+        view.closed = False
+        view._send_bridge_response = MagicMock()
+
+        view._dispatch_action('navigate_f6', {}, 'req-f6')
+        owner.switch_to_tab.assert_called_once_with('alarms')
+        view._send_bridge_response.assert_called_once_with('req-f6', ok=True, revision=1)
+
 
 if __name__ == '__main__':
     unittest.main()

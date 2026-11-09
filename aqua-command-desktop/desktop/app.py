@@ -1687,6 +1687,11 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     # Global Function Keys Controller (F1 - F8)
     # ---------------------------------------------------------
     def on_global_key_pressed(self, controller, keyval, keycode, state):
+        # Program Settings shortcut (Ctrl+,)
+        if hasattr(Gdk, 'ModifierType') and (state & Gdk.ModifierType.CONTROL_MASK) and keyval == getattr(Gdk, 'KEY_comma', 44):
+            self.switch_to_tab('alarms')
+            return True
+
         if USE_UNIFIED_WORKSPACE and keyval == Gdk.KEY_F1:
             self.activate_workspace_mode('monitoring')
             if 'overview' in self.nav_btns:

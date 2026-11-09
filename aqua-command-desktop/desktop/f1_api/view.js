@@ -200,12 +200,12 @@
       const count = counts[key] || 0;
 
       return `
-        <button class="group-item ${isSelected ? 'is-selected' : ''}" data-group="${escapeHtml(key)}" role="tab" aria-selected="${isSelected}">
-          <div class="group-info">
-            <span class="group-name">${escapeHtml(meta.name)}</span>
-            <span class="group-desc">${escapeHtml(meta.desc)}</span>
+        <button class="group-btn ${isSelected ? 'is-selected' : ''}" data-group="${escapeHtml(key)}" role="tab" aria-selected="${isSelected}">
+          <div class="title-row">
+            <span>${escapeHtml(meta.name)}</span>
+            <em>${count}</em>
           </div>
-          <span class="group-count">${count}</span>
+          <small>${escapeHtml(meta.desc)}</small>
         </button>
       `;
     }).join('');
@@ -863,6 +863,15 @@
       };
     }
 
+    // Sidebar bottom-left Program Settings button
+    const btnOpenSettings = document.getElementById('btnOpenSettings');
+    if (btnOpenSettings) {
+      btnOpenSettings.onclick = (e) => {
+        e.preventDefault();
+        sendBridge('navigate_f6', {});
+      };
+    }
+
     // Helper: toggle tag selection with optional range support
     function toggleTagSelection(tagName, rowIdx, isShift) {
       const filtered = getFilteredTags();
@@ -968,6 +977,32 @@
 
     // Keyboard Navigation
     document.addEventListener('keydown', (e) => {
+      // Program Settings shortcuts (F6 or Ctrl+,)
+      if (e.key === 'F6' || (e.ctrlKey && (e.key === ',' || e.code === 'Comma'))) {
+        e.preventDefault();
+        sendBridge('navigate_f6', {});
+        return;
+      }
+
+      // F1 and F2 shortcuts within Unified Workspace
+      if (e.key === 'F2') {
+        e.preventDefault();
+        openTaskDialog(state.recentTaskId);
+        return;
+      }
+      if (e.key === 'F1') {
+        e.preventDefault();
+        closeModal();
+        return;
+      }
+
+      // Other F-keys passed to GTK host
+      if (/^F[3-8]$/.test(e.key)) {
+        e.preventDefault();
+        sendBridge('key_event', { key: e.key });
+        return;
+      }
+
       // Escape closes open modals
       if (e.key === 'Escape') {
         if (state.activeModal) {
