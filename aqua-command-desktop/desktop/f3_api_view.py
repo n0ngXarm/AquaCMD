@@ -60,7 +60,8 @@ def build_html(metadata, *, allow_demo=True, demo=False, demo_error=""):
     page = page.replace('__F3_DEMO_ATTR__', '' if allow_demo else 'hidden')
     page = page.replace('__F3_DEMO_MODE__', '1' if demo else '0')
     page = page.replace('__F3_DEMO_ERROR__', escape(demo_error, quote=True))
-    page = page.replace('/*F3_CSS*/', (ASSETS/'view.css').read_text())
+    fonts = (ASSETS/'fonts_embedded.css').read_text() if (ASSETS/'fonts_embedded.css').exists() else ''
+    page = page.replace('/*F3_CSS*/', fonts + '\n' + (ASSETS/'view.css').read_text())
     detector = (ASSETS/'detect.mjs').read_text().replace('export function detect(', 'function detect(', 1)
     page = page.replace('/*F3_JS*/', detector + '\n' + (ASSETS/'view.js').read_text())
     return page.replace('__F3_METADATA__', json.dumps(metadata, ensure_ascii=False).replace('<', '\\u003c'))

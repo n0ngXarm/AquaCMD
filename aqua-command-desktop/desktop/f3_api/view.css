@@ -8,7 +8,7 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 --ok:#3ddc97;--fail:#ff6b74;--stale:#f2b84b;--unv:#8ea0ad;--nb:#a99bea;--blk:#ff9a8f;--ac:#4cc3ff;--pu:#9a86ff}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 "IBM Plex Sans Thai","Noto Sans Thai",system-ui,sans-serif}
 main {
   margin-inline: auto;
   max-width: 1600px;
