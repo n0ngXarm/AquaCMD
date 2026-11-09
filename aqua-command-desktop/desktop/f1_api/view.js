@@ -475,17 +475,17 @@
 
     const assignedTags = currentTask.tags || [];
     const assignedTagsRows = assignedTags.length === 0
-      ? `<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:14px">ยังไม่มี Tag ใน Task นี้</td></tr>`
-      : assignedTags.map(tn => {
+      ? `<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:18px">ยังไม่มี Tag ใน Task นี้</td></tr>`
+      : assignedTags.map((tn, idx) => {
         const tObj = state.tags.find(x => x.name === tn) || { type: 'Word', group: 'Default' };
         return `
-          <tr style="border-bottom:1px solid var(--line);cursor:pointer" data-assigned-tag="${escapeHtml(tn)}">
-            <td style="width:36px;padding:6px 8px">
-              <input type="checkbox" data-assigned-checkbox="${escapeHtml(tn)}" aria-label="เลือก ${escapeHtml(tn)}">
+          <tr class="assigned-tag-row" data-assigned-tag="${escapeHtml(tn)}" data-index="${idx}" role="row" tabindex="0">
+            <td class="cell-assigned-check">
+              <input type="checkbox" class="table-check" data-assigned-checkbox="${escapeHtml(tn)}" aria-label="เลือก ${escapeHtml(tn)}">
             </td>
-            <td class="mono" style="padding:6px 8px;font-weight:500">${escapeHtml(tn)}</td>
-            <td style="padding:6px 8px;color:var(--mut)">${escapeHtml(getGroupName(tObj.group))}</td>
-            <td class="mono" style="padding:6px 8px;color:var(--mut);font-size:12px">${escapeHtml(tObj.type || 'Word')}</td>
+            <td class="mono cell-assigned-name">${escapeHtml(tn)}</td>
+            <td class="cell-assigned-group" style="color:var(--mut)">${escapeHtml(getGroupName(tObj.group))}</td>
+            <td class="mono cell-assigned-type" style="color:var(--mut);font-size:12px">${escapeHtml(tObj.type || 'Word')}</td>
           </tr>
         `;
       }).join('');
@@ -561,18 +561,18 @@
             </div>
 
             <div style="flex:1;max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)">
-              <table style="width:100%;font-size:12.5px;border-collapse:collapse;text-align:left">
-                <thead style="position:sticky;top:0;background:var(--surface-2);border-bottom:1px solid var(--line)">
+              <table class="assigned-tags-table">
+                <thead>
                   <tr>
-                    <th style="width:36px;padding:6px 8px">
-                      <input type="checkbox" id="chkSelectAllAssigned" aria-label="เลือกทั้งหมด">
+                    <th style="width:40px;text-align:center" id="thAssignedCheck">
+                      <input type="checkbox" id="chkSelectAllAssigned" class="table-check" aria-label="เลือกทั้งหมด">
                     </th>
-                    <th style="padding:6px 8px">ชื่อ Tag</th>
-                    <th style="padding:6px 8px">กลุ่มอุปกรณ์</th>
-                    <th style="padding:6px 8px">ชนิด</th>
+                    <th style="cursor:pointer" id="thAssignedTagName" title="คลิกเพื่อเลือกทั้งหมด">ชื่อ Tag</th>
+                    <th>กลุ่มอุปกรณ์</th>
+                    <th>ชนิด</th>
                   </tr>
                 </thead>
-                <tbody>${assignedTagsRows}</tbody>
+                <tbody id="assignedTagsTbody">${assignedTagsRows}</tbody>
               </table>
             </div>
           </div>
@@ -649,12 +649,124 @@
       };
     }
 
+    let lastAssignedIndex = -1;
+
+    function syncAssignedSelectionUI() {
+      const allRows = container.querySelectorAll('.assigned-tag-row');
+      let checkedCount = 0;
+      allRows.forEach(row => {
+        const chk = row.querySelector('[data-assigned-checkbox]');
+        const isChecked = !!(chk && chk.checked);
+        if (isChecked) checkedCount++;
+        row.classList.toggle('is-selected', isChecked);
+        row.setAttribute('aria-selected', isChecked ? 'true' : 'false');
+      });
+
+      const chkSelectAll = document.getElementById('chkSelectAllAssigned');
+      if (chkSelectAll) {
+        if (allRows.length === 0) {
+          chkSelectAll.checked = false;
+          chkSelectAll.indeterminate = false;
+        } else if (checkedCount === allRows.length) {
+          chkSelectAll.checked = true;
+          chkSelectAll.indeterminate = false;
+        } else if (checkedCount > 0) {
+          chkSelectAll.checked = false;
+          chkSelectAll.indeterminate = true;
+        } else {
+          chkSelectAll.checked = false;
+          chkSelectAll.indeterminate = false;
+        }
+      }
+
+      const btnRemoveSelected = document.getElementById('btnRemoveSelectedAssigned');
+      if (btnRemoveSelected) {
+        if (checkedCount > 0) {
+          btnRemoveSelected.textContent = `เอาที่เลือกออก (${checkedCount})`;
+          btnRemoveSelected.classList.remove('btn-secondary');
+          btnRemoveSelected.classList.add('btn-fail-active');
+        } else {
+          btnRemoveSelected.textContent = 'เอาที่เลือกออก';
+          btnRemoveSelected.classList.remove('btn-fail-active');
+          btnRemoveSelected.classList.add('btn-secondary');
+        }
+      }
+    }
+
+    function toggleAssignedRow(row, isShift, forceState) {
+      const chk = row.querySelector('[data-assigned-checkbox]');
+      if (!chk) return;
+      const rowIdx = parseInt(row.dataset.index, 10);
+      const allRows = Array.from(container.querySelectorAll('.assigned-tag-row'));
+
+      if (isShift && lastAssignedIndex >= 0 && lastAssignedIndex < allRows.length) {
+        const start = Math.min(lastAssignedIndex, rowIdx);
+        const end = Math.max(lastAssignedIndex, rowIdx);
+        const targetState = forceState !== undefined ? forceState : !chk.checked;
+        for (let i = start; i <= end; i++) {
+          const r = allRows[i];
+          const c = r.querySelector('[data-assigned-checkbox]');
+          if (c) c.checked = targetState;
+        }
+      } else {
+        chk.checked = forceState !== undefined ? forceState : !chk.checked;
+        lastAssignedIndex = rowIdx;
+      }
+      syncAssignedSelectionUI();
+    }
+
+    const tbody = container.querySelector('#assignedTagsTbody');
+    if (tbody) {
+      tbody.onclick = (e) => {
+        const row = e.target.closest('.assigned-tag-row');
+        if (!row) return;
+        if (e.target.type === 'checkbox') {
+          lastAssignedIndex = parseInt(row.dataset.index, 10);
+          syncAssignedSelectionUI();
+        } else {
+          e.preventDefault();
+          toggleAssignedRow(row, e.shiftKey);
+        }
+      };
+
+      tbody.onkeydown = (e) => {
+        const row = e.target.closest('.assigned-tag-row');
+        if (!row) return;
+        if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          toggleAssignedRow(row, e.shiftKey);
+        } else if (row && e.key === 'ArrowDown') {
+          const next = row.nextElementSibling;
+          if (next && next.classList.contains('assigned-tag-row')) {
+            e.preventDefault();
+            next.focus();
+          }
+        } else if (row && e.key === 'ArrowUp') {
+          const prev = row.previousElementSibling;
+          if (prev && prev.classList.contains('assigned-tag-row')) {
+            e.preventDefault();
+            prev.focus();
+          }
+        }
+      };
+    }
+
     // Select all assigned checkboxes
     const chkSelectAll = document.getElementById('chkSelectAllAssigned');
+    const thSelectAll = document.getElementById('thAssignedTagName');
     if (chkSelectAll) {
       chkSelectAll.onchange = () => {
-        const boxes = document.querySelectorAll('[data-assigned-checkbox]');
+        const boxes = container.querySelectorAll('[data-assigned-checkbox]');
         boxes.forEach(b => b.checked = chkSelectAll.checked);
+        syncAssignedSelectionUI();
+      };
+    }
+    if (thSelectAll) {
+      thSelectAll.onclick = (e) => {
+        if (chkSelectAll) {
+          chkSelectAll.checked = !chkSelectAll.checked;
+          chkSelectAll.onchange();
+        }
       };
     }
 
@@ -663,7 +775,7 @@
     if (btnRemoveSelected) {
       btnRemoveSelected.onclick = () => {
         const selectedNames = [];
-        document.querySelectorAll('[data-assigned-checkbox]:checked').forEach(b => {
+        container.querySelectorAll('[data-assigned-checkbox]:checked').forEach(b => {
           selectedNames.push(b.dataset.assignedCheckbox);
         });
         if (selectedNames.length === 0) return;
@@ -938,16 +1050,6 @@
         e.stopPropagation();
         const tagName = inspectBtn.dataset.inspectTag;
         openInspector(tagName);
-        return;
-      }
-
-      // Assigned tag row click in Task Manager dialog (toggles assigned checkbox)
-      const assignedTr = e.target.closest('tr[data-assigned-tag]');
-      if (assignedTr && e.target.type !== 'checkbox') {
-        const chk = assignedTr.querySelector('input[type="checkbox"]');
-        if (chk) {
-          chk.checked = !chk.checked;
-        }
         return;
       }
 

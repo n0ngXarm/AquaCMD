@@ -369,6 +369,21 @@ class TestF1ApiViewContracts(unittest.TestCase):
         owner.switch_to_tab.assert_called_once_with('alarms')
         view._send_bridge_response.assert_called_once_with('req-f6', ok=True, revision=1)
 
+    def test_15_task_dialog_assigned_row_selection_and_sync(self):
+        view_css = (ASSETS_DIR / 'view.css').read_text(encoding='utf-8')
+        view_js = (ASSETS_DIR / 'view.js').read_text(encoding='utf-8')
+
+        # CSS rules for assigned tag row selection and custom check
+        self.assertIn('.assigned-tags-table', view_css)
+        self.assertIn('.assigned-tag-row', view_css)
+        self.assertIn('.assigned-tag-row.is-selected', view_css)
+        self.assertIn('.table-check', view_css)
+
+        # JS functions for row clicking, sync, and range selection
+        self.assertIn('syncAssignedSelectionUI', view_js)
+        self.assertIn('toggleAssignedRow', view_js)
+        self.assertIn('assigned-tag-row', view_js)
+
 
 if __name__ == '__main__':
     unittest.main()

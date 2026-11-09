@@ -86,10 +86,12 @@ def capture_all():
     spin(0.6)
     snap_widget(win1366, out_dir / "f1_tag_overview_1366x768.png")
 
-    # Open WebKit Task Manager Dialog (F2)
-    win1366.activate_workspace_mode('task_manager')
-    spin(0.6)
-    ws = win1366.unified_workspace
+    # Open WebKit Task Manager Dialog (F2) for TASK-02 (with assigned tags)
+    if hasattr(win1366, 'unified_workspace') and win1366.unified_workspace.f1_api:
+        win1366.unified_workspace.f1_api.open_task_dialog('TASK-02')
+    else:
+        win1366.activate_workspace_mode('task_manager')
+    spin(0.8)
     # When F1ApiView is active, Task Manager is rendered inside the WebKit workspace
     snap_widget(win1366, out_dir / "f1_task_manager_dialog_1366x768.png")
 
