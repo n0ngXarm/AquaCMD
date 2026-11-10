@@ -30,6 +30,10 @@ from opcua_mapping import NodeIdMapper
 from opcua_store import ObservableStateStore, Quality, TagObservation
 from opcua_storage import DurableStorage, StoredObservation
 from task_engine import TaskEngine
+try:
+    from .opcua_policy import normalize_security_policy, assert_secure_channel_for_auth, POLICY_NONE as SEC_POLICY_NONE, POLICY_BASIC256SHA256 as SEC_POLICY_BASIC256
+except ImportError:
+    from opcua_policy import normalize_security_policy, assert_secure_channel_for_auth, POLICY_NONE as SEC_POLICY_NONE, POLICY_BASIC256SHA256 as SEC_POLICY_BASIC256
 
 logger = logging.getLogger("aqua.polling_engine")
 
@@ -125,13 +129,19 @@ class OpcUaPollingEngine:
         if parsed.scheme != "opc.tcp" or not parsed.hostname or not parsed.port:
             return False, f"Invalid OPC UA URL format: '{endpoint_url}'. Expected 'opc.tcp://<host>:<port>'."
 
+        # Validate SecurityPolicy against strict allowlist (SEC-04)
+        try:
+            canonical_policy = normalize_security_policy(sec_policy)
+        except ValueError as val_err:
+            return False, f"SEC-04: Invalid SecurityPolicy: {val_err}"
+
         # Check required tags
         required_tags = self.task_engine.get_required_tags()
         if self.mode_task_tags_only and not required_tags:
             return False, "No active tasks with assigned tags found. Assign at least 1 tag in F2 before starting monitoring."
 
         # Check PKI prerequisites if Basic256Sha256
-        if sec_policy == "Basic256Sha256":
+        if canonical_policy == SEC_POLICY_BASIC256:
             cert_p, key_p = self.pki.ensure_client_certificate()
             if not cert_p.is_file() or not key_p.is_file():
                 return False, "Client PKI application certificate / RSA key could not be verified."
@@ -154,15 +164,24 @@ class OpcUaPollingEngine:
             if self.telemetry.state in (PollingState.RUNNING, PollingState.STARTING):
                 return False, "Monitoring is already active."
 
+            # Security gate (SEC-04): Validate policy normalization and forbid cleartext credential transmission
+            try:
+                canonical_sec = normalize_security_policy(sec_policy)
+                assert_secure_channel_for_auth(canonical_sec, auth_mode)
+            except (ValueError, PermissionError) as gate_err:
+                self.telemetry.state = PollingState.ERROR
+                self.telemetry.last_error = str(gate_err)
+                return False, f"Security gate check failed: {gate_err}"
+
             self.telemetry.state = PollingState.PREFLIGHT
-            ok, reason = self.run_preflight_checks(endpoint_url, sec_policy)
+            ok, reason = self.run_preflight_checks(endpoint_url, canonical_sec)
             if not ok:
                 self.telemetry.state = PollingState.ERROR
                 self.telemetry.last_error = reason
                 return False, f"Preflight failed: {reason}"
 
             self.endpoint_url = endpoint_url
-            self.sec_policy = sec_policy
+            self.sec_policy = canonical_sec
             self.auth_mode = auth_mode
             self.username = username
             self.password = password
@@ -259,7 +278,10 @@ class OpcUaPollingEngine:
         parsed = urlparse(self.endpoint_url)
         expected_host = parsed.hostname or "127.0.0.1"
 
-        if self.sec_policy == "Basic256Sha256":
+        canonical_policy = normalize_security_policy(self.sec_policy)
+        assert_secure_channel_for_auth(canonical_policy, self.auth_mode)
+
+        if canonical_policy == SEC_POLICY_BASIC256:
             cert_p, key_p = self.pki.ensure_client_certificate()
             await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
 
@@ -275,11 +297,9 @@ class OpcUaPollingEngine:
                 check_trust_store=True
             )
             if not val_res["valid"]:
-                raise PermissionError(f"Server certificate untrusted: {val_res['status_code']}")
+                raise PermissionError(f"Server certificate untrusted: {val_res['status_code']} ({val_res.get('error')})")
 
         if self.auth_mode == "Username":
-            if self.sec_policy in ("None", "POLICY_NONE") or not self.sec_policy:
-                raise PermissionError("Plaintext username/password is strictly forbidden when SecurityPolicy is None")
             if not self.username:
                 raise ValueError("Username mode requires valid username")
             client.set_user(self.username)

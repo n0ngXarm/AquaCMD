@@ -19,10 +19,12 @@ try:
     from .opcua_mapping import NodeIdMapper, TagMapping
     from .opcua_store import ObservableStateStore, TagObservation, Quality
     from .opcua_pki import PkiManager, SUPPORTED_POLICIES, POLICY_NONE
+    from .opcua_policy import normalize_security_policy, assert_secure_channel_for_auth, POLICY_NONE as SEC_POLICY_NONE, POLICY_BASIC256SHA256 as SEC_POLICY_BASIC256
 except ImportError:
     from opcua_mapping import NodeIdMapper, TagMapping
     from opcua_store import ObservableStateStore, TagObservation, Quality
     from opcua_pki import PkiManager, SUPPORTED_POLICIES, POLICY_NONE
+    from opcua_policy import normalize_security_policy, assert_secure_channel_for_auth, POLICY_NONE as SEC_POLICY_NONE, POLICY_BASIC256SHA256 as SEC_POLICY_BASIC256
 
 logger = logging.getLogger("aquacmd.opcua.reader")
 
@@ -121,9 +123,12 @@ class ManualOpcUaReader:
                 self.store.update_observation(obs)
                 return obs
 
-            # 3. Security guardrail: Prohibit plaintext username/password over SecurityPolicy#None
-            if auth_mode == "Username" and sec_policy == "None":
-                err_msg = "INSECURE_CREDENTIAL_TRANSFER: Username authentication prohibited over SecurityPolicy#None."
+            # 3. Security guardrail (SEC-04): Validate policy against strict allowlist & prevent cleartext credential transfer
+            try:
+                canonical_sec_policy = normalize_security_policy(sec_policy)
+                assert_secure_channel_for_auth(canonical_sec_policy, auth_mode)
+            except (ValueError, PermissionError) as sec_err:
+                err_msg = f"SEC-04: Security gate check failed: {sec_err}"
                 logger.error(err_msg)
                 obs = TagObservation(
                     tag_name=tag_name,
@@ -146,7 +151,7 @@ class ManualOpcUaReader:
                 expected_host = parsed.hostname or "127.0.0.1"
 
                 # Configure Security
-                if sec_policy == "Basic256Sha256":
+                if canonical_sec_policy == SEC_POLICY_BASIC256:
                     cert_p, key_p = self.pki.ensure_client_certificate()
                     await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
 
@@ -169,8 +174,7 @@ class ManualOpcUaReader:
 
                 # Configure Authentication
                 if auth_mode == "Username":
-                    if sec_policy in ("None", POLICY_NONE) or not sec_policy:
-                        raise PermissionError("Plaintext username/password is strictly forbidden when SecurityPolicy is None")
+                    assert_secure_channel_for_auth(canonical_sec_policy, auth_mode)
                     if not username:
                         raise ValueError("Username mode requires valid username")
                     client.set_user(username)
