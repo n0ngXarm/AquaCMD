@@ -154,23 +154,56 @@ if IS_WINDOWS:
 else:
     CONFIG_DIR = Path.home() / '.config' / 'aqua-command'
 
-CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+if not IS_WINDOWS:
+    try:
+        if not CONFIG_DIR.exists():
+            CONFIG_DIR.mkdir(parents=True, mode=0o700, exist_ok=True)
+        else:
+            os.chmod(CONFIG_DIR, 0o700)
+    except Exception:
+        pass
+else:
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+
 TASKS_CONFIG_FILE = CONFIG_DIR / 'wincc_tasks.json'
 TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
 TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
 OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 
-def save_atomic_json(filepath, data):
-    """Crash-resistant atomic file save: writes to .tmp before replacing target."""
+def save_atomic_json(filepath, data, mode=None):
+    """Crash-resistant atomic file save: writes to .tmp before replacing target with explicit permissions."""
     p = Path(filepath)
     temp_p = p.with_suffix('.tmp')
     try:
         p.parent.mkdir(parents=True, exist_ok=True)
-        with open(temp_p, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-            f.flush()
-            os.fsync(f.fileno())
+        if not IS_WINDOWS and mode is not None:
+            flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+            fd = os.open(temp_p, flags, mode)
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+                f.flush()
+                os.fsync(f.fileno())
+            try:
+                os.chmod(temp_p, mode)
+            except Exception:
+                pass
+        else:
+            with open(temp_p, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+                f.flush()
+                os.fsync(f.fileno())
+            if not IS_WINDOWS and mode is not None:
+                try:
+                    os.chmod(temp_p, mode)
+                except Exception:
+                    pass
+
         temp_p.replace(p)
+        if not IS_WINDOWS and mode is not None:
+            try:
+                os.chmod(p, mode)
+            except Exception:
+                pass
         return True
     except Exception as e:
         print(f"Error atomic saving {filepath}: {e}", file=sys.stderr)
@@ -223,7 +256,7 @@ def validate_opcua_endpoint(url):
 def save_opcua_config(cfg):
     clean_cfg = dict(cfg)
     clean_cfg.pop('password', None)  # Safety: never save plaintext password to disk
-    return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg)
+    return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg, mode=0o600)
 
 def load_telegram_config():
     if TELEGRAM_CONFIG_FILE.exists():
@@ -239,7 +272,7 @@ def load_telegram_config():
     }
 
 def save_telegram_config(cfg):
-    return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg)
+    return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg, mode=0o600)
 
 DEFAULT_TOPOLOGY = {
     "scada_lan": {
