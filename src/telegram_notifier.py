@@ -31,16 +31,21 @@ class TelegramNotifier:
         """
         External delivery authorization check (REL-02).
         Decoupled from notification trigger generation.
-        Strict default-deny: Only allowed when APP_ENV == 'production'.
-        Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
-        Constructor override cannot enable external egress in non-production environments.
+        Strict default-deny:
+        1. APP_ENV must be strictly 'production'.
+        2. Deployment policy Config.TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED must be True.
+        3. Constructor override can only further restrict/disable delivery (delivery_authorized=False),
+           never bypass or override the deployment policy to True when deployment policy is False.
         """
         env = getattr(Config, "APP_ENV", "").strip().lower()
         if env != "production":
             return False
-        if self._delivery_authorized is not None:
-            return bool(self._delivery_authorized)
-        return getattr(Config, "TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", False)
+        deployment_authorized = bool(getattr(Config, "TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", False))
+        if not deployment_authorized:
+            return False
+        if self._delivery_authorized is False:
+            return False
+        return True
 
     def _api_url(self, method: str) -> str:
         """Constructs Telegram Bot API endpoint URL."""

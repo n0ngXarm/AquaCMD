@@ -36,16 +36,21 @@ class TelegramBot:
         """
         Inbound command polling authorization check (REL-02).
         Decoupled from outbound notification delivery authorization.
-        Strict default-deny: Only allowed when APP_ENV == 'production'.
-        Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
-        Constructor override cannot enable inbound polling in non-production environments.
+        Strict default-deny:
+        1. APP_ENV must be strictly 'production'.
+        2. Deployment policy Config.TELEGRAM_INBOUND_POLLING_AUTHORIZED must be True.
+        3. Constructor override can only further restrict/disable polling (polling_authorized=False),
+           never bypass or override the deployment policy to True when deployment policy is False.
         """
         env = getattr(Config, "APP_ENV", "").strip().lower()
         if env != "production":
             return False
-        if self._polling_authorized is not None:
-            return bool(self._polling_authorized)
-        return getattr(Config, "TELEGRAM_INBOUND_POLLING_AUTHORIZED", False)
+        deployment_authorized = bool(getattr(Config, "TELEGRAM_INBOUND_POLLING_AUTHORIZED", False))
+        if not deployment_authorized:
+            return False
+        if self._polling_authorized is False:
+            return False
+        return True
 
     def start_polling(self) -> None:
         """Starts the long-polling loop for receiving Telegram commands."""
