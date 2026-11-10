@@ -1,6 +1,6 @@
-# AQUA COMMAND Windows Runtime Reader0.9
+# AQUA COMMAND Windows Runtime Reader 0.10
 
-Native WinForms executable for an existing authorized **WinCC Classic V8.1 OPC DA server on the same Windows computer**. It reads selected binary Tags; no mock source is shipped. Linux remains the Gateway/operations development platform. This companion continues the existing AQUA transport and source repository.
+Native WinForms executable for an existing authorized **WinCC Classic V8.1 OPC DA server on the same Windows computer**. It reads selected pump-status and numeric (Analog) Tags; no mock source is shipped. Linux remains the Gateway/operations development platform. This companion continues the existing AQUA transport and source repository.
 
 This is an unsigned engineering build. It is cross-compiled on Linux; actual Windows11/WinCC COM interoperability, permissions, bitness and Runtime load still require authorized LAB verification. Do not treat build/tests as production acceptance. The user's current OPC DA has not yet been formally enabled/authorized; this program does not enable it.
 
@@ -9,9 +9,9 @@ This is an unsigned engineering build. It is cross-compiled on Linux; actual Win
 1. Open `AquaCommand.WinCCReader.exe`. Startup is idle: no COM activation, source read, spool creation, egress probe or Gateway request.
 2. Click **Readiness** only when needed. It reads local existing registry registration for `OPCServer.WinCC`; it does not activate COM or certify organizational approval/Runtime readiness.
 3. Choose a unique enrolled source identityPC-01,PC-02 orPC-03. One computer/spool owns each identity; do not run another exporter stream with the same identity against the same Gateway.
-4. Enter exact binary Tag names, one per line, with no example/default Tags. Supported names use letters,digits,`_`,`-`,`.`;1–100 unique names. This does not browse all Tags or accept an engineering Tag export as current values.
+4. Enter exact Tag names, one per line, in the separate pump-status or Analog field. Use 1–100 unique names across both fields. Supported names use letters, digits, `_`, `-`, and `.`. This does not browse all Tags or accept an engineering Tag export as current values.
 5. Obtain organizational approval outside AQUA. Only then tick its confirmation and click **Approve read every5s**. Review exact local server/CLSID/executable, selected names and interval before confirming. COM connection can launch the already registered local OPC server. No WinCC project, service, registry or DCOM settings are changed.
-6. A separate mapping checkbox confirms ON=1/OFF=0. Without it, values are stored with UNVERIFIED_MAPPING and stateUNKNOWN. Nonbinary/nonnumeric/unsupported values never become OFF. This reader is not an analog-value collector; nonintegral or out-of-range values have rawNULL and UNSUPPORTED_VALUE.
+6. The mapping checkbox applies to pump-status Tags only. It confirms ON=1/OFF=0. Analog Tags accept finite numeric values, including fractions, regardless of that checkbox. A Boolean, string, array, nonfinite value or 64-bit integer VARIANT outside the exact JSON safe-integer range is unsupported as Analog. The reader sends numeric values in the original WinCC units without scaling. An Analog zero or one never produces a pump state or transition.
 7. Collection appends durable snapshots everyfive seconds with no overlapping read. Slow reads skip missed ticks instead of issuing catch-up bursts. Stop reading terminates only the owned reader child; it never terminates WinCC.
 8. Enter an explicit HTTPS Gateway private IPv4 URL and64 lowercase hex enrollment characters for this source. The key is held in process memory and is not saved. Windows/Gateway clocks must agree within30seconds for request authentication; AQUA never changes system time or enables time services. Use Windows certificate trust, or explicitly select the Gateway CA certificate. No TLS validation bypass, remote DCOM, subnet scan, proxy or Internet sharing is used.
 9. Click **Approve send** separately and review destination. Pending records retry until an authenticated digest ACK is received or sending is stopped. Gateway ACK means durable Gateway receipt, not Telegram/Internet success. The Gateway handles its own separately approved external delivery.
@@ -19,7 +19,8 @@ This is an unsigned engineering build. It is cross-compiled on Linux; actual Win
 
 ## Data and storage
 
-The fixed source adapter is `wincc-opc-da`, event schema `aqua.runtime.v3`, `simulated:false`. The companion preserves OPC quality word, signed per-item HRESULT and source FILETIME separately from local read completion time. `observed_at` is explicitly the read completion time for compatibility; it is not a manufactured device timestamp. GOOD OPC class uses mask0xC0=0xC0 (192); WinCC internal128 is not treated as OPC GOOD.
+The fixed source adapter is `wincc-opc-da`, event schema `aqua.runtime.v3`, `simulated:false`. The companion preserves OPC quality word, signed per-item HRESULT and source FILETIME separately from local read completion time. `observed_at` is explicitly the read completion time for compatibility; it is not a manufactured device timestamp. GOOD OPC class uses mask 0xC0 = 0xC0 (192). Uncertain or failed samples retain diagnostic quality, HRESULT, and available source time.
+An Analog observation is marked `value_type: "analog"` and carries its number in `observations[tag].raw_value`. Its `values[tag]` entry is null because that map represents pump states. Use the matching 0.10-compatible Gateway for Analog. The updated Gateway also accepts binary events from older Readers. Gateway archive CSV retains the numeric raw value.
 
 State is one owned per-user profile under LocalAppData/AquaCommand/WinCCReader/profiles. Profile identity is stable for SourceId+local server. Changing selected Tags or mapping changes an atomic capture revision, resets transition continuity and preserves the same monotonic sequence and old pending records. Changing SourceId uses a distinct profile. The operator must consider old queued selections when approving delivery.
 

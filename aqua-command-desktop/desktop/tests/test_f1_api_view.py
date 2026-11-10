@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from f1_api_view import F1ApiView, build_html, validate_payload, ALLOWLISTED_ACTIONS
+from opcua_store import ObservableStateStore, Quality, TagObservation
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ASSETS_DIR = Path(__file__).resolve().parents[1] / 'f1_api'
@@ -288,6 +289,54 @@ class TestF1ApiViewContracts(unittest.TestCase):
         self.assertEqual(tag_map['TAG_NOT_OBSERVED']['quality'], 'NOT_OBSERVED')
         self.assertEqual(tag_map['TAG_NOT_OBSERVED']['age_text'], 'ยังไม่ได้สังเกต')
 
+    def test_untrusted_receipts_do_not_look_current(self):
+        owner = MagicMock()
+        endpoint = 'opc.tcp://127.0.0.1:4850'
+        owner.opcua_config = {'endpoint_url': endpoint}
+        owner.scanned_tags = [{'name': name} for name in ('Uncertain', 'Future', 'PriorBinding')]
+        owner.tasks = []
+        owner.opcua_store = ObservableStateStore()
+        now = datetime.now(timezone.utc)
+        for name, quality, ts, binding in (
+            ('Uncertain', Quality.UNCERTAIN, now, endpoint),
+            ('Future', Quality.GOOD, now + timedelta(seconds=90), endpoint),
+            ('PriorBinding', Quality.GOOD, now, endpoint + '/other'),
+        ):
+            owner.opcua_store.update_observation(TagObservation(
+                name, value=17, quality=quality, arrival_time=ts, endpoint_url=binding))
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = owner
+        tags = {tag['name']: tag for tag in view._get_serializable_tags()}
+        self.assertEqual((tags['Uncertain']['status'], tags['Uncertain']['quality']), ('FAIL', 'UNCERTAIN'))
+        self.assertEqual(tags['Future']['status'], 'STALE')
+        self.assertEqual(tags['PriorBinding']['status'], 'NO')
+        self.assertTrue(all(tag['observed_value'] is None for tag in tags.values()))
+
+    def test_observation_tick_sends_only_changed_receipts(self):
+        view = F1ApiView.__new__(F1ApiView)
+        view.owner = MagicMock(scanned_tags=[{'name': 'Tag1'}, {'name': 'Tag2'}], opcua_config={})
+        view.owner.opcua_store = ObservableStateStore()
+        view.web = MagicMock()
+        view.web.get_mapped.return_value = True
+        view._sent_observations = {}
+        view.refresh_observations()
+        view.web.evaluate_javascript.reset_mock()
+
+        now = datetime.now(timezone.utc)
+        view.owner.opcua_store.update_observation(TagObservation(
+            'Tag1', value=0, quality=Quality.GOOD, arrival_time=now))
+        original_fields = view._observation_fields
+        with patch.object(view, '_observation_fields', side_effect=lambda name, _now: original_fields(name, now)):
+            view.refresh_observations()
+            view.web.evaluate_javascript.assert_called_once()
+            script = view.web.evaluate_javascript.call_args.args[0]
+            self.assertTrue(script.startswith('window.F1?.onObservationsUpdated('))
+            payload = json.loads(script.removeprefix('window.F1?.onObservationsUpdated(').removesuffix(')'))
+            self.assertEqual([(item['name'], item['observed_value']) for item in payload], [('Tag1', 0)])
+            view.web.evaluate_javascript.reset_mock()
+            view.refresh_observations()
+        view.web.evaluate_javascript.assert_not_called()
+
     def test_10_multiple_task_association(self):
         owner = MagicMock()
         owner.scanned_tags = [
@@ -337,24 +386,16 @@ class TestF1ApiViewContracts(unittest.TestCase):
         ws.f1_api.open_task_dialog.assert_called_once()
         self.assertIsNone(ws.task_dialog, "GTK task_dialog must NOT be instantiated when f1_api is active")
 
-    def test_13_sidebar_settings_button_and_group_styling(self):
+    def test_13_settings_shortcuts_and_group_styling(self):
         index_html = (ASSETS_DIR / 'index.html').read_text(encoding='utf-8')
         view_css = (ASSETS_DIR / 'view.css').read_text(encoding='utf-8')
         view_js = (ASSETS_DIR / 'view.js').read_text(encoding='utf-8')
 
-        # Sidebar footer button
-        self.assertIn('btnOpenSettings', index_html)
-        self.assertIn('groups-footer', index_html)
-        self.assertIn('ตั้งค่าโปรแกรม', index_html)
-
-        # CSS styling uses variables and covers both group-btn and group-item
+        self.assertNotIn('btnOpenSettings', index_html)
         self.assertIn('.group-btn', view_css)
         self.assertIn('.group-item', view_css)
-        self.assertIn('.btn-settings-sidebar', view_css)
-        self.assertIn('.groups-footer', view_css)
-
-        # JS bindings
-        self.assertIn('btnOpenSettings', view_js)
+        self.assertIn("e.key === 'F6'", view_js)
+        self.assertIn("e.ctrlKey && (e.key === ',' || e.code === 'Comma')", view_js)
         self.assertIn('navigate_f6', view_js)
 
     def test_14_navigate_f6_dispatches_to_alarms(self):

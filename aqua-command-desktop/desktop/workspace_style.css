@@ -1201,68 +1201,68 @@ paned > separator {
     font-size: 13px;
 }
 .f6-header {
-    background: #1d2834;
-    border: 1px solid #334252;
-    border-radius: 8px;
+    background: @aqua_surface;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
     margin: 8px 14px 0;
     padding: 8px 14px;
 }
 .f6-page-title {
-    color: #f0f4f8;
+    color: @aqua_ink;
     font-size: 20px;
     font-weight: 700;
 }
 .f6-header stackswitcher button,
 .f6-settings button.f6-action,
 .f6-settings button.f6-primary {
-    background: #253343;
-    color: #eef4fb;
-    border: 1px solid #40536a;
+    background: @aqua_surface;
+    color: @aqua_ink;
+    border: 1px solid @aqua_border;
     min-height: 32px;
     padding: 4px 12px;
     font-size: 13px;
     font-weight: 600;
 }
 .f6-header stackswitcher button:checked {
-    background: #24486d;
-    border-color: #6496c9;
+    background: @aqua_selected;
+    border-color: @aqua_accent;
 }
 .f6-settings button.f6-primary {
-    background: #2e72bc;
-    border-color: #659bd3;
+    background: @aqua_selected;
+    border-color: @aqua_accent;
 }
 .f6-header stackswitcher button:hover,
 .f6-settings button.f6-action:hover,
 .f6-settings button.f6-primary:hover {
-    background: #34516f;
+    background: @aqua_raised;
 }
 .f6-settings button.f6-action:disabled,
 .f6-settings button.f6-primary:disabled {
-    background: #19242f;
-    color: #8798ab;
-    border-color: #334252;
+    background: @aqua_panel;
+    color: @aqua_muted;
+    border-color: @aqua_line;
 }
 .f6-body {
-    background: #131c26;
-    border: 1px solid #283847;
-    border-radius: 8px;
+    background: @aqua_bg;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
     margin: 10px 14px 8px;
     padding: 8px;
 }
 .f6-card {
-    background: #1d2834;
-    border: 1px solid #334252;
-    border-radius: 8px;
+    background: @aqua_surface;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
     padding: 14px 16px;
 }
 .f6-card-title {
-    color: #f0f4f8;
+    color: @aqua_ink;
     font-size: 16px;
     font-weight: 700;
 }
 .f6-help,
 .f6-field-label {
-    color: #c0cddd;
+    color: @aqua_muted;
     font-size: 13px;
 }
 .f6-field-label {
@@ -1273,18 +1273,18 @@ paned > separator {
     min-height: 28px;
 }
 .f6-disclosure {
-    color: #a9d4ff;
+    color: @aqua_accent;
     font-size: 13px;
     font-weight: 600;
 }
 .f6-certificate {
     margin-top: 8px;
-    background: #151f2a;
-    border: 1px solid #334252;
-    border-radius: 6px;
+    background: @aqua_panel;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
     padding: 10px;
 }
 .f6-settings .table-th {
-    background: #263648;
-    border-bottom-color: #41556a;
+    background: @aqua_raised;
+    border-bottom-color: @aqua_line;
 }

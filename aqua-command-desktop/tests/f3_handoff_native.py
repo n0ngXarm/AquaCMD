@@ -275,6 +275,8 @@ with tempfile.TemporaryDirectory(dir=ROOT / 'tests') as temporary:
             print('PASS inline demo: yellow rail, genuine OPC UA 73.25 Good, Task/Outbox committed, Telegram status verified, parent DB untouched', flush=True)
 
             with socket.socket() as occupied:
+                # The previous simulator connection can still be in TIME_WAIT.
+                occupied.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 occupied.bind(('127.0.0.1', 4850))
                 occupied.listen()
                 javascript(view, click)

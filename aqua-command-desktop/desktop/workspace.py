@@ -179,8 +179,7 @@ class AquaUnifiedWorkspaceView:
                 self.f1_api = F1ApiView(self.owner)
                 self.root_box.append(self.f1_api.root_widget)
                 self.main_hpaned.set_visible(False)
-                if hasattr(self, 'top_header_box'):
-                    self.top_header_box.set_visible(False)
+                self.top_box.set_visible(False)
             except Exception as e:
                 import sys
                 print(f"[AquaUnifiedWorkspaceView] F1ApiView fallback: {e}", file=sys.stderr)
@@ -208,6 +207,9 @@ class AquaUnifiedWorkspaceView:
             self._hide_toast()
 
     def _refresh_observations(self):
+        if getattr(self, 'f1_api', None):
+            self.f1_api.refresh_observations()
+            return GLib.SOURCE_CONTINUE
         for row in self.catalog_rows.values():
             if row.get_child_visible():
                 self._update_observation_cell(row)
@@ -233,7 +235,7 @@ class AquaUnifiedWorkspaceView:
         lbl_brand.set_xalign(0.0)
         brand_vbox.append(lbl_brand)
 
-        lbl_sub = Gtk.Label(label="คลัง WinCC · ตรวจสอบและจัดการ Task")
+        lbl_sub = Gtk.Label(label="ค้นหา Tag ดูค่าที่อ่านได้ และจัดการงานเฝ้าระวัง")
         lbl_sub.add_css_class('workspace-subtitle')
         lbl_sub.set_xalign(0.0)
         brand_vbox.append(lbl_sub)
@@ -245,13 +247,13 @@ class AquaUnifiedWorkspaceView:
         self.top_box.append(sep1)
 
         # Scan Toolbar Controls
-        self.btn_scan_once = Gtk.Button(label="🔍 สแกนทันที 1 ครั้ง (F7)")
+        self.btn_scan_once = Gtk.Button(label="รีเฟรชคลัง Tag")
         self.btn_scan_once.add_css_class('f2-btn-scan-once')
         self.btn_scan_once.connect('clicked', lambda _: self.owner.trigger_rescan())
         self.top_box.append(self.btn_scan_once)
 
         is_running = getattr(self.owner, 'auto_scan_active', False)
-        self.btn_auto_scan = Gtk.Button(label="⏹ หยุด Auto Scan" if is_running else "▶ เริ่ม Auto Scan")
+        self.btn_auto_scan = Gtk.Button(label="หยุดรีเฟรชอัตโนมัติ" if is_running else "รีเฟรชอัตโนมัติ")
         self.btn_auto_scan.add_css_class('f2-btn-auto-stop' if is_running else 'f2-btn-auto-start')
         self.btn_auto_scan.connect('clicked', self.on_toggle_auto_scan)
         self.top_box.append(self.btn_auto_scan)
@@ -261,7 +263,7 @@ class AquaUnifiedWorkspaceView:
         lbl_int.add_css_class('f2-scan-label')
         self.top_box.append(lbl_int)
 
-        self.badge_scan_status = Gtk.Label(label="Ready · Standby")
+        self.badge_scan_status = Gtk.Label(label="ปิดอยู่")
         self.badge_scan_status.add_css_class('f2-scan-status-idle')
         self.top_box.append(self.badge_scan_status)
 
@@ -269,7 +271,7 @@ class AquaUnifiedWorkspaceView:
         spacer.set_hexpand(True)
         self.top_box.append(spacer)
 
-        self.btn_top_f2 = Gtk.Button(label='จัดการ Task  ·  F2')
+        self.btn_top_f2 = Gtk.Button(label='งานเฝ้าระวัง')
         self.btn_top_f2.add_css_class('workspace-mode-btn-active')
         self.btn_top_f2.connect('clicked', lambda _: self.open_task_dialog())
         self.top_box.append(self.btn_top_f2)
@@ -840,7 +842,7 @@ class AquaUnifiedWorkspaceView:
                 width = max(900, min(1180, int(self.owner.get_width() * .86)))
                 height = max(540, min(800, int(self.owner.get_height() * .86)))
             self.task_dialog = self._make_popup(
-                'จัดการ Task', self.task_config_view, width, height, self._on_close_task_dialog
+                'งานเฝ้าระวัง', self.task_config_view, width, height, self._on_close_task_dialog
             )
         if not self.task_dialog.get_visible():
             self.load_current_task_to_ui()
@@ -930,7 +932,7 @@ class AquaUnifiedWorkspaceView:
         self.btn_read_live = Gtk.Button(label='อ่านค่า 1 ครั้ง')
         self.btn_read_live.connect('clicked', lambda _: self.on_read_selected_tag_once())
         actions.append(self.btn_read_live)
-        self.btn_open_f6 = Gtk.Button(label='ตั้งค่า OPC UA · F6')
+        self.btn_open_f6 = Gtk.Button(label='ตั้งค่า OPC UA')
         self.btn_open_f6.connect('clicked', self._open_f6_from_inspector)
         actions.append(self.btn_open_f6)
         actions.append(Gtk.Box(hexpand=True))
@@ -1259,10 +1261,10 @@ class AquaUnifiedWorkspaceView:
         self.chk_action_notify.connect('toggled', self.on_task_field_changed)
         tg_row.append(self.chk_action_notify)
 
-        btn_f6_hint = Gtk.Button(label="ตั้งค่าปลายทางที่ F6 →")
+        btn_f6_hint = Gtk.Button(label="เปิดการตั้งค่า →")
         btn_f6_hint.set_cursor_from_name('pointer')
         btn_f6_hint.add_css_class('f2-action-hint-btn')
-        btn_f6_hint.set_tooltip_text('เปิดหน้า F6 เพื่อตั้งค่า Telegram Token & Chat ID')
+        btn_f6_hint.set_tooltip_text('เปิดการตั้งค่าเพื่อกรอก Bot Token และ Chat ID ในแท็บ Telegram')
         btn_f6_hint.connect('clicked', self._on_navigate_to_f6)
         tg_row.append(btn_f6_hint)
 
@@ -1788,17 +1790,17 @@ class AquaUnifiedWorkspaceView:
         if hasattr(self.owner, 'auto_scan_active'):
             self.owner.auto_scan_active = not self.owner.auto_scan_active
             is_running = self.owner.auto_scan_active
-            self.btn_auto_scan.set_label("⏹ หยุด Auto Scan" if is_running else "▶ เริ่ม Auto Scan")
+            self.btn_auto_scan.set_label("หยุดรีเฟรชอัตโนมัติ" if is_running else "รีเฟรชอัตโนมัติ")
             if is_running:
                 self.btn_auto_scan.remove_css_class('f2-btn-auto-start')
                 self.btn_auto_scan.add_css_class('f2-btn-auto-stop')
-                self.badge_scan_status.set_text("Scanning...")
+                self.badge_scan_status.set_text("กำลังรีเฟรชตามรอบ")
                 self.badge_scan_status.remove_css_class('f2-scan-status-idle')
                 self.badge_scan_status.add_css_class('f2-scan-status-running')
             else:
                 self.btn_auto_scan.remove_css_class('f2-btn-auto-stop')
                 self.btn_auto_scan.add_css_class('f2-btn-auto-start')
-                self.badge_scan_status.set_text("Ready · Standby")
+                self.badge_scan_status.set_text("ปิดอยู่")
                 self.badge_scan_status.remove_css_class('f2-scan-status-running')
                 self.badge_scan_status.add_css_class('f2-scan-status-idle')
 

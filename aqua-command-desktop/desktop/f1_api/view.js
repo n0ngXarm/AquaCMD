@@ -46,7 +46,6 @@
   const state = {
     tags: [],
     tasks: [],
-    liveMode: false,
     selectedGroup: 'all',
     statusFilter: 'ALL',
     searchQuery: '',
@@ -57,6 +56,7 @@
     activeModal: null, // null | { type: 'inspector', tagName: ... } | { type: 'task_dialog', taskId: ... } | { type: 'bulk_add' }
     toastTimeout: null
   };
+  let returnModalFocus = null;
 
   // --- WebKit Bridge Communication & Request Sequencing ---
   let requestSeq = 0;
@@ -80,11 +80,11 @@
     }
   }
 
-  function sendMutatingBridge(action, payload, successMsg, undoCb) {
+  function sendMutatingBridge(action, payload, successMsg, undoCb, onResult) {
     const reqId = getNextRequestId();
     const fullPayload = { ...(payload || {}), request_id: reqId };
     if (successMsg) {
-      pendingSuccessMessages[reqId] = { message: successMsg, undoCb: undoCb || null };
+      pendingSuccessMessages[reqId] = { message: successMsg, undoCb, onResult };
     }
     sendBridge(action, fullPayload);
     return reqId;
@@ -100,12 +100,41 @@
     return state.tasks.filter(t => (t.tags || []).includes(tagName));
   }
 
-  function getTagStatus(tag) {
-    if (!tag) return 'NO';
-    if (!state.liveMode) {
-      return 'NO'; // In configured / catalog mode, strictly Not Observed until live telemetry runs
+  function recentTask() {
+    return state.tasks.find(task => task.id === state.recentTaskId) || state.tasks[0];
+  }
+
+  function focusTarget(element = document.activeElement) {
+    if (!element || element === document.body) return null;
+    const row = element.closest('.table-row, .assigned-tag-row');
+    if (row) {
+      const attr = row.matches('.table-row') ? 'data-tag-name' : 'data-assigned-tag';
+      const selector = `[${attr}="${CSS.escape(row.getAttribute(attr))}"]`;
+      const control = ['data-quick-tag', 'data-inspect-tag', 'data-checkbox-name', 'data-assigned-checkbox']
+        .find(name => element.hasAttribute(name));
+      return () => document.querySelector(control ? `${selector} [${control}]` : selector);
     }
-    return tag.status || 'NO';
+    return () => element.isConnected ? element : element.id ? document.getElementById(element.id) : null;
+  }
+
+  function getTagStatus(tag) {
+    return tag && Object.hasOwn(STATUS_DEFS, tag.status) ? tag.status : 'NO';
+  }
+
+  function tagStatusContent(tag, includeValue = false) {
+    const status = getTagStatus(tag);
+    const def = STATUS_DEFS[status];
+    const label = status === 'FAIL' && tag.quality === 'UNCERTAIN' ? 'คุณภาพไม่แน่นอน' : def.label;
+    const value = tag.observed_value;
+    const shownValue = typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : value;
+    return `<span>${def.icon}</span><span>${label}</span>` +
+      (includeValue && status !== 'NO' && value != null
+        ? `<span class="mono"> · ${escapeHtml(shownValue)}</span>` : '');
+  }
+
+  function tagStatusStyle(tag) {
+    const def = STATUS_DEFS[getTagStatus(tag)];
+    return `--c:var(${def.colorVar});--t:var(${def.tintVar})`;
   }
 
   function getFilteredTags() {
@@ -151,12 +180,12 @@
 
   // --- Rendering Functions ---
 
-  function render() {
+  function render(preserveTaskForm = false) {
     renderKpis();
     renderGroupSidebar();
     renderCatalogTable();
     renderFloatingActionBar();
-    renderModal();
+    if (!preserveTaskForm || state.activeModal?.type !== 'task_dialog') renderModal();
   }
 
   function renderKpis() {
@@ -174,11 +203,10 @@
 
     const ribbonEl = document.getElementById('catalogRibbon');
     if (ribbonEl) {
-      if (state.liveMode) {
-        ribbonEl.innerHTML = `<span class="badge" style="background:var(--ok-tint);color:var(--ok);border:1px solid var(--ok)">● สังเกตสด (Live Telemetry)</span>`;
-      } else {
-        ribbonEl.innerHTML = `<span class="badge" style="background:var(--accent-tint);color:var(--link);border:1px solid var(--line-strong)">● แคตตาล็อก WinCC (${kpis.total} Tags)</span>`;
-      }
+      const alternative = state.tags.find(tag => tag.observation_source && tag.observation_source !== 'OPC UA');
+      const caption = alternative?.observation_source ||
+        (kpis.unv < kpis.total ? 'หลักฐานการอ่าน OPC UA' : `แคตตาล็อก WinCC (${kpis.total} Tags)`);
+      ribbonEl.innerHTML = `<span class="badge" style="background:var(--accent-tint);color:var(--link);border:1px solid var(--line-strong)">● ${escapeHtml(caption)}</span>`;
     }
   }
 
@@ -187,25 +215,28 @@
     if (!groupsListEl) return;
 
     // Count tags per group
-    const counts = { all: state.tags.length };
+    const counts = new Map();
     state.tags.forEach(t => {
       const g = t.group || 'Default';
-      counts[g] = (counts[g] || 0) + 1;
+      counts.set(g, (counts.get(g) || 0) + 1);
     });
 
-    const groupKeys = Object.keys(GROUP_METADATA);
+    document.getElementById('groupCount').textContent = `${counts.size} กลุ่ม`;
+    const groupKeys = ['all', ...new Set([
+      ...Object.keys(GROUP_METADATA).filter(key => counts.has(key)), ...counts.keys()
+    ])];
     groupsListEl.innerHTML = groupKeys.map(key => {
       const meta = GROUP_METADATA[key];
       const isSelected = state.selectedGroup === key;
-      const count = counts[key] || 0;
+      const count = key === 'all' ? state.tags.length : counts.get(key);
 
       return `
         <button class="group-btn ${isSelected ? 'is-selected' : ''}" data-group="${escapeHtml(key)}" role="tab" aria-selected="${isSelected}">
           <div class="title-row">
-            <span>${escapeHtml(meta.name)}</span>
+            <span>${escapeHtml(meta?.name || key)}</span>
             <em>${count}</em>
           </div>
-          <small>${escapeHtml(meta.desc)}</small>
+          <small>${escapeHtml(meta?.desc || '')}</small>
         </button>
       `;
     }).join('');
@@ -227,7 +258,9 @@
     const tableBodyEl = document.getElementById('tableBody');
     if (!tableBodyEl) return;
 
+    const restore = tableBodyEl.contains(document.activeElement) ? focusTarget() : null;
     const filtered = getFilteredTags();
+    document.getElementById('catalogCounter').textContent = `แสดง ${filtered.length} จาก ${state.tags.length} รายการ`;
 
     if (filtered.length === 0) {
       tableBodyEl.innerHTML = `
@@ -242,51 +275,44 @@
           state.selectedGroup = 'all';
           state.statusFilter = 'ALL';
           state.searchQuery = '';
+          state.activeRowIndex = -1;
+          state.lastCheckedIndex = -1;
           const searchInput = document.getElementById('searchInput');
           if (searchInput) searchInput.value = '';
           render();
         };
       }
+      if (restore) document.getElementById('tableViewport').focus({ preventScroll: true });
       return;
     }
 
     const query = state.searchQuery;
+    const targetTask = recentTask();
+    const quickTitle = targetTask ? `ผูกกับ ${targetTask.id} ทันที` : 'เปิดหน้าจัดการเพื่อสร้าง Task';
     tableBodyEl.innerHTML = filtered.map((tag, idx) => {
       const isChecked = state.checkedTags.has(tag.name);
       const isNavActive = state.activeRowIndex === idx;
-      const statusKey = getTagStatus(tag);
-      const statusDef = STATUS_DEFS[statusKey];
       const boundTasks = getTagTasks(tag.name);
       const boundText = boundTasks.map(t => escapeHtml(t.id)).join(', ');
 
-      let valText = '—';
-      if (state.liveMode && tag.observed_value !== undefined && tag.observed_value !== null) {
-        valText = tag.type === 'Binary Tag' || tag.type === 'Bool'
-          ? (tag.observed_value ? 'TRUE' : 'FALSE')
-          : String(tag.observed_value);
-      }
-
       return `
-        <div class="table-row ${isNavActive ? 'is-active-nav' : ''}" role="row" data-tag-name="${escapeHtml(tag.name)}" data-index="${idx}" aria-selected="${isChecked}">
+        <div class="table-row ${isNavActive ? 'is-active-nav' : ''}" role="row" tabindex="-1" data-tag-name="${escapeHtml(tag.name)}" data-index="${idx}" aria-selected="${isChecked}">
           <div class="cell-checkbox">
             <input type="checkbox" data-checkbox-name="${escapeHtml(tag.name)}" data-checkbox-index="${idx}" ${isChecked ? 'checked' : ''} aria-label="เลือก ${escapeHtml(tag.name)}">
           </div>
           <div class="cell-tag-name mono">${highlightMatch(tag.name, query)}</div>
           <div class="cell-group">${escapeHtml(getGroupName(tag.group))}</div>
           <div class="cell-type mono">${escapeHtml(tag.type || 'Word')}</div>
-          <div class="cell-status" style="--c:var(${statusDef.colorVar});--t:var(${statusDef.tintVar})">
-            <span>${statusDef.icon}</span>
-            <span>${statusDef.label}</span>
-            ${state.liveMode && statusKey !== 'NO' ? `<span class="mono" style="margin-left:4px">· ${escapeHtml(valText)}</span>` : ''}
-          </div>
+          <div class="cell-status" style="${tagStatusStyle(tag)}">${tagStatusContent(tag, true)}</div>
           <div class="cell-task mono" title="${boundText}">${boundText}</div>
           <div class="cell-actions">
-            <button class="btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="ผูกกับ ${escapeHtml(state.recentTaskId)} ทันที">+ Task</button>
+            <button class="btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}">+ Task</button>
             <button class="btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด">🔍</button>
           </div>
         </div>
       `;
     }).join('');
+    if (restore) (restore() || document.getElementById('tableViewport')).focus({ preventScroll: true });
   }
 
   function renderFloatingActionBar() {
@@ -311,36 +337,47 @@
     if (!overlayEl || !contentEl) return;
 
     if (!state.activeModal) {
-      overlayEl.hidden = true;
-      contentEl.innerHTML = '';
+      if (overlayEl.open) {
+        overlayEl.close();
+        contentEl.replaceChildren();
+        document.getElementById('modalToastContainer').replaceChildren();
+        (returnModalFocus?.() || document.getElementById('searchInput'))?.focus({ preventScroll: true });
+      }
+      returnModalFocus = null;
       return;
     }
 
-    overlayEl.hidden = false;
+    const restore = contentEl.contains(document.activeElement) ? focusTarget() : null;
     const modalType = state.activeModal.type;
 
     if (modalType === 'inspector') {
       renderInspectorModal(contentEl, state.activeModal.tagName);
     } else if (modalType === 'task_dialog') {
-      renderTaskDialogModal(contentEl, state.activeModal.taskId);
+      const currentForm = contentEl.querySelector('.modal-card[data-task-id]');
+      const draft = currentForm && currentForm.dataset.taskId === state.activeModal.taskId ? readTaskForm() : null;
+      renderTaskDialogModal(contentEl, state.activeModal.taskId, draft);
     } else if (modalType === 'bulk_add') {
       renderBulkAddModal(contentEl);
+    }
+    if (!overlayEl.open) overlayEl.showModal();
+    if (!contentEl.contains(document.activeElement)) {
+      (restore?.() || contentEl.querySelector('#btnCloseModal'))?.focus({ preventScroll: true });
     }
   }
 
   function renderInspectorModal(container, tagName) {
     const tag = state.tags.find(t => t.name === tagName);
     if (!tag) {
-      container.innerHTML = `<div class="modal-card"><div class="modal-body">ไม่พบข้อมูล Tag</div></div>`;
+      container.innerHTML = `<div class="modal-card"><div class="modal-body"><h3 id="modalTitle">ไม่พบข้อมูล Tag</h3><button class="btn" id="btnCloseModal">ปิด</button></div></div>`;
+      document.getElementById('btnCloseModal').onclick = closeModal;
       return;
     }
 
     const boundTasks = getTagTasks(tag.name);
     const statusKey = getTagStatus(tag);
-    const statusDef = STATUS_DEFS[statusKey];
 
     const taskOptions = state.tasks.map(t =>
-      `<option value="${t.id}" ${t.id === state.recentTaskId ? 'selected' : ''}>${t.id} · ${escapeHtml(t.name)}</option>`
+      `<option value="${escapeHtml(t.id)}" ${t.id === recentTask()?.id ? 'selected' : ''}>${escapeHtml(t.id)} · ${escapeHtml(t.name)}</option>`
     ).join('');
 
     let rawMetaHtml = '';
@@ -375,16 +412,13 @@
     container.innerHTML = `
       <div class="modal-card">
         <div class="modal-header">
-          <h3 class="mono">${escapeHtml(tag.name)}</h3>
+          <h3 class="mono" id="modalTitle">${escapeHtml(tag.name)}</h3>
           <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
             <span class="sub">${escapeHtml(getGroupName(tag.group))} · ${escapeHtml(tag.type || 'Word')}</span>
-            <div class="cell-status" style="--c:var(${statusDef.colorVar});--t:var(${statusDef.tintVar})">
-              <span>${statusDef.icon}</span>
-              <span>${statusDef.label}</span>
-            </div>
+            <div class="cell-status" id="inspectorStatus" style="${tagStatusStyle(tag)}">${tagStatusContent(tag)}</div>
           </div>
 
           <dl class="detail-grid">
@@ -393,9 +427,11 @@
             <dt>Connection</dt>
             <dd class="mono">${escapeHtml(tag.conn || 'Internal')}</dd>
             <dt>ค่าล่าสุด</dt>
-            <dd class="mono">${state.liveMode && tag.observed_value !== undefined && tag.observed_value !== null ? escapeHtml(tag.observed_value) : '— ยังไม่มีการสังเกตสด'}</dd>
-            <dt>เวลาที่ตรวจล่าสุด</dt>
-            <dd>${escapeHtml(tag.age_text || (statusKey === 'NO' ? 'ยังไม่ได้สังเกต' : 'ยังไม่มีประวัติการอ่านสด'))}</dd>
+            <dd class="mono" id="inspectorValue">${statusKey !== 'NO' && tag.observed_value != null ? escapeHtml(tag.observed_value) : '—'}</dd>
+            <dt>แหล่งข้อมูล</dt>
+            <dd id="inspectorSource">${escapeHtml(tag.observation_source || '—')}</dd>
+            <dt>เวลาต้นทาง</dt>
+            <dd id="inspectorAge">${escapeHtml([tag.observation_at, tag.age_text].filter(Boolean).join(' · ') || '—')}</dd>
             <dt>คำอธิบาย Tag</dt>
             <dd>${escapeHtml(tag.comment || 'ไม่มีคำอธิบาย')}</dd>
           </dl>
@@ -424,6 +460,10 @@
     if (btnAssign) {
       btnAssign.onclick = () => {
         const selTask = document.getElementById('modalTaskSelect').value;
+        if (!selTask) {
+          openTaskDialog();
+          return;
+        }
         state.recentTaskId = selTask;
         sendMutatingBridge(
           'add_tag_to_task',
@@ -460,17 +500,32 @@
     return `TASK-${pad(num)}`;
   }
 
-  function renderTaskDialogModal(container, taskId) {
+  function readTaskForm() {
+    return {
+      name: document.getElementById('inputTaskName').value,
+      cycle_sec: Number(document.getElementById('selectTaskCycle').value),
+      action_log: document.getElementById('chkActionLog').checked,
+      action_notify: document.getElementById('chkActionNotify').checked,
+      active: document.getElementById('chkTaskActive').checked
+    };
+  }
+
+  function renderTaskDialogModal(container, taskId, draft) {
     let currentTask = state.tasks.find(t => t.id === taskId);
     if (!currentTask && state.tasks.length > 0) {
       currentTask = state.tasks[0];
     }
     if (!currentTask) {
-      currentTask = { id: 'TASK-01', name: 'Task ใหม่', cycle_sec: 5, action_log: true, action_notify: false, active: true, tags: [] };
+      currentTask = { id: 'TASK-01', name: 'Task ใหม่', cycle_sec: 5, action_log: true, action_notify: false, active: false, tags: [] };
     }
+    state.activeModal.taskId = currentTask.id;
+    if (draft) currentTask = { ...currentTask, ...draft };
+    const cycle = Number(currentTask.cycle_sec);
+    const customCycle = Number.isSafeInteger(cycle) && cycle > 0 && ![1, 5, 10, 30, 60].includes(cycle)
+      ? `<option value="${cycle}" selected>${cycle} วินาที</option>` : '';
 
     const taskOptions = state.tasks.map(t =>
-      `<option value="${t.id}" ${t.id === currentTask.id ? 'selected' : ''}>${t.id} · ${escapeHtml(t.name)} (${(t.tags || []).length} Tags)</option>`
+      `<option value="${escapeHtml(t.id)}" ${t.id === currentTask.id ? 'selected' : ''}>${escapeHtml(t.id)} · ${escapeHtml(t.name)} (${(t.tags || []).length} Tags)</option>`
     ).join('');
 
     const assignedTags = currentTask.tags || [];
@@ -491,12 +546,12 @@
       }).join('');
 
     container.innerHTML = `
-      <div class="modal-card wide">
+      <div class="modal-card wide" data-task-id="${escapeHtml(currentTask.id)}">
         <div class="modal-header">
-          <h3>จัดการ Task (WinCC Task Manager)</h3>
+          <h3 id="modalTitle">งานเฝ้าระวัง</h3>
           <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
-        <div class="modal-body" style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px">
+        <div class="modal-body task-dialog-body">
           <!-- Left Column: Task Settings Form -->
           <div>
             <div class="form-group">
@@ -520,6 +575,7 @@
                 <option value="10" ${currentTask.cycle_sec === 10 ? 'selected' : ''}>10 วินาที (General Monitoring)</option>
                 <option value="30" ${currentTask.cycle_sec === 30 ? 'selected' : ''}>30 วินาที (Slow Sampling)</option>
                 <option value="60" ${currentTask.cycle_sec === 60 ? 'selected' : ''}>60 วินาที</option>
+                ${customCycle}
               </select>
             </div>
 
@@ -536,7 +592,7 @@
                   <input type="checkbox" id="chkActionNotify" ${currentTask.action_notify ? 'checked' : ''}>
                   <span>แจ้งเตือนผ่าน Telegram</span>
                 </label>
-                <button type="button" class="btn btn-ghost" id="btnF6Link" style="padding:2px 8px;font-size:12px;color:var(--accent);cursor:pointer;border:1px solid var(--line);border-radius:4px" title="เปิดหน้า F6 เพื่อตั้งค่า Telegram Token & Chat ID">ตั้งค่าปลายทางที่ F6 →</button>
+                <button type="button" class="btn btn-ghost" id="btnF6Link" style="padding:2px 8px;font-size:12px;color:var(--accent);cursor:pointer;border:1px solid var(--line);border-radius:4px" title="เปิดการตั้งค่าเพื่อกรอก Bot Token และ Chat ID ในแท็บ Telegram">เปิดการตั้งค่า →</button>
               </div>
 
               <label class="form-check" style="cursor:pointer;display:flex;align-items:center;gap:8px;margin-top:6px;border-top:1px solid var(--line);padding-top:8px">
@@ -545,9 +601,6 @@
               </label>
             </div>
 
-            <div style="margin-top:16px;display:flex;gap:8px">
-              <button class="btn btn-primary" id="btnSaveTaskForm" style="flex:1">บันทึก Task</button>
-            </div>
           </div>
 
           <!-- Right Column: Assigned Tags Table -->
@@ -579,6 +632,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" id="btnCloseModalBottom">ปิดหน้าต่าง</button>
+          <button class="btn btn-primary" id="btnSaveTaskForm">บันทึก Task</button>
         </div>
       </div>
     `;
@@ -620,21 +674,29 @@
     const btnSave = document.getElementById('btnSaveTaskForm');
     if (btnSave) {
       btnSave.onclick = () => {
+        const modal = state.activeModal;
+        const form = readTaskForm();
         const updatedTask = {
+          ...form,
           id: currentTask.id,
-          name: document.getElementById('inputTaskName').value.trim() || currentTask.id,
-          cycle_sec: parseInt(document.getElementById('selectTaskCycle').value, 10) || 5,
-          action_log: document.getElementById('chkActionLog').checked,
-          action_notify: document.getElementById('chkActionNotify').checked,
-          active: document.getElementById('chkTaskActive').checked,
+          name: form.name.trim() || currentTask.id,
+          cycle_sec: form.cycle_sec || 5,
           tags: currentTask.tags || []
         };
+        btnSave.disabled = true;
         sendMutatingBridge(
           'save_task',
           { task: updatedTask },
-          `บันทึกการตั้งค่า ${currentTask.id} เรียบร้อยแล้ว`
+          `บันทึกการตั้งค่า ${currentTask.id} เรียบร้อยแล้ว`, null,
+          ok => {
+            if (state.activeModal !== modal || modal.taskId !== currentTask.id) return;
+            if (ok) closeModal();
+            else {
+              btnSave.disabled = false;
+              btnSave.focus({ preventScroll: true });
+            }
+          }
         );
-        closeModal();
       };
     }
 
@@ -721,8 +783,7 @@
         const row = e.target.closest('.assigned-tag-row');
         if (!row) return;
         if (e.target.type === 'checkbox') {
-          lastAssignedIndex = parseInt(row.dataset.index, 10);
-          syncAssignedSelectionUI();
+          toggleAssignedRow(row, e.shiftKey, e.target.checked);
         } else {
           e.preventDefault();
           toggleAssignedRow(row, e.shiftKey);
@@ -763,7 +824,7 @@
     }
     if (thSelectAll) {
       thSelectAll.onclick = (e) => {
-        if (chkSelectAll) {
+        if (chkSelectAll && e.target !== chkSelectAll) {
           chkSelectAll.checked = !chkSelectAll.checked;
           chkSelectAll.onchange();
         }
@@ -807,13 +868,13 @@
   function renderBulkAddModal(container) {
     const selectedCount = state.checkedTags.size;
     const taskOptions = state.tasks.map(t =>
-      `<option value="${t.id}" ${t.id === state.recentTaskId ? 'selected' : ''}>${t.id} · ${escapeHtml(t.name)} (${(t.tags || []).length} Tags)</option>`
+      `<option value="${escapeHtml(t.id)}" ${t.id === recentTask()?.id ? 'selected' : ''}>${escapeHtml(t.id)} · ${escapeHtml(t.name)} (${(t.tags || []).length} Tags)</option>`
     ).join('');
 
     container.innerHTML = `
       <div class="modal-card">
         <div class="modal-header">
-          <h3>เพิ่ม ${selectedCount} Tag เข้าสู่ Task</h3>
+          <h3 id="modalTitle">เพิ่ม ${selectedCount} Tag เข้าสู่ Task</h3>
           <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body">
@@ -853,20 +914,27 @@
     }
   }
 
-  function openInspector(tagName) {
-    state.activeModal = { type: 'inspector', tagName };
+  function openModal(modal) {
+    if (!state.activeModal) returnModalFocus = focusTarget();
+    state.activeModal = modal;
     renderModal();
   }
 
+  function openInspector(tagName) {
+    openModal({ type: 'inspector', tagName });
+  }
+
   function openTaskDialog(taskId) {
-    state.activeModal = { type: 'task_dialog', taskId: taskId || state.recentTaskId };
-    renderModal();
+    openModal({ type: 'task_dialog', taskId: taskId || recentTask()?.id });
   }
 
   function openBulkAddDialog() {
     if (state.checkedTags.size === 0) return;
-    state.activeModal = { type: 'bulk_add' };
-    renderModal();
+    if (!recentTask()) {
+      openTaskDialog();
+      return;
+    }
+    openModal({ type: 'bulk_add' });
   }
 
   function closeModal() {
@@ -876,8 +944,12 @@
 
   // --- Toast with Undo & Error Support ---
   function showToast(message, undoCallback, isError) {
-    const toastContainer = document.getElementById('toastContainer');
+    const modalToast = document.getElementById('modalToastContainer');
+    const pageToast = document.getElementById('toastContainer');
+    const toastContainer = document.getElementById('modalOverlay').open ? modalToast : pageToast;
     if (!toastContainer) return;
+    modalToast.replaceChildren();
+    pageToast.replaceChildren();
 
     if (state.toastTimeout) {
       clearTimeout(state.toastTimeout);
@@ -889,8 +961,8 @@
     const toastColor = isError ? 'var(--fail)' : 'var(--ink)';
 
     toastContainer.innerHTML = `
-      <div class="toast-card" role="alert" style="background:${toastBg};border:1px solid ${toastBorder};color:${toastColor}">
-        <span>${escapeHtml(message)}</span>
+      <div class="toast-item" role="alert" style="background:${toastBg};border-color:${toastBorder};color:${toastColor}">
+        <span class="toast-msg">${escapeHtml(message)}</span>
         ${undoCallback ? `<button class="toast-undo-btn" id="btnToastUndo">เลิกทำ</button>` : ''}
       </div>
     `;
@@ -913,23 +985,10 @@
 
   // --- Event Bindings ---
   function setupEvents() {
-    // Mode toggling
-    const btnModeReal = document.getElementById('btnModeReal');
-    const btnModeSim = document.getElementById('btnModeSim');
-    if (btnModeReal && btnModeSim) {
-      btnModeReal.onclick = () => {
-        state.liveMode = false;
-        btnModeReal.setAttribute('aria-pressed', 'true');
-        btnModeSim.setAttribute('aria-pressed', 'false');
-        render();
-      };
-      btnModeSim.onclick = () => {
-        state.liveMode = true;
-        btnModeReal.setAttribute('aria-pressed', 'false');
-        btnModeSim.setAttribute('aria-pressed', 'true');
-        render();
-      };
-    }
+    document.getElementById('modalOverlay').addEventListener('cancel', event => {
+      event.preventDefault();
+      closeModal();
+    });
 
     // Search input
     const searchInput = document.getElementById('searchInput');
@@ -937,6 +996,7 @@
       searchInput.oninput = (e) => {
         state.searchQuery = e.target.value.trim().toLowerCase();
         state.activeRowIndex = -1;
+        state.lastCheckedIndex = -1;
         renderCatalogTable();
       };
     }
@@ -975,15 +1035,6 @@
       };
     }
 
-    // Sidebar bottom-left Program Settings button
-    const btnOpenSettings = document.getElementById('btnOpenSettings');
-    if (btnOpenSettings) {
-      btnOpenSettings.onclick = (e) => {
-        e.preventDefault();
-        sendBridge('navigate_f6', {});
-      };
-    }
-
     // Helper: toggle tag selection with optional range support
     function toggleTagSelection(tagName, rowIdx, isShift) {
       const filtered = getFilteredTags();
@@ -1017,6 +1068,8 @@
       if (kpiBtn) {
         const kpi = kpiBtn.dataset.kpi;
         state.statusFilter = (state.statusFilter === kpi && kpi !== 'ALL') ? 'ALL' : kpi;
+        state.activeRowIndex = -1;
+        state.lastCheckedIndex = -1;
         render();
         return;
       }
@@ -1026,6 +1079,7 @@
       if (groupBtn) {
         state.selectedGroup = groupBtn.dataset.group;
         state.activeRowIndex = -1;
+        state.lastCheckedIndex = -1;
         render();
         return;
       }
@@ -1035,10 +1089,15 @@
       if (quickBtn) {
         e.stopPropagation();
         const tagName = quickBtn.dataset.quickTag;
+        const task = recentTask();
+        if (!task) {
+          openTaskDialog();
+          return;
+        }
         sendMutatingBridge(
           'add_tag_to_task',
-          { tag_name: tagName, task_id: state.recentTaskId },
-          `เพิ่ม ${tagName} เข้า ${state.recentTaskId} แล้ว`,
+          { tag_name: tagName, task_id: task.id },
+          `เพิ่ม ${tagName} เข้า ${task.id} แล้ว`,
           () => sendMutatingBridge('undo_last_action', {}, 'ยกเลิกการเพิ่ม Tag เรียบร้อยแล้ว')
         );
         return;
@@ -1058,6 +1117,7 @@
       if (tableRow && !e.target.closest('.cell-actions')) {
         const tagName = tableRow.dataset.tagName;
         const rowIdx = parseInt(tableRow.dataset.index, 10);
+        if (!e.target.matches('input')) tableRow.focus({ preventScroll: true });
         toggleTagSelection(tagName, rowIdx, e.shiftKey);
         return;
       }
@@ -1099,7 +1159,7 @@
       }
 
       // Other F-keys passed to GTK host
-      if (/^F[3-8]$/.test(e.key)) {
+      if (/^F[3-9]$/.test(e.key)) {
         e.preventDefault();
         sendBridge('key_event', { key: e.key });
         return;
@@ -1124,42 +1184,32 @@
         return;
       }
 
-      // Arrow navigation in table (when modal not open and not typing in search)
-      if (!state.activeModal && document.activeElement !== searchInput) {
-        const filtered = getFilteredTags();
-        if (filtered.length === 0) return;
-
-        if (e.key === 'ArrowDown') {
-          state.activeRowIndex = Math.min(state.activeRowIndex + 1, filtered.length - 1);
-          renderCatalogTable();
-          scrollActiveRowIntoView();
-          e.preventDefault();
-        } else if (e.key === 'ArrowUp') {
-          state.activeRowIndex = Math.max(state.activeRowIndex - 1, 0);
-          renderCatalogTable();
-          scrollActiveRowIntoView();
-          e.preventDefault();
-        } else if (e.key === 'Enter') {
-          if (state.activeRowIndex >= 0 && state.activeRowIndex < filtered.length) {
-            openInspector(filtered[state.activeRowIndex].name);
-            e.preventDefault();
-          }
-        } else if (e.key === ' ' || e.code === 'Space') {
-          if (state.activeRowIndex >= 0 && state.activeRowIndex < filtered.length) {
-            const tName = filtered[state.activeRowIndex].name;
-            toggleTagSelection(tName, state.activeRowIndex, e.shiftKey);
-            e.preventDefault();
-          }
-        }
+      if (state.activeModal) return;
+      const active = document.activeElement;
+      const row = active?.matches('.table-row') ? active : null;
+      const viewport = document.getElementById('tableViewport');
+      const fromSearch = active === searchInput && e.key === 'ArrowDown';
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+          (row || active === viewport || active === document.body || fromSearch)) {
+        const rows = viewport.querySelectorAll('.table-row');
+        if (!rows.length) return;
+        const delta = e.key === 'ArrowDown' ? 1 : -1;
+        const next = row ? rows[Math.max(0, Math.min(rows.length - 1, Number(row.dataset.index) + delta))]
+          : rows[delta > 0 ? 0 : rows.length - 1];
+        viewport.querySelector('.is-active-nav')?.classList.remove('is-active-nav');
+        next.classList.add('is-active-nav');
+        state.activeRowIndex = Number(next.dataset.index);
+        next.focus({ preventScroll: true });
+        next.scrollIntoView({ block: 'nearest' });
+        e.preventDefault();
+      } else if (row && e.key === 'Enter') {
+        openInspector(row.dataset.tagName);
+        e.preventDefault();
+      } else if (row && (e.key === ' ' || e.code === 'Space')) {
+        toggleTagSelection(row.dataset.tagName, Number(row.dataset.index), e.shiftKey);
+        e.preventDefault();
       }
     });
-  }
-
-  function scrollActiveRowIntoView() {
-    const activeEl = document.querySelector('.table-row.is-active-nav');
-    if (activeEl) {
-      activeEl.scrollIntoView({ block: 'nearest' });
-    }
   }
 
   // --- Public API for WebKit Bridge Host ---
@@ -1169,29 +1219,64 @@
       if (newState.tags) state.tags = newState.tags;
       if (newState.tasks) state.tasks = newState.tasks;
       if (newState.recentTaskId) state.recentTaskId = newState.recentTaskId;
-      if (newState.liveMode !== undefined) state.liveMode = newState.liveMode;
-      render();
+      render(true);
+    },
+
+    onObservationsUpdated(updates) {
+      if (!Array.isArray(updates) || !updates.length) return;
+      const byName = new Map(updates.map(update => [update.name, update]));
+      let changeFilter = false;
+      for (const tag of state.tags) {
+        const update = byName.get(tag.name);
+        if (!update) continue;
+        changeFilter ||= state.statusFilter !== 'ALL' &&
+          (getTagStatus(tag) === state.statusFilter) !== (getTagStatus(update) === state.statusFilter);
+        Object.assign(tag, update);
+      }
+      renderKpis();
+      if (changeFilter) {
+        state.activeRowIndex = -1;
+        state.lastCheckedIndex = -1;
+        renderCatalogTable();
+      } else {
+        for (const row of document.querySelectorAll('.table-row')) {
+          const update = byName.get(row.dataset.tagName);
+          if (!update) continue;
+          const cell = row.querySelector('.cell-status');
+          cell.setAttribute('style', tagStatusStyle(update));
+          cell.innerHTML = tagStatusContent(update, true);
+        }
+      }
+      if (state.activeModal?.type === 'inspector') {
+        const update = byName.get(state.activeModal.tagName);
+        const status = document.getElementById('inspectorStatus');
+        if (update && status) {
+          status.setAttribute('style', tagStatusStyle(update));
+          status.innerHTML = tagStatusContent(update);
+          document.getElementById('inspectorValue').textContent = getTagStatus(update) !== 'NO'
+            ? update.observed_value ?? '—' : '—';
+          document.getElementById('inspectorSource').textContent = update.observation_source || '—';
+          document.getElementById('inspectorAge').textContent =
+            [update.observation_at, update.age_text].filter(Boolean).join(' · ') || '—';
+        }
+      }
     },
 
     onBridgeResponse(resp) {
       if (!resp) return;
+      const entry = pendingSuccessMessages[resp.request_id];
+      if (entry) delete pendingSuccessMessages[resp.request_id];
       if (resp.ok) {
         if (resp.state) {
           if (resp.state.tags) state.tags = resp.state.tags;
           if (resp.state.tasks) state.tasks = resp.state.tasks;
           if (resp.state.recentTaskId) state.recentTaskId = resp.state.recentTaskId;
-          if (resp.state.liveMode !== undefined) state.liveMode = resp.state.liveMode;
         }
-        render();
-        if (resp.request_id && pendingSuccessMessages[resp.request_id]) {
-          const entry = pendingSuccessMessages[resp.request_id];
-          showToast(entry.message, entry.undoCb);
-          delete pendingSuccessMessages[resp.request_id];
-        }
+        entry?.onResult?.(true);
+        render(!entry);
+        if (entry) showToast(entry.message, entry.undoCb);
       } else {
-        if (resp.request_id && pendingSuccessMessages[resp.request_id]) {
-          delete pendingSuccessMessages[resp.request_id];
-        }
+        entry?.onResult?.(false);
         showToast(resp.error || 'การดำเนินการล้มเหลว', null, true);
       }
     },

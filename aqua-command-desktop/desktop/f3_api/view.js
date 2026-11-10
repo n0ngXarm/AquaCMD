@@ -1,6 +1,6 @@
 const ST = {
   OK:{t:'ปกติ',i:'✓',c:'--ok',w:0}, FAIL:{t:'ไม่ตอบ',i:'✕',c:'--fail',w:5},
-  BLOCKED:{t:'ตรวจไม่ได้ เพราะทางผ่านล่ม',i:'⊘',c:'--blk',w:4}, STALE:{t:'ข้อมูลเก่า',i:'◔',c:'--stale',w:3},
+  BLOCKED:{t:'ตรวจไม่ได้ เพราะทางผ่านล่ม',i:'⊘',c:'--blocked',w:4}, STALE:{t:'ข้อมูลเก่า',i:'◔',c:'--stale',w:3},
   UNVERIFIED:{t:'ยังไม่ตรวจ',i:'?',c:'--unv',w:2}, NOT_BUILT:{t:'ยังไม่สร้าง',i:'–',c:'--nb',w:1}
 };
 const ICON={
@@ -80,7 +80,7 @@ function updateSignal(nodes) {
     return;
   }
   if (fetchError || streamError) {
-    announceSignal('error', fetchError ? 'อ่านหลักฐาน F3 ไม่สำเร็จ' : 'การรับเหตุการณ์ F3 ขาดการเชื่อมต่อ');
+    announceSignal('error', fetchError ? 'อ่านหลักฐานการสื่อสารไม่สำเร็จ' : 'การรับเหตุการณ์ขาดการเชื่อมต่อ');
     return;
   }
   const failed = nodes.find(node => {
@@ -118,10 +118,35 @@ function updateSignal(nodes) {
   announceSignal('pending', demo ? 'SIMULATED · รอผลอ่านค่า OPC UA' : '');
 }
 
-if (demo) $('f3-demo').textContent = 'หยุดจำลอง';
+if (demo) {
+  $('f3-demo').textContent = 'หยุดจำลอง';
+  $('host-routes').hidden = true;
+}
+
+function renderHostRoutes(network) {
+  for (const role of ['OT', 'WAN']) {
+    const field = $('route-' + role.toLowerCase());
+    const path = network?.paths?.[role];
+    const status = path?.status ?? network?.state;
+    const target = path?.target ? ' · ปลายทาง ' + path.target : '';
+    let text = ({
+      STALE: 'ข้อมูลเก่า', NO_ROUTE: 'ไม่มีเส้นทาง', LOCAL: 'ปลายทางเป็น IP เครื่องนี้',
+      OBSERVED_LOCAL: 'ไม่พบปลายทางเดียวในผัง',
+    })[status] ?? 'ยังไม่ทราบเส้นทาง';
+    if (status === 'ROUTE') {
+      text = `${path.source_ip} → ${path.target}`;
+      if (path.via) text += ` · ผ่าน GW ${path.via}`;
+    } else {
+      text += target;
+    }
+    field.textContent = text;
+    field.title = path?.device ? `เส้นทางจาก Fedora ผ่าน ${path.device} · ใช้ดู IP ต้นทางและปลายทาง` : '';
+  }
+}
 
 
 function render() {
+  if (!demo) renderHostRoutes(transport ? snapshot?.local_network : null);
   const nodes = snapshot?.nodes ?? [];
   const now = Date.now();
   const byId = new Map(nodes.map(node => [node.id, node]));
@@ -151,7 +176,7 @@ function render() {
         aria-pressed="${dialog.open && selected === node.id}" style="--c:${statusColor(result.k)}">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[iconName(node)]}</svg>
         <strong>${escapeHTML(node.label)}</strong><small>${escapeHTML(subtitles[iconName(node)] ?? subtitles[node.kind])}</small>
-        <span class="st">${state.i} ${label}<span class="age">${age}</span></span>
+        <span class="st"><span class="status-icon" aria-hidden="true">${state.i}</span> ${label}<span class="age">${age}</span></span>
         ${groups ? `<span class="task-groups" title="${escapeHTML(groups)}">${escapeHTML(groups)}</span>` : ''}</button>`;
     }).join('');
   }
@@ -230,8 +255,8 @@ function drawLines(nodes) {
     const path = document.createElementNS(ns, 'path');
     path.setAttribute('d', d);
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke-width', '1.8');
-    path.setAttribute('stroke-dasharray', '5 6');
+    path.setAttribute('stroke-width', '2');
+    if (worst !== 'OK') path.setAttribute('stroke-dasharray', '5 6');
     path.style.stroke = statusColor(worst);
     $('tr').append(path);
     paths.set(from + '>' + to, path);
@@ -388,9 +413,11 @@ dialog.addEventListener('click', event => {
 });
 dialog.addEventListener('close', () => $('n-' + selected)?.focus({preventScroll: true}));
 document.addEventListener('keydown', event => {
-  if (/^F[1-8]$/.test(event.key) && window.webkit?.messageHandlers?.f3navigation) {
+  const settingsShortcut = event.ctrlKey && (event.key === ',' || event.code === 'Comma');
+  const key = settingsShortcut ? 'F6' : event.key;
+  if (/^F[1-9]$/.test(key) && window.webkit?.messageHandlers?.f3navigation) {
     event.preventDefault();
-    window.webkit.messageHandlers.f3navigation.postMessage(JSON.stringify({key: event.key}));
+    window.webkit.messageHandlers.f3navigation.postMessage(JSON.stringify({key}));
   }
 });
 addEventListener('resize', () => drawLines(snapshot?.nodes ?? []));

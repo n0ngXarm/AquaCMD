@@ -10,6 +10,11 @@ from pathlib import Path
 
 from gi.repository import Gio, GLib
 
+if __package__:
+    from .f3_evidence import local_snapshot_state
+else:
+    from f3_evidence import local_snapshot_state
+
 
 def _unpack(value):
     if isinstance(value, GLib.Variant):
@@ -36,7 +41,9 @@ def _nm_properties():
     def props(path, name):
         return call(path, 'org.freedesktop.DBus.Properties', 'GetAll', GLib.Variant('(s)', (name,)))[0]
 
-    devices = call('/org/freedesktop/NetworkManager', 'org.freedesktop.NetworkManager', 'GetDevices')[0]
+    manager = 'org.freedesktop.NetworkManager'
+    root = '/org/freedesktop/NetworkManager'
+    devices = call(root, manager, 'GetDevices')[0]
     records = {}
     for path in devices[:32]:
         item = props(path, 'org.freedesktop.NetworkManager.Device')
@@ -74,15 +81,58 @@ def _nm_properties():
                           gateway=config.get('Gateway') or None)
             record['field_sources'].update({field: 'NETWORKMANAGER_DBUS' for field in ('ipv4', 'ipv4_addresses', 'gateway')})
         records[name] = record
-    return records
+    connectivity = 'UNKNOWN'
+    try:
+        status = props(root, manager)
+        if status.get('ConnectivityCheckEnabled') is not False:
+            connectivity = {1: 'NONE', 2: 'PORTAL', 3: 'LIMITED', 4: 'FULL'}.get(
+                status.get('Connectivity'), 'UNKNOWN')
+    except (GLib.Error, OSError, ValueError, TimeoutError):
+        pass
+    return records, connectivity
 
 
-def read_linux_snapshot():
+def read_router_path(target):
+    """Ask the local routing table which IPv4 source and interface it would use."""
+    result = {'target': target, 'status': 'UNKNOWN'}
+    try:
+        address = str(ipaddress.IPv4Address(target))
+        route = subprocess.run(['ip', '-j', '-4', 'route', 'get', address], capture_output=True,
+                               text=True, timeout=1.0, env={'LC_ALL': 'C', 'PATH': '/usr/sbin:/usr/bin:/sbin:/bin'})
+        if route.returncode:
+            if 'Network is unreachable' in route.stderr:
+                result['status'] = 'NO_ROUTE'
+            return result
+        routes = json.loads(route.stdout)
+        if not routes:
+            return result
+        entry = routes[0]
+        if entry.get('type') in ('blackhole', 'unreachable', 'prohibit', 'throw'):
+            result['status'] = 'NO_ROUTE'
+        elif entry.get('dev') == 'lo' or entry.get('type') in ('local', 'broadcast'):
+            result['status'] = 'LOCAL'
+        elif entry.get('dev') and entry.get('prefsrc'):
+            result.update(status='ROUTE', device=entry['dev'], source_ip=str(ipaddress.IPv4Address(entry['prefsrc'])),
+                          via=str(ipaddress.IPv4Address(entry['gateway'])) if entry.get('gateway') else None)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, subprocess.SubprocessError):
+        pass
+    return result
+
+
+def router_path_summary(snapshot):
+    state = local_snapshot_state(snapshot)
+    paths = snapshot.get('router_paths', {})
+    if state != 'OBSERVED_LOCAL':
+        paths = {role: {'target': path['target'], 'status': state} for role, path in paths.items()}
+    return {'state': state, 'paths': paths}
+
+
+def read_linux_snapshot(*, router_targets=None):
     observed = time.time()
     state = {'observed_at': observed, 'timestamp': datetime.fromtimestamp(observed, timezone.utc).isoformat(),
         'state': 'UNKNOWN', 'source': 'LINUX_KERNEL', 'interfaces': {}, 'errors': [],
         'default_gateway': None, 'default_gw_iface': None, 'active_interface': None,
-        'ip_forwarding': None, 'hostname': socket.gethostname(),
+        'connectivity': 'UNKNOWN', 'ip_forwarding': None, 'hostname': socket.gethostname(),
         'os_name': f'{platform.system()} {platform.release()}'}
     try:
         state['ip_forwarding'] = Path('/proc/sys/net/ipv4/ip_forward').read_text().strip() == '1'
@@ -127,7 +177,8 @@ def read_linux_snapshot():
     except (OSError, ValueError, KeyError, subprocess.SubprocessError):
         state['errors'].append('DEFAULT_ROUTE_API_UNAVAILABLE')
     try:
-        for name, item in _nm_properties().items():
+        records, state['connectivity'] = _nm_properties()
+        for name, item in records.items():
             current = state['interfaces'].setdefault(name, {})
             sources = current.get('field_sources', {}) | item.get('field_sources', {})
             current.update(item)
@@ -135,6 +186,8 @@ def read_linux_snapshot():
         state['source'] = 'NETWORKMANAGER_DBUS + LINUX_KERNEL'
     except (GLib.Error, OSError, ValueError, TimeoutError):
         state['errors'].append('NETWORKMANAGER_API_UNAVAILABLE')
+    if router_targets:
+        state['router_paths'] = {role: read_router_path(target) for role, target in router_targets.items()}
     if state['interfaces']:
         state['state'] = 'OBSERVED_LOCAL'
     return state

@@ -271,3 +271,91 @@ Changed `desktop/workspace.py` and `desktop/workspace_style.css` at the existing
 F3 shows the F2 Task names associated with each successful, committed OPC UA read. It uses the read evidence ID, current configured host/source/endpoint and exact Tag/NodeId binding. SSE carries each read's own groups even if several Tags from one station arrive before the next snapshot. Moving labels show up to two short names with a remaining count, and the node details show all names for its latest evidence. The live labels mean configured Tag membership. Task evaluation, queuing and Telegram delivery keep their independent evidence states.
 
 The separate F3 simulator evaluates two sample Task groups using one loopback OPC UA read. Matching groups accompany the Task, Outbox and delivery evidence and are listed in the single combined test message. Installed-source F3 Python tests, the Node detector, no_fake_check and scoped whitespace checks passed. WebKitGTK in a loopback-only network namespace verified burst attribution, the simulation stages, stopped updates and fit in a 1024 px candidate window and a 1920 px installed window. No WinCC field read or real Telegram send was run for this update. Raw logs, screenshots and changed-files.txt are in this Codex task's outputs/f3-task-groups. Reopen the existing icon to load the update.
+
+## Program settings shortcut and source publication — 2026-11-09
+
+The native bottom-right gear opens the existing F6 settings page. The former F1 sidebar shortcut moved to this common toolbar. F6 and Ctrl+, still work. Updated the installed app and the F1 assets and tests in the existing checkout.
+
+Published the audited desktop source snapshot as commit `c77c6c985b5b31ff14419a109bed6759ba79712a` on `n0ngXarm/waterlevels` branch `codex/aqua-command-desktop`. The snapshot uses public sample settings and synthetic tests and omits commissioning evidence and build artifacts.
+
+Verified GTK gear placement and activation, F1/F3 contracts, parser and workspace tests, the F3 loopback simulator, syntax, outbound source audit, no_fake_check and git diff --check. Raw output and the remote ref receipt are under outputs/waterlevels-publish in the Codex task workspace. Reopen the existing icon to load the gear.
+
+## Handoff reconciliation — 2026-11-09
+
+Compared the A/B/C handoff with the launcher source and kept the existing F3 evidence stream, Task group animation, F1 row selection and global gear. F3 now uses the same formal palette as F1. F1 displays actual receipt quality and freshness, refreshes observations without replacing the open Task form, and supports keyboard navigation and focus restoration. A failed Task save leaves the draft visible.
+
+Added `tools/check_opcua_readiness.py` and `docs/OPCUA_READINESS.md`. The default action validates only private configuration. Explicit execution checks the approved switch and station TCP before secure discovery, trusted certificate validation, one configured process read per station and a private JSON report. Isolated loopback verified an untrusted-certificate stop and a trusted Basic256Sha256 read. Field acceptance still requires the approved addresses, secure endpoint and mapped NodeId for each station.
+
+The native F3 port-conflict test now reuses the address after the preceding simulator connection enters TIME_WAIT. Verified the installed source with F1/F3 contracts, F3 detector tests, native WebKitGTK on an isolated loopback-only profile, the readiness suite and no_fake_check. Raw logs, screenshots and changed files are in this task's outputs/handoff-reconcile. No field or Telegram traffic was used for these checks. Reopen the existing launcher to load the update.
+
+## Handoff publication — 2026-11-09
+
+Published all 17 handoff source, documentation and test files as commit `d083f1b692c32ebd46305ed60b9db6c732f176f1` on `n0ngXarm/waterlevels` branch `codex/aqua-command-desktop`. Verified the exact branch tip after the fast-forward.
+
+Verified the public checkout with F1/F3 and parser contracts, the F3 detector, native WebKitGTK, loopback OPC UA readiness, no_fake_check, the scoped whitespace check and the outbound source audit. Results and the remote ref receipt are under outputs/waterlevels-publish-handoff. WinCC field acceptance remains pending.
+
+## Desktop workflow retheme — 2026-11-09
+
+The existing launcher now presents daily work in a top navigation row: view Tag observations, manage Task, and inspect the F3 data path. The catalog and host diagnostics are grouped as tools. Function keys keep their meanings and the settings gear stays in the bottom-right. The global header stays stable during F3 navigation. GTK and the WebKit pages use matching dark surfaces and semantic status colors.
+
+F1 fits the action column on a 1024 px window. F2 keeps Save in the dialog footer. F3 labels the WinCC, AQUA COMMAND, and notification zones in flow order. F4 groups system, resources, storage and local network fields. F5 shows the entire catalog, builds the grid when opened and keeps local refresh controls with the catalog. F6 places save/test/browse and certificate controls before automatic reading. Existing configuration, persistence, observation, simulation, network and notification handlers are used.
+
+The pre-change layout clipped F1 row actions and rendered only the first 60 Tag rows in F5. Installed-source checks covered the F1–F6 workflow at 1024 and 1920 px with a 457-Tag local fixture, the native fallback, F1/F3 contracts, the F3 detector and simulator, secure OPC UA loopback and no_fake_check. Screenshots and raw output are under outputs/desktop-retheme in the Codex task workspace. Reopen the original launcher to load the changes.
+
+## REST and MQTT observation sources — 2026-11-10
+
+Added `python3 -B -m collector.telemetry` to read one normalized snapshot from an explicitly configured HTTPS GET endpoint or an exact MQTT topic through the installed Mosquitto client. Validation mode is offline. The optional interval requires explicit read mode and stops before reading a changed source. Normal execution requires TLS. Plain transports are available only for the explicitly flagged loopback LAB.
+
+Both adapters validate the source timestamp, exact Tag allowlist, quality and finite scalar values. The private evidence database separates transport/binding and LAB rows. Replayed and older snapshots do not reset freshness. F1 uses one manually selected source via telemetry_source.json, shows its provenance and source timestamp, and marks receipts older than 60 seconds stale. Removing that selection restores OPC UA. F3's OPC UA checks, automatic Tasks and Telegram continue on their established paths and do not consume this store.
+
+Verified HTTPS trust, Bearer header and redirect rejection, MQTTS subscription against a real loopback Mosquitto broker, exact topic/retained handling, deduplication, F1 WebKit source switching and existing F1/F3 and OPC UA loopback regressions. Logs are in outputs/telemetry-sources. Next step is to obtain a compatible approved Gateway snapshot endpoint or topic and test its actual Tag mapping before field use.
+
+## Windows OPC DA Analog Reader 0.10 — 2026-11-10
+
+The Windows Reader now accepts separate lists of pump-status and Analog Tags within the existing allowlist. Read-only local IOPCItemIO capture preserves finite numeric COM scalar values, source time, quality word and HRESULT. Analog zero and one are numeric observations and never produce pump transitions. Queue sequence, destination pin, and ACK handling retain the established spool behavior. The Gateway accepts v3 Analog observations with the explicit value_type marker and continues to accept legacy binary v3. Use the updated Gateway before sending Analog records.
+
+Cross-built the unsigned self-contained Windows x64 package from the existing local .NET SDK and cached runtime packs. Core assertions, deployed Gateway tests, the pre-change rejection reproduction, and authenticated .NET-to-Node TLS interop passed. Mixed payloads covered 73.25, negative and exponent values, negative zero and exact digest ACK. Test fixtures did not activate local COM or connect to WinCC. Artifacts and logs are in outputs/opcda-analog. Next step is field verification of one approved Analog and one approved pump Tag, comparing values, source timestamps and quality before authorizing delivery.
+
+## F6 Data Sources controls — 2026-11-10
+
+Added the Data Sources tab to the existing settings gear. F6 can choose and save OPC DA via a local Gateway archive, HTTPS REST, or MQTTS for F1 and can explicitly read once, start/stop a five-second reader, or return to OPC UA. Alternative profiles remain separate and the F6 reader stays idle on startup. The controlled process is stopped when the app exits. Existing OPC UA, Telegram and history controls remain on their own tabs.
+
+The OPC DA adapter reads an explicitly selected aqua.sqlite3 file in SQLite read-only mode, matches the selected Windows Reader ID and validates the latest committed OPC DA snapshot and its digest. F1 keeps each tag's source timestamp and does not infer a current measurement from Gateway arrival time. Windows Reader capture and Gateway receive approvals still take place separately. Alternative sources feed F1 only.
+
+Verified the missing-tab baseline, native GTK F6 source selection/read/start/stop/return workflow, independent OPC DA source freshness, original F1/F3 regressions, HTTPS/MQTTS loopback tests and signed Windows Reader test events through the real Gateway SQLite schema. No field connection was used. Logs and screenshots are under outputs/f6-telemetry.
+
+## Context help button — 2026-11-10
+
+Added the question-mark button at the right edge of the common top navigation. It opens a local GTK help popover for the visible page. In F6 Data Sources it shows setup guidance for the protocol currently selected in the form. Opening help does not save settings or start a reader.
+
+Reproduced the missing button before the change. Verified placement and click behavior at 1024 and 1920 px, F1 and per-source F6 content, and no_fake_check on the installed source. Screenshots and raw logs are in outputs/aqua-help. Reopen the existing icon to load the button.
+
+## Offline operator manual window — 2026-11-10
+
+The question-mark button in the top-right navigation opens a separate modal GTK window titled คู่มือการใช้งาน AQUA COMMAND. Twelve chapters sit in the left sidebar and explanatory text opens on the right. The manual covers getting started, F1–F5, OPC UA, OPC DA, REST, MQTT, Telegram and history. It reads independently of the active program page. Close and Escape hide the window, and reopening it keeps the last chapter for the running app session.
+
+Reproduced the previous context popover before applying the change. Verified direct opening, switching chapters, closing and reopening, unchanged F6 selection, and no telemetry worker or configuration write in native GTK at 1024 and 1920 px. no_fake_check passed. Screenshots and raw logs are in outputs/aqua-manual.
+
+## Operator labels and keyboard shortcuts — 2026-11-10
+
+The Fedora launcher menu, settings, backup-source controls, Grafana menu and manual now use the operator-facing page and protocol names. Function-key numbers appear in the dedicated คีย์ลัด chapter. Existing F1–F8 mappings are preserved. F9 opens the manual in GTK and both WebKit pages, and Ctrl+, reaches connection settings from the diagram as well.
+
+Reproduced the old numbered menu labels before the change. Verified the new labels, manual and F1–F9/Ctrl+, routes in the installed launcher at 1024 and 1920 px, 41 F1/F3 contract tests in the candidate, JS syntax and no_fake_check. Raw output and screenshots are in outputs/aqua-shortcuts. Reopen the existing icon to load the change.
+
+## Operator wording revision — 2026-11-10
+
+Reworded the navigation, GTK/WebKit headings, settings and manual to use ติดตามค่า, งานเฝ้าระวัง and ผังการสื่อสาร consistently. Kept คลัง Tag and ข้อมูลเครื่อง. The backup-source controls now distinguish saving the source from starting a read, and the help chapter labels match the main menu.
+
+Reproduced the previous labels with the focused GTK check, then verified the labels and F1–F9/Ctrl+, shortcuts at 1024 and 1920 px with a temporary profile and an isolated loopback network. Logs and screenshots are in outputs/aqua-labels. Reopen the existing launcher icon to load the update.
+
+## Compact top bar — 2026-11-10
+
+Kept the catalog count and read-only status beside the app title. Removed the local NIC and Internet badges from the header, removed the header clock and its timer, and mount the Grafana menu only when the optional bridge is configured. Network detail remains available in the communication diagram.
+
+Reproduced the old header, then verified the compact header, optional menu placement and navigation at 1024 and 1920 px in the isolated GTK check. The Grafana branch used a test double for the bridge. Native check logs, screenshots, and the no_fake_check output are in outputs/aqua-topbar. Reopen the existing launcher icon to load the update.
+
+## Passive Internet and router IP status — 2026-11-10
+
+The top bar shows NetworkManager's cached Internet connectivity and the observed default IPv4 gateway. The AQUA COMMAND column in the communication diagram displays the kernel-selected source IPv4 and configured target separately for the OT and WAN paths. A routed path shows the intermediate gateway. Stale snapshots do not display a current source IP. The status follows the configured switch and router roles and does not infer router reachability, OPC UA health or equipment state.
+
+The implementation reads local D-Bus properties and uses local kernel route lookups. No connectivity recheck, network probe, collection or settings write is triggered. Passive host readback reported FULL, an IPv4 default gateway, an indirect OT route and a direct WAN route at verification time. Logs use no production addresses. Adapter tests, the F1/F3 contracts and isolated GTK/WebKit checks are in outputs/aqua-router-status. Reopen the existing launcher to load the change.

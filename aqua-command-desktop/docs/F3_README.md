@@ -12,10 +12,11 @@ aqua-command-desktop/
 │   ├── f3_api_view.py       # GTK4 WebKit6 Controller โหลดหน้า F3 และควบคุม loopback API
 │   ├── f3_projection.py     # Presentation Adapter แปลง SQLite evidence เป็น F3 contract
 │   ├── f3_handoff.py        # Core mapping logic และการตรวจ Task groups
+│   ├── f1_api/formal-theme.css # ธีมสว่างและมืดที่ F1/F3 ใช้ร่วมกัน
 │   └── f3_api/
 │       ├── detect.mjs       # โมดูลฟังก์ชัน detect() กฎสถานะ 6 ระดับ (Node & Browser)
 │       ├── index.html       # ผัง 3 โซน (OT LAN, Dual-Homed Collector, External WAN)
-│       ├── view.css         # สไตล์ธีมมืด/สว่าง พร้อมรองรับ prefers-reduced-motion
+│       ├── view.css         # การจัดวาง F3 ใช้สีจากธีมและรองรับ prefers-reduced-motion
 │       ├── view.js          # จัดการ dynamic SVG, จุดวิ่ง, วงคลื่น, popup รายละเอียด
 │       └── fonts_embedded.css # @font-face base64 ฟอนต์ IBM Plex Sans Thai และ Mono
 ├── fonts/
@@ -53,25 +54,27 @@ CREATE TABLE probe_evidence (
 การแมปไปยัง F3 Node JSON Schema (`GET /api/f3/evidence`):
 | คอลัมน์ใน SQLite | ฟิลด์ใน F3 JSON | หมายเหตุ / กฎการแปลง |
 |---|---|---|
-| `host` | `node.id` / `label` | ไอพีหรือโฮสต์ เช่น `192.168.1.11`..`14`, `192.168.1.254`, `192.168.100.1` |
+| `host` | `node.id` / `label` | ไอพีของแหล่งหลักฐานและชื่ออุปกรณ์จากไฟล์ตั้งค่า |
 | `result` | `last.ok` | `result == 'ok'` แปลงเป็น `true`, ค่าอื่น (timeout, fail) แปลงเป็น `false` |
 | `ts` | `last.ts` | เวลาในรูปแบบ ISO-8601 UTC |
-| `check` | `last.method` | วิธีตรวจ (`ua_read`, `ua_session`, `ua_endpoints`, `ping`, `arp`, `write_readback`) |
+| `check` | `last.method` | วิธีตรวจ เช่น `ua_read`, `ua_session`, `ua_endpoints`, `ping`, `arp` โดยกล่อง SQLite ใช้ `sqlite_readback` เมื่ออ่านหลักฐานที่บันทึกแล้วกลับมา |
 | `detail` / `error` | `last.detail` | ข้อความรายละเอียด เช่น ค่า RTT, ข้อผิดพลาด, หรือจำนวน Tag ที่อ่านได้ |
 | `source` | `last.source` | `'real'` หรือ `'sim'` (แยกแยะข้อมูลจริงกับข้อมูลจำลอง) |
 | `tag_samples` (ตารางรอง) | `last.task_groups` | ตรวจสอบ Tag ที่อ่านได้ว่าตรงกับ Task เฝ้าระวังใดใน F2 |
+
+`GET /api/stream` ส่ง SSE ชื่อ `evidence` พร้อมรหัสแถวที่ SQLite บันทึกแล้ว F3 ตรวจรหัสและแหล่งที่มาก่อนแสดงจุดวิ่ง ส่วนสถานะและอายุหลักฐานอัปเดตจาก `/api/f3/evidence` ทุกประมาณ 2 วินาที
 
 ---
 
 ## 3. กฎสถานะ 6 ระดับ (`detect()`)
 
-ลำดับความสำคัญเมื่อประเมินสถานะและการแสดงสี:
+ลำดับความสำคัญของสีเส้นเมื่อปลายสองด้านมีสถานะต่างกัน:
 `FAIL` > `BLOCKED` > `STALE` > `UNVERIFIED` > `NOT_BUILT` > `OK`
 
 1. **NOT_BUILT (`– ยังไม่สร้าง`)**: ฟังก์ชันถูกประกาศว่ายังไม่สร้างในระบบ
 2. **UNVERIFIED (`? ยังไม่ตรวจ`)**: มีการคอนฟิกโหนดไว้แต่ยังไม่เคยมีบันทึกหลักฐานในตาราง
-3. **FAIL (`✕ ไม่ตอบ`)**: หลักฐานล่าสุดมีค่า `ok = false`
-4. **BLOCKED (`⊘ ทางผ่านล่ม`)**: สวิตช์ทางผ่าน (`192.168.1.254`) เป็น `FAIL` ส่งผลให้ SCADA 4 เครื่องตรวจต่อไม่ได้
+3. **FAIL (`✕ ไม่ตอบ`)**: หลักฐานล่าสุดมีค่า `ok = false` หากหลักฐานหมดอายุ F3 ระบุว่าเป็นผลตรวจเดิม
+4. **BLOCKED (`⊘ ทางผ่านล่ม`)**: สวิตช์ทางผ่านที่ตั้งค่าไว้มีหลักฐานการตรวจล่าสุดเป็น `FAIL` และยังไม่หมดอายุ โหนด SCADA ที่ผ่านสวิตช์นั้นแสดง `BLOCKED`
 5. **STALE (`◔ ข้อมูลเก่า`)**: หลักฐานล่าสุด `ok = true` แต่เวลาเก่ากว่า `stale_ms` (60 วินาที) หรือเวลาเครื่องเพี้ยน
 6. **OK (`✓ ปกติ`)**: หลักฐานล่าสุด `ok = true` และอายุไม่เกิน 60 วินาที
 
@@ -94,6 +97,6 @@ bash scripts/no_fake_check.sh
 
 ## 5. วิธีเปิดโหมด Demo (จำลองสถานการณ์)
 
-- **ในหน้าจอ F3 Desktop**: เมื่อกดปุ่ม "จำลองสถานการณ์" (`f3-demo`) ตัวควบคุมจะสตาร์ตโปรเซสจำลอง `tools/sim/f3_demo.py` บนพอร์ตทดสอบ loopback อัตโนมัติ
-- **ใน Browser URL**: สามารถเปิดดูด้วยพารามิเตอร์ `?demo=1` เพื่อเปิดแผงทดสอบปุ่ม Scenario และส่ง Event ตัวอย่าง
-- **โหมดใช้งานจริง (Production)**: ห้ามมี `?demo=1` ระบบจะเชื่อมต่อกับ Server SSE จริง และสร้างจุดวิ่งเฉพาะเมื่อได้รับ event ผลตรวจจริงเท่านั้น
+- **ทดลองใน Desktop** ใช้ปุ่ม **จำลองและส่ง Telegram** เพื่อเริ่ม `tools/sim/f3_demo.py` แยกโปรเซส ตัวจำลองฟังที่ loopback เก็บหลักฐานในฐานข้อมูลชั่วคราว และแสดงป้าย `SIMULATED` ปุ่มนี้อาจส่งข้อความทดสอบจริงเมื่อมีการตั้งค่า Telegram จึงใช้เมื่อได้รับอนุญาตให้ส่งแล้วเท่านั้น
+- **ตรวจโดยไม่ส่ง Telegram** ใช้ `env -u F3_TEST_TELEGRAM_CONFIG F3_TEST_DEMO=1 python3 -B tests/f3_handoff_native.py` ในเซสชัน GTK ที่แยกจากระบบจริง เทสต์ใช้ค่าตั้งชั่วคราวและตรวจสถานะเมื่อไม่มีค่าตั้ง Telegram
+- **โหมดใช้งานจริง** อ่านเฉพาะฐานข้อมูลหลักของเครื่อง การส่ง `?demo=1` ให้ API ไม่สามารถเปลี่ยนแหล่งข้อมูลเป็นโหมดจำลองได้

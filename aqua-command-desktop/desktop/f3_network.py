@@ -1200,7 +1200,7 @@ class DeviceSettingsDialog(Gtk.Window):
             ("configured_ip", "Configured numeric IP (one address):", device.get("configured_ip", "")),
             ("port", "Service Port (TCP):", str(device.get("port") or "")),
             ("endpoint_url", "OPC UA Endpoint URL:", device.get("endpoint_url", "")),
-            ("test_tag", "Verified Tag from F6:", device.get("test_tag", "")),
+            ("test_tag", "Verified Tag from connection settings:", device.get("test_tag", "")),
             ("network_zone", "Configured network group:", device.get("network_zone", "UNASSIGNED")),
             ("interface_name", "Assigned local interface (optional):", device.get("interface_name", "")),
             ("sec_policy", "Security policy (Basic256Sha256):", device.get("sec_policy") or ""),
@@ -1796,7 +1796,7 @@ class DeviceDetailInspector(Gtk.Box):
         self.lbl_source_time.set_text(dev.get('source_timestamp') or "—")
         self.lbl_server_time.set_text(dev.get('server_timestamp') or "—")
         self.lbl_arrival_time.set_text(dev.get('arrival_timestamp') or "—")
-        self.lbl_mapping.set_text(dev.get('node_id') or "Select verified mapping in F6")
+        self.lbl_mapping.set_text(dev.get('node_id') or "Select verified mapping in connection settings")
         binding, reason = evidence.network_binding(dev, self.owner_view.local_state, store.networks)
         self.lbl_binding.set_text(f"{binding}\n{reason}")
         interfaces = dev.get('interface_observations', {})
@@ -2161,7 +2161,7 @@ class F3NetworkTopologyView:
         t_box.set_hexpand(True)
         title_bar.append(t_box)
 
-        lbl_t = Gtk.Label(label="F3 · เครือข่ายและอุปกรณ์")
+        lbl_t = Gtk.Label(label="เครือข่ายและอุปกรณ์")
         lbl_t.add_css_class('f3-title-text')
         lbl_t.set_xalign(0.0)
         lbl_t.set_ellipsize(Pango.EllipsizeMode.END)
@@ -2426,9 +2426,9 @@ class F3NetworkTopologyView:
         self.lbl_stat_remote.set_text(f"Remote hosts  {stats['verified_remote_hosts']}")
         self.lbl_stat_remote.set_tooltip_text('Fresh authorized reachability observations; excludes this host and external services')
         self.lbl_stat_opc.set_text(f"UA sessions  {stats['opc_connected']}")
-        self.lbl_stat_opc.set_tooltip_text('Open F3 manual sessions plus the existing local poller with a fresh, mapped, endpoint-matched CONNECTED DataValue receipt; RUNNING alone does not count')
+        self.lbl_stat_opc.set_tooltip_text('Open manual sessions plus the existing local poller with a fresh, mapped, endpoint-matched CONNECTED DataValue receipt; RUNNING alone does not count')
         self.lbl_readonly.set_text(f"Read receipts  {stats['opc_read_verified']}")
-        self.lbl_readonly.set_tooltip_text("Last F3 receipts per device + distinct existing backend DataValue receipts within 15 seconds; Quality, NodeId and timestamps remain separate. Poll counters never count.")
+        self.lbl_readonly.set_tooltip_text("Last read receipts per device + distinct existing backend DataValue receipts within 15 seconds; Quality, NodeId and timestamps remain separate. Poll counters never count.")
         for label, count, accent in ((self.lbl_stat_opc, stats['opc_connected'], 'purple'),
                                      (self.lbl_readonly, stats['opc_read_verified'], 'cyan')):
             for name in ('neutral', 'purple', 'cyan'):

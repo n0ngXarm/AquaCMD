@@ -2,22 +2,28 @@
 from datetime import datetime, timezone
 from collector.evidence_api import read_connection, detail
 if __package__:
+    from .f3_local import router_path_summary
     from .f3_handoff import project_f3, read_task_groups
 else:
+    from f3_local import router_path_summary
     from f3_handoff import project_f3, read_task_groups
 
 
 class F3Projection:
-    def __init__(self, reader, settings, metadata, *, task_groups=()):
+    def __init__(self, reader, settings, metadata, *, task_groups=(), local_snapshot=None):
         self.reader, self.settings, self.metadata = reader, settings, metadata
         self.task_groups = task_groups
+        self.local_snapshot = local_snapshot
         self.targets = {target['host']: target for target in settings.get('targets', ())}
 
     def __getattr__(self, name):
         return getattr(self.reader, name)
 
     def f3_evidence(self):
-        return project_f3(self.reader.path, self.settings, self.metadata, task_groups=self.task_groups)
+        result = project_f3(self.reader.path, self.settings, self.metadata, task_groups=self.task_groups)
+        if self.local_snapshot is not None:
+            result['local_network'] = router_path_summary(self.local_snapshot())
+        return result
 
     def after(self, cursor):
         rows = self.reader.after(cursor)

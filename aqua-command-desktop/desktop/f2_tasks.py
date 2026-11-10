@@ -952,7 +952,7 @@ class F2TaskManagerView:
         self.chk_action_notify.connect('toggled', self.on_action_toggled)
         tg_row.append(self.chk_action_notify)
 
-        btn_f6 = Gtk.Button(label="ตั้งค่าใน F6 →")
+        btn_f6 = Gtk.Button(label="เปิดการตั้งค่า →")
         btn_f6.add_css_class('f2-btn-link')
         btn_f6.connect('clicked', lambda _: self.owner.switch_to_tab('alarms'))
         tg_row.append(btn_f6)

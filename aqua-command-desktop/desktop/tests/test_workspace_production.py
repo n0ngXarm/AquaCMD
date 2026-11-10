@@ -68,7 +68,6 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         if width := os.environ.get('F1_TEST_WIDTH'):
             cls.win.set_default_size(int(width), 900)
         cls.win.present()
-        cls.win.tick_clock()
         drain_events()
         cls.ws = cls.win.unified_workspace
 
@@ -343,6 +342,14 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
     def test_10_f6_sections_and_local_telegram_save(self):
         win = self.win
         self.addCleanup(win.switch_to_tab, 'overview')
+        settings = win.settings_button
+        self.assertIs(settings.get_parent().get_last_child(), settings)
+        self.assertEqual(settings.get_icon_name(), 'applications-system-symbolic')
+        self.assertTrue(settings.get_focusable())
+        settings.emit('clicked')
+        self.assertEqual(win.stack.get_visible_child_name(), 'alarms')
+        self.assertTrue(win.nav_btns['alarms'].get_active())
+        win.switch_to_tab('overview')
         self.assertTrue(win.on_global_key_pressed(None, Gdk.KEY_F6, 0, 0))
         self.assertEqual(win.stack.get_visible_child_name(), 'alarms')
 
@@ -450,7 +457,11 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
                     left = settled_bounds(win.entry_opc_url)
                     right = settled_bounds(win.btn_start_monitoring)
                     self.assertGreater(right.get_x(), left.get_x() + left.get_width())
-                    self.assertLess(right.get_y(), settled_bounds(win.btn_test_opc).get_y())
+                    test = settled_bounds(win.btn_test_opc)
+                    browse = settled_bounds(win.btn_browse_opc)
+                    self.assertLess(test.get_x(), browse.get_x())
+                    self.assertLess(test.get_y(), right.get_y())
+                    self.assertLess(settled_bounds(win.f6_certificate).get_y(), right.get_y())
                 if name == 'telegram':
                     left = settled_bounds(win.entry_tg_chat_id)
                     right = settled_bounds(win.entry_tg_test_msg)

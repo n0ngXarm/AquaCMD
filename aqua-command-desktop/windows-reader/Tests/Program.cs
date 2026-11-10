@@ -16,6 +16,26 @@ static class Tests {
    if(args.Length>0&&args[0]=="--emit-test-events"){
     using var store=new DurableSpool(path,config.ProfileId());store.Append(config,Frame());store.Append(config,Frame(1));Directory.CreateDirectory(args[1]);File.WriteAllText(Path.Combine(args[1],"events.json"),"["+string.Join(",",store.Pending().Select(r=>r.Payload))+"]");Console.WriteLine("TEST-ONLY synthetic observations emitted by Tests project");return 0;
    }
+   if(args.Length==4&&args[0]=="--interop-analog"){
+    config.GatewayUrl=args[1];config.CaFile=args[2];config.Secret=args[3];
+    var levels=new Dictionary<string,double>{
+     ["LEVEL"]=73.25,["ZERO"]=-0.0,["SMALL"]=1e-7,["FIXED_MIN"]=1e-6,["LARGE"]=1e21,
+     ["FIXED_MAX"]=1e20,["NEGATIVE"]=-0.25,["DOUBLE_MAX"]=double.MaxValue,["SUBNORMAL"]=double.Epsilon
+    };
+    config.AnalogTags=levels.Keys.ToList();
+    config.Tags.AddRange(config.AnalogTags);
+    using var store=new DurableSpool(path,config.ProfileId());
+    ReadFrame Mixed(double pump)=>new(Wire.Stamp(),[
+     new("RUN_S",pump,192,0,"2026-10-28T01:00:00.000Z"),
+     ..levels.Select(level=>new Observation(level.Key,level.Value,192,0,"2026-10-28T01:00:01.000Z"))
+    ]);
+    store.Append(config,Mixed(0));store.Append(config,Mixed(1));
+    using var sender=new AquaSender(config);
+    Check(await sender.SendBatchAsync(store,CancellationToken.None)==3&&store.PendingCount==0,
+     "Signed mixed snapshots and binary transition accepted with exact digest ACKs");
+    Console.WriteLine("PASS Analog TLS/HMAC/ACK interoperability");
+    return 0;
+   }
    if(args.Length==4&&(args[0]=="--interop"||args[0]=="--interop-numeric")){
     config.GatewayUrl=args[1];config.CaFile=args[2];config.Secret=args[3];if(args[0]=="--interop-numeric")config.Tags=["20","3","RUN_S"];ReadFrame InteropFrame(long state)=>new(Wire.Stamp(),config.Tags.Select(t=>new Observation(t,t=="RUN_S"?state:0,192,0,"2020-01-01T00:00:00Z")).ToList());using var store=new DurableSpool(path,config.ProfileId());store.Append(config,InteropFrame(0));store.Append(config,InteropFrame(1));using var sender=new AquaSender(config);var sent=await sender.SendBatchAsync(store,CancellationToken.None);Check(sent==3&&store.Pending().Count==0,"Actual HTTPS signed handshake/event/ACK integration");Console.WriteLine("PASS actual TLS/HMAC/ACK integration; TEST-ONLY observations; real WinCC not tested");return 0;
    }
@@ -33,6 +53,41 @@ static class Tests {
    using(var store=new DurableSpool(path,config.ProfileId())){Check(store.Sequence==6&&store.Pending().Count==3,"restart sequence/backlog");Reject(()=>store.Append(config,new ReadFrame(DateTimeOffset.UtcNow.ToString("O"),[])),"incomplete frame rejected");}
    Reject(()=>new DurableSpool(path,"wrong-profile"),"profile collision denied");
    Check(Frame(0,128).Observations[0].State(true)==null,"WinCC128 is not OPC GOOD");Check(Frame(0).Observations[0].State(true)==false,"RAW0 valid OFF");Check(Frame(1).Observations[0].State(false)==null,"mapping consent required");Check(Frame(2).Observations[0].State(true)==null,"nonbinary unknown");
+   var analogConfig=new ReaderConfig{Tags=["LEVEL","RUN_S"],AnalogTags=["LEVEL"],MappingConfirmed=true};
+   analogConfig.ValidateCapture();
+   Reject(()=>new ReaderConfig{Tags=["RUN_S"],AnalogTags=["LEVEL"]}.ValidateCapture(),"unlisted Analog Tag rejected");
+   Check(OpcScalar.FromVariant(73.25f,true)==73.25d&&OpcScalar.FromVariant(-2.5m,true)==-2.5d,"floating and decimal COM scalars");
+   Check(OpcScalar.FromVariant(true,true)==null&&OpcScalar.FromVariant("1",true)==null&&
+         OpcScalar.FromVariant(new[]{1},true)==null&&OpcScalar.FromVariant(double.NaN,true)==null&&
+         OpcScalar.FromVariant(double.PositiveInfinity,true)==null&&OpcScalar.FromVariant(ulong.MaxValue,true)==null,
+         "unsupported Analog scalars never become a number");
+   Check(OpcScalar.FromVariant(false,false)==0&&OpcScalar.FromVariant(1.0000000000000002d,false)==null,
+         "binary converter accepts false and rejects fractions near one");
+   var level=new Observation("LEVEL",73.25,192,0,"2026-10-28T01:00:01.000Z");
+   Check(level.Quality(false,true)=="GOOD"&&level.State(true,true)==null,"Analog quality is separate from pump mapping");
+   Check((level with {QualityCode=64}).Quality(true,true)=="UNCERTAIN"&&
+         (level with {ReadError=-1}).Quality(true,true)=="BAD"&&
+         (level with {RawValue=null}).Quality(true,true)=="UNSUPPORTED_VALUE","Analog quality failures");
+   var mixed=new ReadFrame(Wire.Stamp(),[level,new("RUN_S",1,192,0,null)]);
+   var analogPath=Path.Combine(path,"analog");
+   using(var analogStore=new DurableSpool(analogPath,analogConfig.ProfileId())){
+    analogStore.Append(analogConfig,mixed);
+    analogStore.Append(analogConfig,mixed with {Observations=[level with {RawValue=0},new("RUN_S",0,192,0,null)]});
+    Check(analogStore.PendingCount==3,"Analog change emits no state transition while binary change emits one");
+    using var body=JsonDocument.Parse(analogStore.Pending()[0].Payload);
+    var sample=body.RootElement.GetProperty("observations").GetProperty("LEVEL");
+    Check(sample.GetProperty("raw_value").GetDouble()==73.25&&sample.GetProperty("value_type").GetString()=="analog"&&
+          sample.GetProperty("source_timestamp").GetString()==level.SourceTimestamp,"wire preserves value, type and source time");
+    Check(body.RootElement.GetProperty("values").GetProperty("LEVEL").ValueKind==JsonValueKind.Null,
+          "Analog never goes into the pump state map");
+   }
+   using(var analogStore=new DurableSpool(analogPath,analogConfig.ProfileId())){
+    Check(analogStore.Latest!.Observations[0].RawValue==0&&analogStore.PendingCount==3,"Analog queue reopens");
+    Check(analogConfig.CaptureRevision()!=new ReaderConfig{Tags=analogConfig.Tags,MappingConfirmed=true}.CaptureRevision(),
+          "Changing Tag type changes capture revision");
+   }
+   Check(Wire.Encode(new[]{-0.0,1e-6,1e-7,1e20,1e21,-73.25})==
+         "[0,0.000001,1e-7,100000000000000000000,1e+21,-73.25]","Gateway JSON number notation boundaries");
    var quotaPath=path+"-quota";try{using var q=new DurableSpool(quotaPath,config.ProfileId(),maxPending:1);q.Append(config,Frame());Reject(()=>q.Append(config,Frame(1)),"quota must retain prior state");Check(q.Sequence==1&&q.Pending().Count==1,"quota atomic");}finally{Directory.Delete(quotaPath,true);}
    foreach(var mode in new[]{"mac","digest","partial","duplicate"}){
     var faultPath=path+"-"+mode;try{using var fault=new DurableSpool(faultPath,config.ProfileId());fault.Append(config,Frame());fault.Append(config,Frame(1));using var sender=new AquaSender(config,new HttpClient(new FakeGateway(config.Secret,mode)));try{await sender.SendBatchAsync(fault,CancellationToken.None);throw new Exception("Fault accepted");}catch(InvalidOperationException){Check(fault.PendingCount==3,"bad "+mode+" retains entire batch");}}finally{Directory.Delete(faultPath,true);}

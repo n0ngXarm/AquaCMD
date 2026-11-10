@@ -24,6 +24,37 @@ test('real-only v3 preserves source time/quality and rejects simulated or contra
  }finally{s.close();fs.rmSync(d,{recursive:true,force:true})}
 });
 
+test('OPC DA Analog keeps scalar, quality and source time without becoming a pump transition',()=>{
+ const d=temp(),s=new Store(d,{realOnly:true,notifications:true});
+ try {
+  const frame=event();
+  frame.values['TANK.LEVEL']=null;
+  frame.observations['TANK.LEVEL']={value_type:'analog',raw_value:73.25,quality_code:192,read_error:0,
+   quality:'GOOD',source_timestamp:'2026-10-28T01:00:01.000Z'};
+  const receipt=s.ingest('PC-01',[frame]);
+  assert.equal(receipt[0].sha256,digest(JSON.stringify(frame)));
+  const stored=JSON.parse(s.stats().latest);
+  assert.deepEqual(stored.observations['TANK.LEVEL'],frame.observations['TANK.LEVEL']);
+  assert.equal(stored.values['TANK.LEVEL'],null);
+  assert.equal(s.notificationStats().notificationPending,0);
+
+  for(const mutate of [
+   e=>e.values['TANK.LEVEL']=true,
+   e=>e.observations['TANK.LEVEL'].raw_value=null,
+   e=>e.observations['TANK.LEVEL'].raw_value='73.25',
+   e=>e.observations['TANK.LEVEL'].raw_value=Infinity,
+   e=>e.observations['TANK.LEVEL'].quality_code=64,
+   e=>e.observations['TANK.LEVEL'].read_error=1,
+   e=>e.observations['TANK.LEVEL'].value_type='other',
+   e=>Object.assign(e,{kind:'STATE_CHANGE',tag_name:'TANK.LEVEL',before:false,value:true})
+  ]) {
+   const invalid=structuredClone(frame);invalid.sequence=2;invalid.event_id='PC-01:analog-invalid';
+   mutate(invalid);
+   assert.throws(()=>s.ingest('PC-01',[invalid]),{status:400});
+  }
+ } finally {s.close();fs.rmSync(d,{recursive:true,force:true})}
+});
+
 test('deployed HTTPS Gateway requires local receive approval, preserves lost ACK/dedup/restart and never probes before outbound approval',async t=>{
  const dir=temp(),tls=certificate(dir),wrong=certificate(dir,'wrong'),p=await port(),sourceSettings={deployment:{role:'gateway',id:'PC-04',listenHost:'127.0.0.1',listenPort:p,...tls,peers:{'PC-01':key},telegramMode:'telegram'}};let h,probes=0,sends=0;
  const gatewayOptions={telegram:{mode:'telegram',configured:true,probe:async()=>{probes++;return true},send:async()=>{sends++;return 1}}};

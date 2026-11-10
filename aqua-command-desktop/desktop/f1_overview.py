@@ -763,7 +763,7 @@ class F1StationExplorerView:
         title_vbox.append(page_subtitle)
 
         # Rescan quick button
-        btn_refresh = Gtk.Button(label="รีเฟรชคลัง Tag (F7)")
+        btn_refresh = Gtk.Button(label="รีเฟรชคลัง Tag")
         btn_refresh.add_css_class('f1-action-btn')
         btn_refresh.add_css_class('f1-btn-refresh')
         btn_refresh.connect('clicked', lambda _: self.owner.trigger_rescan())
@@ -1537,7 +1537,7 @@ class F1StationExplorerView:
         self.kpi_widgets['tag_groups']['value'].set_text("0 Groups")
         self.lbl_current_group_code.set_text("No Catalog")
         self.lbl_group_name_en.set_text("ยังไม่ได้นำเข้าคลัง Tag WinCC")
-        self.lbl_group_desc_th.set_text("กรุณากดปุ่ม [รีเฟรชคลัง Tag] หรือ F7 เพื่อโหลด Export all.txt")
+        self.lbl_group_desc_th.set_text("กดรีเฟรชคลัง Tag เพื่อโหลด Export all.txt")
         self.lbl_group_tag_count_pill.set_text("0 Tags")
         self.set_observation_status("Not Observed", is_verified=False)
         self.render_tags_table()

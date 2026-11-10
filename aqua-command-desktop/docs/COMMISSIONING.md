@@ -5,7 +5,7 @@
 ## ก่อนนำไปเครื่องWinCC
 
 1. ให้ผู้ดูแลยืนยันรุ่นWinCCV8.1Classic,Runtimelicense/Runtimeที่ทำงานอยู่,ส่วนOPC DAที่ติดตั้งและเปิดใช้งานโดยผู้มีอำนาจ โปรแกรมใช้ `OPCServer.WinCC` ไม่ใช้ชื่อ `WinCC.OPCServer.1` และไม่เปิดOPC UA
-2. ขอรายการbinaryTagsที่อนุญาตอ่าน ตรวจ0/1mappingกับหน้าจอWinCC และสิทธิ์Windowsของผู้รัน ห้ามเพิ่มสิทธิ์หรือแก้DCOM/บริการเพียงเพื่อให้โปรแกรมผ่าน
+2. ขอรายการ Tag ที่อนุญาตอ่านและแยก Tag สถานะ 0/1 จาก Tag Analog ตรวจ mapping สถานะและหน่วยของค่าตัวเลขกับหน้าจอ WinCC ตรวจสิทธิ์ Windows ของผู้รันก่อนเริ่ม
 3. กำหนดExporterIDไม่ซ้ำ PC-01..03และคีย์64hexที่แตกต่างกัน ลงทะเบียนในGatewayเฉพาะสมาชิกเหล่านี้ คีย์ไม่ใช่passwordของPLC/WinCC
 4. ให้ผู้ดูแลจัดHTTPSservercertificateที่มีIP SANตรงGateway,privatekeyและCAที่เครื่องส่งตรวจสอบได้ โปรแกรมไม่ออกcertificate/ติดตั้งCAหรือแก้firewallเอง Default127.0.0.1เหมาะทดสอบเครื่องเดียว สำหรับข้ามเครื่องต้องระบุprivateIPที่มีอยู่จริงบนGateway
 
@@ -45,6 +45,13 @@
 |Capacity | ตกลงfinitearchive/retentionก่อนใช้งานหลายวัน ไม่ลบrecordsเพื่อทำให้หน้าจอเขียว |
 
 ผลจากLinuxprotocoltestsหรือtestfixturesไม่ใช้แทนการตรวจรับตารางนี้
+
+## ตรวจรับ Analog ใน Windows Reader 0.10
+
+- ใช้ Gateway รุ่นที่รองรับ `value_type: "analog"` ก่อนอนุญาตส่งคิว Analog
+- ใส่ Tag ระดับน้ำหนึ่งตัวในช่อง Analog และ Tag สถานะปั๊มหนึ่งตัวในช่อง 0/1 ตรวจค่า หน่วย คุณภาพ HRESULT เวลา WinCC และเวลาอ่านกับหน้าจอจริง
+- ตรวจว่า Analog มีค่าเป็นตัวเลขในหลักฐาน Gateway และ CSV เมื่อ Analog เป็น 0 หรือ 1 ต้องไม่สร้างเหตุการณ์ปั๊มหรือแจ้งเตือน
+- คงคิวและตรวจ Digest ACK หลัง reconnect การทดสอบตัวเลขผ่าน TLS บน loopback ยืนยันสัญญาข้อมูล ส่วนการอ่าน COM จาก WinCC ต้องตรวจบน Windows ที่ได้รับอนุญาต
 
 ## Rollback
 

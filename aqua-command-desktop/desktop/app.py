@@ -784,68 +784,64 @@ def save_tasks(tasks):
 # [PURGED MOCK DATA: REAL_STATIONS_DATA completely deleted]
 
 CSS_DATA = b"""
+@define-color aqua_bg #11161c;
+@define-color aqua_surface #1a212a;
+@define-color aqua_panel #151b22;
+@define-color aqua_raised #222b36;
+@define-color aqua_selected #1f2c3a;
+@define-color aqua_line #2f3a46;
+@define-color aqua_border #66737f;
+@define-color aqua_ink #e3e8ee;
+@define-color aqua_muted #9aa6b2;
+@define-color aqua_accent #6fa8dc;
+
 window {
-    background-color: #0b0f17;
-    color: #e2e8f0;
-    font-family: 'Inter', 'Noto Sans Thai', 'Segoe UI', sans-serif;
+    background: @aqua_bg;
+    color: @aqua_ink;
+    font-family: 'IBM Plex Sans Thai', 'Noto Sans Thai', sans-serif;
     font-size: 10pt;
 }
 
-label {
-    color: #e2e8f0;
-}
+label { color: @aqua_ink; }
 
-/* Modern Mission Control Topbar */
-.wincc-topbar {
-    background: linear-gradient(90deg, #0d1527 0%, #172554 45%, #0f172a 100%);
-    color: #f8fafc;
-    padding: 8px 16px;
-    border-bottom: 2px solid #2563eb;
+.wincc-topbar, .wincc-navigation, .alarm-banner {
+    background: @aqua_panel;
+    padding: 5px 14px;
 }
-.wincc-title {
-    font-size: 12.5pt;
+.wincc-topbar, .wincc-navigation { border-bottom: 1px solid @aqua_line; }
+.alarm-banner { border-top: 1px solid @aqua_line; }
+.wincc-logo {
+    color: @aqua_ink;
+    font-size: 15px;
     font-weight: 700;
-    color: #38bdf8;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
+.wincc-title, .alarm-text, .nav-caption, .page-hint { color: @aqua_muted; }
+.wincc-title, .alarm-text, .nav-caption { font-size: 12px; }
+.nav-caption { padding: 0 3px; }
 .wincc-clock {
-    font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 11pt;
-    font-weight: 700;
-    background: #030712;
-    color: #10b981;
-    padding: 4px 12px;
-    border: 1px solid #059669;
-    border-radius: 6px;
+    color: @aqua_muted;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
 }
 
-/* Modern Status & Alarm Banner */
-.alarm-banner {
-    background: linear-gradient(90deg, #064e3b 0%, #022c22 100%);
-    border-bottom: 1px solid #059669;
-    padding: 6px 16px;
-}
-.alarm-text {
-    font-size: 10pt;
-    font-weight: 600;
-    color: #a7f3d0;
-}
-
-/* Modern Station Card Groups */
 .wincc-group {
-    background-color: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 10px;
+    background: @aqua_surface;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
     padding: 12px;
-    margin: 6px;
 }
 .group-title {
-    font-size: 11.5pt;
+    font-size: 15px;
+    font-weight: 600;
+    color: @aqua_ink;
+    border-bottom: 1px solid @aqua_line;
+    padding-bottom: 8px;
+}
+.page-title {
+    color: @aqua_ink;
+    font-size: 21px;
     font-weight: 700;
-    color: #60a5fa;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #1f2937;
-    padding-bottom: 4px;
 }
 
 /* Modern Equipment Cards */
@@ -923,33 +919,41 @@ label {
     font-size: 9pt;
 }
 
-/* Modern Bottom Navigation Bar (High-Tech Segmented Dock) */
-.wincc-fkey-bar {
-    background: #080c14;
-    border-top: 1px solid #1e293b;
-    padding: 8px 14px;
-}
+/* Shared navigation and page actions. */
 .fkey-btn {
-    background: #111827;
-    color: #cbd5e1;
-    border: 1px solid #1f2937;
-    border-radius: 8px;
+    background: @aqua_surface;
+    color: @aqua_ink;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
     font-weight: 600;
-    font-size: 9.5pt;
-    padding: 7px 14px;
-    margin: 0 2px;
+    font-size: 13px;
+    min-height: 27px;
+    padding: 3px 9px;
 }
+.fkey-btn:hover { background: @aqua_raised; }
 .fkey-btn:checked {
-    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
-    border-color: #38bdf8;
-    color: #ffffff;
-    font-weight: 700;
+    background: @aqua_selected;
+    border-color: @aqua_accent;
+    color: @aqua_accent;
 }
-.fkey-btn:hover {
-    background: #1f2937;
-    color: #ffffff;
-    border-color: #3b82f6;
+.fkey-btn:focus-visible { outline: 2px solid @aqua_accent; outline-offset: -2px; }
+
+/* Offline operator manual */
+.aqua-manual .manual-header {
+    background: @aqua_panel;
+    border-bottom: 1px solid @aqua_line;
+    padding: 10px 16px;
 }
+.aqua-manual stacksidebar {
+    background: @aqua_panel;
+    border-right: 1px solid @aqua_line;
+}
+.aqua-manual stacksidebar row:selected {
+    background: @aqua_selected;
+}
+.manual-content { padding: 22px 26px; }
+.manual-section-title { color: @aqua_ink; font-weight: 700; font-size: 15px; }
+.manual-copy { color: @aqua_muted; font-size: 14px; }
 
 /* Modern Action Buttons */
 .action-btn {
@@ -994,26 +998,24 @@ label {
     background: #dc2626;
 }
 
-/* Modern Data Grid / Table */
+/* Catalog and event table. */
 .data-table {
-    background-color: #0d1522;
-    border: 1px solid #1e293b;
-    border-radius: 8px;
+    background: @aqua_surface;
+    border: 1px solid @aqua_line;
+    border-radius: 4px;
+}
+.table-th, .table-td {
+    padding: 7px 10px;
+    border-bottom: 1px solid @aqua_line;
+    font-size: 13px;
 }
 .table-th {
-    background-color: #172554;
-    font-weight: 700;
-    color: #93c5fd;
-    padding: 8px 12px;
-    border-bottom: 2px solid #1e3a8a;
-    font-size: 9.5pt;
+    background: @aqua_raised;
+    color: @aqua_muted;
+    font-weight: 600;
 }
-.table-td {
-    padding: 7px 12px;
-    border-bottom: 1px solid #1e293b;
-    color: #e2e8f0;
-    font-size: 9.5pt;
-}
+.table-td { color: @aqua_ink; }
+.table-td.alternate { background: @aqua_panel; }
 
 /* Modern Input Fields & Controls */
 entry, textview {
@@ -1041,7 +1043,7 @@ progressbar progress {
 
 class AquaWinCCWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(application=app, title="AQUA COMMAND — WinCC V8.1 SCADA & Task Manager")
+        super().__init__(application=app, title="AQUA COMMAND")
         self.set_default_size(1360, 820)
         self.set_size_request(1024, 700)
         self.connect('close-request', self.on_close_request)
@@ -1179,7 +1181,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         logo_label.add_css_class('wincc-logo')
         topbar.append(logo_label)
 
-        title_label = Gtk.Label(label="WINCC V8.1 / INDUSTRIAL OPERATIONS · ระบบส่วนกลาง (CENTRAL GATEWAY)")
+        title_label = Gtk.Label(label="WinCC V8.1")
         title_label.add_css_class('wincc-title')
         title_label.set_hexpand(True)
         title_label.set_xalign(0.0)
@@ -1188,55 +1190,49 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         # Section A Status Cluster (Restrained visual weight hierarchy)
         if len(self.scanned_tags) == 0:
-            self.pill_scan = Gtk.Label(label="Catalog: 0 Tags")
+            self.pill_scan = Gtk.Label(label="คลัง 0 Tag")
             self.pill_scan.add_css_class('badge-nope')
         else:
-            self.pill_scan = Gtk.Label(label=f"Catalog: {len(self.scanned_tags)} Tags")
+            self.pill_scan = Gtk.Label(label=f"คลัง {len(self.scanned_tags)} Tag")
             self.pill_scan.add_css_class('badge-active')
         topbar.append(self.pill_scan)
-
-        self.pill_scada_ip = Gtk.Label(label="Local NIC: NOT VERIFIED")
-        self.pill_scada_ip.add_css_class('badge-standby')
-        topbar.append(self.pill_scada_ip)
 
         self.pill_readonly = Gtk.Label(label="READ ONLY")
         self.pill_readonly.add_css_class('badge-readonly')
         topbar.append(self.pill_readonly)
 
+        self.internet_badge = Gtk.Label(label='เน็ต: ยังไม่ทราบ')
+        self.internet_badge.add_css_class('badge-standby')
+        topbar.append(self.internet_badge)
+
+        # Legacy status fields used by background and topology handlers.
+        self.pill_scada_ip = Gtk.Label(label="Local NIC: NOT VERIFIED")
         self.pill_net = Gtk.Label(label="Internet: ยังไม่ได้ตรวจสอบ")
-        self.pill_net.add_css_class('badge-standby')
-        topbar.append(self.pill_net)
-
-        self.clock_label = Gtk.Label(label="--:--:--")
-        self.clock_label.add_css_class('wincc-clock')
-        topbar.append(self.clock_label)
-
-        # Internal attribute preserved for background handlers
         self.pill_wan_ip = Gtk.Label(label="")
         self.pill_opcua = Gtk.Label(label="")
 
         # 2. System Status / Alarm Ribbon Line
         alarm_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         alarm_box.add_css_class('alarm-banner')
-        root_box.append(alarm_box)
 
         if len(self.scanned_tags) == 0:
-            self.alarm_icon = Gtk.Label(label="[STANDBY]")
+            self.alarm_icon = Gtk.Label(label="สถานะ")
             self.alarm_icon.add_css_class('alarm-text')
             alarm_box.append(self.alarm_icon)
 
-            self.alarm_text = Gtk.Label(label="ระบบพร้อมใช้งาน — ยังไม่มีข้อมูล Tag ในระบบ | กรุณากดปุ่ม [F7 สแกน & รีเฟรช] เพื่อเริ่มสแกน")
+            self.alarm_text = Gtk.Label(label="ยังไม่มีข้อมูล Tag · เปิดคลัง Tag แล้วกดรีเฟรชคลัง")
             self.alarm_text.add_css_class('alarm-text')
             self.alarm_text.set_hexpand(True)
         else:
-            self.alarm_icon = Gtk.Label(label="[CATALOG VERIFIED]")
+            self.alarm_icon = Gtk.Label(label="คลัง Tag")
             self.alarm_icon.add_css_class('alarm-text')
             alarm_box.append(self.alarm_icon)
 
-            self.alarm_text = Gtk.Label(label=f"คลัง Tag WinCC V8.1 โหลดสมบูรณ์ ({len(self.scanned_tags)} Tags / 10 Groups) — โหมด READ ONLY | สัญญาณสด: Not Observed (ไม่มีเซสชัน OPC UA ภายนอก)")
+            self.alarm_text = Gtk.Label(label=f"โหลดคลัง WinCC แล้ว {len(self.scanned_tags)} Tag · ยังไม่มีผลอ่าน OPC UA")
             self.alarm_text.add_css_class('alarm-text')
             self.alarm_text.set_hexpand(True)
         self.alarm_text.set_xalign(0.0)
+        self.alarm_text.set_ellipsize(Pango.EllipsizeMode.END)
         alarm_box.append(self.alarm_text)
 
         # 3. Stack Pages
@@ -1255,77 +1251,74 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.build_tags_page()
         self.build_alarms_page()
 
-        # 4. WinCC Bottom Function Keys Bar
-        fkey_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        fkey_bar.add_css_class('wincc-fkey-bar')
-        root_box.append(fkey_bar)
+        navigation = Gtk.Box(spacing=6)
+        navigation.add_css_class('wincc-navigation')
+        root_box.insert_child_after(navigation, topbar)
+        root_box.append(alarm_box)
 
         self.nav_btns = {}
-        pages_def = [
-            ('overview', 'F1  ภาพรวม Tag' if USE_UNIFIED_WORKSPACE else 'F1  ภาพรวมสถานีสูบน้ำ'),
-            ('tasks', 'F2  จัดการ Task' if USE_UNIFIED_WORKSPACE else 'F2  ตัวจัดการ Task (WinCC Task Manager)'),
-            ('network', 'F3  ผังเครือข่าย 2 วงแลน & หลายเราเตอร์'),
-            ('machine', 'F4  ข้อมูลเครื่องจริง (Host)'),
-            ('tags', f"F5  คลัง Tag ที่สแกนพบ ({len(self.scanned_tags)} Tags)"),
-            ('alarms', 'F6  ตั้งค่าการเชื่อมต่อ'),
-        ]
+        self.settings_button = Gtk.ToggleButton(icon_name='applications-system-symbolic')
+        self.settings_button.add_css_class('fkey-btn')
+        self.settings_button.set_size_request(42, -1)
+        self.settings_button.set_tooltip_text('ตั้งค่าการเชื่อมต่อ')
+        self.settings_button.update_property([Gtk.AccessibleProperty.LABEL], ['การตั้งค่า'])
 
-        group_btn = None
-        for key, text in pages_def:
-            if USE_UNIFIED_WORKSPACE and key == 'tasks':
-                button = Gtk.Button(label=text)
+        pages = (
+            ('งานประจำ', (
+                ('overview', 'ติดตามค่า' if USE_UNIFIED_WORKSPACE else 'ภาพรวมสถานี'),
+                ('tasks', 'งานเฝ้าระวัง'),
+                ('network', 'ผังการสื่อสาร'),
+            )),
+            ('เครื่องมือ', (
+                ('tags', 'คลัง Tag'),
+                ('machine', 'ข้อมูลเครื่อง'),
+            )),
+        )
+        group_button = self.settings_button
+        for caption, entries in pages:
+            if self.nav_btns:
+                navigation.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
+            heading = Gtk.Label(label=caption)
+            heading.add_css_class('nav-caption')
+            navigation.append(heading)
+            for key, text in entries:
+                if USE_UNIFIED_WORKSPACE and key == 'tasks':
+                    button = Gtk.Button(label=text)
+                    button.set_tooltip_text('เปิดงานเฝ้าระวัง')
+                    button.connect('clicked', lambda _: self.activate_workspace_mode('task_manager'))
+                else:
+                    button = Gtk.ToggleButton(label=text)
+                    button.set_group(group_button)
+                    button.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
+                    if USE_UNIFIED_WORKSPACE and key == 'overview':
+                        button.connect('clicked', lambda _: self.activate_workspace_mode('monitoring'))
+                    self.nav_btns[key] = button
                 button.add_css_class('fkey-btn')
-                button.connect('clicked', lambda _: self.activate_workspace_mode('task_manager'))
-                fkey_bar.append(button)
-                continue
-            b = Gtk.ToggleButton(label=text)
-            b.add_css_class('fkey-btn')
-            if isinstance(b.get_child(), Gtk.Label):
-                b.get_child().set_ellipsize(Pango.EllipsizeMode.END)
-            if group_btn:
-                b.set_group(group_btn)
-            else:
-                group_btn = b
-                b.set_active(True)
-            if USE_UNIFIED_WORKSPACE and key == 'overview':
-                b.connect('toggled', lambda btn: self.activate_workspace_mode('monitoring') if btn.get_active() else None)
-            else:
-                b.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
-            fkey_bar.append(b)
-            self.nav_btns[key] = b
-        # Native Keyboard F1..F8 Controller
+                navigation.append(button)
+
+        navigation.append(Gtk.Box(hexpand=True))
+        navigation.append(self.build_help_button())
+
+        self.nav_btns['alarms'] = self.settings_button
+        self.settings_button.connect('toggled', lambda btn: self.stack.set_visible_child_name('alarms') if btn.get_active() else None)
+        self.stack.connect('notify::visible-child-name', self.on_page_changed)
+
+        exit_btn = Gtk.Button(label='ปิดโปรแกรม')
+        exit_btn.add_css_class('fkey-btn')
+        exit_btn.connect('clicked', lambda _: self.close())
+        alarm_box.append(exit_btn)
+        alarm_box.append(self.settings_button)
+
         key_ctrl = Gtk.EventControllerKey()
         key_ctrl.connect('key-pressed', self.on_global_key_pressed)
         self.add_controller(key_ctrl)
-
-
-        spacer = Gtk.Box()
-        spacer.set_hexpand(True)
-        fkey_bar.append(spacer)
-
-        refresh_btn = Gtk.Button(label="F7  สแกน & รีเฟรช")
-        refresh_btn.add_css_class('fkey-btn')
-        refresh_btn.add_css_class('fkey-btn-orange')
-        if isinstance(refresh_btn.get_child(), Gtk.Label):
-            refresh_btn.get_child().set_ellipsize(Pango.EllipsizeMode.END)
-        refresh_btn.connect('clicked', lambda _: self.trigger_rescan())
-        fkey_bar.append(refresh_btn)
-
-        exit_btn = Gtk.Button(label="F8  ปิดระบบ")
-        exit_btn.add_css_class('fkey-btn')
-        exit_btn.add_css_class('fkey-btn-exit')
-        if isinstance(exit_btn.get_child(), Gtk.Label):
-            exit_btn.get_child().set_ellipsize(Pango.EllipsizeMode.END)
-        exit_btn.connect('clicked', lambda _: self.close())
-        fkey_bar.append(exit_btn)
 
         # Default startup landing page: F1 Overview
         self.stack.set_visible_child_name('overview')
         if 'overview' in self.nav_btns:
             self.nav_btns['overview'].set_active(True)
 
-        # Start Clock & Background Poller
-        GLib.timeout_add_seconds(1, self.tick_clock)
+        # Start the background pollers.
         GLib.timeout_add_seconds(1, self.auto_scan_tick) # Real Auto-Scan Engine!
         self.update_real_data()
         GLib.timeout_add_seconds(2, self.update_real_data)
@@ -1339,34 +1332,51 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         try:
             from observability.ui import DashboardUI
             self.hybrid_ui = DashboardUI(self)
-            topbar.append(self.hybrid_ui.menu)
             if self.hybrid_ui.bridge:
+                topbar.append(self.hybrid_ui.menu)
                 self.render_tags_page_grid()
         except Exception:
             pass  # Grafana integration failure cannot prevent native startup.
 
-    def tick_clock(self):
-        now_str = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        self.clock_label.set_text(now_str)
-        return True
+    def build_help_button(self):
+        self.help_manual = None
+        self.help_button = Gtk.Button(label='?')
+        self.help_button.add_css_class('fkey-btn')
+        self.help_button.set_size_request(38, -1)
+        self.help_button.set_tooltip_text('คู่มือการใช้งาน')
+        self.help_button.update_property([Gtk.AccessibleProperty.LABEL], ['คู่มือการใช้งาน'])
+        self.help_button.connect('clicked', self.show_help_manual)
+        return self.help_button
+
+    def show_help_manual(self, _):
+        if self.help_manual is None:
+            if __package__:
+                from .help_manual import HelpManual
+            else:
+                from help_manual import HelpManual
+            self.help_manual = HelpManual(self)
+        self.help_manual.present()
 
     def switch_to_tab(self, tab_key):
-        if USE_UNIFIED_WORKSPACE and tab_key == 'tasks':
-            self.activate_workspace_mode('task_manager')
+        if USE_UNIFIED_WORKSPACE and tab_key in ('overview', 'tasks'):
+            self.activate_workspace_mode('task_manager' if tab_key == 'tasks' else 'monitoring')
             return
         self.stack.set_visible_child_name(tab_key)
-        if tab_key in self.nav_btns:
-            self.nav_btns[tab_key].set_active(True)
+
+    def on_page_changed(self, stack, _):
+        page = stack.get_visible_child_name()
+        if page in self.nav_btns:
+            self.nav_btns[page].set_active(True)
+        if page == 'tags' and self.tags_page_dirty:
+            self.render_tags_page_grid()
 
     def trigger_rescan(self):
         self.scanned_tags = scan_wincc_tags(DEFAULT_WINCC_EXPORT)
-        self.pill_scan.set_text(f"Catalog: {len(self.scanned_tags)} Tags")
+        self.pill_scan.set_text(f"คลัง {len(self.scanned_tags)} Tag")
         self.pill_scan.remove_css_class('badge-nope')
         self.pill_scan.add_css_class('badge-active')
-        if 'tags' in self.nav_btns:
-            self.nav_btns['tags'].set_label(f"F5  คลัง Tag ที่สแกนพบ ({len(self.scanned_tags)} Tags)")
         self.alarm_icon.set_text("[SCANNED]")
-        self.alarm_text.set_text(f"สแกน Tag WinCC สำเร็จ: โหลดข้อมูล {len(self.scanned_tags)} Tags เข้าสู่ F1 Station Explorer เรียบร้อยแล้ว")
+        self.alarm_text.set_text(f"รีเฟรชคลัง WinCC แล้ว {len(self.scanned_tags)} Tag")
         self.render_dynamic_overview()
         if hasattr(self, 'render_tags_grid'):
             self.render_tags_grid()
@@ -1381,7 +1391,6 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.stack.set_visible_child_name('overview')
         if hasattr(self, 'unified_workspace'):
             if mode == 'task_manager':
-                self.nav_btns['overview'].set_active(True)
                 self.unified_workspace.open_task_dialog()
             else:
                 self.unified_workspace.set_workspace_mode('monitoring')
@@ -1491,8 +1500,6 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.pill_scan.set_text("สแกนพบ: 0 Tags")
         self.pill_scan.remove_css_class('badge-active')
         self.pill_scan.add_css_class('badge-nope')
-        if 'tags' in self.nav_btns:
-            self.nav_btns['tags'].set_label("F5  คลัง Tag ที่สแกนพบ (0 Tags)")
 
         # Switch to F1 (Default Overview Landing Page)
         self.stack.set_visible_child_name('overview')
@@ -1515,8 +1522,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if hasattr(self, 'render_network_table'):
             self.render_network_table()
 
-        self.alarm_icon.set_text("⚪ [STANDBY]")
-        self.alarm_text.set_text("🔄 รีเซ็ตโปรแกรมกลับสู่ค่าเริ่มต้นว่างเปล่า (เหมือนติดตั้งใหม่) เรียบร้อยแล้ว — กรุณากด F7 หรือสแกนเพื่อโหลดข้อมูล")
+        self.alarm_icon.set_text("⚪ สถานะ")
+        self.alarm_text.set_text("🔄 รีเซ็ตโปรแกรมกลับสู่ค่าเริ่มต้นว่างเปล่า (เหมือนติดตั้งใหม่) เรียบร้อยแล้ว — เปิดคลัง Tag แล้วกดรีเฟรชคลัง")
 
     def show_network_config_dialog(self, _):
         dlg = Gtk.Window(title="⚙️ ปรับแต่ง IP และโครงสร้างเราเตอร์ (Multi-Router Config)")
@@ -1684,21 +1691,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         return False
 
     # ---------------------------------------------------------
-    # Global Function Keys Controller (F1 - F8)
+    # Global Function Keys Controller (F1–F9)
     # ---------------------------------------------------------
     def on_global_key_pressed(self, controller, keyval, keycode, state):
         # Program Settings shortcut (Ctrl+,)
         if hasattr(Gdk, 'ModifierType') and (state & Gdk.ModifierType.CONTROL_MASK) and keyval == getattr(Gdk, 'KEY_comma', 44):
             self.switch_to_tab('alarms')
-            return True
-
-        if USE_UNIFIED_WORKSPACE and keyval == Gdk.KEY_F1:
-            self.activate_workspace_mode('monitoring')
-            if 'overview' in self.nav_btns:
-                self.nav_btns['overview'].set_active(True)
-            return True
-        elif USE_UNIFIED_WORKSPACE and keyval == Gdk.KEY_F2:
-            self.activate_workspace_mode('task_manager')
             return True
 
         key_map = {
@@ -1710,16 +1708,16 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             Gdk.KEY_F6: 'alarms',
         }
         if keyval in key_map:
-            page_name = key_map[keyval]
-            self.stack.set_visible_child_name(page_name)
-            if page_name in self.nav_btns:
-                self.nav_btns[page_name].set_active(True)
+            self.switch_to_tab(key_map[keyval])
             return True
         elif keyval == Gdk.KEY_F7:
             self.trigger_rescan()
             return True
         elif keyval == Gdk.KEY_F8:
             self.close()
+            return True
+        elif keyval == Gdk.KEY_F9:
+            self.show_help_manual(None)
             return True
         return False
 
@@ -1738,48 +1736,49 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         vbox.set_margin_bottom(10)
         scrolled.set_child(vbox)
 
-        grp = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        grp.add_css_class('wincc-group')
-        vbox.append(grp)
+        title = Gtk.Label(label='ข้อมูลเครื่องที่รัน AQUA COMMAND', xalign=0)
+        title.add_css_class('page-title')
+        vbox.append(title)
+        hint = Gtk.Label(label='รายละเอียดของเครื่องที่เปิด AQUA COMMAND · ตรวจการเชื่อมต่อ WinCC ได้ในผังการสื่อสาร', xalign=0)
+        hint.add_css_class('page-hint')
+        vbox.append(hint)
 
-        title = Gtk.Label(label="💻 ข้อมูลเครื่องประมวลผลจริง (Host Machine Diagnostics — 100% Real)")
-        title.add_css_class('group-title')
-        title.set_xalign(0.0)
-        grp.append(title)
-
-        grid = Gtk.Grid(column_spacing=20, row_spacing=8)
-        grp.append(grid)
-
+        columns = Gtk.Grid(column_spacing=12, row_spacing=12, column_homogeneous=True)
+        vbox.append(columns)
         self.machine_labels = {}
-        fields = [
-            ("ชื่อเครื่อง (Hostname):", "hostname"),
-            ("ระบบปฏิบัติการ (OS):", "os_name"),
-            ("เคอร์เนล (Linux Kernel):", "kernel"),
-            ("สถาปัตยกรรม (Arch):", "arch"),
-            ("หน่วยประมวลผล (CPU Model):", "cpu_model"),
-            ("จำนวนคอร์ (CPU Cores):", "cpu_cores"),
-            ("ภาระการทำงาน (CPU Load Avg):", "cpu_load"),
-            ("หน่วยความจำรวม (RAM Total):", "ram_total_gb"),
-            ("หน่วยความจำที่ใช้ (RAM Used):", "ram_used_gb"),
-            ("หน่วยความจำว่าง (RAM Available):", "ram_avail_gb"),
-            ("พื้นที่ฮาร์ดดิสก์ทั้งหมด (Disk Total):", "disk_total_gb"),
-            ("พื้นที่ฮาร์ดดิสก์ที่ใช้ (Disk Used):", "disk_used_gb"),
-            ("พื้นที่ฮาร์ดดิสก์ว่าง (Disk Free):", "disk_avail_gb"),
-            ("IP ประจำเครื่อง (LAN IP):", "ip_lan"),
-            ("เวลาที่เปิดเครื่องต่อเนื่อง (Uptime):", "uptime_str"),
-        ]
-
-        for row, (label_text, key) in enumerate(fields):
-            lbl_title = Gtk.Label(label=label_text)
-            lbl_title.set_xalign(0.0)
-            lbl_title.add_css_class('card-header')
-            grid.attach(lbl_title, 0, row, 1, 1)
-
-            lbl_val = Gtk.Label(label="กำลังโหลด...")
-            lbl_val.set_xalign(0.0)
-            lbl_val.set_selectable(True)
-            grid.attach(lbl_val, 1, row, 1, 1)
-            self.machine_labels[key] = lbl_val
+        sections = (
+            ('ระบบ', 0, 0, (
+                ('ชื่อเครื่อง', 'hostname'), ('ระบบปฏิบัติการ', 'os_name'),
+                ('เคอร์เนล', 'kernel'), ('สถาปัตยกรรม', 'arch'),
+                ('เวลาเปิดต่อเนื่อง', 'uptime_str'),
+            )),
+            ('หน่วยประมวลผลและ RAM', 1, 0, (
+                ('รุ่น CPU', 'cpu_model'), ('จำนวนคอร์', 'cpu_cores'),
+                ('โหลด CPU', 'cpu_load'), ('RAM ทั้งหมด', 'ram_total_gb'),
+                ('RAM ที่ใช้', 'ram_used_gb'), ('RAM ว่าง', 'ram_avail_gb'),
+            )),
+            ('เครือข่ายในเครื่อง', 0, 1, (('IP ประจำเครื่อง', 'ip_lan'),)),
+            ('พื้นที่จัดเก็บ', 1, 1, (
+                ('ทั้งหมด', 'disk_total_gb'), ('ที่ใช้', 'disk_used_gb'), ('ว่าง', 'disk_avail_gb'),
+            )),
+        )
+        for heading, column, row, fields in sections:
+            card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            card.add_css_class('wincc-group')
+            columns.attach(card, column, row, 1, 1)
+            caption = Gtk.Label(label=heading, xalign=0)
+            caption.add_css_class('group-title')
+            card.append(caption)
+            grid = Gtk.Grid(column_spacing=16, row_spacing=8)
+            card.append(grid)
+            for index, (name, key) in enumerate(fields):
+                field = Gtk.Label(label=name, xalign=0)
+                field.add_css_class('page-hint')
+                grid.attach(field, 0, index, 1, 1)
+                value = Gtk.Label(label='กำลังโหลด…', xalign=0, selectable=True, wrap=True, hexpand=True)
+                value.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+                grid.attach(value, 1, index, 1, 1)
+                self.machine_labels[key] = value
 
         self.stack.add_named(scrolled, 'machine')
 
@@ -1895,11 +1894,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
             if res.get('new_tags'):
                 self.scanned_tags = res['new_tags']
-                self.pill_scan.set_text(f"Catalog: {len(self.scanned_tags)} Tags")
+                self.pill_scan.set_text(f"คลัง {len(self.scanned_tags)} Tag")
                 self.pill_scan.remove_css_class('badge-nope')
                 self.pill_scan.add_css_class('badge-active')
-                if 'tags' in self.nav_btns:
-                    self.nav_btns['tags'].set_label(f"F5  คลัง Tag ที่สแกนพบ ({len(self.scanned_tags)} Tags)")
                 if hasattr(self, 'render_dynamic_overview'):
                     self.render_dynamic_overview()
                 if hasattr(self, 'render_tags_grid'):
@@ -2011,32 +2008,46 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         vbox.set_margin_bottom(10)
         scrolled.set_child(vbox)
 
-        grp = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        grp.add_css_class('wincc-group')
-        vbox.append(grp)
-
-        self.tags_page_title = Gtk.Label(label=f"🏷️ ตารางสัญญาณ Tag ทั้งหมดที่สแกนพบ ({len(self.scanned_tags)} Tags Inventory)")
-        self.tags_page_title.add_css_class('group-title')
-        self.tags_page_title.set_xalign(0.0)
-        grp.append(self.tags_page_title)
+        header = Gtk.Box(spacing=10)
+        vbox.append(header)
+        heading = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4, hexpand=True)
+        header.append(heading)
+        self.tags_page_title = Gtk.Label(xalign=0)
+        self.tags_page_title.add_css_class('page-title')
+        heading.append(self.tags_page_title)
+        hint = Gtk.Label(label='รายชื่อจากไฟล์ WinCC · เปิดหน้าติดตามค่าเพื่อดูผลอ่านหรือเพิ่ม Tag เข้า Task', xalign=0)
+        hint.add_css_class('page-hint')
+        heading.append(hint)
+        rescan = Gtk.Button(label='รีเฟรชคลัง', valign=Gtk.Align.CENTER)
+        rescan.add_css_class('fkey-btn')
+        rescan.connect('clicked', lambda _: self.trigger_rescan())
+        header.append(rescan)
+        workspace = getattr(self, 'unified_workspace', None)
+        if workspace and workspace.f1_api:
+            for control in (workspace.btn_auto_scan, workspace.badge_scan_status):
+                workspace.top_box.remove(control)
+                control.set_valign(Gtk.Align.CENTER)
+                header.append(control)
 
         self.tags_page_grid = Gtk.Grid(column_spacing=1, row_spacing=1)
         self.tags_page_grid.add_css_class('data-table')
-        grp.append(self.tags_page_grid)
-
-        self.render_tags_page_grid()
+        vbox.append(self.tags_page_grid)
+        self.tags_page_dirty = True
         self.stack.add_named(scrolled, 'tags')
 
     def render_tags_page_grid(self):
+        self.tags_page_dirty = True
+        if self.stack.get_visible_child_name() != 'tags':
+            return
+        self.tags_page_dirty = False
         while self.tags_page_grid.get_first_child():
             self.tags_page_grid.remove(self.tags_page_grid.get_first_child())
 
-        if hasattr(self, 'tags_page_title'):
-            self.tags_page_title.set_text(f"🏷️ ตารางสัญญาณ Tag ทั้งหมดที่สแกนพบ ({len(self.scanned_tags)} Tags Inventory)")
+        self.tags_page_title.set_text(f"คลัง Tag · {len(self.scanned_tags)} รายการ")
 
         hybrid = getattr(self, 'hybrid_ui', None)
         show_trends = bool(hybrid and hybrid.bridge)
-        headers = ["Tag Name", "กลุ่ม (Group)", "PLC Address", "ชนิดข้อมูล", "การเชื่อมต่อ"]
+        headers = ["ชื่อ Tag", "กลุ่มอุปกรณ์", "ชนิดข้อมูล", "ที่อยู่ PLC", "การเชื่อมต่อ"]
         if show_trends:
             headers.append("ประวัติ")
         for col, h in enumerate(headers):
@@ -2046,18 +2057,23 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.tags_page_grid.attach(th, col, 0, 1, 1)
 
         if not self.scanned_tags:
-            empty_lbl = Gtk.Label(label="📭 ยังไม่มี Tag ในคลัง (0 Tags) — กรุณากดปุ่ม [F7 สแกน & รีเฟรช] เพื่อนำเข้า Tag จาก WinCC V8.1")
+            empty_lbl = Gtk.Label(label="ยังไม่มี Tag ในคลัง · กดรีเฟรชคลัง เพื่ออ่านไฟล์ WinCC")
             empty_lbl.add_css_class('table-td')
             empty_lbl.set_xalign(0.0)
-            self.tags_page_grid.attach(empty_lbl, 0, 1, 5, 1)
+            self.tags_page_grid.attach(empty_lbl, 0, 1, len(headers), 1)
             return
 
-        for row, t in enumerate(self.scanned_tags[:60], 1):
-            for col, val in enumerate([t['name'], t['group'], t['addr'], t['type'], t['conn']]):
+        for row, t in enumerate(self.scanned_tags, 1):
+            for col, val in enumerate([t['name'], t['group'], t['type'], t['addr'], t['conn']]):
                 td = Gtk.Label(label=val)
                 td.add_css_class('table-td')
                 td.set_xalign(0.0)
                 td.set_selectable(True)
+                td.set_wrap(True)
+                td.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+                td.set_hexpand(col in (0, 1, 3))
+                if row % 2 == 0:
+                    td.add_css_class('alternate')
                 self.tags_page_grid.attach(td, col, row, 1, 1)
             if show_trends:
                 trend = Gtk.Button(label="Trend")
@@ -2135,11 +2151,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         page.append(self.f6_sections)
 
         opc = add_section('opcua', 'WinCC OPC UA')
-        connection_column, monitoring_column = add_columns(opc, left_span=2)
+        connection_column, certificate_column = add_columns(opc, left_span=2)
         connection = add_card(connection_column, 'เชื่อมต่อ WinCC',
                               'กรอก URL ของเซิร์ฟเวอร์เพื่ออ่านข้อมูลผ่าน OPC UA แบบอ่านอย่างเดียว')
-        monitoring = add_card(monitoring_column, 'อ่านค่าอัตโนมัติ', 'เริ่มอ่านทุก 5 วินาทีเมื่อกดเริ่ม')
-        certificates = add_card(monitoring_column, 'ใบรับรอง OPC UA', '')
+        certificates = add_card(certificate_column, 'ใบรับรอง OPC UA', '')
+        monitoring = add_card(opc, 'อ่านค่าอัตโนมัติ',
+                              'ตรวจการเชื่อมต่อก่อนเริ่มอ่านตามรอบ การแจ้งเตือนทำงานตาม Task ที่ตั้งไว้')
         fields = Gtk.Grid(column_spacing=16, row_spacing=8)
         connection.append(fields)
         self.entry_opc_url = Gtk.Entry(placeholder_text='opc.tcp://ชื่อเซิร์ฟเวอร์:พอร์ต')
@@ -2204,22 +2221,36 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         connection.append(opc_actions)
         self.btn_test_opc = action('ทดสอบการเชื่อมต่อ', self.on_test_opcua_connection)
         self.btn_browse_opc = action('ค้นหา Tag', self.on_browse_opcua_tags)
+        opc_actions.append(action('บันทึก WinCC', self.on_save_opcua_config, primary=True))
         opc_actions.append(self.btn_test_opc)
         opc_actions.append(self.btn_browse_opc)
-        opc_actions.append(action('บันทึก WinCC', self.on_save_opcua_config, primary=True))
 
+        monitoring_controls = Gtk.Box(spacing=12)
+        monitoring.append(monitoring_controls)
         self.lbl_mon_telemetry = status('STOPPED (หยุดอยู่)')
-        monitoring.append(self.lbl_mon_telemetry)
-        monitoring_actions = Gtk.Box(spacing=8, halign=Gtk.Align.END)
-        monitoring.append(monitoring_actions)
+        self.lbl_mon_telemetry.set_hexpand(True)
+        monitoring_controls.append(self.lbl_mon_telemetry)
+        monitoring_actions = Gtk.Box(spacing=8)
+        monitoring_controls.append(monitoring_actions)
         self.btn_start_monitoring = action('เริ่มอ่าน', self.on_start_monitoring_clicked)
         self.btn_pause_monitoring = action('พัก', self.on_pause_monitoring_clicked)
         self.btn_stop_monitoring = action('หยุด', self.on_stop_monitoring_clicked)
         self.btn_pause_monitoring.set_sensitive(False)
         self.btn_stop_monitoring.set_sensitive(False)
+        monitoring_actions.append(self.btn_start_monitoring)
         monitoring_actions.append(self.btn_pause_monitoring)
         monitoring_actions.append(self.btn_stop_monitoring)
-        monitoring_actions.append(self.btn_start_monitoring)
+
+        if __package__:
+            from .telemetry_settings import TelemetrySettings
+        else:
+            from telemetry_settings import TelemetrySettings
+
+        sources = add_section('telemetry', 'แหล่งข้อมูล')
+        source_column, reader_column = add_columns(sources, left_span=2)
+        source_form = add_card(source_column, 'เลือกแหล่งข้อมูล', 'แหล่งที่เลือกใช้แสดงผลในหน้าติดตามค่า')
+        reader_controls = add_card(reader_column, 'การอ่านข้อมูล', 'อ่านครั้งเดียวเพื่อตรวจค่า หรือเริ่มอ่านตามรอบ')
+        self.telemetry_settings = TelemetrySettings(self, source_form, reader_controls, label, action, status)
 
         telegram = add_section('telegram', 'Telegram')
         destination_column, test_column = add_columns(telegram)
@@ -2248,7 +2279,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.btn_test_tg.set_halign(Gtk.Align.END)
         test.append(self.btn_test_tg)
         self.lbl_tg_status = status('ยังไม่ได้ทดสอบส่ง')
-        telegram.append(self.lbl_tg_status)
+        test.append(self.lbl_tg_status)
 
         history = add_section('history', 'ประวัติเหตุการณ์')
         events = add_card(history, 'ประวัติเหตุการณ์', 'แสดงเหตุการณ์ล่าสุดของโปรแกรม สูงสุด 25 รายการ')
@@ -2881,10 +2912,26 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                     if t.get('action_notify'):
                         t['alert_count'] = t.get('alert_count', 0)
 
+    def update_internet_badge(self, snapshot):
+        state = local_snapshot_state(snapshot)
+        connectivity = snapshot.get('connectivity') if state == 'OBSERVED_LOCAL' else None
+        caption = {'FULL': 'ใช้งานได้', 'LIMITED': 'จำกัด', 'PORTAL': 'ต้องเข้าสู่ระบบ',
+                   'NONE': 'ไม่เชื่อมต่อ'}.get(connectivity, 'ข้อมูลเก่า' if state == 'STALE' else 'ยังไม่ทราบ')
+        gateway = snapshot.get('default_gateway') if state == 'OBSERVED_LOCAL' else None
+        label = f'เน็ต: {caption}'
+        if gateway:
+            label += f' · GW {gateway}'
+        self.internet_badge.set_text(label)
+        self.internet_badge.set_tooltip_text(
+            'สถานะอินเทอร์เน็ตจาก NetworkManager · GW คือเกตเวย์ IPv4 เริ่มต้นของเครื่อง')
+        self.internet_badge.set_css_classes(['badge-active' if connectivity == 'FULL' else 'badge-standby'])
+
     def update_real_data(self):
         """Fetches real host machine metrics and updates UI cleanly."""
         try:
-            m = read_real_machine_data(getattr(getattr(self, 'f3_network_view', None), 'local_state', {}))
+            snapshot = getattr(getattr(self, 'f3_network_view', None), 'local_state', {})
+            self.update_internet_badge(snapshot)
+            m = read_real_machine_data(snapshot)
             if hasattr(self, 'machine_labels') and 'hostname' in self.machine_labels:
                 self.machine_labels['hostname'].set_text(m['hostname'])
                 self.machine_labels['os_name'].set_text(m['os_name'])
@@ -2916,6 +2963,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     def on_close_request(self, *args):
         """Gracefully terminate background workers on window close."""
         self.running = False
+        if hasattr(self, 'telemetry_settings'):
+            self.telemetry_settings.stop(closing=True)
         if hasattr(self, 'browse_cancel_flag'):
             self.browse_cancel_flag.set()
         if getattr(self, 'hybrid_ui', None):

@@ -19,9 +19,9 @@ class DashboardUI:
         box.set_margin_bottom(8)
         box.set_margin_start(8)
         box.set_margin_end(8)
-        for label, page in (("เปิดหน้าปัจจุบัน", None), ("F1 Monitoring", "overview"),
-                ("F2 Event history", "tasks"), ("F3 Network / OPC UA", "network"),
-                ("F4 Host metrics", "machine"), ("F6/F7 Diagnostics", "alarms")):
+        for label, page in (("เปิดหน้าปัจจุบัน", None), ("ค่าที่ติดตาม", "overview"),
+                ("ประวัติเหตุการณ์", "tasks"), ("เครือข่ายและ OPC UA", "network"),
+                ("ข้อมูลเครื่อง", "machine"), ("วินิจฉัยการเชื่อมต่อ", "alarms")):
             button = Gtk.Button(label=label)
             button.connect("clicked", lambda _, target=page: self.open(target))
             box.append(button)

@@ -39,13 +39,13 @@ public sealed class LocalOpcReader:IDisposable {
   try{var clsid=registration.Clsid;var iid=typeof(ILocalItemRead).GUID;var hr=CoCreateInstance(ref clsid,IntPtr.Zero,4u|(registration.View=="Registry32"?0x40000u:0x80000u) /* LOCAL_SERVER plus matching architecture */,ref iid,out var p);Marshal.ThrowExceptionForHR(hr);try{reader=(ILocalItemRead)Marshal.GetObjectForIUnknown(p);}finally{Marshal.Release(p);}}
   catch{CoUninitialize();initialized=false;throw;}
  }
- public ReadFrame Read(IReadOnlyList<string> tags){
+ public ReadFrame Read(IReadOnlyList<string> tags,IReadOnlySet<string> analogTags){
   var items=tags.ToArray();var maxAge=items.Select(_=>uint.MaxValue).ToArray();IntPtr values=IntPtr.Zero,quality=IntPtr.Zero,times=IntPtr.Zero,errors=IntPtr.Zero;var successful=false;var stride=IntPtr.Size==8?24:16;
   try{
    var hr=reader.Read(items.Length,items,maxAge,out values,out quality,out times,out errors);Marshal.ThrowExceptionForHR(hr);successful=true;if(values==IntPtr.Zero||quality==IntPtr.Zero||times==IntPtr.Zero||errors==IntPtr.Zero)throw new InvalidOperationException("OPC returned incomplete value/quality/time/error arrays");var readAt=Wire.Stamp();var observations=new List<Observation>();
    for(var i=0;i<items.Length;i++){
-    var error=Marshal.ReadInt32(errors,i*4);var q=unchecked((ushort)Marshal.ReadInt16(quality,i*2));long? raw=null;string? timestamp=null;
-    if(error>=0){var value=Marshal.GetObjectForNativeVariant(IntPtr.Add(values,i*stride));raw=BinaryNumeric(value);}
+    var error=Marshal.ReadInt32(errors,i*4);var q=unchecked((ushort)Marshal.ReadInt16(quality,i*2));double? raw=null;string? timestamp=null;
+    if(error>=0){var value=Marshal.GetObjectForNativeVariant(IntPtr.Add(values,i*stride));raw=OpcScalar.FromVariant(value,analogTags.Contains(items[i]));}
     try{var ft=Marshal.ReadInt64(times,i*8);if(ft>0)timestamp=DateTimeOffset.FromFileTime(ft).UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ",CultureInfo.InvariantCulture);}catch(ArgumentOutOfRangeException){}
     observations.Add(new(items[i],raw,q,error,timestamp));
    }
@@ -55,24 +55,19 @@ public sealed class LocalOpcReader:IDisposable {
    foreach(var p in new[]{values,quality,times,errors})if(p!=IntPtr.Zero)Marshal.FreeCoTaskMem(p);
   }
  }
- static long? BinaryNumeric(object? value){
-  if(value is bool b)return b?1:0;
-  if(value is null||value is string||value is Array||value is DateTime)return null;
-  try{if(value is byte or sbyte or short or ushort or int or uint or long or ulong or float or double or decimal){var n=Convert.ToDecimal(value,CultureInfo.InvariantCulture);if(decimal.Truncate(n)==n&&n>=-1000000000000000m&&n<=1000000000000000m)return (long)n;}}catch(OverflowException){}
-  return null; // Binary monitor: unsupported nonintegral/nonfinite/types never become zero/OFF.
- }
  public void Dispose(){try{if(Marshal.IsComObject(reader))Marshal.FinalReleaseComObject(reader);}finally{if(initialized){CoUninitialize();initialized=false;}}}
 }
-public sealed record WorkerConfig(int ParentId,List<string> Tags,bool OrganizationalReadAuthorization);
+public sealed record WorkerConfig(int ParentId,List<string> Tags,List<string> AnalogTags,bool OrganizationalReadAuthorization);
 public sealed record WorkerReply(bool Ready,ReadFrame? Frame,string? Error);
 public static class Worker {
  public static int Run(){
   try{
-   var line=Console.In.ReadLine();if(line is null||line.Length>20000)throw new InvalidOperationException("Missing bounded parent scope");var config=System.Text.Json.JsonSerializer.Deserialize<WorkerConfig>(line,Wire.Json)??throw new InvalidOperationException("Missing scope");if(!config.OrganizationalReadAuthorization||config.ParentId<=0)throw new InvalidOperationException("Read authorization required");new ReaderConfig{Tags=config.Tags}.ValidateCapture();
+   var line=Console.In.ReadLine();if(line is null||line.Length>20000)throw new InvalidOperationException("Missing bounded parent scope");var config=System.Text.Json.JsonSerializer.Deserialize<WorkerConfig>(line,Wire.Json)??throw new InvalidOperationException("Missing scope");if(!config.OrganizationalReadAuthorization||config.ParentId<=0)throw new InvalidOperationException("Read authorization required");new ReaderConfig{Tags=config.Tags,AnalogTags=config.AnalogTags}.ValidateCapture();
+   var analogTags=config.AnalogTags.ToHashSet(StringComparer.Ordinal);
    using var parent=System.Diagnostics.Process.GetProcessById(config.ParentId);if(parent.HasExited)throw new InvalidOperationException("Parent session ended");var parentStart=parent.StartTime;
    _=Task.Run(async()=>{while(true){await Task.Delay(1000);try{using var p=System.Diagnostics.Process.GetProcessById(config.ParentId);if(p.HasExited||p.StartTime!=parentStart)Environment.Exit(10);}catch{Environment.Exit(10);}}});
    var registration=Readiness.Inspect();using var source=new LocalOpcReader(registration);Console.WriteLine(Wire.Encode(new WorkerReply(true,null,null)));Console.Out.Flush();
-   while((line=Console.In.ReadLine()) is not null){if(line!="READ")throw new InvalidOperationException("Read-only command required");var frame=source.Read(config.Tags);Console.WriteLine(Wire.Encode(new WorkerReply(true,frame,null)));Console.Out.Flush();}
+   while((line=Console.In.ReadLine()) is not null){if(line!="READ")throw new InvalidOperationException("Read-only command required");var frame=source.Read(config.Tags,analogTags);Console.WriteLine(Wire.Encode(new WorkerReply(true,frame,null)));Console.Out.Flush();}
    return 0;
   }catch(Exception e){Console.WriteLine(Wire.Encode(new WorkerReply(false,null,"Read failed: "+e.GetType().Name+" /0x"+unchecked((uint)e.HResult).ToString("X8"))));Console.Out.Flush();return 1;}
  }

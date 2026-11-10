@@ -83,7 +83,22 @@ export class Store{
   const fail=()=>{throw Object.assign(Error('Invalid read-only OPC DA runtime schema'),{status:400})},stamp=v=>typeof v==='string'&&Number.isFinite(Date.parse(v));
   if(!GROUPS[source]||e.source_id!==source||e.schema_version!==3||e.source_adapter!=='wincc-opc-da'||e.simulated!==false||!['SNAPSHOT','STATE_CHANGE'].includes(e.kind)||!Number.isSafeInteger(e.sequence)||e.sequence<1||typeof e.event_id!=='string'||!e.event_id.startsWith(source+':')||e.event_id.length>100||!stamp(e.at)||!stamp(e.read_at)||e.observed_at!==e.read_at||!e.values||Array.isArray(e.values)||!e.observations||Array.isArray(e.observations))fail();
   const tags=Object.keys(e.values);if(!tags.length||tags.length>100||Object.keys(e.observations).length!==tags.length)fail();
-  for(const tag of tags){const v=e.values[tag],o=e.observations[tag];if(!/^[-A-Za-z0-9_.]{1,100}$/.test(tag)||Object.hasOwn(Object.prototype,tag)||(v!==null&&typeof v!=='boolean')||!o||Object.keys(o).some(k=>!['raw_value','quality_code','read_error','quality','source_timestamp'].includes(k))||(o.raw_value!==null&&!Number.isFinite(o.raw_value))||(o.quality_code!==null&&(!Number.isSafeInteger(o.quality_code)||o.quality_code<0||o.quality_code>4294967295))||!Number.isSafeInteger(o.read_error)||o.read_error< -2147483648||o.read_error>2147483647||!['GOOD','BAD','UNCERTAIN','UNVERIFIED_MAPPING','UNSUPPORTED_VALUE'].includes(o.quality)||(o.source_timestamp!==null&&!stamp(o.source_timestamp))||(o.quality!=='GOOD'&&v!==null)||(o.quality==='GOOD'&&(o.read_error<0||o.quality_code===null||(o.quality_code&192)!==192||![0,1].includes(o.raw_value)||v!==(o.raw_value===1))))fail()}
+  for(const tag of tags){
+   const v=e.values[tag],o=e.observations[tag];
+   if(!/^[-A-Za-z0-9_.]{1,100}$/.test(tag)||Object.hasOwn(Object.prototype,tag)||(v!==null&&typeof v!=='boolean')||
+      !o||Object.keys(o).some(k=>!['raw_value','quality_code','read_error','quality','source_timestamp','value_type'].includes(k))||
+      (o.raw_value!==null&&!Number.isFinite(o.raw_value))||
+      (o.quality_code!==null&&(!Number.isSafeInteger(o.quality_code)||o.quality_code<0||o.quality_code>4294967295))||
+      !Number.isSafeInteger(o.read_error)||o.read_error< -2147483648||o.read_error>2147483647||
+      !['GOOD','BAD','UNCERTAIN','UNVERIFIED_MAPPING','UNSUPPORTED_VALUE'].includes(o.quality)||
+      (o.source_timestamp!==null&&!stamp(o.source_timestamp)))fail();
+   const analog=o.value_type==='analog';
+   if((Object.hasOwn(o,'value_type')&&!analog)||(analog&&v!==null)||(o.quality!=='GOOD'&&v!==null))fail();
+   if(o.quality==='GOOD'){
+    if(o.read_error<0||o.quality_code===null||(o.quality_code&192)!==192)fail();
+    if(analog ? o.read_error!==0||!Number.isFinite(o.raw_value) : ![0,1].includes(o.raw_value)||v!==(o.raw_value===1))fail();
+   }
+  }
   const allowed=['event_id','schema','schema_version','source_id','sequence','kind','at','simulated','observed_at','read_at','source_adapter','values','observations',...(e.kind==='STATE_CHANGE'?['tag_name','before','value']:[])];if(Object.keys(e).some(k=>!allowed.includes(k)))fail();
   if(e.kind==='STATE_CHANGE'&&(!tags.includes(e.tag_name)||typeof e.before!=='boolean'||typeof e.value!=='boolean'||e.before===e.value||e.values[e.tag_name]!==e.value))fail();
  }

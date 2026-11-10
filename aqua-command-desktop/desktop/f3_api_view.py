@@ -30,6 +30,7 @@ except ImportError:
     from f3_projection import F3Projection
 
 ASSETS = Path(__file__).with_name('f3_api')
+FORMAL_THEME = ASSETS.parent / 'f1_api' / 'formal-theme.css'
 
 
 def load_metadata(path):
@@ -61,7 +62,8 @@ def build_html(metadata, *, allow_demo=True, demo=False, demo_error=""):
     page = page.replace('__F3_DEMO_MODE__', '1' if demo else '0')
     page = page.replace('__F3_DEMO_ERROR__', escape(demo_error, quote=True))
     fonts = (ASSETS/'fonts_embedded.css').read_text() if (ASSETS/'fonts_embedded.css').exists() else ''
-    page = page.replace('/*F3_CSS*/', fonts + '\n' + (ASSETS/'view.css').read_text())
+    theme = FORMAL_THEME.read_text(encoding='utf-8')
+    page = page.replace('/*F3_CSS*/', '\n'.join((fonts, theme, (ASSETS/'view.css').read_text(encoding='utf-8'))))
     detector = (ASSETS/'detect.mjs').read_text().replace('export function detect(', 'function detect(', 1)
     page = page.replace('/*F3_JS*/', detector + '\n' + (ASSETS/'view.js').read_text())
     return page.replace('__F3_METADATA__', json.dumps(metadata, ensure_ascii=False).replace('<', '\\u003c'))
@@ -96,6 +98,11 @@ class F3ApiView:
         # Existing opt-in observability callers keep their configured inventory.
         # This object is never a source of state/counters for the F3 page.
         self.store = F3DeviceStore(config_file=config_dir/'network_topology.json')
+        self.router_targets = {}
+        for role, kind, zone in (('OT', 'switch', 'SCADA_OT'), ('WAN', 'router', 'EXTERNAL_WAN')):
+            hosts = [host for host, meta in self.metadata.items() if (meta['kind'], meta['zone']) == (kind, zone)]
+            if len(hosts) == 1:
+                self.router_targets[role] = hosts[0]
         self.local_state = {'interfaces': {}, 'ip_forwarding': None}
         self.topology_data = getattr(owner, 'topology_data', {})
         self.closed = False
@@ -107,8 +114,6 @@ class F3ApiView:
         self._stop = threading.Event()
         self._local_pending = False
         self._local_requested = 0.0
-        self._header_visibility = []
-        self._navigation_caption = None
         self.api_url = ''
         self.root_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.root_widget.set_hexpand(True)
@@ -128,7 +133,7 @@ class F3ApiView:
         self.root_widget.append(self.error)
         self.root_widget.connect('map', self._mapped)
         self.root_widget.connect('unmap', self._unmapped)
-        # Preserve the F1 local-host cache, independently of F3's API-only display.
+        # Keep the passive host snapshot independent of the evidence collector.
         self.refresh_local_state()
 
     def _ensure_web(self):
@@ -157,15 +162,6 @@ class F3ApiView:
     def _mapped(self, *_):
         if self.closed or self._active:
             return
-        for name in ('pill_scada_ip', 'pill_net'):
-            widget = getattr(self.owner, name, None)
-            if isinstance(widget, Gtk.Widget):
-                self._header_visibility.append((widget, widget.get_visible()))
-                widget.set_visible(False)
-        button = getattr(self.owner, 'nav_btns', {}).get('network')
-        if isinstance(button, Gtk.Button):
-            self._navigation_caption = (button, button.get_label())
-            button.set_label('F3  ผังการสื่อสาร')
         self._ensure_web()
         self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo), None)
         self._active = True
@@ -179,7 +175,8 @@ class F3ApiView:
             try:
                 settings=load_settings(self.config_path)
                 server=make_server(self.db_path,hosts=[target['host'] for target in settings['targets']],port=0,settings=settings)
-                server.reader = F3Projection(server.reader, settings, self.metadata, task_groups=tasks)
+                server.reader = F3Projection(server.reader, settings, self.metadata, task_groups=tasks,
+                                             local_snapshot=lambda: self.local_state)
                 with self._lock:
                     if stop.is_set():
                         server.server_close()
@@ -221,13 +218,6 @@ class F3ApiView:
     def _unmapped(self, *_):
         if self.details_window is not None:
             self.details_window.set_visible(False)
-        for widget, visible in self._header_visibility:
-            widget.set_visible(visible)
-        self._header_visibility.clear()
-        if self._navigation_caption is not None:
-            button, caption = self._navigation_caption
-            button.set_label(caption)
-            self._navigation_caption = None
         self._active = False
         self._stop_demo()
         self._live_api_url = ""
@@ -260,7 +250,7 @@ class F3ApiView:
         if message.get('action') == 'open-demo':
             self._open_demo()
             return
-        if key in ('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8') and not self.closed:
+        if key in ('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9') and not self.closed:
             self.owner.on_global_key_pressed(None, getattr(Gdk, 'KEY_'+key), 0, 0)
 
     def _show_f3(self, *, port=None, demo_error=""):
@@ -339,7 +329,7 @@ class F3ApiView:
 
         def worker():
             try:
-                state = read_linux_snapshot()
+                state = read_linux_snapshot(router_targets=self.router_targets)
             except Exception as error:
                 state = {'interfaces': {}, 'state': 'UNKNOWN', 'errors': [f'{type(error).__name__}: {error}']}
             GLib.idle_add(done, state)

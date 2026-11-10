@@ -6,8 +6,10 @@ import f3_local
 
 
 class LocalAdapterTests(unittest.TestCase):
-    def bus(self, bitrate=72000, other_type=1):
+    def bus(self, bitrate=72000, other_type=1, connectivity_enabled=True):
         records = {
+            ('/org/freedesktop/NetworkManager', 'org.freedesktop.NetworkManager'): {
+                'Connectivity': 4, 'ConnectivityCheckEnabled': connectivity_enabled},
             ('/device/1', 'org.freedesktop.NetworkManager.Device'): {
                 'Interface': 'lab-wifi', 'DeviceType': 2, 'State': 100, 'Ip4Config': '/ip4/1'},
             ('/device/1', 'org.freedesktop.NetworkManager.Device.Wireless'): {'Bitrate': bitrate},
@@ -28,7 +30,8 @@ class LocalAdapterTests(unittest.TestCase):
 
     def test_current_wifi_rate_addresses_and_inactive_ethernet_are_distinct(self):
         with patch.object(f3_local.Gio, 'bus_get_sync', return_value=self.bus()):
-            result = f3_local._nm_properties()
+            result, connectivity = f3_local._nm_properties()
+        self.assertEqual(connectivity, 'FULL')
         wifi, ethernet = result['lab-wifi'], result['lab-ethernet']
         self.assertEqual(wifi['speed_mbps'], 72)
         self.assertEqual(wifi['speed_kind'], 'CURRENT_BITRATE')
@@ -41,12 +44,33 @@ class LocalAdapterTests(unittest.TestCase):
 
     def test_zero_wifi_rate_is_unknown(self):
         with patch.object(f3_local.Gio, 'bus_get_sync', return_value=self.bus(0)):
-            self.assertIsNone(f3_local._nm_properties()['lab-wifi']['speed_mbps'])
+            self.assertIsNone(f3_local._nm_properties()[0]['lab-wifi']['speed_mbps'])
 
     def test_bridge_generic_and_p2p_type_codes_are_not_interchanged(self):
         for code, label in ((13, 'BRIDGE'), (14, 'GENERIC'), (30, 'WIFI_P2P')):
             with self.subTest(code=code), patch.object(f3_local.Gio, 'bus_get_sync', return_value=self.bus(other_type=code)):
-                self.assertEqual(f3_local._nm_properties()['lab-ethernet']['interface_type'], label)
+                self.assertEqual(f3_local._nm_properties()[0]['lab-ethernet']['interface_type'], label)
+
+    def test_disabled_connectivity_check_does_not_show_cached_full(self):
+        with patch.object(f3_local.Gio, 'bus_get_sync', return_value=self.bus(connectivity_enabled=False)):
+            _, connectivity = f3_local._nm_properties()
+        self.assertEqual(connectivity, 'UNKNOWN')
+
+    def test_kernel_route_preserves_preferred_source_and_intermediate_gateway(self):
+        response = Mock(returncode=0, stdout='[{"dev":"test-wan","prefsrc":"198.51.100.70",'
+                        '"gateway":"198.51.100.1"}]')
+        with patch.object(f3_local.subprocess, 'run', return_value=response) as run:
+            path = f3_local.read_router_path('192.0.2.254')
+        self.assertEqual(run.call_args.args[0], ['ip', '-j', '-4', 'route', 'get', '192.0.2.254'])
+        self.assertEqual(path, {'target': '192.0.2.254', 'status': 'ROUTE', 'source_ip': '198.51.100.70',
+                                'device': 'test-wan', 'via': '198.51.100.1'})
+
+    def test_no_route_and_unavailable_kernel_are_distinct(self):
+        for stderr, expected in (('RTNETLINK answers: Network is unreachable', 'NO_ROUTE'),
+                                 ('Cannot open netlink socket', 'UNKNOWN')):
+            with self.subTest(stderr=stderr), patch.object(f3_local.subprocess, 'run',
+                    return_value=Mock(returncode=2, stderr=stderr)):
+                self.assertEqual(f3_local.read_router_path('192.0.2.254')['status'], expected)
 
     def test_unavailable_nm_remains_a_visible_partial_snapshot(self):
         with patch.object(f3_local, '_nm_properties', side_effect=OSError('unavailable')), \
@@ -58,7 +82,7 @@ class LocalAdapterTests(unittest.TestCase):
         self.assertIsInstance(result['observed_at'], float)
 
     def test_lowest_metric_default_route_is_primary_without_role_inference(self):
-        with patch.object(f3_local, '_nm_properties', return_value={}), \
+        with patch.object(f3_local, '_nm_properties', return_value=({}, 'UNKNOWN')), \
                 patch.object(f3_local.subprocess, 'run') as run:
             # Use current local interface names, but synthetic route and address data only.
             name = next(p.name for p in f3_local.Path('/sys/class/net').iterdir() if p.name != 'lo')

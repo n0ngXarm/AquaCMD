@@ -23,6 +23,18 @@ class FrontendContracts(unittest.TestCase):
         self.assertIn('/api/stream', markup)
         self.assertIn('ไม่ได้รับข้อมูลจาก backend', markup)
 
+    def test_f3_uses_the_shared_formal_theme_without_own_palette(self):
+        module = self.module()
+        theme = (module.ASSETS.parent / 'f1_api' / 'formal-theme.css').read_text(encoding='utf-8')
+        markup = module.build_html({})
+        self.assertTrue(theme in markup, 'F3 must inline the same formal theme as F1')
+        css = (module.ASSETS / 'view.css').read_text(encoding='utf-8')
+        self.assertLess(markup.index(theme), markup.index(css))
+        for name in ('view.css', 'view.js', 'index.html'):
+            with self.subTest(asset=name):
+                text = (module.ASSETS / name).read_text(encoding='utf-8')
+                self.assertNotRegex(text, r'(?<!&)#[0-9a-fA-F]{3,8}\b|\brgba?\(')
+
     def test_metadata_cannot_inject_measurements_or_multiple_addresses(self):
         module = self.module()
         with tempfile.TemporaryDirectory(dir=ROOT/'tests') as temporary:

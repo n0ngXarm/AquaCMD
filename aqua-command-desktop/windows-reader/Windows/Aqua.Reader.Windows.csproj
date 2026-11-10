@@ -1,4 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
- <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWindowsForms>true</UseWindowsForms><EnableWindowsTargeting>true</EnableWindowsTargeting><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><AssemblyName>AquaCommand.WinCCReader</AssemblyName><ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode><Version>0.9.0</Version></PropertyGroup>
+ <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWindowsForms>true</UseWindowsForms><EnableWindowsTargeting>true</EnableWindowsTargeting><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><AssemblyName>AquaCommand.WinCCReader</AssemblyName><ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode><Version>0.10.0</Version></PropertyGroup>
  <ItemGroup><ProjectReference Include="../Core/Aqua.Reader.Core.csproj" /></ItemGroup>
 </Project>

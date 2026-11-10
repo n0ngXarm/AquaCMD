@@ -8,9 +8,11 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from html import escape
 import json
+import math
 import logging
 from pathlib import Path
 import re
+import sqlite3
 import sys
 from urllib.parse import urlsplit
 
@@ -36,6 +38,11 @@ except (ImportError, ValueError):
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = Path(__file__).with_name('f1_api')
+UNOBSERVED = dict(status='NO', observed_value=None, quality='NOT_OBSERVED',
+                  age_text='ยังไม่ได้สังเกต', observation_source='', observation_at='')
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from collector import telemetry
 
 logger = logging.getLogger('AquaF1ApiView')
 
@@ -128,7 +135,7 @@ def validate_payload(action, payload):
         return True, None
 
     if action == 'key_event':
-        if payload.get('key') not in ('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8'):
+        if payload.get('key') not in ('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9'):
             return False, "Invalid function key"
         return True, None
 
@@ -165,6 +172,7 @@ class F1ApiView:
         self.recent_task_id = 'TASK-01'
         self.live_mode = False
         self.revision = 0
+        self._sent_observations = {}
 
         # WebKit Setup
         session = WebKit.NetworkSession.new_ephemeral()
@@ -220,64 +228,100 @@ class F1ApiView:
             num += 1
         return f"TASK-{num:02d}"
 
+    def _telemetry_snapshot(self):
+        directory = getattr(self.owner, 'config_dir', None)
+        if not isinstance(directory, (str, Path)):
+            return None
+        directory = Path(directory)
+        try:
+            source = telemetry.load_config(directory / telemetry.CONFIG_NAME)
+        except FileNotFoundError:
+            return None
+        except (OSError, ValueError, TypeError, RecursionError):
+            return 'แหล่งสำรอง · ตั้งค่าไม่ถูกต้อง', None
+        method = 'OPC DA' if source['transport'] == 'opcda' else source['transport'].upper()
+        label = f'{method} · {source["source_id"]}'
+        if source['lab']:
+            label += ' · SIMULATED'
+        try:
+            snapshot = telemetry.read_snapshot(directory / telemetry.DB_NAME, source)
+            if snapshot:
+                snapshot = telemetry.decode_snapshot(
+                    json.dumps({key: snapshot[key] for key in ('observed_at', 'values')},
+                               ensure_ascii=False, separators=(',', ':')).encode(),
+                    source['tags'], datetime.now(timezone.utc), per_tag_time=source['transport'] == 'opcda')
+        except (OSError, ValueError, TypeError, KeyError, sqlite3.Error, RecursionError):
+            snapshot = None
+        return label, snapshot
+
+    def _alternative_fields(self, name, now, alternative):
+        label, snapshot = alternative
+        unknown = dict(UNOBSERVED, observation_source=label)
+        reading = snapshot['values'].get(name) if snapshot else None
+        if reading is None:
+            return unknown
+        stamp = reading.get('observed_at', snapshot['observed_at'])
+        return self._format_observation(unknown, reading['quality'], reading['value'],
+                                        datetime.fromisoformat(stamp) if stamp else None, now)
+
+    def _observation_fields(self, name, now):
+        unknown = dict(UNOBSERVED)
+        store = getattr(self.owner, 'opcua_store', None)
+        observation = store.get_observation(name) if store else None
+        if observation is None:
+            return unknown
+        config = getattr(self.owner, 'opcua_config', None)
+        binding = getattr(observation, 'endpoint_url', None)
+        if (isinstance(config, dict) and 'endpoint_url' in config and
+                isinstance(binding, str) and binding and binding != config['endpoint_url']):
+            return unknown
+        unknown['observation_source'] = 'OPC UA' if observation.quality != Quality.NOT_OBSERVED else ''
+        ref = observation.source_time or observation.arrival_time
+        return self._format_observation(unknown, observation.quality, observation.value, ref, now)
+
+    @staticmethod
+    def _format_observation(unknown, quality, value, ref, now):
+        result = dict(unknown)
+        if isinstance(ref, datetime):
+            if ref.tzinfo is None:
+                ref = ref.replace(tzinfo=timezone.utc)
+            result['observation_at'] = ref.isoformat()
+        if quality in (Quality.BAD, Quality.DISCONNECTED, Quality.UNCERTAIN):
+            return dict(result, status='FAIL', observed_value=None, quality=quality,
+                        age_text='คุณภาพไม่แน่นอน' if quality == Quality.UNCERTAIN else 'สัญญาณขัดข้อง')
+        if quality not in (Quality.GOOD, Quality.STALE) or not isinstance(ref, datetime):
+            return unknown
+        seconds = (now - ref).total_seconds()
+        if seconds < 0:
+            return dict(result, status='STALE', observed_value=None, quality='STALE',
+                        age_text='เวลาหลักฐานอยู่ในอนาคต')
+        if not isinstance(value, (str, int, float)) or (isinstance(value, float) and not math.isfinite(value)):
+            value = None
+        if seconds < 60:
+            age_text = f'{int(seconds)} วินาทีที่แล้ว'
+        elif seconds < 3600:
+            age_text = f'{int(seconds // 60)} นาทีที่แล้ว'
+        else:
+            age_text = f'{int(seconds // 3600)} ชม. ที่แล้ว'
+        stale = seconds > 60 or quality == Quality.STALE
+        return dict(result, status='STALE' if stale else 'OK', observed_value=value,
+                    quality='STALE' if stale else 'GOOD', age_text=age_text)
+
     def _get_serializable_tags(self):
         """Converts owner scanned_tags to clean serializable list with authentic observations.
         Uses public ObservableStateStore API. Quality, freshness, and age are strictly evaluated.
         """
         scanned = getattr(self.owner, 'scanned_tags', []) or []
-        obs_store = getattr(self.owner, 'opcua_store', None)
         tasks = getattr(self.owner, 'tasks', []) or []
         now_utc = datetime.now(timezone.utc)
+        alternative = self._telemetry_snapshot()
 
         res = []
         for t in scanned:
             name = t.get('name', '')
-            status = 'NO'
-            observed_val = None
-            quality_code = 'NOT_OBSERVED'
-            age_text = 'ยังไม่ได้สังเกต'
-
-            if obs_store and hasattr(obs_store, 'get_observation'):
-                obs = obs_store.get_observation(name)
-                if obs is not None:
-                    # Evaluate observation quality and timestamp
-                    q = getattr(obs, 'quality', Quality.NOT_OBSERVED)
-                    ref_time = getattr(obs, 'source_time', None) or getattr(obs, 'arrival_time', None)
-
-                    if q in (Quality.NOT_OBSERVED, None) or ref_time is None:
-                        status = 'NO'
-                        quality_code = 'NOT_OBSERVED'
-                        observed_val = None
-                        age_text = 'ยังไม่ได้สังเกต'
-                    elif q in (Quality.DISCONNECTED, Quality.BAD):
-                        status = 'FAIL'
-                        quality_code = 'BAD'
-                        observed_val = getattr(obs, 'value', None)
-                        age_text = 'สัญญาณขัดข้อง'
-                    else:
-                        # Good or Uncertain: evaluate staleness dynamically
-                        if ref_time.tzinfo is None:
-                            ref_time = ref_time.replace(tzinfo=timezone.utc)
-                        delta_sec = max(0.0, (now_utc - ref_time).total_seconds())
-
-                        is_stale = obs.is_stale(60.0) if hasattr(obs, 'is_stale') else (delta_sec > 60.0)
-                        if is_stale or q == Quality.STALE:
-                            status = 'STALE'
-                            quality_code = 'STALE'
-                        else:
-                            status = 'OK'
-                            quality_code = 'GOOD'
-
-                        observed_val = getattr(obs, 'value', None)
-                        if delta_sec < 60:
-                            age_text = f"{int(delta_sec)} วินาทีที่แล้ว"
-                        elif delta_sec < 3600:
-                            age_text = f"{int(delta_sec // 60)} นาทีที่แล้ว"
-                        else:
-                            age_text = f"{int(delta_sec // 3600)} ชม. ที่แล้ว"
-
-            # Multi-task association list
             tag_tasks = [t['id'] for t in tasks if name in t.get('tags', [])]
+            fields = (self._observation_fields(name, now_utc) if alternative is None
+                      else self._alternative_fields(name, now_utc, alternative))
 
             res.append({
                 'name': name,
@@ -288,10 +332,7 @@ class F1ApiView:
                 'conn': t.get('conn', ''),
                 'group': t.get('group', 'Default'),
                 'addr': t.get('addr', 'Internal'),
-                'status': status,
-                'observed_value': observed_val,
-                'quality': quality_code,
-                'age_text': age_text,
+                **fields,
                 'tasks': tag_tasks,
                 'raw_metadata': t.get('raw_metadata', {})
             })
@@ -330,6 +371,27 @@ class F1ApiView:
         state_payload = self._get_serializable_state()
         json_str = json.dumps(state_payload, ensure_ascii=False)
         self.web.evaluate_javascript(f'window.F1?.onStateUpdated({json_str})', -1, None, None, None, None, None)
+
+    def refresh_observations(self):
+        """Refresh receipt fields without rebuilding the catalog or a Task draft."""
+        if self.closed or not self.web.get_mapped():
+            return
+        now = datetime.now(timezone.utc)
+        alternative = self._telemetry_snapshot()
+        current = {}
+        updates = []
+        for tag in getattr(self.owner, 'scanned_tags', ()) or ():
+            name = tag.get('name', '')
+            fields = (self._observation_fields(name, now) if alternative is None
+                      else self._alternative_fields(name, now, alternative))
+            current[name] = fields
+            previous = self._sent_observations.get(name)
+            if fields != previous and (previous is not None or fields['status'] != 'NO' or alternative is not None):
+                updates.append({'name': name, **fields})
+        self._sent_observations = current
+        if updates:
+            payload = json.dumps(updates, ensure_ascii=False)
+            self.web.evaluate_javascript(f'window.F1?.onObservationsUpdated({payload})', -1, None, None, None, None, None)
 
     def _send_bridge_response(self, request_id, ok, error=None, revision=0, state=None):
         """Explicit bridge response contract for transactional operations."""

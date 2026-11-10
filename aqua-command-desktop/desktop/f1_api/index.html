@@ -1,28 +1,23 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
-<title>ภาพรวม Tag &amp; จัดการ Task (AQUA COMMAND)</title>
+<title>ติดตามค่า · AQUA COMMAND</title>
 <style>
 /*F1_CSS*/
 </style>
 </head>
 <body>
 <div class="app-container">
-  <!-- Top Navigation & Mode Switcher -->
+  <!-- Tag workspace header -->
   <header class="top-header">
     <div class="header-title">
-      <h1>ภาพรวม Tag &amp; จัดการ Task</h1>
-      <span class="sub">· ระบบส่วนกลาง (CENTRAL GATEWAY) · แคตตาล็อกสัญญาณ WinCC V8.1</span>
+      <h1>ติดตามค่า</h1>
+      <span class="sub">ค้นหา Tag และตรวจค่าที่อ่านได้</span>
     </div>
-    <div class="header-actions">
-      <div class="segmented-control" role="group" aria-label="โหมดการสังเกต">
-        <button id="btnModeReal" aria-pressed="true" type="button">ข้อมูลจริง (ยังไม่เชื่อมต่อ)</button>
-        <button id="btnModeSim" aria-pressed="false" type="button">จำลองสัญญาณสด</button>
-      </div>
-    </div>
+    <div id="catalogRibbon"></div>
   </header>
 
   <!-- 6 KPIs Overview -->
@@ -34,16 +29,9 @@
     <aside class="groups-panel">
       <div class="panel-header">
         <span>กลุ่มอุปกรณ์</span>
-        <span class="mono" style="font-size:11.5px">10 กลุ่ม</span>
+        <span class="mono" id="groupCount" style="font-size:11.5px">—</span>
       </div>
       <div class="groups-list" id="groupsList" role="region" aria-label="รายการกลุ่มอุปกรณ์"></div>
-      <div class="groups-footer">
-        <button type="button" class="btn-settings-sidebar" id="btnOpenSettings" title="ตั้งค่าระบบและการเชื่อมต่อ (F6 หรือ Ctrl+,)" aria-label="ตั้งค่าโปรแกรม">
-          <span class="settings-icon">⚙️</span>
-          <span class="settings-label">ตั้งค่าโปรแกรม</span>
-          <kbd class="kbd-shortcut">F6</kbd>
-        </button>
-      </div>
     </aside>
 
     <!-- Tag Catalog & Task Association Table -->
@@ -53,18 +41,18 @@
           <input type="search" id="searchInput" placeholder="ค้นหาชื่อ Tag, กลุ่มอุปกรณ์, ชนิดข้อมูล หรือที่อยู่ PLC..." aria-label="ค้นหา Tag">
           <span class="kbd-hint">/</span>
         </div>
-        <span class="catalog-counter mono" id="catalogCounter">แสดง 457 จาก 457 รายการ</span>
+        <span class="catalog-counter mono" id="catalogCounter">—</span>
       </div>
 
-      <div class="table-viewport" id="tableViewport">
+      <div class="table-viewport" id="tableViewport" tabindex="0" role="region" aria-label="ตาราง Tag">
         <div class="table-header" role="row">
           <span>เลือก</span>
           <span>ชื่อ Tag</span>
           <span>กลุ่มอุปกรณ์</span>
           <span>ชนิด</span>
-          <span>สถานะการสังเกต</span>
+          <span>สถานะ / ค่าที่อ่าน</span>
           <span>Task ที่ผูก</span>
-          <span style="text-align:right">จัดการ</span>
+          <span style="text-align:right">การทำงาน</span>
         </div>
         <div id="tableBody" role="rowgroup"></div>
       </div>
@@ -81,9 +69,10 @@
 </div>
 
 <!-- Modal Dialogs Overlay -->
-<div class="modal-overlay" id="modalOverlay" hidden role="dialog" aria-modal="true">
+<dialog class="modal-overlay" id="modalOverlay" aria-labelledby="modalTitle">
   <div id="modalContent"></div>
-</div>
+  <div class="toast-container" id="modalToastContainer" aria-live="polite"></div>
+</dialog>
 
 <!-- Toast Notifications with Undo -->
 <div class="toast-container" id="toastContainer" aria-live="polite"></div>
