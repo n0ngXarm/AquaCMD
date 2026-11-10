@@ -22,6 +22,8 @@ class Config:
     CHECK_INTERVAL_SECONDS = int(os.getenv("CHECK_INTERVAL_SECONDS", "300"))
     ENABLE_OUTAGE_ALERT = os.getenv("ENABLE_OUTAGE_ALERT", "true").lower() in ("true", "1", "yes")
     ENABLE_QUALITY_ALERT = os.getenv("ENABLE_QUALITY_ALERT", "true").lower() in ("true", "1", "yes")
+    # Security: Default-deny for external notification broadcast on cold start
+    ENABLE_INITIAL_BROADCAST = os.getenv("ENABLE_INITIAL_BROADCAST", "false").lower() in ("true", "1", "yes")
 
     # Quality alert threshold settings (PWA drinking water standard)
     PH_MIN = float(os.getenv("PH_MIN", "6.5"))

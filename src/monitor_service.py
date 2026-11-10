@@ -47,7 +47,8 @@ class WaterMonitorService:
             logger.info("Baseline sync completed. Saved %d existing notices silently.", len(outages))
 
             # Send a single polite startup notification
-            if self.notifier.default_chat_id:
+            # Security: Default-deny initial broadcast unless explicitly configured
+            if Config.ENABLE_INITIAL_BROADCAST and self.notifier.default_chat_id:
                 startup_msg = (
                     "🟢 <b>[ระบบเริ่มการเฝ้าระวังน้ำประปา 24/7]</b>\n"
                     "──────────────────\n"
@@ -59,6 +60,8 @@ class WaterMonitorService:
                     "🔔 <i>ระบบจะไม่ส่งประกาศเก่าย้อนหลังเพื่อไม่ให้รบกวนคุณ</i>"
                 )
                 self.notifier.send_message(self.notifier.default_chat_id, startup_msg)
+            else:
+                logger.info("Initial startup Telegram notification skipped (default-deny policy).")
 
         self.is_initialized = True
 

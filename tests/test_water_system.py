@@ -147,5 +147,37 @@ class TestTelegramNotifier(unittest.TestCase):
         self.assertIn("ดำเนินการแล้วเสร็จ", update_msg)
 
 
+class TestMonitorServiceSecurity(unittest.TestCase):
+    """Tests for REL-02: verifying default-deny on initial Telegram startup message."""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.db = Database(db_path=Path(self.temp_dir.name) / "test.db")
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_default_deny_initial_telegram_broadcast(self):
+        """Verifies that cold start baseline sync DOES NOT dispatch Telegram messages by default."""
+        from src.monitor_service import WaterMonitorService
+        from src.config import Config
+        from unittest.mock import MagicMock
+
+        # Ensure default-deny is in place
+        self.assertFalse(Config.ENABLE_INITIAL_BROADCAST)
+
+        fake_pwa = MagicMock()
+        fake_pwa.get_all_active_outages.return_value = []
+        fake_notifier = MagicMock()
+        fake_notifier.default_chat_id = "12345678"
+
+        service = WaterMonitorService(db=self.db, pwa=fake_pwa, notifier=fake_notifier)
+        service.initialize_baseline()
+
+        # Assert no message was dispatched to Telegram
+        fake_notifier.send_message.assert_not_called()
+        self.assertTrue(service.is_initialized)
+
+
 if __name__ == "__main__":
     unittest.main()
