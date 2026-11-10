@@ -81,6 +81,12 @@ def cmd_test_telegram() -> None:
     print(f"Bot Token: {'ตั้งค่าแล้ว (ความยาว ' + str(len(Config.TELEGRAM_BOT_TOKEN)) + ' ตัวอักษร)' if Config.is_telegram_configured() else '❌ ยังไม่ได้ตั้งค่า'}")
     print(f"Target Chat ID: {Config.TELEGRAM_CHAT_ID or '❌ ยังไม่ได้ตั้งค่า'}")
 
+    if not notifier.is_delivery_authorized:
+        print(f"\n🛑 การเชื่อมต่อไปยัง Telegram API ถูกระงับตามนโยบายความปลอดภัย (REL-02): APP_ENV='{Config.APP_ENV}'")
+        print("💡 ในโหมด LAB/Non-production ห้ามส่ง HTTP Request (getMe, sendMessage) ออกภายนอก")
+        print("💡 ต้องใช้ APP_ENV='production' และ TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED=true เท่านั้น")
+        return
+
     ok, msg = notifier.test_connection()
     if not ok:
         print(f"\n❌ การเชื่อมต่อล้มเหลว: {msg}")
@@ -195,7 +201,13 @@ def cmd_run(mode: str = "all") -> None:
         logger.info("Background PWA Monitor service started.")
 
     if mode in ("all", "bot"):
-        if notifier.is_configured:
+        if not bot.is_polling_authorized:
+            logger.warning(
+                "Interactive Telegram Bot polling skipped: APP_ENV='%s' (polling authorization not granted). "
+                "Network policy prohibits bot polling thread in non-production.",
+                Config.APP_ENV
+            )
+        elif notifier.is_configured:
             t_bot = threading.Thread(target=bot.start_polling, name="PWA-BotThread", daemon=True)
             t_bot.start()
             threads.append(t_bot)

@@ -33,6 +33,15 @@ class Config:
         APP_ENV == "production" and _DELIVERY_AUTH_RAW in ("true", "1", "yes")
     )
 
+    # Inbound Telegram Command Polling Authorization Gate (REL-02)
+    # Decoupled from outbound notification delivery authorization.
+    # Strictly DISABLED by default in LAB / non-production environments.
+    # In production, requires both APP_ENV == "production" and explicit operator consent flag.
+    _POLLING_AUTH_RAW = os.getenv("TELEGRAM_INBOUND_POLLING_AUTHORIZED", "false").strip().lower()
+    TELEGRAM_INBOUND_POLLING_AUTHORIZED = (
+        APP_ENV == "production" and _POLLING_AUTH_RAW in ("true", "1", "yes")
+    )
+
     # Quality alert threshold settings (PWA drinking water standard)
     PH_MIN = float(os.getenv("PH_MIN", "6.5"))
     PH_MAX = float(os.getenv("PH_MAX", "8.5"))

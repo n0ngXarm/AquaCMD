@@ -17,15 +17,44 @@ logger = logging.getLogger(__name__)
 class TelegramBot:
     """Handles Telegram Bot interactive commands and polling."""
 
-    def __init__(self, db: Database, pwa: PWAClient, notifier: TelegramNotifier):
+    def __init__(
+        self,
+        db: Database,
+        pwa: PWAClient,
+        notifier: TelegramNotifier,
+        polling_authorized: Optional[bool] = None
+    ):
         self.db = db
         self.pwa = pwa
         self.notifier = notifier
+        self._polling_authorized = polling_authorized
         self.is_running = False
         self.last_update_id = 0
 
+    @property
+    def is_polling_authorized(self) -> bool:
+        """
+        Inbound command polling authorization check (REL-02).
+        Decoupled from outbound notification delivery authorization.
+        Strictly DISABLED by default in LAB / non-production environments.
+        Requires production environment AND explicit operator consent.
+        """
+        if Config.APP_ENV in ("lab", "test", "development", "dev"):
+            return False
+        if self._polling_authorized is not None:
+            return bool(self._polling_authorized)
+        return getattr(Config, "TELEGRAM_INBOUND_POLLING_AUTHORIZED", False)
+
     def start_polling(self) -> None:
         """Starts the long-polling loop for receiving Telegram commands."""
+        if not self.is_polling_authorized:
+            logger.warning(
+                "Cannot start bot polling: APP_ENV='%s' (polling authorization not granted). "
+                "Egress/Ingress policy prohibits network connection.",
+                Config.APP_ENV
+            )
+            return
+
         if not self.notifier.is_configured:
             logger.error("Cannot start bot polling: TELEGRAM_BOT_TOKEN is not set.")
             return
@@ -50,6 +79,13 @@ class TelegramBot:
 
     def _get_updates(self, offset: int = 0, timeout: int = 20) -> list[dict[str, Any]]:
         """Calls getUpdates from Telegram API."""
+        if not self.is_polling_authorized:
+            logger.warning(
+                "getUpdates blocked: polling not authorized in '%s' environment (REL-02)",
+                Config.APP_ENV
+            )
+            return []
+
         url = self.notifier._api_url(f"getUpdates?offset={offset}&timeout={timeout}")
         req = urllib.request.Request(url, headers={"User-Agent": "PWA-Water-Bot/1.0"})
         with urllib.request.urlopen(req, timeout=timeout + 5) as resp:

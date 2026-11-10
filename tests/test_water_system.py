@@ -233,6 +233,67 @@ class TestMonitorServiceSecurity(unittest.TestCase):
         with patch.object(Config, "APP_ENV", "production"):
             self.assertTrue(notifier_approved.is_delivery_authorized)
 
+    def test_bot_polling_zero_egress_in_lab(self):
+        """Zero-egress test: Bot polling and getUpdates must make 0 network requests in LAB."""
+        from src.telegram_bot import TelegramBot
+        from src.telegram_notifier import TelegramNotifier
+        from src.config import Config
+
+        notifier = TelegramNotifier(bot_token="123456:FAKE_TOKEN_FOR_TESTING")
+        bot = TelegramBot(db=MagicMock(), pwa=MagicMock(), notifier=notifier)
+
+        with patch.object(Config, "APP_ENV", "lab"):
+            self.assertFalse(bot.is_polling_authorized)
+
+            # Assert getUpdates produces zero network calls
+            with patch("urllib.request.urlopen") as mock_urlopen:
+                updates = bot._get_updates(offset=0, timeout=1)
+                self.assertEqual(updates, [])
+                mock_urlopen.assert_not_called()
+
+            # Assert start_polling exits immediately without polling loop
+            with patch("urllib.request.urlopen") as mock_urlopen:
+                bot.start_polling()
+                self.assertFalse(bot.is_running)
+                mock_urlopen.assert_not_called()
+
+    def test_decoupled_permissions_independent_gates(self):
+        """Verifies that delivery authorization and polling authorization are strictly decoupled."""
+        from src.telegram_bot import TelegramBot
+        from src.telegram_notifier import TelegramNotifier
+        from src.config import Config
+
+        notifier = TelegramNotifier(bot_token="123456:FAKE_TOKEN_FOR_TESTING", delivery_authorized=True)
+        bot = TelegramBot(db=MagicMock(), pwa=MagicMock(), notifier=notifier, polling_authorized=False)
+
+        with patch.object(Config, "APP_ENV", "production"):
+            # Delivery authorized, but polling NOT authorized
+            self.assertTrue(notifier.is_delivery_authorized)
+            self.assertFalse(bot.is_polling_authorized)
+
+            # Polling authorized, but delivery NOT authorized
+            notifier_no_deliv = TelegramNotifier(bot_token="123456:FAKE_TOKEN_FOR_TESTING", delivery_authorized=False)
+            bot_poll_auth = TelegramBot(db=MagicMock(), pwa=MagicMock(), notifier=notifier_no_deliv, polling_authorized=True)
+            self.assertFalse(notifier_no_deliv.is_delivery_authorized)
+            self.assertTrue(bot_poll_auth.is_polling_authorized)
+
+    def test_main_cmd_test_telegram_zero_egress_in_lab(self):
+        """Verifies that main.py cmd_test_telegram makes zero network calls in LAB."""
+        import io
+        import sys
+        from unittest.mock import patch
+        import main
+
+        with patch.object(main.Config, "APP_ENV", "lab"):
+            with patch("urllib.request.urlopen") as mock_urlopen:
+                captured_out = io.StringIO()
+                with patch("sys.stdout", captured_out):
+                    main.cmd_test_telegram()
+                mock_urlopen.assert_not_called()
+                output = captured_out.getvalue()
+                self.assertIn("REL-02", output)
+                self.assertIn("ระงับตามนโยบายความปลอดภัย", output)
+
 
 if __name__ == "__main__":
     unittest.main()
