@@ -263,19 +263,25 @@ class OpcUaPollingEngine:
             cert_p, key_p = self.pki.ensure_client_certificate()
             await client.set_security_string(f"Basic256Sha256,SignAndEncrypt,{cert_p},{key_p}")
 
-            # Handshake & validate server certificate
+            # Handshake & validate server certificate (fail-closed)
             server_cert = getattr(client.security_policy, "peer_certificate", None)
-            if server_cert:
-                server_cert_bytes = server_cert if isinstance(server_cert, bytes) else server_cert.public_bytes(serialization.Encoding.DER)
-                val_res = self.pki.validate_server_certificate(
-                    cert_bytes=server_cert_bytes,
-                    expected_host=expected_host,
-                    check_trust_store=True
-                )
-                if not val_res["valid"]:
-                    raise PermissionError(f"Server certificate untrusted: {val_res['status_code']}")
+            if not server_cert:
+                raise PermissionError("Server certificate missing during secure session establishment")
 
-        if self.auth_mode == "Username" and self.username:
+            server_cert_bytes = server_cert if isinstance(server_cert, bytes) else server_cert.public_bytes(serialization.Encoding.DER)
+            val_res = self.pki.validate_server_certificate(
+                cert_bytes=server_cert_bytes,
+                expected_host=expected_host,
+                check_trust_store=True
+            )
+            if not val_res["valid"]:
+                raise PermissionError(f"Server certificate untrusted: {val_res['status_code']}")
+
+        if self.auth_mode == "Username":
+            if self.sec_policy in ("None", "POLICY_NONE") or not self.sec_policy:
+                raise PermissionError("Plaintext username/password is strictly forbidden when SecurityPolicy is None")
+            if not self.username:
+                raise ValueError("Username mode requires valid username")
             client.set_user(self.username)
             client.set_password(self.password)
 

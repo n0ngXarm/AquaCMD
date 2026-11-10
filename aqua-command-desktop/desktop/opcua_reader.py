@@ -28,6 +28,7 @@ logger = logging.getLogger("aquacmd.opcua.reader")
 
 try:
     from asyncua import Client, ua
+    from cryptography.hazmat.primitives import serialization
     HAS_ASYNCUA = True
 except ImportError:
     HAS_ASYNCUA = False
@@ -168,6 +169,8 @@ class ManualOpcUaReader:
 
                 # Configure Authentication
                 if auth_mode == "Username":
+                    if sec_policy in ("None", POLICY_NONE) or not sec_policy:
+                        raise PermissionError("Plaintext username/password is strictly forbidden when SecurityPolicy is None")
                     if not username:
                         raise ValueError("Username mode requires valid username")
                     client.set_user(username)
