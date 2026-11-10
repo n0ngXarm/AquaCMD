@@ -94,8 +94,10 @@ def load_initial_tags():
 
 def save_atomic_json(filepath, data):
     p = Path(filepath)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    temp_p = p.with_suffix('.tmp')
+    parent_dir = p.parent
+    parent_dir.mkdir(parents=True, exist_ok=True)
+    rand_id = os.urandom(8).hex()
+    temp_p = parent_dir / f".{p.name}.{rand_id}.tmp"
     try:
         with open(temp_p, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
@@ -117,7 +119,9 @@ def load_opcua_config():
     if OPCUA_CONFIG_FILE.exists():
         try:
             with open(OPCUA_CONFIG_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                data.pop('password', None)  # Safety: never retain password in memory or disk
+                return data
         except Exception:
             pass
     return {
@@ -125,7 +129,6 @@ def load_opcua_config():
         'security_policy': 'None',
         'auth_mode': 'Anonymous',
         'username': '',
-        'password': '',
         'status': 'disconnected'
     }
 

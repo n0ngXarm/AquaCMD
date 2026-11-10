@@ -174,14 +174,17 @@ OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 
 def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
     """
-    Crash-resistant, secure atomic file save adhering to SEC-02:
+    Durable, secure atomic file save adhering to SEC-02:
     - Random temporary file name in destination directory (same filesystem guarantee).
     - Created exclusively (O_CREAT | O_EXCL | O_NOFOLLOW).
     - Explicit permission enforcement (0600) on fd via fchmod/fstat before write.
     - Directory ownership and symlink validation.
     - Symlink target rejection to prevent symlink redirection attacks.
-    - Atomic rename preserving existing data on failure.
-    - Strict post-replace mode verification.
+    - Data durability: flush() + fsync() on temporary file descriptor prior to replace.
+    - Atomic replacement (POSIX rename(2)) preserving existing data on failure.
+    - Directory metadata durability: fsync() on parent directory descriptor on POSIX.
+    - Post-replace verification with fail-closed purge: if post-replace mode verification
+      fails, the unverified file is immediately unlinked to prevent credential exposure.
     - Fail-closed: Never swallows permission or security exceptions.
     """
     p = Path(filepath)
@@ -260,7 +263,22 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
         # 3. Atomic replacement of target file (preserves existing file if crash occurs prior to replace)
         temp_p.replace(p)
 
-        # 4. Post-replace verification
+        # 4. Fsync parent directory on POSIX to commit directory entry metadata to durable storage
+        if not IS_WINDOWS and hasattr(os, "O_DIRECTORY"):
+            dir_fd = None
+            try:
+                dir_fd = os.open(str(parent_dir), os.O_RDONLY | os.O_DIRECTORY)
+                os.fsync(dir_fd)
+            except OSError as sync_err:
+                logger.warning(f"SEC-02: Directory fsync warning on {parent_dir}: {sync_err}")
+            finally:
+                if dir_fd is not None:
+                    try:
+                        os.close(dir_fd)
+                    except Exception:
+                        pass
+
+        # 5. Post-replace verification with fail-closed purge
         if not IS_WINDOWS and mode is not None:
             post_st = p.stat()
             final_mode = post_st.st_mode & 0o777
@@ -268,8 +286,14 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
                 os.chmod(p, mode)
                 final_mode = p.stat().st_mode & 0o777
                 if final_mode != mode:
+                    # Security breach: The file was replaced but permissions failed to lock down to mode.
+                    # Unlink the insecure file immediately to prevent unauthorized access.
+                    try:
+                        p.unlink()
+                    except Exception:
+                        pass
                     raise PermissionError(
-                        f"SEC-02: Post-replace permission check failed on {p}: expected {oct(mode)}, got {oct(final_mode)}"
+                        f"SEC-02: Post-replace permission check failed on {p}: expected {oct(mode)}, got {oct(final_mode)}. Target unlinked to prevent exposure."
                     )
 
         return True

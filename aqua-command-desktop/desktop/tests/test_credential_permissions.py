@@ -138,19 +138,65 @@ class TestCredentialFilePermissions(unittest.TestCase):
         self.assertEqual(len(all_tmp), 0)
 
     def test_post_replace_verification_fails_closed(self):
-        """Negative test: If post-replace file mode cannot be verified to match requested mode, fail-closed."""
+        """Negative test: If post-replace file mode cannot be verified to match requested mode, fail-closed and purge."""
         if IS_WINDOWS:
             self.skipTest("POSIX mode tests")
 
         test_file = self.target_dir / "mode_fail.json"
         fake_bad_stat = MagicMock()
+        fake_bad_stat.st_uid = os.getuid()
         fake_bad_stat.st_mode = 0o666  # Insecure mode leaked
+
+        # Ensure target_dir exists and has correct stat
+        self.target_dir.mkdir(parents=True, exist_ok=True)
 
         with patch.object(Path, "stat", return_value=fake_bad_stat):
             with patch("os.chmod"):
                 with self.assertRaises(PermissionError) as ctx:
                     save_atomic_json(test_file, {"sensitive": True}, mode=0o600)
                 self.assertIn("SEC-02", str(ctx.exception))
+                self.assertIn("unlinked", str(ctx.exception).lower())
+
+    def test_parent_directory_fsync_called_on_posix(self):
+        """Verifies that parent directory fsync is invoked to persist directory entries on POSIX."""
+        if IS_WINDOWS:
+            self.skipTest("POSIX directory fsync")
+
+        test_file = self.target_dir / "fsync_test.json"
+        data = {"key": "durable_value"}
+
+        fsync_fds = []
+        real_fsync = os.fsync
+
+        def mock_fsync(fd):
+            fsync_fds.append(fd)
+            return real_fsync(fd)
+
+        with patch("os.fsync", side_effect=mock_fsync):
+            success = save_atomic_json(test_file, data, mode=0o600)
+            self.assertTrue(success)
+
+        # Must have fsynced at least twice: once for temp file fd, once for parent dir fd
+        self.assertGreaterEqual(len(fsync_fds), 2, f"Expected at least 2 fsync calls (file + dir), got {len(fsync_fds)}")
+
+    def test_symlink_directory_unowned_fails_closed(self):
+        """Negative test: Parent directory symlink pointing to an unowned path fails closed."""
+        if IS_WINDOWS:
+            self.skipTest("Symlink directory test applies to POSIX")
+
+        self.target_dir.mkdir(parents=True, exist_ok=True)
+        test_file = self.target_dir / "symdir_test.json"
+
+        # Mock parent_dir.is_symlink to return True and resolve().stat().st_uid to mismatch
+        mock_resolved = MagicMock()
+        mock_resolved.stat.return_value.st_uid = os.getuid() + 999
+
+        with patch.object(Path, "is_symlink", return_value=True):
+            with patch.object(Path, "resolve", return_value=mock_resolved):
+                with self.assertRaises(PermissionError) as ctx:
+                    save_atomic_json(test_file, {"data": 1}, mode=0o600)
+                self.assertIn("SEC-02", str(ctx.exception))
+                self.assertIn("unowned target", str(ctx.exception))
 
     def test_concurrent_writes(self):
         """Verifies that concurrent writes across threads succeed without corruption or race condition collisions."""
