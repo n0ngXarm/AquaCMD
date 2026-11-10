@@ -90,6 +90,9 @@ import subprocess
 import threading
 import concurrent.futures
 import asyncio
+import logging
+
+logger = logging.getLogger("AquaCommand")
 try:
     from asyncua import Client, Server, ua
     HAS_ASYNCUA = True
@@ -158,10 +161,9 @@ if not IS_WINDOWS:
     try:
         if not CONFIG_DIR.exists():
             CONFIG_DIR.mkdir(parents=True, mode=0o700, exist_ok=True)
-        else:
-            os.chmod(CONFIG_DIR, 0o700)
-    except Exception:
-        pass
+        os.chmod(CONFIG_DIR, 0o700)
+    except Exception as e:
+        logger.warning(f"Could not enforce 0700 mode on CONFIG_DIR {CONFIG_DIR}: {e}")
 else:
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -170,48 +172,122 @@ TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
 TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
 OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 
-def save_atomic_json(filepath, data, mode=None):
-    """Crash-resistant atomic file save: writes to .tmp before replacing target with explicit permissions."""
+def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
+    """
+    Crash-resistant, secure atomic file save adhering to SEC-02:
+    - Random temporary file name in destination directory (same filesystem guarantee).
+    - Created exclusively (O_CREAT | O_EXCL | O_NOFOLLOW).
+    - Explicit permission enforcement (0600) on fd via fchmod/fstat before write.
+    - Directory ownership and symlink validation.
+    - Symlink target rejection to prevent symlink redirection attacks.
+    - Atomic rename preserving existing data on failure.
+    - Strict post-replace mode verification.
+    - Fail-closed: Never swallows permission or security exceptions.
+    """
     p = Path(filepath)
-    temp_p = p.with_suffix('.tmp')
-    try:
-        p.parent.mkdir(parents=True, exist_ok=True)
-        if not IS_WINDOWS and mode is not None:
-            flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
-            fd = os.open(temp_p, flags, mode)
-            with os.fdopen(fd, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-                f.flush()
-                os.fsync(f.fileno())
-            try:
-                os.chmod(temp_p, mode)
-            except Exception:
-                pass
-        else:
-            with open(temp_p, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-                f.flush()
-                os.fsync(f.fileno())
-            if not IS_WINDOWS and mode is not None:
-                try:
-                    os.chmod(temp_p, mode)
-                except Exception:
-                    pass
+    parent_dir = p.parent
 
-        temp_p.replace(p)
+    # 1. Directory validation and preparation
+    if not IS_WINDOWS:
+        if not parent_dir.exists():
+            parent_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
+            os.chmod(parent_dir, 0o700)
+
+        # Check directory ownership (must match current user UID)
+        dir_stat = parent_dir.stat()
+        if dir_stat.st_uid != os.getuid():
+            err = PermissionError(
+                f"SEC-02: Directory {parent_dir} ownership mismatch: UID {dir_stat.st_uid} != current UID {os.getuid()}"
+            )
+            if raise_on_error:
+                raise err
+            logger.error(str(err))
+            return False
+
+        # Check symlink on parent directory
+        if parent_dir.is_symlink():
+            resolved = parent_dir.resolve()
+            if resolved.stat().st_uid != os.getuid():
+                err = PermissionError(
+                    f"SEC-02: Directory symlink {parent_dir} points to unowned target {resolved}"
+                )
+                if raise_on_error:
+                    raise err
+                logger.error(str(err))
+                return False
+
+        # Reject overwrite if target file itself is a symlink
+        if p.is_symlink():
+            err = PermissionError(
+                f"SEC-02: Target path {p} is a symlink; refusing to overwrite to prevent symlink attack."
+            )
+            if raise_on_error:
+                raise err
+            logger.error(str(err))
+            return False
+    else:
+        parent_dir.mkdir(parents=True, exist_ok=True)
+
+    # 2. Randomized temporary file in the destination directory
+    rand_id = os.urandom(8).hex()
+    temp_p = parent_dir / f".{p.name}.{rand_id}.tmp"
+    fd = None
+
+    try:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if not IS_WINDOWS and hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+
+        file_mode = mode if (mode is not None and not IS_WINDOWS) else 0o600
+        fd = os.open(temp_p, flags, file_mode)
+
         if not IS_WINDOWS and mode is not None:
-            try:
+            # Enforce exact permissions on file descriptor
+            os.fchmod(fd, mode)
+            st = os.fstat(fd)
+            actual_mode = st.st_mode & 0o777
+            if actual_mode != mode:
+                raise PermissionError(
+                    f"SEC-02: fchmod mode mismatch on temp file {temp_p}: expected {oct(mode)}, got {oct(actual_mode)}"
+                )
+
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            fd = None  # fd transferred to file object
+            json.dump(data, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+
+        # 3. Atomic replacement of target file (preserves existing file if crash occurs prior to replace)
+        temp_p.replace(p)
+
+        # 4. Post-replace verification
+        if not IS_WINDOWS and mode is not None:
+            post_st = p.stat()
+            final_mode = post_st.st_mode & 0o777
+            if final_mode != mode:
                 os.chmod(p, mode)
+                final_mode = p.stat().st_mode & 0o777
+                if final_mode != mode:
+                    raise PermissionError(
+                        f"SEC-02: Post-replace permission check failed on {p}: expected {oct(mode)}, got {oct(final_mode)}"
+                    )
+
+        return True
+
+    except Exception as e:
+        logger.error(f"SEC-02: Error atomic saving {filepath}: {e}")
+        if fd is not None:
+            try:
+                os.close(fd)
             except Exception:
                 pass
-        return True
-    except Exception as e:
-        print(f"Error atomic saving {filepath}: {e}", file=sys.stderr)
         try:
             if temp_p.exists():
                 temp_p.unlink()
         except Exception:
             pass
+        if raise_on_error:
+            raise
         return False
 
 MAX_OPCUA_BROWSE_NODES = 500
