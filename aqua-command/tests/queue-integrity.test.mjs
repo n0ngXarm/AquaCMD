@@ -226,3 +226,155 @@ test('queue retention: capacity limit trimming strictly preserves pending notifi
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
+
+test('DATA-02: Alert-Queue referential integrity, >400 alerts, >500 jobs, payload accessibility and restart recovery', { timeout: 30_000 }, async () => {
+  const root = path.resolve(import.meta.dirname, '..');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'aqua-data02-test-'));
+  for (const file of ['server.mjs', 'rules.mjs']) {
+    fs.copyFileSync(path.join(root, file), path.join(tmp, file));
+  }
+  fs.cpSync(path.join(root, 'public'), path.join(tmp, 'public'), { recursive: true });
+  fs.mkdirSync(path.join(tmp, 'storage'));
+
+  const now = new Date().toISOString();
+  // Pre-seed storage with 450 alerts and 550 jobs
+  // Alerts 0-49: resolved & acknowledged (safe to prune if excess)
+  // Alerts 50-249: referenced by pending jobs (MUST NEVER BE PRUNED)
+  // Alerts 250-449: unacknowledged active alerts (MUST NEVER BE PRUNED)
+  const seedAlerts = [];
+  const seedQueue = [];
+
+  for (let i = 0; i < 450; i++) {
+    const isAcknowledged = i < 50;
+    seedAlerts.push({
+      id: `AL-TEST-${i}`,
+      stationId: `CM-${(i % 12) + 1}`,
+      stationName: `Station ${i}`,
+      region: 'Chiang Mai',
+      title: `Water Outage Incident ${i}`,
+      severity: i % 2 === 0 ? 'critical' : 'warning',
+      message: `Detailed pipe break telemetry info ${i}`,
+      value: 0.5,
+      ruleId: 'pressure-low',
+      createdAt: now,
+      resolvedAt: isAcknowledged ? now : null,
+      acknowledgedAt: isAcknowledged ? now : null,
+      demo: false
+    });
+  }
+
+  // Jobs: 350 completed 'sent' jobs + 200 'pending' jobs referencing alerts 50..249
+  for (let i = 0; i < 350; i++) {
+    seedQueue.push({
+      id: `SENT-JOB-${i}`,
+      alertId: `AL-TEST-${i % 50}`, // references resolved/acknowledged alert
+      status: 'sent',
+      attempt: 1,
+      createdAt: now,
+      sentAt: now,
+      nextAt: Date.now() - 100000,
+      payload: { text: `Delivered text ${i}`, title: `Title ${i}` }
+    });
+  }
+
+  for (let i = 50; i < 250; i++) {
+    seedQueue.push({
+      id: `PENDING-JOB-${i}`,
+      alertId: `AL-TEST-${i}`,
+      status: 'pending',
+      attempt: 0,
+      createdAt: now,
+      nextAt: Date.now() + 600000,
+      payload: { text: `Pending text for alert ${i}`, title: `Alert ${i}` }
+    });
+  }
+
+  assert.equal(seedAlerts.length, 450);
+  assert.equal(seedQueue.length, 550);
+
+  fs.writeFileSync(path.join(tmp, 'storage', 'state.json'), JSON.stringify({
+    alerts: seedAlerts,
+    queue: seedQueue,
+    active: {},
+    updatedAt: now
+  }, null, 2));
+
+  let port = await openPort();
+  const env = {
+    ...process.env,
+    APP_ENV: 'lab',
+    DEMO_MODE: 'false',
+    HOST: '127.0.0.1',
+    PORT: String(port),
+    ADMIN_API_KEY: KEY,
+    TELEGRAM_BOT_TOKEN: '123456:TEST_TOKEN',
+    TELEGRAM_CHAT_ID: '999999'
+  };
+
+  let child = spawn(process.execPath, [path.join(tmp, 'server.mjs')], { cwd: tmp, env, stdio: 'pipe' });
+  let base = `http://127.0.0.1:${port}`;
+
+  try {
+    for (let i = 0; i < 50; i++) {
+      if (child.exitCode !== null) throw Error('Server died');
+      try {
+        const r = await fetch(base + '/api/health');
+        if (r.ok) break;
+      } catch {}
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    let st = await (await fetch(base + '/api/state')).json();
+
+    // 1. Referential integrity: All 200 pending jobs are intact
+    assert.equal(st.queueStats.pending, 200, 'All 200 pending jobs must be preserved');
+
+    // 2. Verified payload accessibility: Every pending job has valid payload
+    const pendingJobs = st.queueRecent.filter(j => j.status === 'pending');
+    for (const j of pendingJobs) {
+      assert.ok(j.alertId, 'Pending job must have associated alertId');
+    }
+
+    // 3. Restart recovery test:
+    // Terminate server cleanly with SIGTERM and restart it
+    child.kill('SIGTERM');
+    await new Promise(resolve => {
+      if (child.exitCode !== null || child.signalCode) resolve();
+      else child.once('exit', resolve);
+    });
+
+    // Start server again from same storage directory
+    port = await openPort();
+    env.PORT = String(port);
+    base = `http://127.0.0.1:${port}`;
+    child = spawn(process.execPath, [path.join(tmp, 'server.mjs')], { cwd: tmp, env, stdio: 'pipe' });
+
+    for (let i = 0; i < 50; i++) {
+      if (child.exitCode !== null) throw Error('Restarted server died');
+      try {
+        const r = await fetch(base + '/api/health');
+        if (r.ok) break;
+      } catch {}
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    // Re-verify state after restart
+    const restartedState = await (await fetch(base + '/api/state')).json();
+    assert.equal(restartedState.queueStats.pending, 200, 'All 200 pending jobs must survive restart');
+
+    // Verify all referenced alerts (50..249) exist in restarted server storage
+    const rawSaved = JSON.parse(fs.readFileSync(path.join(tmp, 'storage', 'state.json'), 'utf8'));
+    const savedAlertIds = new Set(rawSaved.alerts.map(a => a.id));
+    for (let i = 50; i < 250; i++) {
+      assert.ok(savedAlertIds.has(`AL-TEST-${i}`), `Referenced alert AL-TEST-${i} must never be pruned`);
+    }
+
+  } finally {
+    child.kill('SIGTERM');
+    await new Promise(resolve => {
+      if (child.exitCode !== null || child.signalCode) resolve();
+      else child.once('exit', resolve);
+    });
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});

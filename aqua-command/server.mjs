@@ -63,21 +63,60 @@ if (!DEMO) history.length=0;
 let store = {alerts:[], queue:[], active:{}, updatedAt:now()};
 try { const previous=JSON.parse(fs.readFileSync(DATA_PATH,'utf8')); store={...store, alerts:previous.alerts||[],queue:previous.queue||[],active:previous.active||{}}; }
 catch (e) {if (e.code!=='ENOENT') console.error('Could not read state:',e.message);}
+const MAX_ALERT_STORE = 400;
+
+function isAlertReferenced(alertId) {
+  return store.queue.some(j => (j.status === 'pending' || j.status === 'blocked_by_policy') && j.alertId === alertId);
+}
+
+function canPruneAlert(alert) {
+  if (isAlertReferenced(alert.id)) return false;
+  if (alert.acknowledgedAt === null && alert.resolvedAt === null) return false;
+  return true;
+}
+
+function canPruneAlerts() {
+  return store.alerts.some(canPruneAlert);
+}
+
+function trimAlerts() {
+  if (store.alerts.length <= MAX_ALERT_STORE) return;
+  const excess = store.alerts.length - MAX_ALERT_STORE;
+  const prunables = new Set();
+  for (let i = store.alerts.length - 1; i >= 0 && prunables.size < excess; i--) {
+    const a = store.alerts[i];
+    if (canPruneAlert(a)) {
+      prunables.add(a.id);
+    }
+  }
+  if (prunables.size > 0) {
+    store.alerts = store.alerts.filter(a => !prunables.has(a.id));
+  }
+}
+
 const MAX_QUEUE_SIZE = 500;
 function trimQueue() {
   if (store.queue.length <= MAX_QUEUE_SIZE) return;
   const excess = store.queue.length - MAX_QUEUE_SIZE;
-  // Prune only completed/terminal entries in chronological order.
-  // NEVER prune 'pending' or in-flight entries.
-  // NEVER prune unacknowledged alerts.
-  let pruned = 0;
-  store.queue = store.queue.filter(j => {
-    if (pruned < excess && (j.status === 'sent' || j.status === 'simulated' || (j.status === 'failed' && j.attempt >= 6))) {
-      pruned++;
-      return false;
+  const prunables = new Set();
+  for (let i = 0; i < store.queue.length && prunables.size < excess; i++) {
+    const j = store.queue[i];
+    // NEVER prune pending or blocked_by_policy jobs
+    if (j.status === 'pending' || j.status === 'blocked_by_policy') continue;
+
+    // Check associated alert
+    const alert = store.alerts.find(a => a.id === j.alertId);
+    if (alert && alert.acknowledgedAt === null && alert.resolvedAt === null) {
+      continue; // keep job if alert is still unacknowledged and unresolved
     }
-    return true;
-  });
+
+    if (j.status === 'sent' || j.status === 'simulated' || (j.status === 'failed' && j.attempt >= 6)) {
+      prunables.add(j.id);
+    }
+  }
+  if (prunables.size > 0) {
+    store.queue = store.queue.filter(j => !prunables.has(j.id));
+  }
 }
 let saveTimer;
 function saveSoon() {clearTimeout(saveTimer); saveTimer=setTimeout(saveNow,400);}
@@ -155,9 +194,21 @@ function createAlert(station,rule,severity,value,{resolved=false,demo=DEMO}={}) 
   const message=resolved?`${rule.title} กลับสู่เกณฑ์ที่กำหนด (${value}${rule.unit})` :
     `${rule.title}: ${value}${rule.unit} / เกณฑ์เตือน ${rule.warning}${rule.unit}, วิกฤต ${rule.critical}${rule.unit}`;
   const alert={id:`AL-${uid()}`,stationId:station.id,stationName:station.name,region:station.region,title:resolved?`${rule.title} — กลับสู่ปกติ`:rule.title,severity:resolved?'resolved':severity,message,value,ruleId:rule.id,createdAt:now(),resolvedAt:resolved?now():null,acknowledgedAt:null,demo};
-  store.alerts.unshift(alert);store.alerts=store.alerts.slice(0,400);
+  store.alerts.unshift(alert);
+  trimAlerts();
   if(BOT&&CHAT&&(!demo||SEND_DEMO)) {
-    store.queue.push({id:uid(),alertId:alert.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null});
+    const jobPayload = {
+      text: alertMessage(alert),
+      title: alert.title,
+      severity: alert.severity,
+      stationName: alert.stationName,
+      region: alert.region,
+      message: alert.message,
+      value: alert.value,
+      demo: alert.demo,
+      createdAt: alert.createdAt
+    };
+    store.queue.push({id:uid(),alertId:alert.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null,payload:jobPayload});
     trimQueue();
   }
   saveSoon();broadcast();return alert;
@@ -197,11 +248,14 @@ async function processQueue() {
   if(sending||!BOT||!CHAT)return;
   const job=store.queue.find(x=>x.status==='pending' && x.nextAt<=Date.now());if(!job)return;
   const gap=Date.now()-lastTelegramSend;if(gap<SEND_GAP)return;
-  const alert=store.alerts.find(x=>x.id===job.alertId);if(!alert){job.status='failed';job.lastError='Missing alert';trimQueue();saveSoon();return;}
+  const alert=store.alerts.find(x=>x.id===job.alertId);
+  // Referential Integrity & Self-Contained Payload:
+  // If alert is somehow detached, the job still possesses its immutable payload.
+  if(!alert && !job.payload){job.status='failed';job.lastError='Missing alert and payload';trimQueue();saveSoon();return;}
+  const messageText = alert ? alertMessage(alert) : (job.payload?.text || 'AQUA COMMAND Alert');
+  const isDemo = alert ? alert.demo : Boolean(job.payload?.demo);
   if (!TELEGRAM_DELIVERY_AUTHORIZED) {
-    // In LAB or non-production environment, external network delivery is strictly disabled by default (REL-02).
-    // NEVER mark as 'sent' without real acknowledgment from Telegram API.
-    if (alert.demo) {
+    if (isDemo) {
       job.status='simulated';job.simulatedAt=now();job.simulated=true;job.lastError=null;
     } else {
       job.status='blocked_by_policy';job.blockedAt=now();
@@ -211,7 +265,7 @@ async function processQueue() {
   }
   sending=true;lastTelegramSend=Date.now();job.attempt++;
   try {
-    const response=await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:alertMessage(alert),disable_web_page_preview:true}),signal:AbortSignal.timeout(8000)});
+    const response=await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:messageText,disable_web_page_preview:true}),signal:AbortSignal.timeout(8000)});
     const answer=await response.json();
     if(!response.ok||!answer.ok) throw new Error(`Telegram HTTP ${response.status}: ${answer.description||'Unknown'}`);
     job.status='sent';job.sentAt=now();job.messageId=answer.result?.message_id;
@@ -268,6 +322,10 @@ async function handler(req,res){
   if(req.method==='POST'&&p==='/api/incidents'){
     if(!checkKey(req))return reply(res,401,{error:'Invalid admin API key'});
     let b=await body(req);
+    // Backpressure check when capacity is full of active unacknowledged alerts
+    if (store.alerts.length >= 2000 && !canPruneAlerts()) {
+      return reply(res, 503, {error: 'Alert store capacity limit reached: active alerts require acknowledgement'});
+    }
     const alert={
       id: b.id || `PWA-${uid()}`,
       stationId: b.stationId || 'PWA',
@@ -284,7 +342,7 @@ async function handler(req,res){
       demo: Boolean(b.demo)
     };
     store.alerts.unshift(alert);
-    store.alerts = store.alerts.slice(0, 400);
+    trimAlerts();
     saveSoon();
     broadcast();
     return reply(res, 200, {ok: true, alertId: alert.id});
@@ -317,7 +375,21 @@ async function handler(req,res){
     if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});
     if(!BOT||!CHAT)return reply(res,422,{error:'Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env'});
     const a={id:`TEST-${uid()}`,title:'ทดสอบการเชื่อมต่อ Telegram',severity:'info',stationName:'ศูนย์ควบคุม',region:'ทุกพื้นที่',message:'ข้อความทดสอบจาก AQUA COMMAND สำเร็จเมื่อ Telegram ยอมรับการส่ง',createdAt:now(),demo:true};
-    store.alerts.unshift(a);store.queue.push({id:uid(),alertId:a.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null});trimQueue();saveSoon();broadcast();return reply(res,202,{ok:true,queued:true,id:a.id});
+    store.alerts.unshift(a);
+    trimAlerts();
+    const jobPayload = {
+      text: alertMessage(a),
+      title: a.title,
+      severity: a.severity,
+      stationName: a.stationName,
+      region: a.region,
+      message: a.message,
+      value: a.value || '-',
+      demo: true,
+      createdAt: a.createdAt
+    };
+    store.queue.push({id:uid(),alertId:a.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null,payload:jobPayload});
+    trimQueue();saveSoon();broadcast();return reply(res,202,{ok:true,queued:true,id:a.id});
   }
   const ack=p.match(/^\/api\/alerts\/([A-Za-z0-9-]+)\/ack$/);
   if(req.method==='POST'&&ack){if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});const a=store.alerts.find(x=>x.id===ack[1]);if(!a)return reply(res,404,{error:'Alert not found'});a.acknowledgedAt=now();saveSoon();broadcast();return reply(res,200,{ok:true});}
