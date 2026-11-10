@@ -31,10 +31,12 @@ class TelegramNotifier:
         """
         External delivery authorization check (REL-02).
         Decoupled from notification trigger generation.
-        Strictly DISABLED by default in LAB / non-production environments.
-        Requires production environment AND explicit operator consent.
+        Strict default-deny: Only allowed when APP_ENV == 'production'.
+        Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
+        Constructor override cannot enable external egress in non-production environments.
         """
-        if Config.APP_ENV in ("lab", "test", "development", "dev"):
+        env = getattr(Config, "APP_ENV", "").strip().lower()
+        if env != "production":
             return False
         if self._delivery_authorized is not None:
             return bool(self._delivery_authorized)

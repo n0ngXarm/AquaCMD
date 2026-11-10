@@ -294,6 +294,47 @@ class TestMonitorServiceSecurity(unittest.TestCase):
                 self.assertIn("REL-02", output)
                 self.assertIn("ระงับตามนโยบายความปลอดภัย", output)
 
+    def test_strict_production_allowlist_negative_environments(self):
+        """Negative test: Strict allowlist default-deny for non-production environments."""
+        from src.telegram_bot import TelegramBot
+        from src.telegram_notifier import TelegramNotifier
+        from src.config import Config
+
+        invalid_environments = [
+            "staging",
+            "qa",
+            "unknown",
+            "",
+            "   ",
+            "production_test",
+            "prod",
+            "dev",
+            "test",
+            "malformed!env"
+        ]
+
+        for env in invalid_environments:
+            with patch.object(Config, "APP_ENV", env):
+                # Constructor override must NOT enable egress in non-production
+                notifier = TelegramNotifier(bot_token="123456:FAKE_TOKEN_FOR_TESTING", delivery_authorized=True)
+                self.assertFalse(
+                    notifier.is_delivery_authorized,
+                    f"Environment '{env}' must be denied outbound delivery even with constructor override"
+                )
+
+                # Inbound polling must also be strictly denied
+                bot = TelegramBot(db=MagicMock(), pwa=MagicMock(), notifier=notifier, polling_authorized=True)
+                self.assertFalse(
+                    bot.is_polling_authorized,
+                    f"Environment '{env}' must be denied inbound polling even with constructor override"
+                )
+
+                # Zero network requests on probe/send
+                with patch("urllib.request.urlopen") as mock_urlopen:
+                    self.assertFalse(notifier.send_message("123", "Test"))
+                    self.assertEqual(bot._get_updates(), [])
+                    mock_urlopen.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

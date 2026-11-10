@@ -22,21 +22,21 @@ class Config:
     CHECK_INTERVAL_SECONDS = int(os.getenv("CHECK_INTERVAL_SECONDS", "300"))
     ENABLE_OUTAGE_ALERT = os.getenv("ENABLE_OUTAGE_ALERT", "true").lower() in ("true", "1", "yes")
     ENABLE_QUALITY_ALERT = os.getenv("ENABLE_QUALITY_ALERT", "true").lower() in ("true", "1", "yes")
-    # Environment & Deployment Mode
+    # Environment & Deployment Mode (Strict Default-Deny Allowlist)
     APP_ENV = os.getenv("APP_ENV", "lab").strip().lower()
 
     # External Notification Delivery Authorization Gate (REL-02)
-    # External delivery is strictly DISABLED by default in LAB / non-production environments.
-    # In production, requires both APP_ENV == "production" and explicit operator consent flag.
+    # Default-deny: APP_ENV must be strictly "production".
+    # Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
     _DELIVERY_AUTH_RAW = os.getenv("TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", "false").strip().lower()
     TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED = (
         APP_ENV == "production" and _DELIVERY_AUTH_RAW in ("true", "1", "yes")
     )
 
     # Inbound Telegram Command Polling Authorization Gate (REL-02)
-    # Decoupled from outbound notification delivery authorization.
-    # Strictly DISABLED by default in LAB / non-production environments.
-    # In production, requires both APP_ENV == "production" and explicit operator consent flag.
+    # Decoupled from outbound delivery authorization.
+    # Default-deny: APP_ENV must be strictly "production".
+    # Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
     _POLLING_AUTH_RAW = os.getenv("TELEGRAM_INBOUND_POLLING_AUTHORIZED", "false").strip().lower()
     TELEGRAM_INBOUND_POLLING_AUTHORIZED = (
         APP_ENV == "production" and _POLLING_AUTH_RAW in ("true", "1", "yes")
