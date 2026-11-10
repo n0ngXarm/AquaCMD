@@ -172,6 +172,29 @@ TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
 TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
 OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 
+class AtomicSaveError(OSError):
+    """Base error for atomic configuration save failures."""
+    def __init__(self, message: str, committed: bool = False):
+        super().__init__(message)
+        self.committed = committed
+
+class PreCommitSaveError(AtomicSaveError):
+    """Raised when save fails before atomic replace. Original configuration is untouched."""
+    def __init__(self, message: str):
+        super().__init__(message, committed=False)
+
+class PreCommitPermissionError(PreCommitSaveError, PermissionError):
+    """Raised when permission checks fail before commit. Original configuration is untouched."""
+    pass
+
+class PostCommitDurabilityError(AtomicSaveError):
+    """Raised when atomic replace succeeded but post-commit durability or mode sync failed.
+    The new configuration file is retained on disk (not destroyed/unlinked).
+    Automatic retry must NOT be attempted without manual reconciliation.
+    """
+    def __init__(self, message: str):
+        super().__init__(message, committed=True)
+
 def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
     """
     Durable, secure atomic file save adhering to SEC-02:
@@ -205,7 +228,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
         # Check directory ownership (must match current user UID)
         dir_stat = parent_dir.stat()
         if dir_stat.st_uid != os.getuid():
-            err = PermissionError(
+            err = PreCommitPermissionError(
                 f"SEC-02: Directory {parent_dir} ownership mismatch: UID {dir_stat.st_uid} != current UID {os.getuid()}"
             )
             if raise_on_error:
@@ -217,7 +240,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
         if parent_dir.is_symlink():
             resolved = parent_dir.resolve()
             if resolved.stat().st_uid != os.getuid():
-                err = PermissionError(
+                err = PreCommitPermissionError(
                     f"SEC-02: Directory symlink {parent_dir} points to unowned target {resolved}"
                 )
                 if raise_on_error:
@@ -227,7 +250,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
 
         # Reject overwrite if target file itself is a symlink
         if p.is_symlink():
-            err = PermissionError(
+            err = PreCommitPermissionError(
                 f"SEC-02: Target path {p} is a symlink; refusing to overwrite to prevent symlink attack."
             )
             if raise_on_error:
@@ -257,7 +280,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
             st = os.fstat(fd)
             actual_mode = st.st_mode & 0o777
             if actual_mode != mode:
-                raise PermissionError(
+                raise PreCommitPermissionError(
                     f"SEC-02: fchmod mode mismatch on temp file {temp_p}: expected {oct(mode)}, got {oct(actual_mode)}"
                 )
 
@@ -272,7 +295,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
             pre_st = temp_p.stat()
             pre_mode = pre_st.st_mode & 0o777
             if pre_mode != mode:
-                raise PermissionError(
+                raise PreCommitPermissionError(
                     f"SEC-02: Pre-commit mode mismatch on {temp_p}: expected {oct(mode)}, got {oct(pre_mode)}"
                 )
 
@@ -290,7 +313,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
                 err_msg = f"SEC-02: Post-commit directory fsync failed on {parent_dir}: {sync_err}"
                 logger.error(err_msg)
                 if raise_on_error:
-                    raise OSError(err_msg) from sync_err
+                    raise PostCommitDurabilityError(err_msg) from sync_err
                 return False
             finally:
                 if dir_fd is not None:
@@ -313,11 +336,28 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
                     )
                     logger.error(err_msg)
                     if raise_on_error:
-                        raise PermissionError(err_msg)
+                        raise PostCommitDurabilityError(err_msg)
                     return False
 
         return True
 
+    except AtomicSaveError as e:
+        phase = "post-commit" if e.committed else "pre-commit"
+        logger.error(f"SEC-02: Error atomic saving {filepath} [{phase}]: {e}")
+        if fd is not None:
+            try:
+                os.close(fd)
+            except Exception:
+                pass
+        if not e.committed:
+            try:
+                if temp_p.exists():
+                    temp_p.unlink()
+            except Exception:
+                pass
+        if raise_on_error:
+            raise
+        return False
     except Exception as e:
         phase = "post-commit" if committed else "pre-commit"
         logger.error(f"SEC-02: Error atomic saving {filepath} [{phase}]: {e}")
@@ -333,7 +373,10 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
             except Exception:
                 pass
         if raise_on_error:
-            raise
+            if committed:
+                raise PostCommitDurabilityError(f"SEC-02: [{phase}] {e}") from e
+            else:
+                raise PreCommitSaveError(f"SEC-02: [{phase}] {e}") from e
         return False
 
 MAX_OPCUA_BROWSE_NODES = 500

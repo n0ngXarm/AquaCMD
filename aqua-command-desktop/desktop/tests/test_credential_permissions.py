@@ -20,7 +20,14 @@ desktop_dir = Path(__file__).resolve().parent.parent
 if str(desktop_dir) not in sys.path:
     sys.path.insert(0, str(desktop_dir))
 
-from app import save_atomic_json, IS_WINDOWS
+from app import (
+    save_atomic_json,
+    IS_WINDOWS,
+    AtomicSaveError,
+    PreCommitSaveError,
+    PreCommitPermissionError,
+    PostCommitDurabilityError
+)
 
 
 class TestCredentialFilePermissions(unittest.TestCase):
@@ -188,15 +195,55 @@ class TestCredentialFilePermissions(unittest.TestCase):
             return real_fsync(fd)
 
         with patch("os.fsync", side_effect=fail_dir_fsync):
-            with self.assertRaises(OSError) as ctx:
+            with self.assertRaises(PostCommitDurabilityError) as ctx:
                 save_atomic_json(test_file, data, mode=0o600)
             self.assertIn("post-commit directory fsync failed", str(ctx.exception).lower())
+            self.assertTrue(ctx.exception.committed, "Exception must explicitly reflect committed=True")
 
         # Target file must still exist and contain the data (not destroyed)
         self.assertTrue(test_file.exists(), "Target config must never be deleted on post-commit fsync failure")
         with open(test_file, "r", encoding="utf-8") as f:
             saved = json.load(f)
         self.assertEqual(saved["key"], "important_config")
+
+    def test_post_commit_error_distinction_and_retry_prevention(self):
+        """SEC-02: Asserts distinct handling between pre-commit failure (retryable) and post-commit error (non-retryable)."""
+        if IS_WINDOWS:
+            self.skipTest("POSIX directory fsync")
+
+        self.target_dir.mkdir(parents=True, exist_ok=True)
+        test_file = self.target_dir / "retry_check.json"
+        original_data = {"version": 1, "state": "ORIGINAL"}
+        save_atomic_json(test_file, original_data, mode=0o600)
+
+        # 1. Pre-commit failure: committed must be False, safe to retry or abort
+        with patch("json.dump", side_effect=IOError("Simulated write failure")):
+            with self.assertRaises(PreCommitSaveError) as pre_ctx:
+                save_atomic_json(test_file, {"version": 2, "state": "NEW"}, mode=0o600)
+            self.assertFalse(pre_ctx.exception.committed, "Pre-commit error must have committed=False")
+
+        # Original data untouched
+        with open(test_file, "r", encoding="utf-8") as f:
+            self.assertEqual(json.load(f)["version"], 1)
+
+        # 2. Post-commit failure: committed must be True, callers MUST NOT retry automatically
+        real_fsync = os.fsync
+        call_count = [0]
+        def fail_dir_fsync(fd):
+            call_count[0] += 1
+            if call_count[0] > 1:
+                raise OSError("Simulated hardware fsync failure")
+            return real_fsync(fd)
+
+        with patch("os.fsync", side_effect=fail_dir_fsync):
+            with self.assertRaises(PostCommitDurabilityError) as post_ctx:
+                save_atomic_json(test_file, {"version": 2, "state": "COMMITTED_BUT_FSYNC_FAILED"}, mode=0o600)
+            self.assertTrue(post_ctx.exception.committed, "Post-commit error must have committed=True")
+
+        # The new configuration WAS committed to disk; caller must NOT attempt blind automatic overwrite/retry!
+        with open(test_file, "r", encoding="utf-8") as f:
+            persisted = json.load(f)
+        self.assertEqual(persisted["version"], 2, "New config is retained on disk and must not be reverted or unlinked")
 
     def test_parent_directory_fsync_called_on_posix(self):
         """Verifies that parent directory fsync is invoked to persist directory entries on POSIX."""
