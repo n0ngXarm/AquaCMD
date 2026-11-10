@@ -63,9 +63,48 @@ if (!DEMO) history.length=0;
 let store = {alerts:[], queue:[], active:{}, updatedAt:now()};
 try { const previous=JSON.parse(fs.readFileSync(DATA_PATH,'utf8')); store={...store, alerts:previous.alerts||[],queue:previous.queue||[],active:previous.active||{}}; }
 catch (e) {if (e.code!=='ENOENT') console.error('Could not read state:',e.message);}
+const MAX_QUEUE_SIZE = 500;
+function trimQueue() {
+  if (store.queue.length <= MAX_QUEUE_SIZE) return;
+  const excess = store.queue.length - MAX_QUEUE_SIZE;
+  // Prune only completed/terminal entries in chronological order.
+  // NEVER prune 'pending' or in-flight entries.
+  // NEVER prune unacknowledged alerts.
+  let pruned = 0;
+  store.queue = store.queue.filter(j => {
+    if (pruned < excess && (j.status === 'sent' || j.status === 'simulated' || (j.status === 'failed' && j.attempt >= 6))) {
+      pruned++;
+      return false;
+    }
+    return true;
+  });
+}
 let saveTimer;
 function saveSoon() {clearTimeout(saveTimer); saveTimer=setTimeout(saveNow,400);}
-function saveNow() {try {let temp=DATA_PATH+'.tmp';fs.writeFileSync(temp,JSON.stringify(store));fs.renameSync(temp,DATA_PATH);}catch(e){console.error('State persistence error:',e.message);}}
+function saveNow() {
+  const rand = crypto.randomBytes(6).toString('hex');
+  const dir = path.dirname(DATA_PATH);
+  const temp = path.join(dir, `.${path.basename(DATA_PATH)}.${rand}.tmp`);
+  let fd;
+  try {
+    fd = fs.openSync(temp, 'wx', 0o600);
+    const content = Buffer.from(JSON.stringify(store, null, 2), 'utf8');
+    fs.writeFileSync(fd, content);
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+    fd = null;
+    fs.renameSync(temp, DATA_PATH);
+    try {
+      const dirFd = fs.openSync(dir, 'r');
+      fs.fsyncSync(dirFd);
+      fs.closeSync(dirFd);
+    } catch {}
+  } catch (e) {
+    if (fd !== null && fd !== undefined) { try { fs.closeSync(fd); } catch {} }
+    try { if (fs.existsSync(temp)) fs.unlinkSync(temp); } catch {}
+    console.error('State persistence error:', e.message);
+  }
+}
 function statusOf(s) {if (!s.hasTelemetry) return 'unknown';const a=evaluateTelemetry(s);return a.some(x=>x.severity==='critical')?'critical':a.some(x=>x.severity==='warning')?'warning':'normal';}
 function snapshot() {
   const details=stations.map(s=>({...s,status:statusOf(s)}));
@@ -85,9 +124,11 @@ function snapshot() {
     queueStats:{
       pending:store.queue.filter(x=>x.status==='pending').length,
       failed:store.queue.filter(x=>x.status==='failed').length,
-      sent:store.queue.filter(x=>x.status==='sent').length
+      sent:store.queue.filter(x=>x.status==='sent').length,
+      simulated:store.queue.filter(x=>x.status==='simulated').length,
+      blocked:store.queue.filter(x=>x.status==='blocked_by_policy').length
     },
-    queueRecent:store.queue.slice(-8).reverse().map(j=>({id:j.id,alertId:j.alertId,status:j.status,attempt:j.attempt,createdAt:j.createdAt,sentAt:j.sentAt||null,lastError:j.lastError||null})),
+    queueRecent:store.queue.slice(-8).reverse().map(j=>({id:j.id,alertId:j.alertId,status:j.status,attempt:j.attempt,createdAt:j.createdAt,sentAt:j.sentAt||null,simulatedAt:j.simulatedAt||null,blockedAt:j.blockedAt||null,lastError:j.lastError||null})),
     metrics:{
       total:details.length,
       online:details.filter(x=>x.online).length,
@@ -115,7 +156,10 @@ function createAlert(station,rule,severity,value,{resolved=false,demo=DEMO}={}) 
     `${rule.title}: ${value}${rule.unit} / เกณฑ์เตือน ${rule.warning}${rule.unit}, วิกฤต ${rule.critical}${rule.unit}`;
   const alert={id:`AL-${uid()}`,stationId:station.id,stationName:station.name,region:station.region,title:resolved?`${rule.title} — กลับสู่ปกติ`:rule.title,severity:resolved?'resolved':severity,message,value,ruleId:rule.id,createdAt:now(),resolvedAt:resolved?now():null,acknowledgedAt:null,demo};
   store.alerts.unshift(alert);store.alerts=store.alerts.slice(0,400);
-  if(BOT&&CHAT&&(!demo||SEND_DEMO)) store.queue.push({id:uid(),alertId:alert.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null});
+  if(BOT&&CHAT&&(!demo||SEND_DEMO)) {
+    store.queue.push({id:uid(),alertId:alert.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null});
+    trimQueue();
+  }
   saveSoon();broadcast();return alert;
 }
 function processRules(station,{demo=DEMO,initial=false}={}) {
@@ -153,11 +197,17 @@ async function processQueue() {
   if(sending||!BOT||!CHAT)return;
   const job=store.queue.find(x=>x.status==='pending' && x.nextAt<=Date.now());if(!job)return;
   const gap=Date.now()-lastTelegramSend;if(gap<SEND_GAP)return;
-  const alert=store.alerts.find(x=>x.id===job.alertId);if(!alert){job.status='failed';job.lastError='Missing alert';saveSoon();return;}
+  const alert=store.alerts.find(x=>x.id===job.alertId);if(!alert){job.status='failed';job.lastError='Missing alert';trimQueue();saveSoon();return;}
   if (!TELEGRAM_DELIVERY_AUTHORIZED) {
-    // In LAB or non-production environment, external network delivery is strictly disabled by default (REL-02)
-    job.status='sent';job.sentAt=now();job.messageId='simulated-lab-delivery';
-    store.queue=store.queue.slice(-500);saveSoon();broadcast();return;
+    // In LAB or non-production environment, external network delivery is strictly disabled by default (REL-02).
+    // NEVER mark as 'sent' without real acknowledgment from Telegram API.
+    if (alert.demo) {
+      job.status='simulated';job.simulatedAt=now();job.simulated=true;job.lastError=null;
+    } else {
+      job.status='blocked_by_policy';job.blockedAt=now();
+      job.lastError=`Delivery suppressed: external network delivery not authorized in APP_ENV='${APP_ENV}' (REL-02)`;
+    }
+    trimQueue();saveSoon();broadcast();return;
   }
   sending=true;lastTelegramSend=Date.now();job.attempt++;
   try {
@@ -166,7 +216,7 @@ async function processQueue() {
     if(!response.ok||!answer.ok) throw new Error(`Telegram HTTP ${response.status}: ${answer.description||'Unknown'}`);
     job.status='sent';job.sentAt=now();job.messageId=answer.result?.message_id;
   }catch(err){job.lastError=String(err.message).slice(0,180);if(job.attempt>=6){job.status='failed';}else{job.nextAt=Date.now()+Math.min(300_000,3000*2**(job.attempt-1));}}
-  finally{sending=false;store.queue=store.queue.slice(-500);saveSoon();broadcast();}
+  finally{sending=false;trimQueue();saveSoon();broadcast();}
 }
 setInterval(processQueue,950).unref();
 // A silent station cannot send online=false itself. Detect stale telemetry centrally.
@@ -255,14 +305,19 @@ async function handler(req,res){
   if(req.method==='POST'&&p==='/api/queue/retry-failed'){
     if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});
     if(!BOT||!CHAT)return reply(res,422,{error:'Telegram not configured'});
-    let count=0;for(const j of store.queue)if(j.status==='failed'){j.status='pending';j.attempt=0;j.nextAt=Date.now();j.lastError=null;count++;}
+    let count=0;for(const j of store.queue)if(j.status==='failed'||j.status==='blocked_by_policy'){j.status='pending';j.attempt=0;j.nextAt=Date.now();j.lastError=null;count++;}
     saveSoon();broadcast();return reply(res,200,{ok:true,retried:count});
+  }
+  if(req.method==='POST'&&p==='/api/queue/resume-blocked'){
+    if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});
+    let count=0;for(const j of store.queue)if(j.status==='blocked_by_policy'){j.status='pending';j.attempt=0;j.nextAt=Date.now();j.lastError=null;count++;}
+    saveSoon();broadcast();return reply(res,200,{ok:true,resumed:count});
   }
   if(req.method==='POST'&&p==='/api/test-telegram'){
     if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});
     if(!BOT||!CHAT)return reply(res,422,{error:'Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env'});
     const a={id:`TEST-${uid()}`,title:'ทดสอบการเชื่อมต่อ Telegram',severity:'info',stationName:'ศูนย์ควบคุม',region:'ทุกพื้นที่',message:'ข้อความทดสอบจาก AQUA COMMAND สำเร็จเมื่อ Telegram ยอมรับการส่ง',createdAt:now(),demo:true};
-    store.alerts.unshift(a);store.queue.push({id:uid(),alertId:a.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null});saveSoon();broadcast();return reply(res,202,{ok:true,queued:true,id:a.id});
+    store.alerts.unshift(a);store.queue.push({id:uid(),alertId:a.id,status:'pending',attempt:0,nextAt:Date.now(),createdAt:now(),lastError:null});trimQueue();saveSoon();broadcast();return reply(res,202,{ok:true,queued:true,id:a.id});
   }
   const ack=p.match(/^\/api\/alerts\/([A-Za-z0-9-]+)\/ack$/);
   if(req.method==='POST'&&ack){if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});const a=store.alerts.find(x=>x.id===ack[1]);if(!a)return reply(res,404,{error:'Alert not found'});a.acknowledgedAt=now();saveSoon();broadcast();return reply(res,200,{ok:true});}
