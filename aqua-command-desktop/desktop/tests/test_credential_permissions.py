@@ -137,25 +137,66 @@ class TestCredentialFilePermissions(unittest.TestCase):
         all_tmp = list(self.target_dir.glob(".*.tmp"))
         self.assertEqual(len(all_tmp), 0)
 
-    def test_post_replace_verification_fails_closed(self):
-        """Negative test: If post-replace file mode cannot be verified to match requested mode, fail-closed and purge."""
+    def test_pre_replace_mode_verification_aborts_preserving_original(self):
+        """Pre-commit failure test: Mode mismatch on temp file aborts before replace, preserving original config intact."""
         if IS_WINDOWS:
             self.skipTest("POSIX mode tests")
 
-        test_file = self.target_dir / "mode_fail.json"
-        fake_bad_stat = MagicMock()
-        fake_bad_stat.st_uid = os.getuid()
-        fake_bad_stat.st_mode = 0o666  # Insecure mode leaked
-
-        # Ensure target_dir exists and has correct stat
         self.target_dir.mkdir(parents=True, exist_ok=True)
+        test_file = self.target_dir / "safe_original.json"
+        original_data = {"version": 1, "credentials": "SAFE_ORIGINAL_CREDS"}
+        save_atomic_json(test_file, original_data, mode=0o600)
 
-        with patch.object(Path, "stat", return_value=fake_bad_stat):
-            with patch("os.chmod"):
-                with self.assertRaises(PermissionError) as ctx:
-                    save_atomic_json(test_file, {"sensitive": True}, mode=0o600)
-                self.assertIn("SEC-02", str(ctx.exception))
-                self.assertIn("unlinked", str(ctx.exception).lower())
+        # Mock os.stat on temp file to return insecure mode before replace
+        real_stat = os.stat
+
+        def mock_os_stat(path, *args, **kwargs):
+            st = real_stat(path, *args, **kwargs)
+            path_str = str(path)
+            if ".safe_original.json." in path_str and path_str.endswith(".tmp"):
+                bad_st = MagicMock(st_mode=0o666, st_uid=os.getuid())
+                return bad_st
+            return st
+
+        with patch("os.stat", side_effect=mock_os_stat):
+            with self.assertRaises(PermissionError) as ctx:
+                save_atomic_json(test_file, {"version": 2, "credentials": "NEW_UNTRUSTED_CREDS"}, mode=0o600)
+            self.assertIn("pre-commit", str(ctx.exception).lower())
+
+        # Verify original file was completely preserved and not modified or unlinked
+        with open(test_file, "r", encoding="utf-8") as f:
+            persisted = json.load(f)
+        self.assertEqual(persisted["credentials"], "SAFE_ORIGINAL_CREDS")
+        self.assertEqual(persisted["version"], 1)
+
+    def test_post_commit_fsync_failure_does_not_destroy_config(self):
+        """Post-commit test: If parent directory fsync fails, reports failure but never destroys target config."""
+        if IS_WINDOWS:
+            self.skipTest("POSIX directory fsync")
+
+        self.target_dir.mkdir(parents=True, exist_ok=True)
+        test_file = self.target_dir / "fsync_fail.json"
+        data = {"key": "important_config"}
+
+        real_fsync = os.fsync
+        call_count = [0]
+
+        def fail_dir_fsync(fd):
+            call_count[0] += 1
+            if call_count[0] > 1:  # First call is file fd, second call is dir fd
+                raise OSError("Simulated parent dir fsync hardware fault")
+            return real_fsync(fd)
+
+        with patch("os.fsync", side_effect=fail_dir_fsync):
+            with self.assertRaises(OSError) as ctx:
+                save_atomic_json(test_file, data, mode=0o600)
+            self.assertIn("post-commit directory fsync failed", str(ctx.exception).lower())
+
+        # Target file must still exist and contain the data (not destroyed)
+        self.assertTrue(test_file.exists(), "Target config must never be deleted on post-commit fsync failure")
+        with open(test_file, "r", encoding="utf-8") as f:
+            saved = json.load(f)
+        self.assertEqual(saved["key"], "important_config")
 
     def test_parent_directory_fsync_called_on_posix(self):
         """Verifies that parent directory fsync is invoked to persist directory entries on POSIX."""

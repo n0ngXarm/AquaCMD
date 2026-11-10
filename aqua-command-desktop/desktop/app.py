@@ -175,16 +175,22 @@ OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
     """
     Durable, secure atomic file save adhering to SEC-02:
-    - Random temporary file name in destination directory (same filesystem guarantee).
-    - Created exclusively (O_CREAT | O_EXCL | O_NOFOLLOW).
-    - Explicit permission enforcement (0600) on fd via fchmod/fstat before write.
-    - Directory ownership and symlink validation.
-    - Symlink target rejection to prevent symlink redirection attacks.
-    - Data durability: flush() + fsync() on temporary file descriptor prior to replace.
-    - Atomic replacement (POSIX rename(2)) preserving existing data on failure.
-    - Directory metadata durability: fsync() on parent directory descriptor on POSIX.
-    - Post-replace verification with fail-closed purge: if post-replace mode verification
-      fails, the unverified file is immediately unlinked to prevent credential exposure.
+    - Pre-commit phase:
+      * Random temporary file in destination directory (same filesystem guarantee).
+      * Created exclusively with O_CREAT | O_EXCL | O_NOFOLLOW.
+      * Explicit permission enforcement (0600) on fd via fchmod/fstat before write.
+      * Directory ownership and symlink validation.
+      * Symlink target rejection to prevent symlink redirection attacks.
+      * Data durability: flush() + fsync() on temporary file descriptor prior to replace.
+      * Strict pre-replace permission verification on temp file: if mode does not match,
+        aborts pre-commit without modifying the original configuration.
+    - Commit phase:
+      * Atomic replacement (POSIX rename(2)), replacing target file only after data is durable.
+    - Post-commit phase:
+      * Directory metadata durability: fsync() on parent directory descriptor on POSIX.
+        If parent directory fsync fails, reports failure (never falsely claims durable success).
+      * Post-commit permission verification: verifies target file mode without destroying
+        configuration on post-commit verification failure.
     - Fail-closed: Never swallows permission or security exceptions.
     """
     p = Path(filepath)
@@ -231,10 +237,11 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
     else:
         parent_dir.mkdir(parents=True, exist_ok=True)
 
-    # 2. Randomized temporary file in the destination directory
+    # 2. Pre-commit: Randomized temporary file in the destination directory
     rand_id = os.urandom(8).hex()
     temp_p = parent_dir / f".{p.name}.{rand_id}.tmp"
     fd = None
+    committed = False
 
     try:
         flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
@@ -260,17 +267,31 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
             f.flush()
             os.fsync(f.fileno())
 
-        # 3. Atomic replacement of target file (preserves existing file if crash occurs prior to replace)
-        temp_p.replace(p)
+        # Pre-replace verification: check mode on disk BEFORE committing replacement
+        if not IS_WINDOWS and mode is not None:
+            pre_st = temp_p.stat()
+            pre_mode = pre_st.st_mode & 0o777
+            if pre_mode != mode:
+                raise PermissionError(
+                    f"SEC-02: Pre-commit mode mismatch on {temp_p}: expected {oct(mode)}, got {oct(pre_mode)}"
+                )
 
-        # 4. Fsync parent directory on POSIX to commit directory entry metadata to durable storage
+        # 3. Commit Point: Atomic replacement of target file
+        temp_p.replace(p)
+        committed = True
+
+        # 4. Post-commit: Fsync parent directory on POSIX to commit directory entry metadata
         if not IS_WINDOWS and hasattr(os, "O_DIRECTORY"):
             dir_fd = None
             try:
                 dir_fd = os.open(str(parent_dir), os.O_RDONLY | os.O_DIRECTORY)
                 os.fsync(dir_fd)
             except OSError as sync_err:
-                logger.warning(f"SEC-02: Directory fsync warning on {parent_dir}: {sync_err}")
+                err_msg = f"SEC-02: Post-commit directory fsync failed on {parent_dir}: {sync_err}"
+                logger.error(err_msg)
+                if raise_on_error:
+                    raise OSError(err_msg) from sync_err
+                return False
             finally:
                 if dir_fd is not None:
                     try:
@@ -278,7 +299,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
                     except Exception:
                         pass
 
-        # 5. Post-replace verification with fail-closed purge
+        # 5. Post-commit: Permission verification (retains configuration if check fails)
         if not IS_WINDOWS and mode is not None:
             post_st = p.stat()
             final_mode = post_st.st_mode & 0o777
@@ -286,30 +307,31 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
                 os.chmod(p, mode)
                 final_mode = p.stat().st_mode & 0o777
                 if final_mode != mode:
-                    # Security breach: The file was replaced but permissions failed to lock down to mode.
-                    # Unlink the insecure file immediately to prevent unauthorized access.
-                    try:
-                        p.unlink()
-                    except Exception:
-                        pass
-                    raise PermissionError(
-                        f"SEC-02: Post-replace permission check failed on {p}: expected {oct(mode)}, got {oct(final_mode)}. Target unlinked to prevent exposure."
+                    err_msg = (
+                        f"SEC-02: Post-commit mode verification failed on {p}: "
+                        f"expected {oct(mode)}, got {oct(final_mode)}. Configuration retained."
                     )
+                    logger.error(err_msg)
+                    if raise_on_error:
+                        raise PermissionError(err_msg)
+                    return False
 
         return True
 
     except Exception as e:
-        logger.error(f"SEC-02: Error atomic saving {filepath}: {e}")
+        phase = "post-commit" if committed else "pre-commit"
+        logger.error(f"SEC-02: Error atomic saving {filepath} [{phase}]: {e}")
         if fd is not None:
             try:
                 os.close(fd)
             except Exception:
                 pass
-        try:
-            if temp_p.exists():
-                temp_p.unlink()
-        except Exception:
-            pass
+        if not committed:
+            try:
+                if temp_p.exists():
+                    temp_p.unlink()
+            except Exception:
+                pass
         if raise_on_error:
             raise
         return False
