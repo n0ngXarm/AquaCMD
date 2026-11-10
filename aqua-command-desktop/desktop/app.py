@@ -332,7 +332,11 @@ def validate_opcua_endpoint(url):
 def save_opcua_config(cfg):
     clean_cfg = dict(cfg)
     clean_cfg.pop('password', None)  # Safety: never save plaintext password to disk
-    return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg, mode=0o600)
+    try:
+        return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg, mode=0o600)
+    except Exception as e:
+        logger.error(f"Error saving OPC UA config: {e}")
+        return False
 
 def load_telegram_config():
     if TELEGRAM_CONFIG_FILE.exists():
@@ -348,7 +352,11 @@ def load_telegram_config():
     }
 
 def save_telegram_config(cfg):
-    return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg, mode=0o600)
+    try:
+        return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg, mode=0o600)
+    except Exception as e:
+        logger.error(f"Error saving Telegram config: {e}")
+        return False
 
 DEFAULT_TOPOLOGY = {
     "scada_lan": {
@@ -886,7 +894,11 @@ def load_tasks():
     return list(DEFAULT_TASKS)
 
 def save_tasks(tasks):
-    return save_atomic_json(TASKS_CONFIG_FILE, tasks)
+    try:
+        return save_atomic_json(TASKS_CONFIG_FILE, tasks)
+    except Exception as e:
+        logger.error(f"Error saving tasks: {e}")
+        return False
 
 
 # ---------------------------------------------------------
