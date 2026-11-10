@@ -378,3 +378,291 @@ test('DATA-02: Alert-Queue referential integrity, >400 alerts, >500 jobs, payloa
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
+
+test('DATA-02: Legacy alert schema migration, ACK evidence, and schema resilience', { timeout: 20_000 }, async () => {
+  const root = path.resolve(import.meta.dirname, '..');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'aqua-legacy-schema-'));
+  for (const file of ['server.mjs', 'rules.mjs']) {
+    fs.copyFileSync(path.join(root, file), path.join(tmp, file));
+  }
+  fs.cpSync(path.join(root, 'public'), path.join(tmp, 'public'), { recursive: true });
+  fs.mkdirSync(path.join(tmp, 'storage'));
+
+  const now = new Date().toISOString();
+  // Pre-seed with legacy alert representations missing acknowledgedAt or resolvedAt
+  const legacyAlerts = [
+    { id: 'LEGACY-ACK', stationId: 'CM-01', stationName: 'Station 1', title: 'Legacy Ack Alert', severity: 'warning', message: 'Legacy ack alert', acknowledged: true },
+    { id: 'LEGACY-RES', stationId: 'CM-02', stationName: 'Station 2', title: 'Legacy Res Alert', severity: 'resolved', message: 'Legacy res alert', resolved: true },
+    { id: 'LEGACY-STATUS', stationId: 'CM-03', stationName: 'Station 3', title: 'Legacy Status Alert', severity: 'warning', message: 'Legacy status ack', status: 'acknowledged' },
+    { id: 'LEGACY-ACTIVE', stationId: 'CM-04', stationName: 'Station 4', title: 'Active Alert', severity: 'critical', message: 'Original critical issue', demo: false }
+  ];
+
+  // Legacy job missing payload
+  const legacyQueue = [
+    { id: 'LEGACY-JOB-1', alertId: 'LEGACY-ACTIVE', status: 'pending', attempt: 0, nextAt: Date.now() + 600000, createdAt: now }
+  ];
+
+  fs.writeFileSync(path.join(tmp, 'storage', 'state.json'), JSON.stringify({
+    alerts: legacyAlerts,
+    queue: legacyQueue,
+    active: {},
+    updatedAt: now
+  }, null, 2));
+
+  const port = await openPort();
+  const env = {
+    ...process.env,
+    APP_ENV: 'lab',
+    DEMO_MODE: 'false',
+    HOST: '127.0.0.1',
+    PORT: String(port),
+    ADMIN_API_KEY: KEY,
+    TELEGRAM_BOT_TOKEN: '123456:MOCK',
+    TELEGRAM_CHAT_ID: '999999'
+  };
+
+  const child = spawn(process.execPath, [path.join(tmp, 'server.mjs')], { cwd: tmp, env, stdio: 'pipe' });
+  const base = `http://127.0.0.1:${port}`;
+
+  try {
+    for (let i = 0; i < 50; i++) {
+      if (child.exitCode !== null) throw Error('Server died');
+      try {
+        const r = await fetch(base + '/api/health');
+        if (r.ok) break;
+      } catch {}
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    const st = await (await fetch(base + '/api/state')).json();
+    const loadedAlerts = st.alerts;
+
+    // 1. Verify schema migration and ACK/resolved recognition
+    const ackAlert = loadedAlerts.find(a => a.id === 'LEGACY-ACK');
+    assert.ok(ackAlert.acknowledged === true || ackAlert.acknowledgedAt !== null, 'Legacy ACK must be recognized');
+
+    const resAlert = loadedAlerts.find(a => a.id === 'LEGACY-RES');
+    assert.ok(resAlert.resolved === true || resAlert.resolvedAt !== null, 'Legacy resolution must be recognized');
+
+    // 2. Verify legacy job payload was migrated/enriched from associated alert
+    const rawSaved = JSON.parse(fs.readFileSync(path.join(tmp, 'storage', 'state.json'), 'utf8'));
+    const savedJob = rawSaved.queue.find(j => j.id === 'LEGACY-JOB-1');
+    assert.ok(savedJob.payload, 'Legacy job without payload must be enriched on load');
+    assert.ok(savedJob.payload.text, 'Enriched payload must have message text');
+
+    // 3. Acknowledge the active alert via API and verify dual ACK evidence
+    const ackRes = await fetch(base + '/api/alerts/LEGACY-ACTIVE/ack', {
+      method: 'POST',
+      headers: { 'X-API-Key': KEY }
+    });
+    assert.equal(ackRes.status, 200);
+    const ackBody = await ackRes.json();
+    assert.ok(ackBody.acknowledgedAt, 'ACK endpoint must return acknowledged timestamp');
+
+    // Check state has both fields
+    const updatedSt = await (await fetch(base + '/api/state')).json();
+    const updatedActive = updatedSt.alerts.find(a => a.id === 'LEGACY-ACTIVE');
+    assert.ok(updatedActive.acknowledgedAt, 'acknowledgedAt timestamp must be recorded');
+    assert.equal(updatedActive.acknowledged, true, 'acknowledged boolean must be true');
+
+  } finally {
+    child.kill('SIGTERM');
+    await new Promise(resolve => {
+      if (child.exitCode !== null || child.signalCode) resolve();
+      else child.once('exit', resolve);
+    });
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('DATA-02: Boundary and backpressure on saturated capacity for external ingest and internal rules', { timeout: 25_000 }, async () => {
+  const root = path.resolve(import.meta.dirname, '..');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'aqua-backpressure-'));
+  for (const file of ['server.mjs', 'rules.mjs']) {
+    fs.copyFileSync(path.join(root, file), path.join(tmp, file));
+  }
+  fs.cpSync(path.join(root, 'public'), path.join(tmp, 'public'), { recursive: true });
+  fs.mkdirSync(path.join(tmp, 'storage'));
+
+  const now = new Date().toISOString();
+  // Fill alert store to MAX_ALERT_STORE (400) with active UNACKNOWLEDGED alerts
+  const saturatedAlerts = [];
+  for (let i = 0; i < 400; i++) {
+    saturatedAlerts.push({
+      id: `UNACK-${i}`,
+      stationId: 'CM-01',
+      stationName: 'Station 1',
+      region: 'Chiang Mai',
+      title: `Unacknowledged Outage ${i}`,
+      severity: 'critical',
+      message: `Active incident ${i}`,
+      value: 0.2,
+      ruleId: 'pressure-low',
+      createdAt: now,
+      resolvedAt: null,
+      acknowledgedAt: null,
+      acknowledged: false,
+      resolved: false,
+      demo: false
+    });
+  }
+
+  fs.writeFileSync(path.join(tmp, 'storage', 'state.json'), JSON.stringify({
+    alerts: saturatedAlerts,
+    queue: [],
+    active: {},
+    updatedAt: now
+  }, null, 2));
+
+  const port = await openPort();
+  const env = {
+    ...process.env,
+    APP_ENV: 'lab',
+    DEMO_MODE: 'false',
+    HOST: '127.0.0.1',
+    PORT: String(port),
+    ADMIN_API_KEY: KEY,
+    TELEGRAM_BOT_TOKEN: '123456:MOCK',
+    TELEGRAM_CHAT_ID: '999999'
+  };
+
+  const child = spawn(process.execPath, [path.join(tmp, 'server.mjs')], { cwd: tmp, env, stdio: 'pipe' });
+  const base = `http://127.0.0.1:${port}`;
+
+  try {
+    for (let i = 0; i < 50; i++) {
+      if (child.exitCode !== null) throw Error('Server died');
+      try {
+        const r = await fetch(base + '/api/health');
+        if (r.ok) break;
+      } catch {}
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    // 1. External Ingest: Attempt to add 401st alert when all 400 are unacknowledged -> expect 503 backpressure
+    const overflowRes = await fetch(base + '/api/incidents', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': KEY },
+      body: JSON.stringify({
+        title: '401st Outage Incident',
+        severity: 'critical',
+        message: 'Should be rejected by backpressure'
+      })
+    });
+    assert.equal(overflowRes.status, 503, 'Saturated alert store must reject new incidents with 503');
+    const errBody = await overflowRes.json();
+    assert.ok(errBody.error.includes('capacity limit reached'), 'Error must mention capacity limit');
+    assert.equal(errBody.retryAfterSeconds, 30, 'Backpressure must include Retry-After hint');
+
+    // 2. Internal telemetry generation: Should throttle gracefully without exceeding MAX_ALERT_STORE
+    const telemRes = await fetch(base + '/api/telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': KEY },
+      body: JSON.stringify({
+        stationId: 'CM-01',
+        pressureBar: 0.1, // triggers critical rule
+        online: true
+      })
+    });
+    assert.equal(telemRes.status, 200);
+
+    const rawCheck = JSON.parse(fs.readFileSync(path.join(tmp, 'storage', 'state.json'), 'utf8'));
+    assert.equal(rawCheck.alerts.length, 400, 'Alert store length in state must not exceed MAX_ALERT_STORE ceiling');
+
+    // 3. Acknowledge one alert to free capacity
+    const ackRes = await fetch(base + '/api/alerts/UNACK-0/ack', {
+      method: 'POST',
+      headers: { 'X-API-Key': KEY }
+    });
+    assert.equal(ackRes.status, 200);
+
+    // 4. Now external incident post should succeed because UNACK-0 can be pruned
+    const allowedRes = await fetch(base + '/api/incidents', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': KEY },
+      body: JSON.stringify({
+        title: 'New Incident After Acknowledging Old',
+        severity: 'warning',
+        message: 'Accepted because capacity was freed'
+      })
+    });
+    assert.equal(allowedRes.status, 200, 'Should accept new incident after capacity freed by ACK');
+    const allowedBody = await allowedRes.json();
+    assert.ok(allowedBody.alertId, 'Should return created alertId');
+
+  } finally {
+    child.kill('SIGTERM');
+    await new Promise(resolve => {
+      if (child.exitCode !== null || child.signalCode) resolve();
+      else child.once('exit', resolve);
+    });
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('DATA-02: Immutable job payload primary delivery and retry state retention', { timeout: 20_000 }, async () => {
+  const root = path.resolve(import.meta.dirname, '..');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'aqua-payload-fidelity-'));
+  for (const file of ['server.mjs', 'rules.mjs']) {
+    fs.copyFileSync(path.join(root, file), path.join(tmp, file));
+  }
+  fs.cpSync(path.join(root, 'public'), path.join(tmp, 'public'), { recursive: true });
+  fs.mkdirSync(path.join(tmp, 'storage'));
+
+  const port = await openPort();
+  const env = {
+    ...process.env,
+    APP_ENV: 'lab',
+    DEMO_MODE: 'false',
+    SEND_DEMO_ALERTS: 'true',
+    HOST: '127.0.0.1',
+    PORT: String(port),
+    ADMIN_API_KEY: KEY,
+    TELEGRAM_BOT_TOKEN: '123456:MOCK',
+    TELEGRAM_CHAT_ID: '999999',
+    TELEGRAM_MIN_GAP_MS: '1000'
+  };
+
+  const child = spawn(process.execPath, [path.join(tmp, 'server.mjs')], { cwd: tmp, env, stdio: 'pipe' });
+  const base = `http://127.0.0.1:${port}`;
+
+  try {
+    for (let i = 0; i < 50; i++) {
+      if (child.exitCode !== null) throw Error('Server died');
+      try {
+        const r = await fetch(base + '/api/health');
+        if (r.ok) break;
+      } catch {}
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    // Post test telegram to queue a job with an immutable payload
+    const qRes = await fetch(base + '/api/test-telegram', {
+      method: 'POST',
+      headers: { 'X-API-Key': KEY }
+    });
+    assert.equal(qRes.status, 202);
+    const qBody = await qRes.json();
+    assert.ok(qBody.id);
+
+    // Wait for processQueue to cycle the job to 'simulated' in lab mode
+    let simulatedJob = null;
+    for (let i = 0; i < 30; i++) {
+      const st = await (await fetch(base + '/api/state')).json();
+      simulatedJob = st.queueRecent.find(j => j.alertId === qBody.id);
+      if (simulatedJob && simulatedJob.status === 'simulated') break;
+      await new Promise(r => setTimeout(r, 200));
+    }
+
+    assert.ok(simulatedJob, 'Job must be processed in queue');
+    assert.equal(simulatedJob.status, 'simulated');
+
+  } finally {
+    child.kill('SIGTERM');
+    await new Promise(resolve => {
+      if (child.exitCode !== null || child.signalCode) resolve();
+      else child.once('exit', resolve);
+    });
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});

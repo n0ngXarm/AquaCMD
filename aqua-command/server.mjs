@@ -60,18 +60,83 @@ const history = Array.from({length:96},(_,i)=>({
   tank: num(72+Math.sin(i*.11)*6+Math.random()*1.8,1)
 }));
 if (!DEMO) history.length=0;
+function isAlertAcknowledged(alert) {
+  if (!alert || typeof alert !== 'object') return false;
+  return Boolean(
+    alert.acknowledgedAt ||
+    alert.acknowledged === true ||
+    alert.ack === true ||
+    alert.status === 'acknowledged' ||
+    alert.acknowledged_at
+  );
+}
+
+function isAlertResolved(alert) {
+  if (!alert || typeof alert !== 'object') return false;
+  return Boolean(
+    alert.resolvedAt ||
+    alert.resolved === true ||
+    alert.severity === 'resolved' ||
+    alert.status === 'resolved' ||
+    alert.resolved_at ||
+    alert.supersededAt
+  );
+}
+
+function migrateLoadedAlert(a) {
+  if (!a || typeof a !== 'object') return a;
+  const isAck = isAlertAcknowledged(a);
+  const isRes = isAlertResolved(a);
+  return {
+    ...a,
+    createdAt: a.createdAt || now(),
+    acknowledgedAt: a.acknowledgedAt || (isAck ? (a.updatedAt || a.createdAt || now()) : null),
+    resolvedAt: a.resolvedAt || (isRes ? (a.updatedAt || a.createdAt || now()) : null),
+    acknowledged: isAck,
+    resolved: isRes
+  };
+}
+
 let store = {alerts:[], queue:[], active:{}, updatedAt:now()};
-try { const previous=JSON.parse(fs.readFileSync(DATA_PATH,'utf8')); store={...store, alerts:previous.alerts||[],queue:previous.queue||[],active:previous.active||{}}; }
+try {
+  const previous=JSON.parse(fs.readFileSync(DATA_PATH,'utf8'));
+  const prevAlerts = (previous.alerts||[]).map(migrateLoadedAlert);
+  let migrated = false;
+  const prevQueue = (previous.queue||[]).map(j => {
+    if (!j.payload) {
+      const al = prevAlerts.find(a => a.id === j.alertId);
+      if (al) {
+        migrated = true;
+        j.payload = {
+          text: alertMessage(al),
+          title: al.title,
+          severity: al.severity,
+          stationName: al.stationName,
+          region: al.region,
+          message: al.message,
+          value: al.value,
+          demo: Boolean(al.demo),
+          createdAt: al.createdAt
+        };
+      }
+    }
+    return j;
+  });
+  store={...store, alerts:prevAlerts, queue:prevQueue, active:previous.active||{}};
+  if (migrated) {
+    saveNow();
+  }
+}
 catch (e) {if (e.code!=='ENOENT') console.error('Could not read state:',e.message);}
 const MAX_ALERT_STORE = 400;
 
 function isAlertReferenced(alertId) {
-  return store.queue.some(j => (j.status === 'pending' || j.status === 'blocked_by_policy') && j.alertId === alertId);
+  return store.queue.some(j => (j.status === 'pending' || j.status === 'blocked_by_policy' || (j.status === 'failed' && j.attempt < 6)) && j.alertId === alertId);
 }
 
 function canPruneAlert(alert) {
   if (isAlertReferenced(alert.id)) return false;
-  if (alert.acknowledgedAt === null && alert.resolvedAt === null) return false;
+  if (!isAlertAcknowledged(alert) && !isAlertResolved(alert)) return false;
   return true;
 }
 
@@ -79,9 +144,9 @@ function canPruneAlerts() {
   return store.alerts.some(canPruneAlert);
 }
 
-function trimAlerts() {
-  if (store.alerts.length <= MAX_ALERT_STORE) return;
-  const excess = store.alerts.length - MAX_ALERT_STORE;
+function trimAlerts(maxLimit = MAX_ALERT_STORE) {
+  if (store.alerts.length <= maxLimit) return;
+  const excess = store.alerts.length - maxLimit;
   const prunables = new Set();
   for (let i = store.alerts.length - 1; i >= 0 && prunables.size < excess; i--) {
     const a = store.alerts[i];
@@ -101,13 +166,13 @@ function trimQueue() {
   const prunables = new Set();
   for (let i = 0; i < store.queue.length && prunables.size < excess; i++) {
     const j = store.queue[i];
-    // NEVER prune pending or blocked_by_policy jobs
-    if (j.status === 'pending' || j.status === 'blocked_by_policy') continue;
+    // NEVER prune pending, blocked_by_policy, or actively retrying jobs
+    if (j.status === 'pending' || j.status === 'blocked_by_policy' || (j.status === 'failed' && j.attempt < 6)) continue;
 
-    // Check associated alert
+    // Check associated alert: keep job if alert is still unacknowledged and unresolved (retaining ACK evidence)
     const alert = store.alerts.find(a => a.id === j.alertId);
-    if (alert && alert.acknowledgedAt === null && alert.resolvedAt === null) {
-      continue; // keep job if alert is still unacknowledged and unresolved
+    if (alert && !isAlertAcknowledged(alert) && !isAlertResolved(alert)) {
+      continue;
     }
 
     if (j.status === 'sent' || j.status === 'simulated' || (j.status === 'failed' && j.attempt >= 6)) {
@@ -191,9 +256,32 @@ const clients = new Set();
 function broadcast() {const message=`data: ${JSON.stringify(snapshot())}\n\n`;for(const c of clients) try{c.write(message);}catch{clients.delete(c);}}
 const uid=()=>crypto.randomUUID().slice(0,8).toUpperCase();
 function createAlert(station,rule,severity,value,{resolved=false,demo=DEMO}={}) {
+  if (store.alerts.length >= MAX_ALERT_STORE) {
+    trimAlerts();
+    if (store.alerts.length >= MAX_ALERT_STORE && !canPruneAlerts()) {
+      console.warn(`[DATA-02] Alert capacity limit reached (${store.alerts.length}/${MAX_ALERT_STORE}). Active unacknowledged alerts require acknowledgement. Backpressure engaged.`);
+      return null;
+    }
+  }
   const message=resolved?`${rule.title} กลับสู่เกณฑ์ที่กำหนด (${value}${rule.unit})` :
     `${rule.title}: ${value}${rule.unit} / เกณฑ์เตือน ${rule.warning}${rule.unit}, วิกฤต ${rule.critical}${rule.unit}`;
-  const alert={id:`AL-${uid()}`,stationId:station.id,stationName:station.name,region:station.region,title:resolved?`${rule.title} — กลับสู่ปกติ`:rule.title,severity:resolved?'resolved':severity,message,value,ruleId:rule.id,createdAt:now(),resolvedAt:resolved?now():null,acknowledgedAt:null,demo};
+  const alert={
+    id:`AL-${uid()}`,
+    stationId:station.id,
+    stationName:station.name,
+    region:station.region,
+    title:resolved?`${rule.title} — กลับสู่ปกติ`:rule.title,
+    severity:resolved?'resolved':severity,
+    message,
+    value,
+    ruleId:rule.id,
+    createdAt:now(),
+    resolvedAt:resolved?now():null,
+    acknowledgedAt:null,
+    acknowledged:false,
+    resolved:Boolean(resolved),
+    demo
+  };
   store.alerts.unshift(alert);
   trimAlerts();
   if(BOT&&CHAT&&(!demo||SEND_DEMO)) {
@@ -250,10 +338,10 @@ async function processQueue() {
   const gap=Date.now()-lastTelegramSend;if(gap<SEND_GAP)return;
   const alert=store.alerts.find(x=>x.id===job.alertId);
   // Referential Integrity & Self-Contained Payload:
-  // If alert is somehow detached, the job still possesses its immutable payload.
+  // Primary delivery source: immutable job payload ensures message fidelity even if alert is mutated or pruned
   if(!alert && !job.payload){job.status='failed';job.lastError='Missing alert and payload';trimQueue();saveSoon();return;}
-  const messageText = alert ? alertMessage(alert) : (job.payload?.text || 'AQUA COMMAND Alert');
-  const isDemo = alert ? alert.demo : Boolean(job.payload?.demo);
+  const messageText = job.payload?.text || (alert ? alertMessage(alert) : 'AQUA COMMAND Alert');
+  const isDemo = job.payload ? Boolean(job.payload.demo) : (alert ? Boolean(alert.demo) : Boolean(DEMO));
   if (!TELEGRAM_DELIVERY_AUTHORIZED) {
     if (isDemo) {
       job.status='simulated';job.simulatedAt=now();job.simulated=true;job.lastError=null;
@@ -323,22 +411,32 @@ async function handler(req,res){
     if(!checkKey(req))return reply(res,401,{error:'Invalid admin API key'});
     let b=await body(req);
     // Backpressure check when capacity is full of active unacknowledged alerts
-    if (store.alerts.length >= 2000 && !canPruneAlerts()) {
-      return reply(res, 503, {error: 'Alert store capacity limit reached: active alerts require acknowledgement'});
+    if (store.alerts.length >= MAX_ALERT_STORE) {
+      trimAlerts();
+      if (store.alerts.length >= MAX_ALERT_STORE && !canPruneAlerts()) {
+        return reply(res, 503, {
+          error: 'Alert store capacity limit reached: active alerts require acknowledgement',
+          retryAfterSeconds: 30
+        });
+      }
     }
+    const isResolved = b.resolved === true || b.severity === 'resolved' || Boolean(b.resolvedAt);
+    const isAck = b.acknowledged === true || Boolean(b.acknowledgedAt);
     const alert={
       id: b.id || `PWA-${uid()}`,
       stationId: b.stationId || 'PWA',
       stationName: b.stationName || 'กปภ.',
       region: b.region || 'ส่วนภูมิภาค',
       title: b.title || 'ประกาศหยุดจ่ายน้ำ',
-      severity: b.severity || 'warning',
+      severity: b.severity || (isResolved ? 'resolved' : 'warning'),
       message: b.message || '',
       value: b.value !== undefined ? b.value : '-',
       ruleId: b.ruleId || 'pwa-outage',
       createdAt: b.createdAt || now(),
-      resolvedAt: b.resolvedAt || null,
-      acknowledgedAt: null,
+      resolvedAt: b.resolvedAt || (isResolved ? now() : null),
+      acknowledgedAt: b.acknowledgedAt || (isAck ? now() : null),
+      acknowledged: isAck,
+      resolved: isResolved,
       demo: Boolean(b.demo)
     };
     store.alerts.unshift(alert);
@@ -392,7 +490,16 @@ async function handler(req,res){
     trimQueue();saveSoon();broadcast();return reply(res,202,{ok:true,queued:true,id:a.id});
   }
   const ack=p.match(/^\/api\/alerts\/([A-Za-z0-9-]+)\/ack$/);
-  if(req.method==='POST'&&ack){if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});const a=store.alerts.find(x=>x.id===ack[1]);if(!a)return reply(res,404,{error:'Alert not found'});a.acknowledgedAt=now();saveSoon();broadcast();return reply(res,200,{ok:true});}
+  if(req.method==='POST'&&ack){
+    if(!checkKey(req))return reply(res,401,{error:'Admin API key required'});
+    const a=store.alerts.find(x=>x.id===ack[1]);
+    if(!a)return reply(res,404,{error:'Alert not found'});
+    a.acknowledgedAt=now();
+    a.acknowledged=true;
+    saveSoon();
+    broadcast();
+    return reply(res,200,{ok:true,id:a.id,acknowledgedAt:a.acknowledgedAt});
+  }
   if(p.startsWith('/api/'))return reply(res,404,{error:'API not found'});
   if(req.method!=='GET'&&req.method!=='HEAD')return reply(res,405,{error:'Method not allowed'});
   const safePath=path.resolve(PUBLIC,'.'+decodeURIComponent(p==='/'?'/index.html':p));

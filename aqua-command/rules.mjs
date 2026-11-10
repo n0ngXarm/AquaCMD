@@ -24,13 +24,15 @@ export function alertMessage(alert) {
   const icons = {critical: '🔴', warning: '🟠', resolved: '🟢', info: '🔵'};
   const tag = alert.demo ? '[DEMO] ' : '';
   const area = alert.region ? (alert.region.includes('เชียงใหม่') ? alert.region : `${alert.region}, เชียงใหม่`) : 'จังหวัดเชียงใหม่';
-  return `${icons[alert.severity] || '🔔'} ${tag}AQUA COMMAND — CHIANG MAI (${alert.severity.toUpperCase()})\n` +
-    `ระดับ: ${alert.severity.toUpperCase()}\n` +
-    `เหตุการณ์: ${alert.title}\n` +
-    `สถานี: ${alert.stationName}\n` +
+  const alertDate = (alert.createdAt && !isNaN(new Date(alert.createdAt).getTime())) ? new Date(alert.createdAt) : new Date();
+  const severityStr = String(alert.severity || 'warning').toUpperCase();
+  return `${icons[alert.severity] || '🔔'} ${tag}AQUA COMMAND — CHIANG MAI (${severityStr})\n` +
+    `ระดับ: ${severityStr}\n` +
+    `เหตุการณ์: ${alert.title || 'การแจ้งเตือน'}\n` +
+    `สถานี: ${alert.stationName || 'สถานีทั่วไป'}\n` +
     `พื้นที่: ${area}\n` +
-    `รายละเอียด: ${alert.message}\n` +
-    `เวลา: ${new Intl.DateTimeFormat('th-TH', {timeZone:'Asia/Bangkok', dateStyle:'medium', timeStyle:'medium'}).format(new Date(alert.createdAt))}\n` +
-    `รหัสเหตุการณ์: ${alert.id}\n` +
+    `รายละเอียด: ${alert.message || '-'}\n` +
+    `เวลา: ${new Intl.DateTimeFormat('th-TH', {timeZone:'Asia/Bangkok', dateStyle:'medium', timeStyle:'medium'}).format(alertDate)}\n` +
+    `รหัสเหตุการณ์: ${alert.id || 'N/A'}\n` +
     `แหล่งข้อมูล: ${alert.demo ? 'ข้อมูลจำลอง / DEMO' : 'ระบบตรวจวัด กปภ. เชียงใหม่'}`;
 }
