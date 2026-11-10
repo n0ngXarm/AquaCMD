@@ -22,8 +22,16 @@ class Config:
     CHECK_INTERVAL_SECONDS = int(os.getenv("CHECK_INTERVAL_SECONDS", "300"))
     ENABLE_OUTAGE_ALERT = os.getenv("ENABLE_OUTAGE_ALERT", "true").lower() in ("true", "1", "yes")
     ENABLE_QUALITY_ALERT = os.getenv("ENABLE_QUALITY_ALERT", "true").lower() in ("true", "1", "yes")
-    # Security: Default-deny for external notification broadcast on cold start
-    ENABLE_INITIAL_BROADCAST = os.getenv("ENABLE_INITIAL_BROADCAST", "false").lower() in ("true", "1", "yes")
+    # Environment & Deployment Mode
+    APP_ENV = os.getenv("APP_ENV", "lab").strip().lower()
+
+    # External Notification Delivery Authorization Gate (REL-02)
+    # External delivery is strictly DISABLED by default in LAB / non-production environments.
+    # In production, requires both APP_ENV == "production" and explicit operator consent flag.
+    _DELIVERY_AUTH_RAW = os.getenv("TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", "false").strip().lower()
+    TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED = (
+        APP_ENV == "production" and _DELIVERY_AUTH_RAW in ("true", "1", "yes")
+    )
 
     # Quality alert threshold settings (PWA drinking water standard)
     PH_MIN = float(os.getenv("PH_MIN", "6.5"))

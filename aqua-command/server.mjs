@@ -16,6 +16,8 @@ const DEMO = process.env.DEMO_MODE !== 'false';
 const SEND_DEMO = process.env.SEND_DEMO_ALERTS === 'true';
 const BOT = process.env.TELEGRAM_BOT_TOKEN || '';
 const CHAT = process.env.TELEGRAM_CHAT_ID || '';
+const APP_ENV = (process.env.APP_ENV || 'lab').toLowerCase();
+const TELEGRAM_DELIVERY_AUTHORIZED = APP_ENV === 'production' && process.env.TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED === 'true';
 const SECRET = process.env.ADMIN_API_KEY || '';
 const REMINDER_MS = Math.max(5, Number(process.env.REMINDER_MINUTES)||30)*60_000;
 const SEND_GAP = Math.max(1000, Number(process.env.TELEGRAM_MIN_GAP_MS)||1400);
@@ -152,6 +154,11 @@ async function processQueue() {
   const job=store.queue.find(x=>x.status==='pending' && x.nextAt<=Date.now());if(!job)return;
   const gap=Date.now()-lastTelegramSend;if(gap<SEND_GAP)return;
   const alert=store.alerts.find(x=>x.id===job.alertId);if(!alert){job.status='failed';job.lastError='Missing alert';saveSoon();return;}
+  if (!TELEGRAM_DELIVERY_AUTHORIZED) {
+    // In LAB or non-production environment, external network delivery is strictly disabled by default (REL-02)
+    job.status='sent';job.sentAt=now();job.messageId='simulated-lab-delivery';
+    store.queue=store.queue.slice(-500);saveSoon();broadcast();return;
+  }
   sending=true;lastTelegramSend=Date.now();job.attempt++;
   try {
     const response=await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:alertMessage(alert),disable_web_page_preview:true}),signal:AbortSignal.timeout(8000)});

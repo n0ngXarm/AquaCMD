@@ -16,14 +16,29 @@ class TelegramNotifier:
 
     API_BASE = "https://api.telegram.org/bot"
 
-    def __init__(self, bot_token: Optional[str] = None):
+    def __init__(self, bot_token: Optional[str] = None, delivery_authorized: Optional[bool] = None):
         self.bot_token = bot_token or Config.TELEGRAM_BOT_TOKEN
         self.default_chat_id = Config.TELEGRAM_CHAT_ID
+        self._delivery_authorized = delivery_authorized
 
     @property
     def is_configured(self) -> bool:
         """Returns True if bot token is configured."""
         return bool(self.bot_token)
+
+    @property
+    def is_delivery_authorized(self) -> bool:
+        """
+        External delivery authorization check (REL-02).
+        Decoupled from notification trigger generation.
+        Strictly DISABLED by default in LAB / non-production environments.
+        Requires production environment AND explicit operator consent.
+        """
+        if Config.APP_ENV in ("lab", "test", "development", "dev"):
+            return False
+        if self._delivery_authorized is not None:
+            return bool(self._delivery_authorized)
+        return getattr(Config, "TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", False)
 
     def _api_url(self, method: str) -> str:
         """Constructs Telegram Bot API endpoint URL."""
@@ -33,6 +48,9 @@ class TelegramNotifier:
         """Tests connection with Telegram API using getMe."""
         if not self.is_configured:
             return False, "TELEGRAM_BOT_TOKEN ยังไม่ได้ตั้งค่าใน .env"
+
+        if not self.is_delivery_authorized:
+            return False, f"External network probe blocked in {Config.APP_ENV} environment (delivery not authorized)"
 
         try:
             req = urllib.request.Request(self._api_url("getMe"), headers={"User-Agent": "PWA-Water-Alert/1.0"})
@@ -56,6 +74,14 @@ class TelegramNotifier:
         """Sends an HTML formatted text message."""
         if not self.is_configured:
             logger.warning("Telegram Bot Token is not configured. Message skipped.")
+            return False
+
+        if not self.is_delivery_authorized:
+            logger.info(
+                "External Telegram delivery suppressed: APP_ENV='%s' (delivery authorization not granted). "
+                "Notification recorded locally.",
+                Config.APP_ENV
+            )
             return False
 
         payload: dict[str, Any] = {
@@ -94,6 +120,14 @@ class TelegramNotifier:
         or if caption length exceeds Telegram's 1024-character photo caption limit.
         """
         if not self.is_configured:
+            return False
+
+        if not self.is_delivery_authorized:
+            logger.info(
+                "External Telegram photo delivery suppressed: APP_ENV='%s' (delivery authorization not granted). "
+                "Photo notification recorded locally.",
+                Config.APP_ENV
+            )
             return False
 
         # Telegram photo caption limit is 1024 chars
