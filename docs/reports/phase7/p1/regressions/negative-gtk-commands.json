@@ -1,0 +1,15 @@
+[
+  {
+    "id": "negative-controls",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p1-evidence/negative_controls.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "duration_seconds": 2.018,
+    "log": "negative-controls.txt",
+    "source_state": "Phase7 P1 test tree from ca1a96fe9323d1758dc59a00498c39fde4c67d94"
+  }
+]

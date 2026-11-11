@@ -1,0 +1,22 @@
+{
+  "branch": "test/phase7-p1-gui-reconciliation",
+  "checkouts": {
+    "p1": {
+      "head": "dcd36196c5be9efe53ae71d43508bd0f59801687",
+      "clean": true
+    },
+    "p0": {
+      "head": "ca1a96fe9323d1758dc59a00498c39fde4c67d94",
+      "clean": true
+    },
+    "phase6": {
+      "head": "e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+      "clean": true
+    },
+    "canonical": {
+      "head": "0db6e72145ec4b2d1fef0329a285216ac6d49d12",
+      "clean": true
+    }
+  },
+  "no_public_push_merge_rewrite_deploy": true
+}

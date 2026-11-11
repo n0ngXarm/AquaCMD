@@ -1,0 +1,189 @@
+[
+  {
+    "path": "SOURCE_DIFF_REDACTED.patch",
+    "redactions": {
+      "synthetic_baseline_sentinel": 2
+    },
+    "original_sha256": "6f3491bc26e12ff83821ad56ab00601c58e74bf2e18c2ff96afec704990de6e6",
+    "delivered_sha256": "1b976603aefea25626fe6989741db265019944538159382637fba71725192195"
+  },
+  {
+    "path": "catalog-baseline-raw.txt",
+    "redactions": {
+      "personal_home_path": 7
+    },
+    "original_sha256": "19e4b01ff1a53acb34dcdbebaf700d61528cff51e8fa456f2ebe395214d9b08f",
+    "delivered_sha256": "e3f1a88ee0ce54398ebc2feb4687e8b2267981af8c7a770e9815f68fbe9a0358"
+  },
+  {
+    "path": "credential-baseline-raw.txt",
+    "redactions": {
+      "personal_home_path": 4,
+      "synthetic_baseline_sentinel": 3
+    },
+    "original_sha256": "91908b9eaede3f77109f52132328d2bc2c4a240dcabbe2d6d39004fec55bdf6c",
+    "delivered_sha256": "48f44e7f48fd94b1f652fe6c6cdecb8e8b5373cd74aee9c3d66e1ff276d1c555"
+  },
+  {
+    "path": "guard-baseline-raw.txt",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "original_sha256": "3e880bcebd414880b75c4c4080fbd79055ad905a8c6125a3ea6aa6c32821bfe1",
+    "delivered_sha256": "badfb3200a5f8d48f08ea62f7a4128a47ee92898dea09ba9db2f0151dd797526"
+  },
+  {
+    "path": "payload-session-raw.txt",
+    "redactions": {
+      "personal_home_path": 3
+    },
+    "original_sha256": "10659cfcaec5ecee34ae203aa77bbf63346f9d2128e3152bbcab580cc1bb686b",
+    "delivered_sha256": "368c23853a2198f4dc8b90e866a72b36fd677aedf9d4d1917bc598c13764eddf"
+  },
+  {
+    "path": "regressions/contracts-116.txt",
+    "redactions": {
+      "personal_home_path": 2
+    },
+    "original_sha256": "9b790b3a932fd5666b738a4e1e8537e596953ef6e33da34f958496299883a42a",
+    "delivered_sha256": "18c1ddbfc5ef6cec00d63fa784c5198ac5d1b29d4e5d436c3990c8abe1fcc602"
+  },
+  {
+    "path": "regressions/desktop-broad-p0.txt",
+    "redactions": {
+      "rendered_pixel_byte_literal": 2,
+      "personal_home_path": 36
+    },
+    "original_sha256": "3d2e084037ef80e25ce1159e722dd02e9b6623dbe737d10859ec41360bcf1bb5",
+    "delivered_sha256": "842e6e718730b9314dbd9109b56903bae9269b474baf3f217f89d95285b46165"
+  },
+  {
+    "path": "regressions/focused-security-task-delivery.txt",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "original_sha256": "6d178830b0788888243627aa5455d3fd59d998c542fed45be7182ea12efb5a79",
+    "delivered_sha256": "82f73ae244e69011976957bbeb09b5a323f280a0de769b1ad2adf286668bc9f4"
+  },
+  {
+    "path": "regressions/gateway-59-host-loopback.txt",
+    "redactions": {
+      "personal_home_path": 10
+    },
+    "original_sha256": "a7c69b14ef6d475656773f31523a13a92ad97d56b6aa32845c2a60705a133b54",
+    "delivered_sha256": "fdeea3b679b5126fa1511d55fc21203d950108d6adce9f1369104c551cb57dae"
+  },
+  {
+    "path": "regressions/gtk-commands.json",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "original_sha256": "43d0b89e13d2594d017dd268220bf31960c7c8e3d7a82bd9ec0de0694933b17a",
+    "delivered_sha256": "41c1479c7537771c20db723278915a8ae3fc82afe53e492f03aa98903139d83c"
+  },
+  {
+    "path": "regressions/native-private-runtime.txt",
+    "redactions": {
+      "personal_home_path": 2
+    },
+    "original_sha256": "1604a584a263d3ea8024dd4607a046a0c58df1a9708366898369373c6165750c",
+    "delivered_sha256": "5e31508755ecbe0c2580afa0787daa682fa7fcd87c41b7a419f9cf98fc381e97"
+  },
+  {
+    "path": "regressions/native-rpm-payload-private-runtime.txt",
+    "redactions": {
+      "personal_home_path": 2
+    },
+    "original_sha256": "1604a584a263d3ea8024dd4607a046a0c58df1a9708366898369373c6165750c",
+    "delivered_sha256": "5e31508755ecbe0c2580afa0787daa682fa7fcd87c41b7a419f9cf98fc381e97"
+  },
+  {
+    "path": "regressions/node-commands.json",
+    "redactions": {
+      "personal_home_path": 15
+    },
+    "original_sha256": "0d09b5f74c8fb1cc073923509c089695f1c09a42d42741e2ca78130da4a95556",
+    "delivered_sha256": "7bb252268d0e417ca738b1c483aa8ad06bff77ad2ac0acb0349b7f2ee7ca5aa9"
+  },
+  {
+    "path": "regressions/payload-gtk-commands.json",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "original_sha256": "38a1b6cee41366f9e1c638871920e2b6fc01334a468aca41835bfbaf9bb66e90",
+    "delivered_sha256": "32cf371ec5bf05459d92ed559253c699a6004a56793e3475c7b2b76ecfe00156"
+  },
+  {
+    "path": "regressions/pwa-14.txt",
+    "redactions": {
+      "rendered_pixel_byte_literal": 1,
+      "personal_home_path": 1
+    },
+    "original_sha256": "60c7f23f395ed0205d14ba137c65ee806a85c0670fa95578354d0a780cc61838",
+    "delivered_sha256": "22f6f7b3d6829c33f0941cc57e84c5d42bfd08d769b90f507badd2a79e602a67"
+  },
+  {
+    "path": "regressions/pwa-final.txt",
+    "redactions": {
+      "rendered_pixel_byte_literal": 1
+    },
+    "original_sha256": "2c01749f32d565d04ec4bf0c00fb5fc70ed1cc98736ac4ccadbe5ab18d9fa63e",
+    "delivered_sha256": "c9fc7856f854ad0b15b06baea8684f6fcabd77026f8c859f851512ffee88013f"
+  },
+  {
+    "path": "regressions/web-20.txt",
+    "redactions": {
+      "personal_home_path": 7
+    },
+    "original_sha256": "f5857359bc899b70e6b00a2e33225f533aa4f32f9f84495bdd40a6d7a1adc3a9",
+    "delivered_sha256": "e04d9fc64dc3b8ee74fd238db3f08703f14b3208f42cb3a889c641dc3f3f8877"
+  },
+  {
+    "path": "rpm-build-raw.txt",
+    "redactions": {
+      "personal_home_path": 69
+    },
+    "original_sha256": "5a11e8256761570979b4cd553b70f5e4b1ba2ef4bc95f3132bdad6f48be32a5c",
+    "delivered_sha256": "4bb0b3d523ae6eda98949213974e8243a247496dc60edd01abb089b516556513"
+  },
+  {
+    "path": "rpm-final-build-raw.txt",
+    "redactions": {
+      "personal_home_path": 69
+    },
+    "original_sha256": "e2d61145e5f79e7ff9a7cc08887ee357ea94207ebac17c2e7e77e74575257c94",
+    "delivered_sha256": "09f34e836b654e9a5e5a282316841b179e2e458af03031836ec5eac52b29d563"
+  },
+  {
+    "path": "rpm-installed-container-command.json",
+    "redactions": {
+      "personal_home_path": 3
+    },
+    "original_sha256": "ff25c78f9ab8e1407d2a3f13c5d452b8455d81ba831dd359a89e35116f81e191",
+    "delivered_sha256": "53469a336f114f56dae508773a2476b5c7c9252f6af8f88cfa4f590983f31a84"
+  },
+  {
+    "path": "rpm-installed-container-raw.txt",
+    "redactions": {
+      "personal_home_path": 3
+    },
+    "original_sha256": "bf3533ecaed6617d4ab53a1f848f44f0550fd47588f8e1868123d56f699d35e0",
+    "delivered_sha256": "aed93fb6637a5e7acc91017c303287eb6e6089de13e6ab38b27388433dfc1407"
+  },
+  {
+    "path": "staged-symlink-baseline.txt",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "original_sha256": "37a0e98a42899de4d5c15d122a31543b8dea673202da65d63b48c3ef310240b9",
+    "delivered_sha256": "6481eac8b43311c2efc9c53712a1e5527c1141e032b846a77ed2076693fdc6ab"
+  },
+  {
+    "path": "storage-baseline-raw.txt",
+    "redactions": {
+      "personal_home_path": 2
+    },
+    "original_sha256": "6bac7cf38912d4f738ba85a5a9e57ae0f74e9cb2b45814620ba1fab81ae67e06",
+    "delivered_sha256": "0208944ebc837654d6f914217161878ad52a4500d1bed4dec18cd05d764f540e"
+  }
+]

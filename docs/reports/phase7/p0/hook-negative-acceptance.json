@@ -1,0 +1,11 @@
+[
+  {
+    "case": "Real pre-commit hook rejects staged credential even after safe worktree substitution",
+    "exit_code": 1,
+    "secret_rendered": false
+  },
+  {
+    "case": "Same hook permits safe staged text",
+    "exit_code": 0
+  }
+]

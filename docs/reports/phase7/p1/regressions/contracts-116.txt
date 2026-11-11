@@ -1,0 +1,279 @@
+COMMAND /usr/bin/python3 -B -m unittest discover -s tests -v
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p1-tests/aqua-command-desktop
+test_api_does_not_write_database_or_create_missing_database (test_evidence_phase2.ApiTests.test_api_does_not_write_database_or_create_missing_database) ... 127.0.0.1 - - [11/Nov/2026 11:58:06] "GET /api/topology HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 11:58:06] "GET /api/evidence HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 11:58:06] "GET /api/topology HTTP/1.1" 503 -
+ok
+test_empty_database_counters_are_sql_zero_and_no_success_is_inferred (test_evidence_phase2.ApiTests.test_empty_database_counters_are_sql_zero_and_no_success_is_inferred) ... 127.0.0.1 - - [11/Nov/2026 11:58:06] "GET /api/topology HTTP/1.1" 200 -
+ok
+test_host_filter_is_a_bound_sql_value (test_evidence_phase2.ApiTests.test_host_filter_is_a_bound_sql_value) ... 127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?host=%27%20OR%201%3D1-- HTTP/1.1" 200 -
+ok
+test_invalid_limits_duplicate_arguments_and_write_methods_are_rejected (test_evidence_phase2.ApiTests.test_invalid_limits_duplicate_arguments_and_write_methods_are_rejected) ... 127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?limit=0 HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?limit=-1 HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?limit=1001 HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?limit=NaN HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?limit= HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?limit=1&limit=2 HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /api/evidence?other=1 HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "POST /api/topology HTTP/1.1" 405 -
+127.0.0.1 - - [11/Nov/2026 11:58:07] "GET /missing HTTP/1.1" 404 -
+ok
+test_live_stream_sends_only_new_rows_once_and_is_silent_when_idle (test_evidence_phase2.ApiTests.test_live_stream_sends_only_new_rows_once_and_is_silent_when_idle) ... 127.0.0.1 - - [11/Nov/2026 11:58:08] "GET /api/stream HTTP/1.1" 200 -
+ok
+test_other_origins_and_nonloopback_binding_are_rejected (test_evidence_phase2.ApiTests.test_other_origins_and_nonloopback_binding_are_rejected) ... 127.0.0.1 - - [11/Nov/2026 11:58:10] "GET /api/topology HTTP/1.1" 403 -
+ok
+test_raw_evidence_is_not_rewritten_and_limit_is_applied_by_sql (test_evidence_phase2.ApiTests.test_raw_evidence_is_not_rewritten_and_limit_is_applied_by_sql) ... 127.0.0.1 - - [11/Nov/2026 11:58:10] "GET /api/evidence?host=192.0.2.11&limit=1 HTTP/1.1" 200 -
+ok
+test_stream_resume_uses_last_event_id_without_duplicates (test_evidence_phase2.ApiTests.test_stream_resume_uses_last_event_id_without_duplicates) ... 127.0.0.1 - - [11/Nov/2026 11:58:11] "GET /api/stream HTTP/1.1" 200 -
+ok
+test_topology_keeps_old_failure_context_when_a_new_route_cannot_verify_recovery (test_evidence_phase2.ApiTests.test_topology_keeps_old_failure_context_when_a_new_route_cannot_verify_recovery) ... 127.0.0.1 - - [11/Nov/2026 11:58:11] "GET /api/topology HTTP/1.1" 200 -
+ok
+test_topology_states_and_all_counters_match_independent_sql_counts (test_evidence_phase2.ApiTests.test_topology_states_and_all_counters_match_independent_sql_counts) ... 127.0.0.1 - - [11/Nov/2026 11:58:12] "GET /api/topology HTTP/1.1" 200 -
+ok
+test_unobserved_configured_host_is_unknown_and_has_no_source (test_evidence_phase2.ApiTests.test_unobserved_configured_host_is_unknown_and_has_no_source) ... 127.0.0.1 - - [11/Nov/2026 11:58:12] "GET /api/topology HTTP/1.1" 200 -
+ok
+test_config_sim_flag_controls_only_its_target_and_not_os_inventory (test_evidence_phase2.MigrationTests.test_config_sim_flag_controls_only_its_target_and_not_os_inventory) ... ok
+test_existing_phase1_rows_are_preserved_and_default_to_real (test_evidence_phase2.MigrationTests.test_existing_phase1_rows_are_preserved_and_default_to_real) ... ok
+test_nonboolean_sim_is_rejected_before_creating_database (test_evidence_phase2.MigrationTests.test_nonboolean_sim_is_rejected_before_creating_database) ... ok
+test_source_is_validated_and_rejected_without_inserting (test_evidence_phase2.MigrationTests.test_source_is_validated_and_rejected_without_inserting) ... ok
+test_age_boundary_and_stale_failure_reason (test_evidence_phase2.StateTests.test_age_boundary_and_stale_failure_reason) ... ok
+test_invalid_timestamp_is_an_error_instead_of_success (test_evidence_phase2.StateTests.test_invalid_timestamp_is_an_error_instead_of_success) ... ok
+test_new_failure_invalidates_older_read_success_and_preserves_reason (test_evidence_phase2.StateTests.test_new_failure_invalidates_older_read_success_and_preserves_reason) ... ok
+test_no_rows_is_unknown_with_no_observed_source_or_timestamp (test_evidence_phase2.StateTests.test_no_rows_is_unknown_with_no_observed_source_or_timestamp) ... ok
+test_recent_route_does_not_refresh_old_read_success (test_evidence_phase2.StateTests.test_recent_route_does_not_refresh_old_read_success) ... ok
+test_recovery_promotes_only_to_newly_verified_level (test_evidence_phase2.StateTests.test_recovery_promotes_only_to_newly_verified_level) ... ok
+test_route_ping_and_discovery_alone_do_not_assert_transport_or_session (test_evidence_phase2.StateTests.test_route_ping_and_discovery_alone_do_not_assert_transport_or_session) ... ok
+test_route_success_does_not_erase_transport_failure (test_evidence_phase2.StateTests.test_route_success_does_not_erase_transport_failure) ... ok
+test_sources_are_not_combined_into_false_read_success (test_evidence_phase2.StateTests.test_sources_are_not_combined_into_false_read_success) ... ok
+test_stale_recovery_does_not_reuse_the_pre_recovery_failure_reason (test_evidence_phase2.StateTests.test_stale_recovery_does_not_reuse_the_pre_recovery_failure_reason) ... ok
+test_success_levels_and_priority_use_real_checks (test_evidence_phase2.StateTests.test_success_levels_and_priority_use_real_checks) ... ok
+test_application_uses_new_api_view_and_closes_it_with_the_window (test_f3_api_view_phase3.FrontendContracts.test_application_uses_new_api_view_and_closes_it_with_the_window) ... ok
+test_f3_uses_the_shared_formal_theme_without_own_palette (test_f3_api_view_phase3.FrontendContracts.test_f3_uses_the_shared_formal_theme_without_own_palette) ... ok
+test_inline_page_has_only_local_assets_and_escapes_config_metadata (test_f3_api_view_phase3.FrontendContracts.test_inline_page_has_only_local_assets_and_escapes_config_metadata) ... ok
+test_metadata_cannot_inject_measurements_or_multiple_addresses (test_f3_api_view_phase3.FrontendContracts.test_metadata_cannot_inject_measurements_or_multiple_addresses) ... ok
+test_only_http_loopback_base_is_allowed_in_the_webview (test_f3_api_view_phase3.FrontendContracts.test_only_http_loopback_base_is_allowed_in_the_webview) ... ok
+test_counts_and_bounds_are_sql (test_f3_architecture.Architecture.test_counts_and_bounds_are_sql) ... ok
+test_empty (test_f3_architecture.Architecture.test_empty) ... ok
+test_no_writes (test_f3_architecture.Architecture.test_no_writes) ... ok
+test_old_endpoint_cannot_confirm_current_read (test_f3_architecture.Architecture.test_old_endpoint_cannot_confirm_current_read) ... ok
+test_pipeline_not_built (test_f3_architecture.Architecture.test_pipeline_not_built) ... ok
+test_session_receipt_is_not_live_session (test_f3_architecture.Architecture.test_session_receipt_is_not_live_session) ... ok
+test_stale_failure_not_current (test_f3_architecture.Architecture.test_stale_failure_not_current) ... ok
+test_stale_success_not_current (test_f3_architecture.Architecture.test_stale_success_not_current) ... ok
+test_unknown_inventory_and_dynamic_count (test_f3_architecture.Architecture.test_unknown_inventory_and_dynamic_count) ... ok
+test_no_threshold_match_does_not_queue (test_f3_demo_delivery.DemoTaskGroupTest.test_no_threshold_match_does_not_queue) ... ok
+test_only_matching_task_groups_follow_one_queued_message_and_receipt (test_f3_demo_delivery.DemoTaskGroupTest.test_only_matching_task_groups_follow_one_queued_message_and_receipt) ... ok
+test_unconfirmed_delivery_keeps_the_queued_groups (test_f3_demo_delivery.DemoTaskGroupTest.test_unconfirmed_delivery_keeps_the_queued_groups) ... ok
+test_connect_failure_never_posts (test_f3_demo_delivery.TelegramReceiptTest.test_connect_failure_never_posts) ... ok
+test_http_success_without_bot_receipt_is_failure (test_f3_demo_delivery.TelegramReceiptTest.test_http_success_without_bot_receipt_is_failure) ... ok
+test_response_timeout_does_not_retry (test_f3_demo_delivery.TelegramReceiptTest.test_response_timeout_does_not_retry) ... ok
+test_success_requires_telegram_message_id (test_f3_demo_delivery.TelegramReceiptTest.test_success_requires_telegram_message_id) ... ok
+test_different_source_or_endpoint_cannot_label_displayed_read (test_f3_task_groups.TestF3TaskGroups.test_different_source_or_endpoint_cannot_label_displayed_read) ... ok
+test_legacy_read_without_tag_sample_cannot_reuse_previous_group (test_f3_task_groups.TestF3TaskGroups.test_legacy_read_without_tag_sample_cannot_reuse_previous_group) ... ok
+test_same_tag_can_belong_to_multiple_configured_groups (test_f3_task_groups.TestF3TaskGroups.test_same_tag_can_belong_to_multiple_configured_groups) ... ok
+test_built_client_is_unknown_until_an_actual_attempt_and_source_has_no_control_calls (test_opcua_phase4.Phase4Contracts.test_built_client_is_unknown_until_an_actual_attempt_and_source_has_no_control_calls) ... ok
+test_explicit_endpoint_and_node_allowlist_cannot_redirect_or_embed_credentials (test_opcua_phase4.Phase4Contracts.test_explicit_endpoint_and_node_allowlist_cannot_redirect_or_embed_credentials) ... ok
+test_first_kernel_observation_proves_internal_pairs_before_nic_inventory (test_opcua_phase4.Phase4Contracts.test_first_kernel_observation_proves_internal_pairs_before_nic_inventory) ... ok
+test_ip_forward_is_observed_and_warns_without_changing_the_os (test_opcua_phase4.Phase4Contracts.test_ip_forward_is_observed_and_warns_without_changing_the_os) ... ok
+test_local_network_facts_cannot_be_borrowed_from_another_observer (test_opcua_phase4.Phase4Contracts.test_local_network_facts_cannot_be_borrowed_from_another_observer) ... ok
+test_new_failure_hides_previous_value_without_erasing_sample_history (test_opcua_phase4.Phase4Contracts.test_new_failure_hides_previous_value_without_erasing_sample_history) ... ok
+test_sample_and_evidence_commit_atomically_with_foreign_key (test_opcua_phase4.Phase4Contracts.test_sample_and_evidence_commit_atomically_with_foreign_key) ... ok
+test_samples_from_a_previous_node_binding_are_not_current_config_values (test_opcua_phase4.Phase4Contracts.test_samples_from_a_previous_node_binding_are_not_current_config_values) ... ok
+test_a_real_read_changes_value_and_preserves_quality_certificate_and_source (test_opcua_protocol_phase4.RealOpcUaPhase4.test_a_real_read_changes_value_and_preserves_quality_certificate_and_source) ... Requested session timeout to be 3600000ms, got 600000ms instead
+Requested session timeout to be 3600000ms, got 600000ms instead
+{"protocol": "real-loopback", "source": "sim", "first_value": 12.5, "changed_value": 73.25, "quality": "Good", "certificate": {"subject": "O=AQUA COMMAND SIMULATED,CN=AQUA COMMAND SIMULATED server", "issuer": "O=AQUA COMMAND SIMULATED,CN=AQUA COMMAND SIMULATED server", "not_before": "2026-11-11T04:58:15+00:00", "not_after": "2027-11-11T04:58:15+00:00", "sha256": "0917f20e9ba32ca48277159f0678894af223f05829da5d1cedddd007c345b067"}}
+ok
+test_b_bad_node_status_is_not_a_successful_read (test_opcua_protocol_phase4.RealOpcUaPhase4.test_b_bad_node_status_is_not_a_successful_read) ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_b_server_status_uses_the_explicit_standard_node_and_real_structured_value (test_opcua_protocol_phase4.RealOpcUaPhase4.test_b_server_status_uses_the_explicit_standard_node_and_real_structured_value) ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_c_untrusted_certificate_is_rejected_then_explicitly_trusted_secure_read_succeeds (test_opcua_protocol_phase4.RealOpcUaPhase4.test_c_untrusted_certificate_is_rejected_then_explicitly_trusted_secure_read_succeeds) ... Quarantined untrusted certificate to: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p1-tests/aqua-command-desktop/tests/.phase4-protocol-dnaygbwa/client-pki/rejected/certs/rejected_urn_aqua_command_sim_0917F20E9BA32CA4.der (Reason: Untrusted by client trust store)
+close_secure_channel was called but connection is closed
+Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_d_actual_loop_respects_configured_interval_and_stops_cleanly (test_opcua_protocol_phase4.RealOpcUaPhase4.test_d_actual_loop_respects_configured_interval_and_stops_cleanly) ... {"loop_samples": 2, "configured_interval_s": 1.2, "actual_receipt_delta_s": 1.37759, "stop_exit": 0}
+ok
+test_e_storage_failure_aborts_the_read_and_closes_actual_client_sockets (test_opcua_protocol_phase4.RealOpcUaPhase4.test_e_storage_failure_aborts_the_read_and_closes_actual_client_sockets) ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_z_stopped_simulator_records_refused_and_never_displays_old_value (test_opcua_protocol_phase4.RealOpcUaPhase4.test_z_stopped_simulator_records_refused_and_never_displays_old_value) ... Requested session timeout to be 3600000ms, got 600000ms instead
+{"stopped_server_evidence": {"id": 5, "host": "127.0.0.1", "check": "ua_endpoints", "result": "REFUSED", "error": "[Errno 111] Connect call failed ('127.0.0.1', 4850)", "latency_ms": 0.3294420002930565, "ts": "2026-11-11T04:58:23.288622+00:00", "detail": "{\"endpoint\": \"opc.tcp://127.0.0.1:4850/aqua-sim/\", \"port\": 4850, \"security_policy\": \"None\", \"authentication\": \"Anonymous\", \"exception\": \"ConnectionRefusedError\", \"observer\": \"fedora\"}", "source": "sim"}, "current_sample": {"tag": "T-101.level", "node_id": "ns=1;s=T-101.level", "value": null, "quality": "Good", "ts": "2026-11-11T04:58:22.850495+00:00", "evidence_id": 3, "source": "sim", "available": false, "freshness": "FRESH", "age_seconds": 0.452718, "age_label": "FRESH"}}
+ok
+test_default_is_configuration_only_and_creates_no_report (test_opcua_readiness.ReadinessGates.test_default_is_configuration_only_and_creates_no_report) ... ok
+test_existing_report_blocks_probes_and_is_not_replaced (test_opcua_readiness.ReadinessGates.test_existing_report_blocks_probes_and_is_not_replaced) ... ok
+test_insecure_non_process_or_non_local_target_is_rejected_before_execution (test_opcua_readiness.ReadinessGates.test_insecure_non_process_or_non_local_target_is_rejected_before_execution) ... ok
+test_local_pki_failure_is_distinct_from_discovery (test_opcua_readiness.ReadinessGates.test_local_pki_failure_is_distinct_from_discovery) ... /usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0ce949c40>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0ce949e00>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51620>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51a80>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51b60>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea518c0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51c40>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea517e0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea519a0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51d20>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51e00>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51ee0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea51fc0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea520a0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52180>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52260>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52340>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52420>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52500>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea525e0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea526c0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea527a0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52880>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52960>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52a40>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52b20>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52c00>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52ce0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52dc0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52ea0>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:2263: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fd0cea52f80>
+  def __init__(self, name, parent):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_switch_failure_blocks_every_station_without_fabricated_evidence (test_opcua_readiness.ReadinessGates.test_switch_failure_blocks_every_station_without_fabricated_evidence) ... ok
+test_tcp_failure_blocks_only_that_station (test_opcua_readiness.ReadinessGates.test_tcp_failure_blocks_only_that_station) ... ok
+test_untrusted_rejection_then_secure_read_and_private_report (test_opcua_readiness.ReadinessLoopback.test_untrusted_rejection_then_secure_read_and_private_report) ... Quarantined untrusted certificate to: /tmp/aqua-opcua-readiness-oelt30e3/127.0.0.1/rejected/certs/rejected_urn_aqua_command_sim_D336883E55821A71.der (Reason: Untrusted by client trust store)
+close_secure_channel was called but connection is closed
+Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_opcua_reader_has_serialization_imported (test_opcua_security_gate.TestOpcUaSecurityGate.test_opcua_reader_has_serialization_imported)
+Verifies that serialization is imported in opcua_reader module (no NameError). ... ok
+test_policy_normalization_allowlist (test_opcua_security_gate.TestOpcUaSecurityGate.test_policy_normalization_allowlist)
+Positive test: Valid short names and full OPC UA URIs normalize to canonical policy names. ... ok
+test_policy_normalization_rejects_unsupported_or_malformed (test_opcua_security_gate.TestOpcUaSecurityGate.test_policy_normalization_rejects_unsupported_or_malformed)
+Negative test: Malformed, unrecognized, or deprecated policies fail closed with ValueError. ... ok
+test_polling_engine_allows_anonymous_on_none_policy (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_allows_anonymous_on_none_policy)
+Positive test: Anonymous authentication on SecurityPolicy=None is permitted to proceed. ... ok
+test_polling_engine_fails_closed_when_server_cert_missing_in_basic256 (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_fails_closed_when_server_cert_missing_in_basic256)
+Negative test: In Basic256Sha256 mode, if server certificate is missing, fail-closed. ... ok
+test_polling_engine_fails_closed_when_server_cert_untrusted_or_expired (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_fails_closed_when_server_cert_untrusted_or_expired)
+Negative test: Server certificate failing trust/expiration check must fail-closed. ... ok
+test_polling_engine_preflight_validates_policy (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_preflight_validates_policy)
+Verifies run_preflight_checks rejects invalid policies and accepts allowed policies. ... ok
+test_polling_engine_rejects_username_on_none_policy (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_rejects_username_on_none_policy)
+Negative test: Username authentication on SecurityPolicy=None must fail-closed with PermissionError. ... ok
+test_polling_engine_rejects_username_on_uri_none_policy (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_rejects_username_on_uri_none_policy)
+Negative test: Username authentication on full URI SecurityPolicy#None must also fail-closed. ... ok
+test_polling_engine_start_monitoring_rejects_insecure_combination (test_opcua_security_gate.TestOpcUaSecurityGate.test_polling_engine_start_monitoring_rejects_insecure_combination)
+Verifies start_monitoring rejects Username on SecurityPolicy None. ... ok
+test_reader_rejects_invalid_policy_string (test_opcua_security_gate.TestOpcUaSecurityGate.test_reader_rejects_invalid_policy_string)
+Negative test: ManualOpcUaReader rejects unknown / invalid policy string fail-closed. ... SEC-04: Security gate check failed: SEC-04: Insecure SecurityPolicy rejected: Basic128Rsa15 is cryptographically deprecated and forbidden by IEC 62541.
+ok
+test_reader_rejects_username_on_none_policy (test_opcua_security_gate.TestOpcUaSecurityGate.test_reader_rejects_username_on_none_policy)
+Negative test: ManualOpcUaReader rejects Username on SecurityPolicy=None. ... SEC-04: Security gate check failed: SEC-04: Plaintext username/password is strictly forbidden when SecurityPolicy is None. Encrypted session (Basic256Sha256) is mandatory for credential transmission.
+ok
+test_reader_rejects_username_on_uri_none_policy (test_opcua_security_gate.TestOpcUaSecurityGate.test_reader_rejects_username_on_uri_none_policy)
+Negative test: ManualOpcUaReader rejects Username on URI SecurityPolicy#None. ... SEC-04: Security gate check failed: SEC-04: Plaintext username/password is strictly forbidden when SecurityPolicy is None. Encrypted session (Basic256Sha256) is mandatory for credential transmission.
+ok
+test_arp_cache_requires_a_current_reachable_neighbor (test_phase3_1_contract.Phase31Tests.test_arp_cache_requires_a_current_reachable_neighbor) ... ok
+test_collector_never_connects_tcp_to_a_router (test_phase3_1_contract.Phase31Tests.test_collector_never_connects_tcp_to_a_router) ... ok
+test_internet_failure_keeps_dns_or_certificate_reason_without_application_request (test_phase3_1_contract.Phase31Tests.test_internet_failure_keeps_dns_or_certificate_reason_without_application_request) ... ok
+test_local_nic_and_per_target_route_define_mismatch_without_inferred_connectivity (test_phase3_1_contract.Phase31Tests.test_local_nic_and_per_target_route_define_mismatch_without_inferred_connectivity) ... ok
+test_no_edges_without_pair_evidence_then_explicit_actor_creates_labelled_pair (test_phase3_1_contract.Phase31Tests.test_no_edges_without_pair_evidence_then_explicit_actor_creates_labelled_pair) ... ok
+test_old_failure_stays_red_with_separate_stale_age (test_phase3_1_contract.Phase31Tests.test_old_failure_stays_red_with_separate_stale_age) ... ok
+test_remote_counts_are_checked_and_current_round_responses_from_sql (test_phase3_1_contract.Phase31Tests.test_remote_counts_are_checked_and_current_round_responses_from_sql) ... ok
+test_router_uses_ping_and_arp_ignoring_old_tcp4840 (test_phase3_1_contract.Phase31Tests.test_router_uses_ping_and_arp_ignoring_old_tcp4840) ... ok
+test_sqlite_is_directly_observed_with_count_and_last_write (test_phase3_1_contract.Phase31Tests.test_sqlite_is_directly_observed_with_count_and_last_write) ... ok
+test_actual_tcp_success_uses_a_separate_labelled_listener_process (test_probe_once_phase1.ProbeOnceTests.test_actual_tcp_success_uses_a_separate_labelled_listener_process) ... ok
+test_default_route_to_a_different_subnet_is_not_no_route (test_probe_once_phase1.ProbeOnceTests.test_default_route_to_a_different_subnet_is_not_no_route) ... ok
+test_every_configured_host_is_checked_even_when_route_and_transport_fail (test_probe_once_phase1.ProbeOnceTests.test_every_configured_host_is_checked_even_when_route_and_transport_fail) ... ok
+test_failure_is_committed_with_its_reason_and_real_rowid (test_probe_once_phase1.ProbeOnceTests.test_failure_is_committed_with_its_reason_and_real_rowid) ... ok
+test_invalid_configuration_never_opens_a_socket_or_database (test_probe_once_phase1.ProbeOnceTests.test_invalid_configuration_never_opens_a_socket_or_database) ... ok
+test_invalid_os_json_is_not_success (test_probe_once_phase1.ProbeOnceTests.test_invalid_os_json_is_not_success) ... ok
+test_os_route_failure_is_preserved (test_probe_once_phase1.ProbeOnceTests.test_os_route_failure_is_preserved) ... ok
+test_ping_is_one_numeric_packet_and_retains_packet_loss (test_probe_once_phase1.ProbeOnceTests.test_ping_is_one_numeric_packet_and_retains_packet_loss) ... ok
+test_scanner_rejects_banned_runtime_tokens_and_keeps_schema_enums (test_probe_once_phase1.ProbeOnceTests.test_scanner_rejects_banned_runtime_tokens_and_keeps_schema_enums) ... ok
+test_timeout_is_not_fabricated_success_or_fixed_latency (test_probe_once_phase1.ProbeOnceTests.test_timeout_is_not_fabricated_success_or_fixed_latency) ... ok
+test_transport_errors_keep_real_errno_and_message (test_probe_once_phase1.ProbeOnceTests.test_transport_errors_keep_real_errno_and_message) ... ok
+test_unavailable_os_tool_is_error_not_remote_unreachable (test_probe_once_phase1.ProbeOnceTests.test_unavailable_os_tool_is_error_not_remote_unreachable) ... ok
+test_config_only_has_no_side_effects (test_telemetry.TelemetryTest.test_config_only_has_no_side_effects) ... ok
+test_invalid_configs (test_telemetry.TelemetryTest.test_invalid_configs) ... ok
+test_loop_stops_before_reading_a_changed_source (test_telemetry.TelemetryTest.test_loop_stops_before_reading_a_changed_source) ... Telemetry stopped: Configuration changed; restart the collector to authorize the new source
+ok
+test_record_preserves_source_time_and_ignores_replay (test_telemetry.TelemetryTest.test_record_preserves_source_time_and_ignores_replay) ... ok
+test_rejects_unknown_tags_nonfinite_future_and_duplicate_keys (test_telemetry.TelemetryTest.test_rejects_unknown_tags_nonfinite_future_and_duplicate_keys) ... ok
+test_mqtt_exact_topic_ignores_retained_snapshot (test_telemetry.TransportTest.test_mqtt_exact_topic_ignores_retained_snapshot) ... MQTT SIMULATED recorded · 1 Tag(s)
+ok
+test_rest_snapshot_requires_trust_and_does_not_follow_redirect (test_telemetry.TransportTest.test_rest_snapshot_requires_trust_and_does_not_follow_redirect) ... Telemetry stopped: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1147)
+Configuration valid. No connection opened.
+REST SIMULATED recorded · 1 Tag(s)
+Telemetry stopped: REST did not return a JSON snapshot (HTTP 302)
+ok
+test_collect_preserves_per_tag_age_and_leaves_gateway_untouched (test_telemetry_opcda.OpcDaTelemetryTest.test_collect_preserves_per_tag_age_and_leaves_gateway_untouched) ... OPCDA SIMULATED recorded · 3 Tag(s)
+ok
+test_corrupt_digest_or_missing_tag_is_rejected (test_telemetry_opcda.OpcDaTelemetryTest.test_corrupt_digest_or_missing_tag_is_rejected) ... ok
+test_missing_or_unrelated_data_fails_without_creating_evidence (test_telemetry_opcda.OpcDaTelemetryTest.test_missing_or_unrelated_data_fails_without_creating_evidence) ... Telemetry stopped: unable to open database file
+Telemetry stopped: หลักฐานล่าสุดของแหล่งนี้ไม่ได้มาจาก Windows OPC DA Reader
+ok
+
+----------------------------------------------------------------------
+Ran 116 tests in 25.337s
+
+OK
+
+AUDIT_EXIT_CODE=0

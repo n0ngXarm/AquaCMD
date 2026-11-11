@@ -2,7 +2,7 @@
 
 อ่าน AGENTS.md ก่อน การติดตั้งนี้เพิ่ม client อ่านอย่างเดียวใน evidence pipeline เดิม ไม่เปิด OPC DA ไม่เริ่ม service/collector จาก F3 และไม่เปลี่ยนการตั้งค่าเครือข่าย
 
-`python -m collector.probe_once` ยังคงตรวจ transport อย่างเดียว ส่วน `python -m collector.run` ตรวจ transport แล้วอ่าน OPC UA เฉพาะ target ที่มี `ua` ใน private configuration เป็นหนึ่งรอบ เพิ่ม `--loop` เพื่อวนรอบตาม `interval_s` ที่ระบุไว้ ไม่เริ่ม loop อัตโนมัติ และไม่มีการทำรอบซ้อนกัน Ctrl+C/SIGTERM หยุดหลังงานที่กำลังตรวจแบบ bounded เสร็จ
+`python -m collector.probe_once` ยังคงตรวจ transport อย่างเดียว ส่วน `python -m collector.run` ตรวจ transport แล้วอ่าน OPC UA เฉพาะ target ที่มี `ua` ใน private configuration เป็นหนึ่งรอบ เพิ่ม `--loop` เพื่อวนรอบตาม `interval_s` ที่ระบุไว้ เมื่อจบรอบหนึ่ง collector จะพักตามช่วงที่ตั้งไว้ก่อนเริ่มรอบถัดไป ไม่เริ่ม loop อัตโนมัติ และไม่มีการทำรอบซ้อนกัน Ctrl+C/SIGTERM หยุดหลังงานที่กำลังตรวจแบบ bounded เสร็จ
 
 Configuration เดิมยังใช้ได้ แต่การวนรอบต้องมี `interval_s` เป็นจำนวน finite บวกไม่เกิน3600 วินาที target ของ UA ต้องมี endpoint แบบ opc.tcp ที่ hostname/port ตรงกับ IP/port ของ target ไม่มี credentials/query/fragment และ `nodes` เป็น mapping ชื่อ tag → NodeId ที่ชัดเจน Client ไม่ browse เพื่อเดา NodeId และไม่ตาม endpoint URL ที่ server อื่นโฆษณาไปยัง host ใหม่
 

@@ -1,4 +1,4 @@
-"""Native F1/F2 tests using the real catalog and an isolated Task file."""
+"""Native F1/F2 tests using a synthetic catalog and an isolated Task file."""
 import json
 import os
 import time
@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import app
 from gi.repository import Gdk, Gio, GLib, Gtk
 from opcua_store import Quality, TagObservation
+from wincc_catalog_fixture import write_catalog
 
 
 def drain_events():
@@ -52,7 +53,8 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         cls.addClassCleanup(cleanup.close)
         config = Path(cleanup.enter_context(tempfile.TemporaryDirectory()))
         cleanup.enter_context(patch.multiple(
-            app, CONFIG_DIR=config, TASKS_CONFIG_FILE=config / 'wincc_tasks.json',
+            app, CONFIG_DIR=config, DEFAULT_WINCC_EXPORT=write_catalog(config / 'catalog.txt'),
+            TASKS_CONFIG_FILE=config / 'wincc_tasks.json',
             TOPOLOGY_CONFIG_FILE=config / 'network_topology.json',
             TELEGRAM_CONFIG_FILE=config / 'telegram_config.json',
             OPCUA_CONFIG_FILE=config / 'opcua_config.json',
@@ -71,7 +73,7 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         drain_events()
         cls.ws = cls.win.unified_workspace
 
-    def test_01_real_catalog_and_search(self):
+    def test_01_synthetic_catalog_and_search(self):
         ws = self.ws
         ws.on_select_group('All')
         self.assertEqual(len(ws.currently_filtered_tags), 457)
@@ -94,7 +96,7 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         self.assertEqual(self.win.stack.get_visible_child_name(), 'overview')
         self.assertTrue(self.win.nav_btns['overview'].get_active())
         self.assertTrue(self.ws.task_dialog.get_visible())
-        self.assertIn('Task', self.ws.task_dialog.get_title())
+        self.assertEqual(self.ws.task_dialog.get_title(), 'งานเฝ้าระวัง')
         self.ws.task_dialog.close()
         drain_events()
 
@@ -133,7 +135,7 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
     def test_04_single_add_undo_and_bulk_membership(self):
         self.ensure_task()
         ws = self.ws
-        ws.on_select_group('High_VSD')
+        ws.on_select_group('LAB_PUMPS')
         names = [tag['name'] for tag in ws.currently_filtered_tags[:10]]
         index = ws.selected_task_index
         self.assertEqual(len(names), 10)

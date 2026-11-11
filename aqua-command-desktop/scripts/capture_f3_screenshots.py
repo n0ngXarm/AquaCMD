@@ -112,7 +112,7 @@ def capture_all():
     spin(0.1)
 
     # B. OT Authorization Dialog
-    dlg_auth = OTAuthorizationDialog(win1366, "PC1 · SCADA Workstation", "192.168.1.11", None)
+    dlg_auth = OTAuthorizationDialog(win1366, "PC1 · SCADA Workstation", "192.0.2.11", None)
     dlg_auth.present()
     spin(0.3)
     snap_widget(dlg_auth, out_dir / "f3_ot_authorization_dialog_1366x768.png")

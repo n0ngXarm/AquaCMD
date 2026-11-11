@@ -177,7 +177,7 @@ class TestOpcUaSecurityGate(unittest.TestCase):
 
     def test_05_hostname_and_uri_mismatch_rejection(self):
         """Verifies hostname or ApplicationURI mismatch is rejected."""
-        der, _, _, _ = generate_ephemeral_cert_pair("urn:wincc:legit_server", "192.168.1.100")
+        der, _, _, _ = generate_ephemeral_cert_pair("urn:wincc:legit_server", "192.0.2.100")
         # Validate against 10.0.0.1
         res_host = self.pki.validate_server_certificate(
             cert_bytes=der,
@@ -190,7 +190,7 @@ class TestOpcUaSecurityGate(unittest.TestCase):
         # Validate against mismatched URI
         res_uri = self.pki.validate_server_certificate(
             cert_bytes=der,
-            expected_host="192.168.1.100",
+            expected_host="192.0.2.100",
             expected_uri="urn:wincc:different_server",
             check_trust_store=False,
         )

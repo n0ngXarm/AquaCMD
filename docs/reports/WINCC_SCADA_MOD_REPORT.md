@@ -1,3 +1,4 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # รายงานการพัฒนาและการทดสอบ AQUA COMMAND WinCC V8.1 SCADA & Task Manager
 
 ## 1. ผลการทดสอบระบบอัตโนมัติเต็มรูปแบบ (Full Automated E2E Test Suite)
@@ -56,8 +57,8 @@ flowchart LR
         WINCCTAG --- OPCSERV
     end
 
-    subgraph LAN_CLOSED ["🔒 วงแลนปิดภายใน (OT LAN 192.168.1.0/24)"]
-        OPCSERV -. "Binary TCP: opc.tcp://192.168.1.11:4862" .-> ENP["พอร์ตแลน enp0s31f6"]
+    subgraph LAN_CLOSED ["🔒 วงแลนปิดภายใน (OT LAN [REDACTED_PRIVATE_IP]/24)"]
+        OPCSERV -. "Binary TCP: opc.tcp://[REDACTED_PRIVATE_IP]:4862" .-> ENP["พอร์ตแลน enp0s31f6"]
     end
 
     subgraph AQUA_GATEWAY ["💻 เครื่อง PC4 Gateway (AQUA COMMAND เครื่องนี้)"]
@@ -79,7 +80,7 @@ flowchart LR
 ## 4. รายการฟังก์ชัน OPC UA ที่ติดตั้งใน AQUA COMMAND
 
 1. **การตั้งค่าในแท็บ [F6 เชื่อมต่อ WinCC OPC UA & Telegram]:**
-   - **WinCC OPC UA URL:** รองรับ URL มาตรฐาน เช่น `opc.tcp://192.168.1.11:4862`
+   - **WinCC OPC UA URL:** รองรับ URL มาตรฐาน เช่น `opc.tcp://[REDACTED_PRIVATE_IP]:4862`
    - **ความปลอดภัย & สิทธิ์ (Security Policy):** เลือก `None` (มาตรฐานวงแลนปิด) หรือการเข้ารหัส `Basic256Sha256`
    - **การยืนยันตัวตน (Authentication):** รองรับทั้ง `Anonymous` (ไม่ใช้รหัสผ่าน) และ `Username & Password`
    - **ปุ่ม [ 🔌 ทดสอบเชื่อมต่อ WinCC OPC UA (Test Connection) ]:** ตรวจสอบ Endpoint และ Node ต้นแบบสด
@@ -119,11 +120,11 @@ flowchart LR
 - เพิ่มตัวตรวจจับสัญญาณ `close-request` ของหน้าต่าง GTK4 เมื่อผู้ใช้กดปิดหน้าต่าง จะสั่ง `self.running = False` หยุดการทำงานของ Background Task Threads ทันที ไม่ค้างกระบวนการใน Task Manager
 
 ### 4. ชุดแพ็กเกจสำหรับติดตั้งบน Windows 11 (`packaging/windows/`)
-- [`run_aqua_command.bat`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/run_aqua_command.bat): สคริปต์เปิดโปรแกรมบน Windows 11 ในคลิกเดียว
-- [`setup_windows11.ps1`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/setup_windows11.ps1): สคริปต์ PowerShell สำหรับติดตั้ง MSYS2 UCRT64, GTK4, PyGObject และสร้าง Shortcut บน Desktop อัตโนมัติ
-- [`build_exe.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/build_exe.py) & [`build_exe.bat`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/build_exe.bat): ตัวแปลงโปรแกรมเป็นไฟล์ Portable EXE ด้วย PyInstaller สำหรับนำไปรันโดยไม่ต้องติดตั้ง Python
-- [`requirements.txt`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/requirements.txt): รายการไลบรารีสำหรับ Windows 11
-- [`README_WINDOWS11.md`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/README_WINDOWS11.md): คู่มือภาษาไทยฉบับสมบูรณ์ พร้อมขั้นตอนตั้งค่า Windows Defender Firewall
+- [`run_aqua_command.bat`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/run_aqua_command.bat): สคริปต์เปิดโปรแกรมบน Windows 11 ในคลิกเดียว
+- [`setup_windows11.ps1`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/setup_windows11.ps1): สคริปต์ PowerShell สำหรับติดตั้ง MSYS2 UCRT64, GTK4, PyGObject และสร้าง Shortcut บน Desktop อัตโนมัติ
+- [`build_exe.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/build_exe.py) & [`build_exe.bat`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/build_exe.bat): ตัวแปลงโปรแกรมเป็นไฟล์ Portable EXE ด้วย PyInstaller สำหรับนำไปรันโดยไม่ต้องติดตั้ง Python
+- [`requirements.txt`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/requirements.txt): รายการไลบรารีสำหรับ Windows 11
+- [`README_WINDOWS11.md`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/packaging/windows/README_WINDOWS11.md): คู่มือภาษาไทยฉบับสมบูรณ์ พร้อมขั้นตอนตั้งค่า Windows Defender Firewall
 
 ---
 
@@ -174,9 +175,9 @@ flowchart TD
    พร้อมแสดงแท็กการ์ดสีแดง `❌ nope` และที่อยู่ Address จริงตรงตามตู้ PLC
 3. **หน้า F2 ตัวจัดการ Task:** มีแถบควบคุม Auto-Scan ด้านบน (`สแกนรอบถัดไป: 5s`, `สแกนไปแล้ว: x รอบ`), การแบ่งหน้าจอแบบ Two-Pane ฝั่งซ้ายเลือกกลุ่มและเลือกติ๊กถูก Tag, ฝั่งขวาแสดงตาราง Task พร้อมทำงาน
 4. **หน้า F3 ผังเครือข่าย (Network Topology Canvas):** วาดบนผืน Canvas สีน้ำเงินเข้ม `#11161d` แสดงวงแลน 2 โซนชัดเจน:
-   - ฝั่งซ้าย: วงแลนปิด SCADA LAN (`192.168.1.0/24`) ไม่มีอินเทอร์เน็ต เชื่อมต่อไปยัง PC1, PC2, PC3
+   - ฝั่งซ้าย: วงแลนปิด SCADA LAN (`[REDACTED_PRIVATE_IP]/24`) ไม่มีอินเทอร์เน็ต เชื่อมต่อไปยัง PC1, PC2, PC3
    - ตรงกลาง: เครื่อง PC4 Gateway (AQUA COMMAND เครื่องนี้) ทำหน้าที่สะพานเชื่อม
-   - ฝั่งขวา: วง WAN เราเตอร์ 4G TrueMove H (`192.168.100.1`) มีอินเทอร์เน็ต สำหรับยิงแจ้งเตือนออกสู่ภายนอก
+   - ฝั่งขวา: วง WAN เราเตอร์ 4G [REDACTED_IDENTITY] H (`[REDACTED_PRIVATE_IP]`) มีอินเทอร์เน็ต สำหรับยิงแจ้งเตือนออกสู่ภายนอก
    - ด้านล่าง: ตารางสรุป IP ทุกโหนดในเครือข่าย 8 คอลัมน์พร้อมป้ายสถานะสด
 5. **หน้า F5 คลัง Tag 457 รายการ:** ฝังไฟล์ฐานข้อมูล `Export all.txt` เข้าไปในตัวแพ็กเกจโดยตรง ทำให้เปิดใช้งานครั้งแรก โปรแกรมจะโหลด Tag ทั้ง 457 รายการขึ้นมาทันทีโดยไม่ต้องไปค้นหาไฟล์เอง
 6. **ปุ่มฟังก์ชัน F1-F8 ด้านล่าง:** ออกแบบด้วย 3D Beveled ขอบนูนแบบอุตสาหกรรม Siemens WinCC เมื่อคลิกเลือกหรือกดปุ่มบนคีย์บอร์ด ปุ่มจะยุบตัวลง (Sunken) สลับหน้าจอได้ทันที
@@ -188,7 +189,7 @@ flowchart TD
 4. **Microsoft Edge Native App Mode:** รันผ่านหน้าต่างเดสก์ท็อปไร้ขอบของ Edge ที่มีมาใน Windows 11 ทุกเครื่อง ได้หน้าต่างเหมือน Desktop App แท้ๆ 100%
 5. **Offline 100%:** ใช้งานในวงแลนปิดของ SCADA ได้ทันทีแม้ไม่มีการเชื่อมต่ออินเทอร์เน็ต
 
-* **ดาวน์โหลดแพ็กเกจพกพาตัวสมบูรณ์:** [`AQUA_COMMAND_Windows11_Portable.zip`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/AQUA_COMMAND_Windows11_Portable.zip)
+* **ดาวน์โหลดแพ็กเกจพกพาตัวสมบูรณ์:** [`AQUA_COMMAND_Windows11_Portable.zip`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/AQUA_COMMAND_Windows11_Portable.zip)
 
 ---
 
@@ -217,7 +218,7 @@ flowchart LR
 5. **ผลการทดสอบความสมบูรณ์:**
    - ทดสอบรันและทดสอบเรียกดู API พอร์ตภายใน: อ่านค่า Tag ครบ 457 Tags, บันทึกคอนฟิก Telegram/OPC UA อัตโนมัติ, พร้อมเปิดทำงานได้ทันที
 
-* **ดาวน์โหลดไฟล์เดี่ยวพร้อมรัน:** [`AQUA_COMMAND_SCADA.exe`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/outputs/aqua-command-0.9-actual/AQUA_COMMAND_SCADA.exe) *(หรือในไดเรกทอรี Artifact: [AQUA_COMMAND_SCADA.exe](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/AQUA_COMMAND_SCADA.exe))*
+* **ดาวน์โหลดไฟล์เดี่ยวพร้อมรัน:** [`AQUA_COMMAND_SCADA.exe`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/outputs/aqua-command-0.9-actual/AQUA_COMMAND_SCADA.exe) *(หรือในไดเรกทอรี Artifact: [AQUA_COMMAND_SCADA.exe](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/AQUA_COMMAND_SCADA.exe))*
 * **SHA256:** `cc341d180ec790fb4077ab84d4b6220cd78a076e3ad2c4f7dd29b4e852754a54`
 
 ---
@@ -227,7 +228,7 @@ flowchart LR
 ตามที่ท่านได้สั่งการให้ดำเนินการ **Rollback** เนื่องจากต้องการคืนค่าหน้าตา Interface เดิม ระบบได้ดำเนินการย้อนกลับอย่างสมบูรณ์และปลอดภัย 100% ดังนี้:
 
 1. **คืนค่าซอร์สโค้ดใน Git Repository:**
-   - ทำการย้อนกลับสถานะไฟล์ทั้งหมดใน [`work/waterlevels-desktop`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/) กลับสู่ Commit ดั้งเดิม (`2987627`)
+   - ทำการย้อนกลับสถานะไฟล์ทั้งหมดใน [`work/waterlevels-desktop`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/) กลับสู่ Commit ดั้งเดิม (`2987627`)
    - สถานะปัจจุบัน: `nothing to commit, working tree clean`
    - ข้อมูลการแก้ไขทั้งหมดถูกบันทึกสำรองไว้อย่างปลอดภัยใน Git Stash (`stash@{0}`) สามารถเรียกดูหรือกู้คืนได้เสมอ ไม่สูญหาย
 2. **คืนค่าไฟล์ในระบบ Linux ที่ติดตั้งแล้ว:**
@@ -237,11 +238,11 @@ flowchart LR
 ---
 
 ### ภาพหลักฐานการทำงาน (Snapshots):
-* **หน้าต่างข้อมูลเครื่องจริงแบบไดนามิก (F4 Host):** [`scada_host_diagnostics_f4.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_host_diagnostics_f4.png)
-* **หน้าต่างตั้งค่า WinCC OPC UA & Telegram เสถียร 100% (F6):** [`scada_opcua_stable_f6.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_opcua_stable_f6.png)
-* **หน้าต่างตั้งค่า WinCC OPC UA ในแท็บ F6:** [`scada_opcua_settings_f6.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_opcua_settings_f6.png)
-* **สถานะการทดสอบเชื่อมต่อ WinCC OPC UA สด:** [`scada_opcua_tested_f6.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_opcua_tested_f6.png)
-* **หน้าต่าง F1 ภาพรวมพร้อมปุ่มเชื่อมต่อ WinCC OPC UA:** [`scada_overview_opcua_f1.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_overview_opcua_f1.png)
-* **หน้าต่างตั้งค่า Telegram ในแท็บ F6:** [`scada_telegram_settings_f6.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_telegram_settings_f6.png)
-* **ผลการทดสอบยิงข้อความ Telegram สำเร็จจริง:** [`scada_telegram_test_result_f6.png`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_telegram_test_result_f6.png)
+* **หน้าต่างข้อมูลเครื่องจริงแบบไดนามิก (F4 Host):** [`scada_host_diagnostics_f4.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_host_diagnostics_f4.png)
+* **หน้าต่างตั้งค่า WinCC OPC UA & Telegram เสถียร 100% (F6):** [`scada_opcua_stable_f6.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_opcua_stable_f6.png)
+* **หน้าต่างตั้งค่า WinCC OPC UA ในแท็บ F6:** [`scada_opcua_settings_f6.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_opcua_settings_f6.png)
+* **สถานะการทดสอบเชื่อมต่อ WinCC OPC UA สด:** [`scada_opcua_tested_f6.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_opcua_tested_f6.png)
+* **หน้าต่าง F1 ภาพรวมพร้อมปุ่มเชื่อมต่อ WinCC OPC UA:** [`scada_overview_opcua_f1.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_overview_opcua_f1.png)
+* **หน้าต่างตั้งค่า Telegram ในแท็บ F6:** [`scada_telegram_settings_f6.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_telegram_settings_f6.png)
+* **ผลการทดสอบยิงข้อความ Telegram สำเร็จจริง:** [`scada_telegram_test_result_f6.png`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scada_telegram_test_result_f6.png)
 * **ซอร์สโค้ดที่รันอยู่บนระบบ:** [`app.py`](file:///usr/share/aqua-command-desktop/desktop/app.py)

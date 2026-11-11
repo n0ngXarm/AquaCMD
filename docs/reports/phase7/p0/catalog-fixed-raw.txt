@@ -1,0 +1,9 @@
+test_existing_private_mapping_keeps_exact_tag_node_and_namespace (test_private_runtime.PrivateRuntimeTests.test_existing_private_mapping_keeps_exact_tag_node_and_namespace) ... ok
+test_explicit_private_catalog_has_priority_and_missing_does_not_fallback (test_private_runtime.PrivateRuntimeTests.test_explicit_private_catalog_has_priority_and_missing_does_not_fallback) ... ok
+test_new_install_mapping_is_an_empty_template (test_private_runtime.PrivateRuntimeTests.test_new_install_mapping_is_an_empty_template) ... ok
+test_private_profile_catalog_precedes_legacy_downloads (test_private_runtime.PrivateRuntimeTests.test_private_profile_catalog_precedes_legacy_downloads) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+OK

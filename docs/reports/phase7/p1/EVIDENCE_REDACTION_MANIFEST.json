@@ -1,0 +1,84 @@
+[
+  {
+    "path": "negative-session-raw.txt",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "raw_sha256": "b63ae5c68b2027f4e1b1aac575d1f799b240207c77b7110166d5daa0719c07b5",
+    "delivered_sha256": "461ab8dc4a483cbaea03cd143199c7b2268cc221c5602707e64762c625410b78"
+  },
+  {
+    "path": "regressions/contracts-116.txt",
+    "redactions": {
+      "personal_home_path": 2
+    },
+    "raw_sha256": "01c3678500c604189604cc522d20ba79099e88c723d0a019ddffb6dda493af1f",
+    "delivered_sha256": "dd0d7762feeae58e3b6943e299d367e30bd314724f91d15b66eb0b2de3606093"
+  },
+  {
+    "path": "regressions/focused-security-task-delivery.txt",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "raw_sha256": "ee32cc5a72e93d952dcd1ad381e51ed25ceff12257c649c200146b1b806841b7",
+    "delivered_sha256": "c8324c3690d0f540918bc39ecbd3b93ce8721d761535f3cced7e46529dafc6d1"
+  },
+  {
+    "path": "regressions/gui-baseline.txt",
+    "redactions": {
+      "rendered_pixel_byte_literal": 2,
+      "personal_home_path": 35
+    },
+    "raw_sha256": "beb55c0c27748f29a5123b019900a84785a7fd42a8849fcffe0c3ad078914890",
+    "delivered_sha256": "b56fabf0e22d2978173509a7d929342e4697f0b1590f9b2340a1674876e79094"
+  },
+  {
+    "path": "regressions/gui-final.txt",
+    "redactions": {
+      "personal_home_path": 8
+    },
+    "raw_sha256": "d705078ac05a77782f87bb1a017433cdcadc33913f7e70b52eb81c7d8440840c",
+    "delivered_sha256": "8a5e5c8b24acdf9b77c342f81a8c36519fd247c47b43f2f48d2b98107fe581e4"
+  },
+  {
+    "path": "regressions/gui-focused-v2.txt",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "raw_sha256": "df14c5c4741bc7db445023cd5baff20e2dd68d79c2122480e7b22ba0fc13b2e1",
+    "delivered_sha256": "2d960e39a684cbfd1b6a1a29b06b430c5e77d40c02ed8411c0b7960f751c77ef"
+  },
+  {
+    "path": "regressions/gui-focused.txt",
+    "redactions": {
+      "personal_home_path": 7
+    },
+    "raw_sha256": "92d303c4b3033f1b3ff86ee762bc65eac4eb0b4fc15ecb434a6cd7b81e024ee5",
+    "delivered_sha256": "628ce143feb6527c03ab5570bd4e00b4164b5110751538eed19db90f628052e5"
+  },
+  {
+    "path": "regressions/negative-controls.txt",
+    "redactions": {
+      "personal_home_path": 2
+    },
+    "raw_sha256": "335b3780d8971c0d4cc2cf49486517d2f8d6876b22b07476ec33e628d0fbeeb0",
+    "delivered_sha256": "e6186356ede33445aec53283a2a276bd3dea214f78880f7c6e7425bce0595bc9"
+  },
+  {
+    "path": "regressions/negative-gtk-commands.json",
+    "redactions": {
+      "personal_home_path": 1
+    },
+    "raw_sha256": "78f2046016ae3030a6970890b6cdc60ee24978ac72d9e8af94ba8657e6979fa8",
+    "delivered_sha256": "ef60c4704142cdf27aa207679eb86f89bbeba0de3bd42d5eb4bffc6e1456486d"
+  },
+  {
+    "path": "regressions/pwa-14.txt",
+    "redactions": {
+      "rendered_pixel_byte_literal": 1,
+      "personal_home_path": 1
+    },
+    "raw_sha256": "e581e11b3e7ade30bb0333b77c7a9df982335960b86db6576450a2b8685eb5c9",
+    "delivered_sha256": "2f8518b701b607081ab05d7161e11dc5317b835df33e4752e72f408585c17a6f"
+  }
+]

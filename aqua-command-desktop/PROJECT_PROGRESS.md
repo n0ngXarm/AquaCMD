@@ -4,7 +4,7 @@
 
 ทดสอบ F3 ด้วย SQLite จำลองผ่านโดยไม่มี credentials และผล 4 เคสของการรับใบยืนยันผ่าน การทดสอบส่งไปยัง Telegram ที่ตั้งไว้หนึ่งครั้งไม่ได้รับ message_id จึงยังไม่ยืนยันว่าถึงแชต TLS diagnostic ภายหลัง timeout ไม่ส่งซ้ำ syntax/no_fake_check/git diff --check ผ่าน ยังไม่ได้ตรวจ WinCC หน้างาน
 
-ผลดิบและรายการไฟล์: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-telegram/ สำรอง: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-telegram/before/
+ผลดิบและรายการไฟล์: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-telegram/ สำรอง: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-telegram/before/
 
 # จำลอง OPC UA ใน F3 เดิม — 2026-11-08
 
@@ -12,7 +12,7 @@
 
 Native WebKitGTK 1024×496 exit 0 อ่านค่า 73.25 Good ผ่าน OPC UA จริงบน loopback, ปุ่มหยุดคืน API เดิม, DB หลักในชุดทดสอบ bytes เดิม, ทดสอบพอร์ตไม่ว่างขึ้นแดงพร้อม toast, syntax/no_fake_check/git diff --check ผ่าน ยังไม่ได้ตรวจ WinCC หน้างาน
 
-ผลดิบและภาพ: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-inline/ สำรอง: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-inline/before/
+ผลดิบและภาพ: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-inline/ สำรอง: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-inline/before/
 
 # ปุ่มดูตัวอย่างการทำงาน F3 — 2026-11-08
 
@@ -20,7 +20,7 @@ Native WebKitGTK 1024×496 exit 0 อ่านค่า 73.25 Good ผ่าน 
 
 ทดสอบ F3_TEST_DEMO=1 F3_TEST_SIZE=1024x535 ผ่าน native GTK: เปิดได้หนึ่งโปรเซส ปิดตามเจ้าของ DB ตัวอย่างของหน้าหลักคง bytes เดิม สถานะจำลอง UNVERIFIED→OK→STALE→OK และผังไม่ต้องเลื่อน node syntax, no_fake_check และ git diff --check exit 0 ยังไม่ได้ตรวจในโปรแกรมพร้อมฐานข้อมูลหน้างาน
 
-ไฟล์ที่ลง ผลดิบ และภาพ: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-demo/ สำรอง: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-demo/before/
+ไฟล์ที่ลง ผลดิบ และภาพ: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-demo/ สำรอง: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-demo/before/
 
 # F3 ขยายตามหน้าต่าง — 2026-11-08
 
@@ -28,7 +28,7 @@ Native WebKitGTK 1024×496 exit 0 อ่านค่า 73.25 Good ผ่าน 
 
 ที่ 1920×1009 ผังสูง 408→855 px และชื่อการ์ด 13→19 px ตรวจ 1920×1009, 1360×616 และ 1024×496 ใน WebKitGTK ด้วย SQLite จำลอง 4 สถานี ผ่านและไม่มีแถบเลื่อนแม้ขึ้น BLOCKED ทั้งสี่ รายละเอียดการทำงาน F3 ยังคงแสดงในผังและ popup no_fake_check และ git diff --check ผ่าน ยังไม่ได้ทดสอบฐานหน้างาน
 
-ผลและภาพ: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-adaptive/ สำรอง: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-adaptive/before/
+ผลและภาพ: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-adaptive/ สำรอง: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-adaptive/before/
 
 # F3 พอดีหน้าต่างและอธิบายการทำงาน — 2026-11-08
 
@@ -36,7 +36,7 @@ Native WebKitGTK 1024×496 exit 0 อ่านค่า 73.25 Good ผ่าน 
 
 ก่อนแก้ WebKitGTK 1024×496 เอกสารสูง 1228 px (exit 1) หลังแก้ทดสอบขนาดจริง 1024×496 และ 1360×616 ผ่านทั้งแนวตั้งและแนวนอนแม้ SCADA 4 การ์ด BLOCKED ตรวจจาก checkout หลักด้วย SQLite จำลอง no_fake_check/syntax/diff check exit 0 ข้อมูลหน้างานและโปรแกรมเต็มยังไม่ได้ตรวจซ้ำ
 
-ผลดิบและภาพ: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-fit/ สำรองก่อนแก้: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-fit/before/
+ผลดิบและภาพ: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-fit/ สำรองก่อนแก้: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-fit/before/
 
 # ลง F3 handoff ใน AquaCMD ที่ไอคอนใช้งาน — 2026-11-08
 
@@ -46,7 +46,7 @@ Native WebKitGTK 1024×496 exit 0 อ่านค่า 73.25 Good ผ่าน 
 
 เปิด Aqua Command จากไอคอนใหม่และกด F3 เพื่อดูรุ่นใหม่ ยังไม่ได้ตรวจสอบการเปิดด้วยฐานข้อมูลหน้างานหรือการเชื่อม SCADA/Telegram จริง ไม่มีการ commit/push หรือเปลี่ยน runtime config
 
-หลักฐานและภาพ: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-live-install/ สำรอง: /home/nong_ing/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-live-install/before/
+หลักฐานและภาพ: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/outputs/f3-live-install/ สำรอง: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/f3-live-install/before/
 
 # GNOME Applications เปิดได้แล้ว — 2026-11-08
 
@@ -60,13 +60,13 @@ Native WebKitGTK 1024×496 exit 0 อ่านค่า 73.25 Good ผ่าน 
 
 ผู้ใช้แจ้งเปิดโปรแกรมไม่ได้ พบ ~/.local/bin/aqua-command ยังชี้ Documents/Codex/.../waterlevels-desktop ที่ย้ายแล้ว พิสูจน์ก่อนแก้: เรียก launcher แล้ว Python can't open file / No such file or directory, exit2.
 
-แก้ launcher ให้ชี้ `/home/nong_ing/Documents/Work_SHCOOL/project_water/AquaCMD/aqua-command-desktop/desktop/app.py` และแก้ Exec ของไอคอน Menu/Desktop ให้เรียก launcherเดียวกัน. สำรองทั้ง3ไฟล์ใน artifacts/aqua-launch-repair-20261108/before-*. ไม่มีการแก้ application code/backend.
+แก้ launcher ให้ชี้ `[REDACTED_HOME]/Documents/Work_SHCOOL/project_water/AquaCMD/aqua-command-desktop/desktop/app.py` และแก้ Exec ของไอคอน Menu/Desktop ให้เรียก launcherเดียวกัน. สำรองทั้ง3ไฟล์ใน artifacts/aqua-launch-repair-20261108/before-*. ไม่มีการแก้ application code/backend.
 
 หลังแก้ sh -n และ desktop-file-validate ทั้ง2ไฟล์ PASS exit0; ~/.local/bin/aqua-command --help แสดง GTK help exit0; gio launch Desktop icon exit0; host pgrep ยืนยัน app.py ตำแหน่งใหม่ PID558978 ยังทำงาน. no_fake_check PASS exit0. ไม่มีfieldprobe/Telegram/dependency/commit/push.
 
 # ย้าย AQUA COMMAND มาที่ project_water/AquaCMD แล้ว — 2026-11-08
 
-Source หลัก: `/home/nong_ing/Documents/Work_SHCOOL/project_water/AquaCMD/aqua-command-desktop`.
+Source หลัก: `[REDACTED_HOME]/Documents/Work_SHCOOL/project_water/AquaCMD/aqua-command-desktop`.
 Repository root: `project_water/AquaCMD` (origin n0ngXarm/AquaCMD), HEAD c4daf58a85a068988963a0b0282c69e021fc9563. ใช้ Git จาก root นี้สำหรับโปรแกรม Desktop; project_water/.git เป็น waterlevels คนละ repository.
 
 ย้ายทั้ง repository จาก Documents/Codex/.../waterlevels-desktop ด้วย directory rename รวม .git/history/uncommitted/untracked files. ตรวจ hash964ไฟล์ตรงกัน Git statusเดิมตรงกันก่อนเขียน checkpoint และ linked worktree10ชุดซ่อม reference แล้ว HEADตรงเดิม. ตำแหน่งเก่าไม่มี source หลักซ้ำ; มี AQUACMD_MOVED_TO.md ใน parent ชี้ทางใหม่.
@@ -94,7 +94,7 @@ Installed F3 tests13/13 PASS exit0 และno_fake_check PASS exit0; actualGTK/
 ใช้ Gtk.Window แบบ transient/nonmodal อ่านข้อความ/หลักฐานดิบจาก Inspector API เดิม ไม่มี WebView/API/collector ชุดที่สอง เปิดซ้ำใช้หน้าต่างเดิม เปลี่ยนกล่องอัปเดตข้อมูล ปิดด้วย ×/Esc และปิดตามเมื่อออกF3/parentclose; pollingไม่เปิดหน้าต่างที่ปิดแล้วและไม่เรียก present ซ้ำ ผังคงขนาดเดิม API origin policy เดิมยังบล็อก arbitrary windows
 
 Candidate GTKจริง1366×768/1600×900/1920×1080 PASS exit0; browser20checks PASS exit0; installed UItests4/4 PASS exit0 และ actual installed/mainDB popup/read-only proof PASS exit0; no_fake_check PASS exit0 ทั้ง7backend files/testsเดิม/config5/icons2/mainDBคงbytesเดิม มีbackupในprivate/before-apply
-Main DB 129→129 ไม่มีprobe/collector/TGsend การเชื่อมต่อหน้างานรอบใหม่ยังไม่ได้ตรวจสอบ; fullshared/backend suiteไม่ได้รันซ้ำในงานUIนี้ รายงาน/ไฟล์/patch/commands/outputดิบ/ภาพจริง: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-f3-popup-20261107/README.md
+Main DB 129→129 ไม่มีprobe/collector/TGsend การเชื่อมต่อหน้างานรอบใหม่ยังไม่ได้ตรวจสอบ; fullshared/backend suiteไม่ได้รันซ้ำในงานUIนี้ รายงาน/ไฟล์/patch/commands/outputดิบ/ภาพจริง: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-f3-popup-20261107/README.md
 
 # F3 หน้าตาเรียบง่ายตามคำสั่งล่าสุด — 2026-11-07
 
@@ -103,42 +103,42 @@ Main DB 129→129 ไม่มีprobe/collector/TGsend การเชื่อ
 ผัง4สถานี→LAN Switch→fedora Gateway→Router/Internet→Telegram→มือถือ กล่องชื่อ>=16px+สถานะไทยบรรทัดเดียว ป้ายอายุแยก สีผลล่าสุดคงเดิมเมื่อหลักฐานเก่า ตัวเลขเหลือแถบเดียว สรุปใช้SQLAPIคำนิยามปลายทางรวมSwitch/Router ที่อยู่Routerอ่านroute_inventory/default routeจากiprouteในหลักฐานผ่านAPIเดิม ไม่fallbackconfiguredrouter ผลเน็ตใช้DNS+TLS NIC/route/ip_forward/error/msอยู่Inspector;ผังเชิงบทบาทไม่อ้างphysicalswitchhop
 
 Installed UItests4/4 PASS0/browser19checksPASS/nativeจริง3ขนาดPASS พร้อมF1/F2/F6และrestoreheader Mainreadonlyproof:DB129→129,bytesเดิม,0probe/collector/notification/particles,defaultgateway192.168.1.1ตรงOSขณะตรวจ;no_fake_checkPASS0. Sourcebackend/config5files/icons2files/DBคงhashเดิม มีbackupก่อนแก้
-ภาพจริง/คำสั่ง/outputดิบ/manifest/patch: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-f3-simple-20261107/README.md ไอคอนเดิมเปิดsourceนี้ ไม่เพิ่มfeature/dependency/subagent/commit/push/fieldprobe/TGsend
+ภาพจริง/คำสั่ง/outputดิบ/manifest/patch: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-f3-simple-20261107/README.md ไอคอนเดิมเปิดsourceนี้ ไม่เพิ่มfeature/dependency/subagent/commit/push/fieldprobe/TGsend
 
 # อ่าน AGENTS.md ก่อน — Phase 4 ติดตั้งและตรวจแล้ว (2026-11-06)
 
 เพิ่ม read-only asyncua client: GetEndpoints/session/configured NodeId read, atomic tag_samples/evidence FK, certificate metadata/PKI เดิม, startup ip_forward และคำเตือนเมื่อ1, manual loop ตาม interval config ไม่มี collector autostart จาก F3. Simulator แยก process 127.0.0.1:4850; set_level อยู่ tools/sim เท่านั้น; sourceไม่มี control calls.
 Installed phase66/66 PASS exit0, observability43/43 PASS exit0, browser17 PASS, nativeจริง3ขนาด PASS. Installed-source GTK+protocol sim12.5→73.25/Good, SSE19/SVG19, serverหยุด→REFUSED/value unavailable, mainDB bytesคงเดิมระหว่างทดสอบ. ไม่มี Sim target/rows ใน private main config/DB.
 Actual mainหนึ่งรอบ: DB101→129; SSE28/SVG28; old101rowsคงเดิม; tag_samples0; ip_forward=0; backendbanner90.4ms. ดู actual UA errors/SQL/API/route ในรายงาน; ไม่อ้าง WinCC/production acceptance จาก Sim.
-Private probe configเพิ่มเฉพาะ UA ServerStatus i=2256 Anonymous/None ของ5targetเดิมและ interval_s5; ไม่เปลี่ยน opcua_config เดิม/4otherconfigs/2icons. Iconเดิมเปิด sourceนี้; collectorloopไม่ถูกเปิดค้าง. หลักฐาน/manifest/patch/commands/output: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase4-20261106/README.md ไม่มีdependencies/subagents/commit/push/PLCwrite/TGsend/phase5.
+Private probe configเพิ่มเฉพาะ UA ServerStatus i=2256 Anonymous/None ของ5targetเดิมและ interval_s5; ไม่เปลี่ยน opcua_config เดิม/4otherconfigs/2icons. Iconเดิมเปิด sourceนี้; collectorloopไม่ถูกเปิดค้าง. หลักฐาน/manifest/patch/commands/output: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase4-20261106/README.md ไม่มีdependencies/subagents/commit/push/PLCwrite/TGsend/phase5.
 
 # อ่าน AGENTS.md ก่อน — Phase 3.1 ผ่าน (2026-11-06)
 
 ติดตั้ง11ไฟล์ตามmanifestหลังสำรองและhashguard; SQLiteOBSERVED_LOCAL/COUNT/MAXtimestamp, ผลหลักแยกอายุSTALE, RouterICMPARPไม่มีTCPใหม่, DNS+TLSไม่มีHTTP/ข้อความ, FedoraNIC/IP/CIDR/routeและsubnetจริง, SQLchecked/responding, NOT_BUILTและevidencepairedarrows/fontcardsใหญ่.
 Installedphase51/51PASS0; observability43/43PASS0;browser16checksPASS;nativeactual3sizesPASS. RealDB80→101;SSE21/SVG21;oldrows80คงเดิม;backendbanner104.2ms. Privateprobeconfigเปลี่ยนเฉพาะreviewedrouter/OTsubnet/internet;4otherconfigs/2iconsคงhashเดิม.
-Source/patch/rawcommands/output/SQL/API/route/screenshots: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase3_1-20261106/README.md ผู้ใช้อนุญาตต่อPhase4หลังผ่าน;ยังไม่มีOPCUA/TGsend/PLCwrite/dependency/commit/push.
+Source/patch/rawcommands/output/SQL/API/route/screenshots: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase3_1-20261106/README.md ผู้ใช้อนุญาตต่อPhase4หลังผ่าน;ยังไม่มีOPCUA/TGsend/PLCwrite/dependency/commit/push.
 
 # อ่าน AGENTS.md ก่อน — เฟส 3 ผ่านเกณฑ์จริง (2026-11-06)
 
 F3 SVG/WebView อ่าน phase2APIเท่านั้น backendเดิมhashเดิม; สถานะ/ตัวเลขSQLผ่านAPI;rawInspector/sourceSIMULATED/reducedmotion;1SVGobjectต่อSSErowid ไม่มีidletraffic APIownedเฉพาะF3และปิดเมื่อออก/ปิด เริ่มF1ยังไม่สร้างWebView/API
 Actualsource phase42/42tests PASS0, observability43/43PASS0; browser15checksPASS; nativeactual1366x768/1600x900/1920x1080fullscreenPASSและassertขนาดจริง Shared87/88FAIL1baselinefixtureเดิม ซึ่งsourceก่อนติดตั้งก็6/7FAILเหมือนกัน ไม่มีskip/assertionsลด
 เกณฑ์จริงหนึ่งprobe6targets/4840เดิม:DB60→80 SSE20rows/particleobjects20;SQL/API/DOMตรงกัน;backendfailurebanner136.3ms<5s;oldrows60คงเดิม;pollingSTOPPED/notificationsOFF/UAobs0. Source/config5files/icons2filesรักษาhashเดิมนอกpayload;เปิดmenuiconเดิมใหม่ PID46253
-หลักฐาน/คำสั่ง/exit/outputดิบ/ภาพ: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase3-20261106/README.md เฟส4–5ยังไม่เริ่ม ไม่มีdependencies/commit/push/PLCwrite/TGsend/RPMEXEbuild/productionacceptance
+หลักฐาน/คำสั่ง/exit/outputดิบ/ภาพ: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase3-20261106/README.md เฟส4–5ยังไม่เริ่ม ไม่มีdependencies/commit/push/PLCwrite/TGsend/RPMEXEbuild/productionacceptance
 
 # อ่าน AGENTS.md ก่อน — เฟส 2 ผ่านเกณฑ์จริง (2026-11-06)
 
 source migration คงแถวเดิม 20 แถว; derive_state จุดเดียว; SQL counters; loopback API/SSE; tests38/38 exit0; no_fake_check exit0. รัน probe จริงสองรอบตาม6 targets/4840เดิม: DB 20 → 60 แถว; curl/SQLตรงกัน; SSE 20 events ตรงแถวใหม่ทุกตัว; ไม่มี idle bytes; ไม่ probe 70.0s แล้วทั้ง6โหนดSTALE. UI85ไฟล์hashเดิม configเดิม APIทดสอบปิดแล้ว ไม่มีservice/autostart/UA/TG/write/dependencies/commit/push เฟส3–5ยังไม่เริ่ม
 
-หลักฐาน/คำสั่ง/exit code/outputดิบ: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase2-20261106/evidence และ /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase2-20261106/README.md
+หลักฐาน/คำสั่ง/exit code/outputดิบ: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase2-20261106/evidence และ [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase2-20261106/README.md
 
 ## เฟส 1 ผ่านเกณฑ์จริง — 2026-11-06
 
-อ่าน AGENTS.md แล้ว ติดตั้ง sqlite CLI ตามที่ผู้ใช้อนุมัติ เก็บจริงหนึ่งรอบกับ6IPที่กำหนด:20แถว, NIC wlp2s0 192.168.100.177/24, default gateway192.168.100.1 routeทั้ง6ok;5เป้าหมาย192.168.1.x ping/TCP TIMEOUT;gateway pingok/TCP4840 REFUSED ไม่มีUA/TG/PLCwrite Test12/12และno_fake_check exit0 UI85ไฟล์hashเดิม เฟส2–5ยังไม่เริ่ม
-คำสั่งจริงและoutputดิบ: /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase1-20261106/evidence (probe-once, sql-raw, sql-tcp-corrected, sql-counts, installed-tests, no-fake-final) Queryสรุปเสริมครั้งแรกquoteผิดexit1 เก็บหลักฐานเดิมไว้แล้ว แก้SQLและอ่านซ้ำเท่านั้น ไม่probeเพิ่ม
+อ่าน AGENTS.md แล้ว ติดตั้ง sqlite CLI ตามที่ผู้ใช้อนุมัติ เก็บจริงหนึ่งรอบกับ6IPที่กำหนด:20แถว, NIC wlp2s0 [REDACTED_PRIVATE_IP]/24, default gateway192.168.100.1 routeทั้ง6ok;5เป้าหมาย192.168.1.x ping/TCP TIMEOUT;gateway pingok/TCP4840 REFUSED ไม่มีUA/TG/PLCwrite Test12/12และno_fake_check exit0 UI85ไฟล์hashเดิม เฟส2–5ยังไม่เริ่ม
+คำสั่งจริงและoutputดิบ: [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase1-20261106/evidence (probe-once, sql-raw, sql-tcp-corrected, sql-counts, installed-tests, no-fake-final) Queryสรุปเสริมครั้งแรกquoteผิดexit1 เก็บหลักฐานเดิมไว้แล้ว แก้SQLและอ่านซ้ำเท่านั้น ไม่probeเพิ่ม
 
 # อ่าน AGENTS.md ก่อน — ปัจจุบัน: ขั้น 0 + เฟส 1 (2026-11-06)
 
-ผู้ใช้กำหนดให้ทำทีละเฟส CLI ใหม่อยู่ src/collector/probe_once.py และเปิดด้วย python -m collector.probe_once กฎเหล็กและ scanner ติดตั้งแล้ว หน้าจอ/API/OPC UA/Telegram ไม่ถูกแก้ในเฟสนี้ config/data อยู่นอก source แยกจาก GTK DB หลักฐานและผลรันจริงอยู่ /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase1-20261106 เฟส 2–5 รอเกณฑ์เฟส 1 ผ่านก่อน ตัวเลข/ผลสำเร็จต้องมาจากหลักฐานจริงเสมอ
+ผู้ใช้กำหนดให้ทำทีละเฟส CLI ใหม่อยู่ src/collector/probe_once.py และเปิดด้วย python -m collector.probe_once กฎเหล็กและ scanner ติดตั้งแล้ว หน้าจอ/API/OPC UA/Telegram ไม่ถูกแก้ในเฟสนี้ config/data อยู่นอก source แยกจาก GTK DB หลักฐานและผลรันจริงอยู่ [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-evidence-phase1-20261106 เฟส 2–5 รอเกณฑ์เฟส 1 ผ่านก่อน ตัวเลข/ผลสำเร็จต้องมาจากหลักฐานจริงเสมอ
 
 # F3 separate details window — completed 2026-11-04
 
@@ -149,7 +149,7 @@ source migration คงแถวเดิม 20 แถว; derive_state จุ�
 - Actual-source verification: `python3 -B -X faulthandler artifacts/aqua-f3-dialog/run_isolated.py --project <this-project> --pattern 'test_f3*.py'`: 65 tests PASS, exit 0. The runner uses a temporary profile and permits loopback connections only.
 - Native source layout/screenshot smoke PASS, exit 0: main windows 1366x768, 1600x900, 1920x1048; separate popup 420x660. Canvas widths before/after opening details: 1366/1366, 1600/1600, 1920/1920. Largest requested height is clamped by the desktop work area.
 - Hash checks verify both payloads and 42 unchanged desktop source/style/test files. Originals and prior checkpoint backed up under `artifacts/aqua-f3-dialog/before-apply` in the working workspace. `git diff --check` PASS.
-- Evidence: `f3-details-window.patch`, `patch-manifest.json`, `source-f3.log`, `source-layout.log`, screenshots and verification scripts under `/home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-f3-dialog`.
+- Evidence: `f3-details-window.patch`, `patch-manifest.json`, `source-f3.log`, `source-layout.log`, screenshots and verification scripts under `[REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-f3-dialog`.
 - Close/reopen the existing application to load the Python UI change. Real F3 live tag reads remain unavailable/disabled. WinCC/physical LAN/real Telegram acceptance NOT TESTED. No dependency changes, service restart, production probes, commits or pushes.
 
 # Current F3 revision — usability correction
@@ -212,7 +212,7 @@ User authorized installing the reviewed F3 into the existing desktop icon target
 
 
 ## Existing app-menu source update — 2026-11-06
-User clarified that only the original AQUA COMMAND application icon is used. Applied the reviewed current Hybrid/F3 source into that exact icon target, with private backups and drift/hash checks. Existing menu/Desktop icons and four runtime configuration files remain unchanged. Narrow installed-source dock contract reproduced FAIL before and PASS after; focused/shared/native results and exact commands are recorded in /home/nong_ing/Documents/Work_SHCOOL/project_water/artifacts/aqua-main-app-install-20261106. No new dependencies, field actions, commit/push or Windows EXE rebuild. Legacy aggregate/shared acceptance limitations from the review remain. Windows GUI uses a separate implementation; see installation report before claiming platform parity.
+User clarified that only the original AQUA COMMAND application icon is used. Applied the reviewed current Hybrid/F3 source into that exact icon target, with private backups and drift/hash checks. Existing menu/Desktop icons and four runtime configuration files remain unchanged. Narrow installed-source dock contract reproduced FAIL before and PASS after; focused/shared/native results and exact commands are recorded in [REDACTED_HOME]/Documents/Work_SHCOOL/project_water/artifacts/aqua-main-app-install-20261106. No new dependencies, field actions, commit/push or Windows EXE rebuild. Legacy aggregate/shared acceptance limitations from the review remain. Windows GUI uses a separate implementation; see installation report before claiming platform parity.
 
 ## F1/F2 desktop update — 2026-11-08
 
@@ -359,3 +359,101 @@ Reproduced the old header, then verified the compact header, optional menu place
 The top bar shows NetworkManager's cached Internet connectivity and the observed default IPv4 gateway. The AQUA COMMAND column in the communication diagram displays the kernel-selected source IPv4 and configured target separately for the OT and WAN paths. A routed path shows the intermediate gateway. Stale snapshots do not display a current source IP. The status follows the configured switch and router roles and does not infer router reachability, OPC UA health or equipment state.
 
 The implementation reads local D-Bus properties and uses local kernel route lookups. No connectivity recheck, network probe, collection or settings write is triggered. Passive host readback reported FULL, an IPv4 default gateway, an indirect OT route and a direct WAN route at verification time. Logs use no production addresses. Adapter tests, the F1/F3 contracts and isolated GTK/WebKit checks are in outputs/aqua-router-status. Reopen the existing launcher to load the change.
+
+## Phase 1B RPM startup dependencies — 2026-11-10
+
+Accepted the packaging follow-up against Gemini's 0db6e72 baseline in fix/phase-1b-rpm-runtime-dependency. Release 2 requires python3-cryptography for startup PKI imports and gobject-introspection for the Cairo typelib used by PangoCairo. A clean Fedora 45 run with only the first change exposed the missing typelib. asyncua remains optional.
+
+Built noarch RPMs for Fedora 44 and 45 on the Fedora 45 build host. Verified package digests, required dependencies, absence of runtime databases and test files in the payload, and no_fake_check. Installed each unsigned candidate in a fresh matching Fedora container with DNF weak dependencies disabled. Ran /usr/bin/aqua-command --help with temporary HOME and container networking disabled. Both returned 0. This covers launcher imports and argument processing. Graphical desktop use, field connectivity and signed distribution were outside the test.
+
+Rollback is a revert of the isolated packaging commit. The installed host package and canonical checkout were kept separate. Raw evidence is in outputs/aqua-roadmap-phase1b-fix. Phase 2 DATA-04 requires its separate approval before implementation.
+
+## Phase 2 DATA-04 — durable alert production — 2026-11-10
+
+Implemented DATA-04 on fix/phase-2-data04-durable-alerts, based on c5eb38c. The legacy web producer stages alerts, outbox jobs and rule transitions together, checks capacity for the entire update, and writes one atomic JSON snapshot before reporting success. Existing IDs and legacy JSON remain readable. Pre-rename failures and capacity rejection return 503 without publishing the candidate. A post-rename directory-sync failure reports ALERT_COMMIT_UNKNOWN and suspends delivery while durability is uncertain. Corrupt snapshots block startup and remain available for recovery.
+
+Four focused regression cases failed on 0db6e72 and passed after remediation. The web suite passed 16/16, Desktop Gateway passed 58/58, node syntax, diff check and no_fake_check passed. Tests used isolated loopback and synthetic fixtures. A real filesystem rename failure and SIGKILL after a successful response were covered. Power loss, Windows Reader runtime and Telegram delivery or lost response were not validated. Raw logs are in outputs/aqua-roadmap-phase2-data04. The wider Phase 2 exit gate and main integration remain on hold.
+
+## Phase 2 fault acceptance — 2026-11-10
+
+Tested fa44140 in isolated LABs. .NET SDK 10.0.403 ran all 59 Windows Reader Core assertions in a Linux container with networking disabled. The existing HTTPS Gateway lost-ACK test passed: one durable receipt, deduplication on retry, exact digest ACK and retained record after restart. The web producer also passed an actual ENOSPC test using a dedicated 2 MiB tmpfs: HTTP 503, byte-for-byte old state retention and successful retry after freeing space.
+
+Phase 2 remains HOLD. The legacy web delivery worker recorded the first lost response as pending, then sent the same payload a second time automatically. The loopback sink recorded two POSTs and the job eventually became sent. The acceptance assertion for a distinct delivery_unknown state failed. No real destination or WinCC was used. Evidence is in outputs/aqua-roadmap-phase2-acceptance. Source stays at fa44140 pending approval of the delivery-state repair. Proposed scope is aqua-command/server.mjs, public/app.js and isolated delivery regression tests. Persist sending before dispatch, recover interrupted sends as delivery_unknown, retain unknown jobs and require an explicit duplicate-aware decision to resend.
+
+## All-phase LAB continuation and Phase 6 review — 2026-11-11
+
+The user authorized every remaining roadmap phase. Implementation and review were carried through Phase 6 in the isolated branch fix/phase-6-source-privacy. Final functional/package source is e466efe8fbcf0c706edb0886271dba4f8cfceb16. Documentation commits follow separately. The canonical checkout remained clean at 0db6e72145ec4b2d1fef0329a285216ac6d49d12 when checked after final validation.
+
+- Phase 2 repaired atomic web alert/outbox/rule state, local Task SQLite transactionality, sending/unknown-delivery recovery and legacy exhausted attempts. Actual ENOSPC, SIGKILL, lost ACK and a failed SQLite trigger have recorded baseline/fix evidence. Web now passes20/20, Gateway59/59, Reader Core59 assertions. Unknown delivery remains held. Explicit resend can duplicate an accepted message.
+- Phase 3 passed116/116 source contracts with secure OPC UA/REST/MQTT loopback opt-ins and three actual .NET-to-Node TLS/HMAC/digest-ACK variants. PWA tests passed14/14. The collector waits its configured interval after a full round. Alternative OPC DA/REST/MQTT sources currently feed F1 without local Task evaluation.
+- Phase 4 focused active GTK/WebKit checks passed at1024/1360. Synthetic457-Tag fixtures removed the parser/workspace dependence on the site catalog. The broad synthetic desktop run remains red,308 tests with16 failures and5 errors, concentrated in legacy F3 widget expectations. All failing assertions are retained. Earlier broad runs included one test that reached the tracked catalog, followed by the synthetic correction.
+- Phase 5 final release4 RPMs for Fedora44/45 match byte for byte across two builds each. The fc44 dist label was built on Fedora45 and installed on actual Fedora44. Offline containers upgraded2→4, ran launcher help, uninstalled, preserved synthetic config+SQLite hashes and passed integrity/content checks. Final extracted RPM UI passed at allocated1440px for a1360px request. Windows0.10.0 x64 cross-builds match, without Windows runtime/COM acceptance. CI proposal is locally syntax checked with no hosted execution.
+- Phase 6 removed the tracked catalog from the isolated current tree and sanitized selected defaults. The final RPM excludes the archival Windows preview. All99 extracted files scanned against457 catalog names and recorded private/credential patterns with0 matches. Source/history/old artifacts still require review, and historical credential revocation is unverified. Old Linux release3 and initial99190c8 release4 evidence are superseded by the final e466efe builds.
+- Final focused command `python3 -B -m unittest test_credential_permissions test_opcua_security_gate test_task_alert_atomicity test_notification_delivery -v` passed27/27,0 skipped,exit0 in a temporary HOME and loopback-only network namespace. Dependency inventories cover316 Fedora44 packages and319 Fedora45 packages, plus the separately retained Windows restore-input inventory. SHA256SUMS verifies the final artifacts. Inventory scope includes container base packages, rather than exhaustive binary composition.
+
+All20 required Markdown deliverable categories are indexed in docs/reports/ROADMAP_DELIVERABLE_INDEX.md. Current acceptance, hashes, commands, baseline/fix results, source capability boundaries, risk register, rollback and release decision are linked there. Raw logs/artifacts are in the task workspace outputs/aqua-roadmap-phase* directories. Final changed-file and commit receipts are under outputs/aqua-roadmap-phase6-privacy.
+
+Final decision is NO-GO for public distribution, main integration and production deployment. Open gates include source/history privacy and credential revocation,16 legacy F3 failures+5 errors, Windows/COM and actual WinCC/OT/Telegram acceptance, hosted CI/signing/composition review, full backup restoration, power-loss and performance acceptance. No production install, field connection, actual Telegram send, main merge or push occurred in this continuation.
+
+Next work follows MASTER_REMEDIATION_PLAN.md after owners and the required operational/release authorization are available. Do not reactivate old delivery workers onto unresolved sending/unknown records.
+
+## Phase 7 P0 — isolated privacy and credential remediation (2026-11-11)
+
+Implemented only the approved P0 scope on local branch `fix/phase7-p0-privacy`,
+based on e5d6a931c0c16017736fa36bf43fe38878b62fd3. Original ancestry, installed
+checkout, private configuration, catalogs and databases remain preserved.
+
+Private catalog selection now supports an explicit path or the private desktop
+profile and retains legacy Downloads import. The factory OPC UA mapping is empty;
+private mappings still take priority with exact existing Tag/NodeId/namespace
+semantics. No mapping/parser/database schema was changed. Historical images,
+old executables and two private Tag lists were quarantined from this checkout;
+original files and hashes remain private. Public documentation copies and the
+archived preview were sanitized. Public third-party license text is preserved.
+
+CLI setup uses secure terminal input, masks configured credentials and writes an
+external owner-only profile through backup/fsync/atomic replace. Unknown keys and
+legacy input survive. Failed secure input and pre-rename failures leave the
+selected configuration unchanged. Post-rename sync failure reports uncertain
+durability. Notifier/bot and desktop manual-send errors redact credentials.
+Windows CLI writes fail closed pending separate owner-only ACL verification.
+Legacy fallback files remain read-only and their original permissions are not
+changed; operators must handle legacy copies privately.
+
+A shared privacy guard checks staged bytes, file modes and extracted build
+inputs. It rejects credential/key patterns, private filenames, populated factory
+mappings, symlinks and unreviewed binary data. Five public fonts require exact
+reviewed hashes. Optional private catalog comparison stays outside source. The
+local hook is configured here; hooks remain opt-in for other clones. Build guard
+failure stops rpmbuild before consuming the source archive.
+
+Validation: PWA/CLI 39 tests, desktop source contracts 116, focused security/task/
+delivery 27, web 20 and Gateway 59 passed. Reader Core passed 59 assertions in an
+offline Linux .NET container; this does not establish Windows/COM acceptance.
+Native AquaApplication first run loaded zero Tags and mappings. A separate
+private legacy import loaded 457 Tags plus an exact private mapping without
+changing original files. Broad desktop 313 tests still has exactly the previous
+16 failures and 5 errors, with identical diagnostic IDs; existing GUI tests and
+safety assertions were not edited. The original independent baseline had 309
+tests; four new private-runtime tests account for the increase. no_fake_check
+and diff whitespace checks passed. Commands, raw-output redactions, baseline/fix
+results, manifests and final package scans accompany the Phase 7 evidence.
+
+P0 implementation is ready for Independent Review within the tested Linux LAB
+scope. Public push/distribution, main merge and production deployment remain
+NO-GO. History is NOT_CLEARED; token rotation is PENDING_OWNER_ACTION. P1 has a
+21-row requirements-linked plan only; GUI remediation remains HOLD. Do not push
+this ancestry, install the LAB artifact, or begin P1 before separate review.
+
+
+## Owner-authorized GitHub main publication — 2026-11-11
+
+After P1 Independent Review, the owner explicitly requested pushing all current
+project files to main. Publication prepares the reviewed P1 current snapshot
+and sanitized Phase7 text evidence as a new commit on the existing GitHub main,
+without attaching the uncleared local ancestry, force push, history rewrite or
+visibility change. P0 runtime is unchanged. GUI319,source contracts116,security27
+and PWA/privacy39 passed in the isolated LAB. See docs/reports/phase7/PUBLICATION.md
+and its reports for evidence and scope. Publication is not production deployment
+or public release acceptance; history/rotation/Windows/field/CI/signing gates
+remain unresolved. No operational action is authorized by this update.

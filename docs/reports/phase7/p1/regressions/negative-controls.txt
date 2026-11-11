@@ -1,0 +1,5 @@
+COMMAND /usr/bin/python3 -B [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p1-evidence/negative_controls.py
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an
+PASS: all3 in-memory safety regressions rejected by new assertions; no XFail/Skip
+
+AUDIT_EXIT_CODE=0

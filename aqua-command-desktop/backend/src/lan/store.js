@@ -145,10 +145,30 @@ export class Store{
  stats(){return {snapshots:this.get('snapshots',0),transitions:this.get('transitions',0),pending:Number(this.db.prepare("SELECT count(*) n FROM records WHERE state!='acked'").get().n),acked:this.get('acked',0),received:this.get('received',0),duplicates:this.get('duplicates',0),lastExport:this.get('lastExport'),lastAckAt:this.get('lastAckAt'),sequence:this.get('sequence',0),latest:this.db.prepare("SELECT payload FROM records WHERE kind='SNAPSHOT' ORDER BY seq DESC LIMIT 1").get()?.payload??null}}
  disk(){return {bytes:['aqua.sqlite3','aqua.sqlite3-wal','aqua.sqlite3-shm'].reduce((sum,name)=>{try{return sum+fs.statSync(path.join(this.dir,name)).size}catch{return sum}},0),maxDatabaseBytes:64*1024*1024,maxPending:this.maxPending,maxHistory:this.maxHistory,maxRecords:this.maxRecords}}
  notificationText(e){return `[${e.simulated?'AQUA LAB / SIMULATED':e.source_adapter==='wincc-opc-da'?'AQUA READ-ONLY / WINCC OPC DA':'AQUA READ-ONLY FILE / WINCC CONNECTION UNVERIFIED'}]\n${e.source_id} ${e.tag_name}: ${e.before?'ON':'OFF'} -> ${e.value?'ON':'OFF'}\n${e.observed_at||e.at}\nevent_id: ${e.event_id}`}
- notificationStats(){return {notificationPending:Number(this.db.prepare("SELECT count(*) n FROM notifications WHERE state='pending'").get().n),notificationSent:Number(this.db.prepare("SELECT count(*) n FROM notifications WHERE state='delivered'").get().n),notificationEffects:Number(this.db.prepare('SELECT count(*) n FROM notification_receipts').get().n)}}
+ notificationStats(){
+  const count=state=>Number(this.db.prepare('SELECT count(*) n FROM notifications WHERE state=?').get(state).n);
+  return {notificationPending:count('pending'),notificationSent:count('delivered'),
+   notificationSending:count('sending'),notificationDeliveryUnknown:count('delivery_unknown'),
+   notificationFailed:count('failed'),notificationEffects:Number(this.db.prepare('SELECT count(*) n FROM notification_receipts').get().n)};
+ }
  messages(){return this.db.prepare("SELECT id event_id,source source_id,text,mode,delivered_at,message_id FROM notifications WHERE state='delivered' ORDER BY delivered_at DESC LIMIT 50").all()}
  nextNotification(){return this.db.prepare("SELECT * FROM notifications WHERE state='pending' AND next_at<=? ORDER BY rowid LIMIT 1").get(Date.now())}
- markNotification(id,mode,messageId=null){return this.tx(()=>{this.db.prepare("UPDATE notifications SET state='delivered',mode=?,delivered_at=?,message_id=? WHERE id=? AND state='pending'").run(mode,new Date().toISOString(),messageId===null?null:String(messageId),id);this.log('DELIVERY',`${mode} transition notification committed`)})}
+ beginTelegramNotification(id){
+  return this.db.prepare("UPDATE notifications SET state='sending',mode='telegram' WHERE id=? AND state='pending'").run(id).changes===1;
+ }
+ recoverTelegramNotifications(legacyTelegram=false){
+  return this.db.prepare("UPDATE notifications SET state='delivery_unknown' WHERE state='sending' OR (? AND state='pending' AND attempts>0 AND mode IS NULL)").run(Number(legacyTelegram)).changes;
+ }
+ markNotification(id,mode,messageId=null){
+  return this.tx(()=>{
+   const expected=mode==='telegram'?'sending':'pending';
+   this.db.prepare("UPDATE notifications SET state='delivered',mode=?,delivered_at=?,message_id=? WHERE id=? AND state=?").run(mode,new Date().toISOString(),messageId===null?null:String(messageId),id,expected);
+   this.log('DELIVERY',`${mode} transition notification committed`);
+  });
+ }
+ finishTelegramFailure(id,state,delay=0){
+  this.db.prepare("UPDATE notifications SET state=?,attempts=attempts+1,next_at=? WHERE id=? AND state='sending'").run(state,Date.now()+delay,id);
+ }
  failNotification(id,delay){this.db.prepare('UPDATE notifications SET attempts=attempts+1,next_at=? WHERE id=?').run(Date.now()+delay,id);this.log('RETRY','Transition notification remains queued')}
  receiveNotification(event){
   this.validate(event.source_id,event);if(event.kind!=='STATE_CHANGE')throw Object.assign(Error('Only state transitions can notify'),{status:400});

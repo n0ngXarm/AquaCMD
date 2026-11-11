@@ -1,0 +1,41 @@
+[
+  {
+    "id": "web-20",
+    "command": [
+      "node",
+      "--test",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/delivery-unknown.test.mjs",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/durable-alerts.test.mjs",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/integration.test.mjs",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/queue-integrity.test.mjs",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/rules.test.mjs",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/ui-render.test.mjs"
+    ],
+    "cwd": "work/aqua-phase7-p0-privacy/aqua-command",
+    "exit_code": 0,
+    "duration_seconds": 16.066,
+    "log": "web-20.txt",
+    "source_state": "Phase7 P0 working tree from e5d6a931c0c16017736fa36bf43fe38878b62fd3"
+  },
+  {
+    "id": "gateway-59-host-loopback",
+    "command": [
+      "node",
+      "--test",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/deployed.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/desktop.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g1.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g2.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g3.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g4.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g5.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/readonly.test.js",
+      "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/simulator.test.js"
+    ],
+    "cwd": "work/aqua-phase7-p0-privacy/aqua-command-desktop/backend",
+    "exit_code": 0,
+    "duration_seconds": 21.925,
+    "log": "gateway-59-host-loopback.txt",
+    "source_state": "Phase7 P0 working tree from e5d6a931c0c16017736fa36bf43fe38878b62fd3"
+  }
+]

@@ -294,14 +294,15 @@ class TaskEngine:
                 }
                 outbox_entries.append((c_type, recip, payload))
 
-            # Atomically save event and outbox
-            self.storage.record_event_and_enqueue_outbox(event, outbox_entries)
-            logger.warning("🚨 [TASK TRIGGERED] %s -> Event %s enqueued", desc, evt_id)
-
         # Update runtime state
         state.last_evaluated_value = num_val if num_val is not None else (1.0 if bool_val else 0.0)
         state.last_evaluated_quality = obs.quality
         state.last_evaluated_at = now_iso
-        self.storage.save_runtime_state(state)
-
+        if event is None:
+            self.storage.save_runtime_state(state)
+            return None
+        if not self.storage.record_event_and_enqueue_outbox(event, outbox_entries, runtime_state=state):
+            logger.error("Task %s trigger was not committed", task.id)
+            return None
+        logger.warning("Task triggered: %s -> Event %s enqueued", desc, event.event_id)
         return event

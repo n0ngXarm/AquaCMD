@@ -5,9 +5,9 @@ import { randomUUID } from 'node:crypto';
 const PUMP_IDS = ['PUMP-01', 'PUMP-02', 'PUMP-03', 'PUMP-04', 'PUMP-05', 'PUMP-06', 'PUMP-07', 'PUMP-08'];
 const DEFAULT_PUMPS = Object.fromEntries(PUMP_IDS.map((id,i) => [id, i === 0 || i === 1 || i === 3 || i === 5 || i === 6]));
 const SYSTEM_AGENTS = [
-  { id: 'PC-01', label: 'SCADA / Pump Station A', ip: '10.20.0.11' },
-  { id: 'PC-02', label: 'SCADA / Pump Station B', ip: '10.20.0.12' },
-  { id: 'PC-03', label: 'SCADA / Valve Station', ip: '10.20.0.13' }
+  { id: 'PC-01', label: 'SCADA / Pump Station A', ip: '192.0.2.101' },
+  { id: 'PC-02', label: 'SCADA / Pump Station B', ip: '192.0.2.102' },
+  { id: 'PC-03', label: 'SCADA / Valve Station', ip: '192.0.2.103' }
 ];
 export class DemoSimulator {
   constructor({ dataDir = path.resolve('./data'), now = () => Date.now(), telegramSink = null } = {}) {

@@ -1,4 +1,6 @@
 #!/bin/sh
 set -eu
 aqua_prefix=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-exec /usr/bin/python3 -B "$aqua_prefix/share/aqua-command-desktop/desktop/app.py" "$@"
+app_dir="$aqua_prefix/share/aqua-command-desktop/desktop"
+export PYTHONPATH="$app_dir:$aqua_prefix/share/aqua-command-desktop:${PYTHONPATH:-}"
+exec /usr/bin/python3 -B "$app_dir/app.py" "$@"

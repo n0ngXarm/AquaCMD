@@ -3,6 +3,8 @@
 """
 
 import argparse
+import getpass
+import warnings
 import logging
 import os
 import signal
@@ -10,6 +12,7 @@ import sys
 import threading
 from pathlib import Path
 from src.config import BASE_DIR, Config
+from src.private_config import save_environment, PrivateConfigSaveError
 from src.database import Database
 from src.monitor_service import WaterMonitorService
 from src.pwa_client import PWAClient
@@ -79,7 +82,13 @@ def cmd_test_telegram() -> None:
     notifier = TelegramNotifier()
 
     print(f"Bot Token: {'ตั้งค่าแล้ว (ความยาว ' + str(len(Config.TELEGRAM_BOT_TOKEN)) + ' ตัวอักษร)' if Config.is_telegram_configured() else '❌ ยังไม่ได้ตั้งค่า'}")
-    print(f"Target Chat ID: {Config.TELEGRAM_CHAT_ID or '❌ ยังไม่ได้ตั้งค่า'}")
+    print("Target Chat ID: " + ("[REDACTED]" if Config.TELEGRAM_CHAT_ID else "ยังไม่ได้ตั้งค่า"))
+
+    if not notifier.is_delivery_authorized:
+        print(f"\n🛑 การเชื่อมต่อไปยัง Telegram API ถูกระงับตามนโยบายความปลอดภัย (REL-02): APP_ENV='{Config.APP_ENV}'")
+        print("💡 ในโหมด LAB/Non-production ห้ามส่ง HTTP Request (getMe, sendMessage) ออกภายนอก")
+        print("💡 ต้องใช้ APP_ENV='production' และ TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED=true เท่านั้น")
+        return
 
     ok, msg = notifier.test_connection()
     if not ok:
@@ -94,7 +103,7 @@ def cmd_test_telegram() -> None:
         print("💡 คุณสามารถรับ Chat ID ได้โดยการทักบอท @userinfobot บน Telegram แล้วนำ ID มาใส่ใน .env")
         return
 
-    print(f"\nกำลังส่งข้อความทดสอบไปยัง Chat ID: {Config.TELEGRAM_CHAT_ID}...")
+    print("\nกำลังส่งข้อความทดสอบไปยังผู้รับที่ตั้งค่าไว้...")
     test_text = (
         "💧 <b>[ทดสอบระบบแจ้งเตือนน้ำประปาส่วนภูมิภาค]</b>\n"
         "──────────────────\n"
@@ -116,50 +125,36 @@ def cmd_test_telegram() -> None:
 
 def cmd_setup() -> None:
     """Interactive wizard to configure .env settings."""
-    env_file = BASE_DIR / ".env"
-    print("=" * 60)
-    print("🛠️ ระบบช่วยตั้งค่า (Setup Wizard) แจ้งเตือนน้ำประปา กปภ.")
-    print("=" * 60)
-
-    token = input(f"ระบุ Telegram Bot Token [{Config.TELEGRAM_BOT_TOKEN or 'ยังไม่มี'}]: ").strip()
-    if not token and Config.TELEGRAM_BOT_TOKEN:
-        token = Config.TELEGRAM_BOT_TOKEN
-
-    chat_id = input(f"ระบุ Telegram Chat ID ผู้รับหลัก [{Config.TELEGRAM_CHAT_ID or 'ยังไม่มี'}]: ").strip()
-    if not chat_id and Config.TELEGRAM_CHAT_ID:
-        chat_id = Config.TELEGRAM_CHAT_ID
-
-    branches = input("ระบุสาขา กปภ. ที่ต้องการติดตาม (คั่นด้วยจุลภาค เช่น ชลบุรี, เชียงใหม่ หรือ * สำหรับทุกสาขา) [*]: ").strip()
-    if not branches:
-        branches = "*"
-
-    interval = input("ความถี่ในการตรวจเช็คข้อมูลใหม่ (วินาที) [300]: ").strip()
-    if not interval:
-        interval = "300"
-
-    env_content = (
-        f"# Telegram Configuration\n"
-        f"TELEGRAM_BOT_TOKEN={token}\n"
-        f"TELEGRAM_CHAT_ID={chat_id}\n\n"
-        f"# Monitoring Configuration\n"
-        f"CHECK_INTERVAL_SECONDS={interval}\n"
-        f"ENABLE_OUTAGE_ALERT=true\n"
-        f"ENABLE_QUALITY_ALERT=true\n\n"
-        f"# Monitored branches (* for all)\n"
-        f"MONITOR_BRANCHES={branches}\n\n"
-        f"# Quality threshold\n"
-        f"PH_MIN=6.5\n"
-        f"PH_MAX=8.5\n"
-        f"NTU_MAX=5.0\n"
-        f"CL_MIN=0.2\n"
-        f"CL_MAX=2.0\n"
-    )
-
-    with open(env_file, "w", encoding="utf-8") as f:
-        f.write(env_content)
-
-    print(f"\n✅ บันทึกการตั้งค่าลงใน {env_file} เรียบร้อยแล้ว!")
-    print("คุณสามารถทดสอบการทำงานได้ด้วยคำสั่ง: python main.py test-telegram")
+    env_file = Config.ENV_FILE
+    print("ตั้งค่า private configuration ของ AQUA COMMAND")
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter('error', getpass.GetPassWarning)
+            token = getpass.getpass("Telegram Bot Token [ตั้งค่าแล้ว, เว้นว่างเพื่อคงค่าเดิม]: ").strip()
+            chat_id = getpass.getpass("Telegram Chat ID [เว้นว่างเพื่อคงค่าเดิม]: ").strip()
+    except (getpass.GetPassWarning, EOFError, KeyboardInterrupt):
+        print("Secure credential input unavailable. Configuration was not changed.", file=sys.stderr)
+        raise SystemExit(1) from None
+    branches = input("สาขาที่ติดตาม [*]: ").strip() or "*"
+    interval = input("รอบตรวจข้อมูล วินาที [300]: ").strip() or "300"
+    try:
+        if int(interval) <= 0:
+            raise ValueError()
+        updates = {
+            'TELEGRAM_BOT_TOKEN': token or Config.TELEGRAM_BOT_TOKEN,
+            'TELEGRAM_CHAT_ID': chat_id or Config.TELEGRAM_CHAT_ID,
+            'MONITOR_BRANCHES': branches,
+            'CHECK_INTERVAL_SECONDS': interval,
+        }
+        save_environment(env_file, updates, source=Config.ENV_SOURCE_FILE)
+    except PrivateConfigSaveError as error:
+        print("Configuration saved but durability is unconfirmed." if error.committed
+              else "Private configuration was not saved.", file=sys.stderr)
+        raise SystemExit(1) from None
+    except (OSError, ValueError):
+        print("Private configuration could not be saved. Check the profile and input.", file=sys.stderr)
+        raise SystemExit(1) from None
+    print(f"บันทึก private configuration แล้วที่ {env_file}")
 
 
 def cmd_run(mode: str = "all") -> None:
@@ -195,7 +190,13 @@ def cmd_run(mode: str = "all") -> None:
         logger.info("Background PWA Monitor service started.")
 
     if mode in ("all", "bot"):
-        if notifier.is_configured:
+        if not bot.is_polling_authorized:
+            logger.warning(
+                "Interactive Telegram Bot polling skipped: APP_ENV='%s' (polling authorization not granted). "
+                "Network policy prohibits bot polling thread in non-production.",
+                Config.APP_ENV
+            )
+        elif notifier.is_configured:
             t_bot = threading.Thread(target=bot.start_polling, name="PWA-BotThread", daemon=True)
             t_bot.start()
             threads.append(t_bot)

@@ -65,6 +65,7 @@ from f3_network import (
     F3DeviceCard
 )
 from app import DEFAULT_TOPOLOGY, AquaWinCCWindow
+from f3_reconciliation_fixture import assert_all_pages_fit
 
 
 def wait_for_glib(event, timeout=2.0):
@@ -101,18 +102,22 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
     def test_01_f3_rendering_bounds(self):
         """1. Verify F3 initializes and renders within bounds at 1366x768, 1600x900, 1920x1080 without window overflow."""
         view = F3NetworkTopologyView(self.mock_owner)
-        self.assertGreaterEqual(view.canvas.get_content_height(), 450)
+        # G15: height adapts to viewport and pagination, rather than a fixed 450px floor.
+        self.addCleanup(GLib.source_remove, view.canvas.anim_source_id)
+        for width in (1024, 1366, 1920):
+            with self.subTest(width=width):
+                assert_all_pages_fit(self, view, width, 407)
         self.assertTrue(view.canvas.get_hexpand())
         self.assertTrue(view.stack.get_vexpand())
         self.assertIsNotNone(view.root_widget)
         self.assertIsNotNone(view.main_split)
         self.assertIsNotNone(view.inspector)
-        src_file = desktop_dir / "f3_network.py"
-        src_code = src_file.read_text(encoding="utf-8")
-        self.assertIn("sw_out_x", src_code)
-        self.assertIn("nic1_in_x", src_code)
-        self.assertIn("nic2_out_x", src_code)
-        self.assertIn("rt_in_x", src_code)
+        # Port placement now comes from f3_layout rather than retired local variable names.
+        geometry = view.canvas.flow_geometry['stages']
+        self.assertLess(geometry['lan'][0], geometry['collector'][0])
+        self.assertLess(geometry['collector'][0], geometry['storage'][0])
+        self.assertLess(geometry['storage'][0], geometry['outbox'][0])
+        self.assertLess(geometry['outbox'][0], geometry['delivery'][0])
 
     # 2. Device Diagram Click Selection
     def test_02_diagram_click_selection(self):
@@ -126,17 +131,33 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
 
     # 3. Device Status LED Updates
     def test_03_status_led_updates(self):
-        """3. Verify device status LED and badge change according to actual state."""
+        # G16: configured flags do not establish observations or an OPC UA session.
         view = F3NetworkTopologyView(self.mock_owner)
-        view.store.update_device("PC1", {
-            "reachability": "REACHABLE",
-            "opcua_state": OpcUaState.CONNECTED
-        })
-        card = view.cards["PC1"]
-        self.assertEqual(card.lbl_badge.get_text(), "REACHABLE")
-        self.assertIn("OPC: CONNECT", card.pill_opc.get_text())
+        self.addCleanup(GLib.source_remove, view.canvas.anim_source_id)
+        view.store.update_device('PC1', {'reachability': 'REACHABLE', 'opcua_state': OpcUaState.CONNECTED})
+        card = view.cards['PC1']
+        self.assertEqual(card.lbl_badge.get_text(), 'UNKNOWN')
+        import f3_evidence as evidence
+        dev = view.store.devices['PC1']
+        self.assertFalse(evidence.session_connected(dev))
+        evidence.record_evidence(dev, 'reachability', evidence.Provenance.REMOTE)
+        view.store.notify()
+        self.assertEqual(card.lbl_badge.get_text(), 'REMOTE')
+        self.assertTrue(evidence.reachable(dev))
+        self.assertFalse(evidence.session_connected(dev))
+        dev['session_state'] = 'CONNECTED'
+        evidence.record_evidence(dev, 'session', evidence.Provenance.OPCUA)
+        view.store.notify()
+        self.assertTrue(evidence.session_connected(dev))
+        self.assertIn('CONNECT', card.pill_opc.get_text())
+        dev['evidence']['reachability']['checked_at'] -= 120
+        view.store.notify()
+        self.assertEqual(card.lbl_badge.get_text(), 'STALE')
+        dev['configured_ip'] = '192.0.2.99'
+        dev['endpoint_url'] = 'opc.tcp://192.0.2.99:4862'
+        self.assertFalse(evidence.reachable(dev))
+        self.assertFalse(evidence.session_connected(dev))
 
-    # 4. Animation Halts when UNKNOWN / STALE / ERROR
     def test_04_animation_stops_when_unknown_stale(self):
         """4. Verify connection line animation halts when state is UNKNOWN, STALE, or ERROR."""
         animated_states = {
@@ -165,7 +186,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
     # 6. Synthetic Remote ICMP/TCP Detection
     def test_06_synthetic_remote_detection(self):
         """6. Verify synthetic remote ICMP/TCP detection works in DEMO mode."""
-        dev = {"id": "PC1", "configured_ip": "192.168.1.11", "port": 4862, "type": "wincc"}
+        dev = {"id": "PC1", "configured_ip": "192.0.2.11", "port": 4862, "type": "wincc"}
         result = {}
         done_evt = threading.Event()
         def on_done(res):
@@ -183,10 +204,10 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         view = F3NetworkTopologyView(self.mock_owner)
         view.store.update_device("PC1", {
             "port": 4840,
-            "endpoint_url": "opc.tcp://192.168.1.11:4840"
+            "endpoint_url": "opc.tcp://192.0.2.11:4840"
         })
         self.assertEqual(view.store.devices["PC1"]["port"], 4840)
-        self.assertEqual(view.store.devices["PC1"]["endpoint_url"], "opc.tcp://192.168.1.11:4840")
+        self.assertEqual(view.store.devices["PC1"]["endpoint_url"], "opc.tcp://192.0.2.11:4840")
         self.assertIn("4840", view.cards["PC1"].v_cfg_ip.get_text())
 
     # 8. OPC UA Loopback Connect / Disconnect
@@ -206,7 +227,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
     # 9. Strict Separation: TCP Open != OPC UA Connected
     def test_09_tcp_open_not_opcua_connected(self):
         """9. Verify strict separation: TCP port open does NOT imply OPC UA session connected."""
-        dev = {"id": "PC1", "endpoint_url": "opc.tcp://192.168.1.11:4862", "port": 4862, "type": "wincc"}
+        dev = {"id": "PC1", "endpoint_url": "opc.tcp://192.0.2.11:4862", "port": 4862, "type": "wincc"}
         result = {}
         done_evt = threading.Event()
         def on_done(res):
@@ -225,7 +246,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
     # 10. PKI Trust Failure Status
     def test_10_pki_trust_failure_status(self):
         """10. Verify PKI trust failure displays CERTIFICATE_UNTRUSTED status."""
-        dev = {"id": "PC1", "endpoint_url": "opc.tcp://192.168.1.11:4862", "port": 4862, "type": "wincc", "simulate_untrusted_cert": True}
+        dev = {"id": "PC1", "endpoint_url": "opc.tcp://192.0.2.11:4862", "port": 4862, "type": "wincc", "simulate_untrusted_cert": True}
         result = {}
         done_evt = threading.Event()
         def on_done(res):
@@ -263,7 +284,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
             "name": "PC5 · Test Station",
             "role": "สถานีทดสอบ",
             "type": "wincc",
-            "configured_ip": "192.168.1.55",
+            "configured_ip": "192.0.2.55",
             "port": 4862
         }
         view.store.add_device(new_dev)
@@ -297,7 +318,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
     # 14. Demo Data Isolation
     def test_14_demo_data_isolation(self):
         """14. Verify DEMO mode uses synthetic loopback and does NOT touch live production IPs."""
-        dev = {"id": "PC1", "configured_ip": "192.168.1.11", "port": 4862}
+        dev = {"id": "PC1", "configured_ip": "192.0.2.11", "port": 4862}
         with patch("socket.socket") as mock_sock, patch("subprocess.run") as mock_sub:
             done_evt = threading.Event()
             RealDetectionEngine.detect_device_network(dev, is_demo=True, callback=lambda _: done_evt.set())
@@ -396,23 +417,19 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertIn("PC4", dlg.get_title())
 
     def test_compat_ip_table_update(self):
+        # G17: explicit store configuration differs from an observed NIC address.
         view = F3NetworkTopologyView(self.mock_owner)
-        view.topology_data['gateway_bridge']['nic_scada']['ip'] = "192.168.1.99"
+        self.addCleanup(GLib.source_remove, view.canvas.anim_source_id)
+        view.store.update_device('dev-collector-01', {'configured_ip': '192.0.2.99'})
         view.render_ip_summary_table()
-        found_new_ip = False
+        labels = []
         child = view.ip_grid.get_first_child()
         while child:
-            if isinstance(child, Gtk.Label) and "192.168.1.99" in child.get_text():
-                found_new_ip = True
-                break
+            if isinstance(child, Gtk.Label):
+                labels.append(child.get_text())
             child = child.get_next_sibling()
-        self.assertTrue(found_new_ip)
-
-
-
-    # =========================================================================
-    # Phase 10: 12 Real Hostname & Device Identity Acceptance Tests
-    # =========================================================================
+        self.assertIn('Config: 192.0.2.99 | Actual: UNKNOWN', labels)
+        self.assertIsNone(view.store.devices['dev-collector-01']['observed_ip'])
 
     def test_identity_01_local_hostname_from_os(self):
         """1. Verify local machine reads actual OS hostname (fedora) and never username or PC4."""
@@ -420,7 +437,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertIsNotNone(h)
         self.assertNotEqual(h, "")
         self.assertNotEqual(h.lower(), "pc4")
-        self.assertNotEqual(h.lower(), "nong_ing")
+        self.assertNotEqual(h.lower(), "local-user")
         self.assertEqual(h, "fedora")
 
         view = F3NetworkTopologyView(self.mock_owner)
@@ -437,7 +454,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertIsNone(scada1["hostname"])
         self.assertEqual(scada1["identity_status"], IdentityStatus.UNKNOWN)
         disp_name, status = compute_display_name(scada1, is_demo=False)
-        self.assertEqual(disp_name, "192.168.1.11 [Hostname Unknown]")
+        self.assertEqual(disp_name, "192.0.2.11 [Hostname Unknown]")
         self.assertEqual(status, IdentityStatus.UNKNOWN)
 
     def test_identity_03_dns_ptr_not_auto_verified(self):
@@ -448,7 +465,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
             "alias": "",
             "identity_status": IdentityStatus.UNVERIFIED,
             "identity_source": IdentitySource.DNS_PTR,
-            "configured_ip": "192.168.1.11"
+            "configured_ip": "192.0.2.11"
         }
         disp_name, status = compute_display_name(mock_dev, is_demo=False)
         self.assertEqual(disp_name, "scada-ping.tunnel.internal [Unverified]")
@@ -471,12 +488,12 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         view = F3NetworkTopologyView(self.mock_owner)
         view.store.update_device("dev-scada-01", {
             "alias": "Emergency Pump",
-            "configured_ip": "192.168.1.77",
+            "configured_ip": "192.0.2.77",
             "hostname": "stn1-scada.internal"
         })
         dev = view.store.devices["dev-scada-01"]
         self.assertEqual(dev["device_id"], "dev-scada-01")
-        self.assertEqual(dev["configured_ip"], "192.168.1.77")
+        self.assertEqual(dev["configured_ip"], "192.0.2.77")
         self.assertEqual(dev["alias"], "Emergency Pump")
 
     def test_identity_06_tasks_and_opcua_mapping_intact(self):
@@ -485,7 +502,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         view.store.update_device("dev-scada-01", {"alias": "Renamed Station"})
         dev = view.store.devices["dev-scada-01"]
         self.assertEqual(dev["test_tag"], "High_Analog.Tank01_Level")
-        self.assertEqual(dev["endpoint_url"], "opc.tcp://192.168.1.11:4862")
+        self.assertEqual(dev["endpoint_url"], "opc.tcp://192.0.2.11:4862")
 
     def test_identity_07_dynamic_devices_render_correctly(self):
         """7. Verify adding dynamic devices renders correctly without hardcoded limits."""
@@ -499,15 +516,22 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertEqual(new_dev["identity_status"], IdentityStatus.UNKNOWN)
 
     def test_identity_08_demo_data_isolated_from_live(self):
-        """8. Verify DEMO mode uses clearly labeled synthetic hostnames with [DEMO]."""
+        # G04: LIVE IDs are absent in DEMO; aliases/config cannot cross modes.
         view = F3NetworkTopologyView(self.mock_owner)
+        self.addCleanup(GLib.source_remove, view.canvas.anim_source_id)
+        before = view.store.config_file.read_bytes()
+        live_ids = set(view.store.devices)
         view._on_mode_toggle(None)
         self.assertTrue(view.store.is_demo_mode)
-        disp_name, status = compute_display_name(view.store.devices["dev-scada-01"], is_demo=True)
-        self.assertIn("[DEMO]", disp_name)
-        self.assertEqual(status, "DEMO")
+        self.assertTrue(live_ids.isdisjoint(view.store.devices))
+        for dev in view.store.devices.values():
+            disp_name, status = compute_display_name(dev, is_demo=True)
+            self.assertIn('[DEMO]', disp_name)
+            self.assertEqual(status, 'DEMO')
         view._on_mode_toggle(None)
         self.assertFalse(view.store.is_demo_mode)
+        self.assertEqual(set(view.store.devices), live_ids)
+        self.assertEqual(view.store.config_file.read_bytes(), before)
 
     def test_identity_09_no_fake_online_connected_status(self):
         """9. Verify remote SCADA devices do not show fake online or connected status initially."""
@@ -534,18 +558,45 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertNotIn("PC4", col_card.lbl_name.get_text())
 
         scada1_card = view.cards["dev-scada-01"]
-        self.assertEqual(scada1_card.lbl_name.get_text(), "192.168.1.11 [Hostname Unknown]")
+        self.assertEqual(scada1_card.lbl_name.get_text(), "192.0.2.11 [Hostname Unknown]")
         self.assertNotIn("PC1", scada1_card.lbl_name.get_text())
 
     def test_identity_12_regression_f1_f2_f6_all_pass(self):
-        """12. Verify full system regression: F1, F2, F6 tabs and underlying engines remain intact."""
-        app = Gtk.Application()
-        app.register(None)
-        win = AquaWinCCWindow(app=app)
-        self.assertTrue(hasattr(win, 'build_overview_page'))
-        self.assertTrue(hasattr(win, 'build_task_manager_page'))
-        self.assertIsNotNone(win.f3_network_view)
-        self.assertEqual(len(win.scanned_tags), 457)
+        # G18: explicit synthetic fixture, then a separate empty-profile setup.
+        from wincc_catalog_fixture import write_catalog
+        from gi.repository import Gio
+        import app as desktop_app
+        from f3_api_view import F3ApiView
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            catalog = write_catalog(directory / 'synthetic.txt')
+            for source, expected in ((catalog, 457), (directory / 'missing.txt', 0)):
+                with self.subTest(expected_tags=expected), \
+                        patch.object(desktop_app, 'CONFIG_DIR', directory / str(expected)), \
+                        patch.object(desktop_app, 'DEFAULT_WINCC_EXPORT', source):
+                    application = Gtk.Application(application_id=f'org.aqua.p1.catalog{expected}', flags=Gio.ApplicationFlags.NON_UNIQUE)
+                    application.register(None)
+                    win = AquaWinCCWindow(app=application)
+                    try:
+                        self.assertTrue(hasattr(win, 'build_overview_page'))
+                        self.assertTrue(hasattr(win, 'build_task_manager_page'))
+                        self.assertIsInstance(win.f3_network_view, F3ApiView)
+                        self.assertEqual(len(win.scanned_tags), expected)
+                        self.assertTrue(all(tag['name'].startswith('LAB.') for tag in win.scanned_tags))
+                        self.assertFalse(win.f3_network_view._active)
+                        self.assertIsNone(win.f3_network_view._server)
+                        self.assertEqual(win.stack.get_visible_child_name(), 'overview')
+                        for key, page in (('F2', 'overview'), ('F6', 'alarms'), ('F1', 'overview')):
+                            win.on_global_key_pressed(None, getattr(desktop_app.Gdk, 'KEY_' + key), 0, 0)
+                            self.assertEqual(win.stack.get_visible_child_name(), page)
+                            if key == 'F2':
+                                self.assertEqual(win.unified_workspace.current_workspace_mode, 'task_manager')
+                            if key == 'F1':
+                                self.assertEqual(win.unified_workspace.current_workspace_mode, 'monitoring')
+                    finally:
+                        win.on_close_request()
+                        win.destroy()
+                        application.quit()
 
 
 if __name__ == '__main__':

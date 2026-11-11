@@ -27,3 +27,37 @@ storage/state.json*
 .DS_Store
 MagicMock/
 mock.config_dir/
+
+# Private runtime inputs, credentials, and storage (never public build inputs)
+**/Export all*.txt
+**/pump-status-tags.txt
+*.env
+*.env.*
+!.env.example
+*.bak
+*.sqlite
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.key
+*.pem
+*.pfx
+*.p12
+private-runtime/
+private-config/
+quarantine/
+
+# Generated distributions and historical screenshots require separate review
+*.rpm
+*.exe
+*.zip
+*.tar.gz
+*.src.rpm
+build/
+dist/
+releases/
+docs/screenshots/
+docs/mockups/

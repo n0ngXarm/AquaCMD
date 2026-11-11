@@ -1,3 +1,4 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # G0 — Audit & Baseline
 
 STAGE: **G0**
@@ -8,7 +9,7 @@ PROGRESS: **1/6 stage gates ผ่านจริง**; G1–G5 ยังไม�
 
 ## Repository และขอบเขต
 
-- ต้นฉบับ: `/home/nong_ing/Downloads/AQUA_COMMAND_Desktop_Demo_v0.3_BUNDLE/aqua-command-isometric-demo-source/aqua-command-isometric-demo`
+- ต้นฉบับ: `[REDACTED_HOME]/Downloads/AQUA_COMMAND_Desktop_Demo_v0.3_BUNDLE/aqua-command-isometric-demo-source/aqua-command-isometric-demo`
 - `package.json`: `aqua-command-isometric-demo@0.3.0`, ESM, Node >=20, ไม่มี external dependencies
 - Source เป็นโฟลเดอร์ที่แตกจาก archive ไม่ใช่ Git repository; `git status` ต้นฉบับตอบ `not a git repository`
 - ทำ working copy จาก source เดิมแบบ byte-for-byte ใน `work/aqua-command-v04` โดยไม่ยก runtime `data/` เดิมมาใช้ และไม่แก้ต้นฉบับ

@@ -414,12 +414,12 @@ class TestE2EGtkIntegration(unittest.TestCase):
         # Step 4: Test Pause Monitoring
         self.win.on_pause_monitoring_clicked()
         self.assertEqual(self.win.polling_engine.telemetry.state, PollingState.PAUSED)
-        self.assertIn("Resume", self.win.btn_pause_monitoring.get_label())
+        self.assertEqual(self.win.btn_pause_monitoring.get_label(), "อ่านต่อ")
 
         # Step 5: Test Resume Monitoring
         self.win.on_pause_monitoring_clicked()
         self.assertEqual(self.win.polling_engine.telemetry.state, PollingState.RUNNING)
-        self.assertIn("Pause", self.win.btn_pause_monitoring.get_label())
+        self.assertEqual(self.win.btn_pause_monitoring.get_label(), "พัก")
 
         # Step 6: Test Stop Monitoring
         self.win.on_stop_monitoring_clicked()

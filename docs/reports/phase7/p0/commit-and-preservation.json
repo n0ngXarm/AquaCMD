@@ -1,0 +1,21 @@
+{
+  "branch": "fix/phase7-p0-privacy",
+  "commit": "ca1a96fe9323d1758dc59a00498c39fde4c67d94",
+  "baseline": "e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+  "functional_phase6_ancestor": "e466efe8fbcf0c706edb0886271dba4f8cfceb16",
+  "local_only": true,
+  "original_ancestry_commits": 61,
+  "all_original_ancestry_preserved": true,
+  "current_tree_clean": true,
+  "history_rewritten": false,
+  "production_install": false,
+  "public_push": false,
+  "original_phase6": {
+    "head": "e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+    "tracked_tree_clean": true
+  },
+  "canonical": {
+    "head": "0db6e72145ec4b2d1fef0329a285216ac6d49d12",
+    "tracked_tree_clean": true
+  }
+}

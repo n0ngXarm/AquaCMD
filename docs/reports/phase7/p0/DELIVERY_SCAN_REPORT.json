@@ -1,0 +1,14 @@
+{
+  "text_files_scanned": 57,
+  "credential_and_private_tag_findings": 0,
+  "source_snapshot_preflight": "PASS 414 files; see source-snapshot-preflight.json",
+  "desktop_archive_preflight": "PASS 117 files",
+  "rpm_payload_preflight": "PASS 100 files",
+  "artifact_scope": "Current-only files; no Git history, private originals, runtime profiles or catalogs",
+  "evidence_raw_policy": "Private raw retained; delivery logs redact private values/paths/pixel bytes and baseline synthetic leakage without changing test outcomes",
+  "history": "NOT_CLEARED",
+  "rotation": "PENDING_OWNER_ACTION",
+  "final_text_files_scanned_source_and_evidence": 469,
+  "final_strict_findings": [],
+  "original_test_mapper_workspace_files_preserved": 102
+}

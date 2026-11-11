@@ -5,28 +5,27 @@ import unittest
 
 from app import scan_wincc_tags
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-EXPORT_PATH = REPO_ROOT / 'docs' / 'tags' / 'Export all.txt'
+from wincc_catalog_fixture import write_catalog
 
 
 class TestWinCCExportParser(unittest.TestCase):
-    def test_parse_real_export_file(self):
-        self.assertTrue(EXPORT_PATH.exists(), f"Real export file must exist at {EXPORT_PATH}")
-        tags = scan_wincc_tags(EXPORT_PATH)
+    def test_parse_full_synthetic_export_file(self):
+        with tempfile.TemporaryDirectory() as private:
+            tags = scan_wincc_tags(write_catalog(Path(private) / 'catalog.txt'))
         self.assertEqual(len(tags), 457, "Must discover exactly 457 tags")
 
         groups = {t['group'] for t in tags}
-        self.assertEqual(len(groups), 10, "Must discover exactly 10 plant groups")
-        self.assertIn('High_VSD', groups)
-        self.assertIn('High_Valve', groups)
-        self.assertIn('High1_PT1PT', groups)
+        self.assertEqual(len(groups), 10, "Must discover exactly 10 synthetic groups")
+        self.assertIn('LAB_PUMPS', groups)
+        self.assertIn('LAB_VALVES', groups)
+        self.assertIn('LAB_PRESSURE', groups)
         self.assertIn('Default', groups)
 
         first = tags[0]
-        self.assertEqual(first['name'], 'BVEC1PT.AUTO_C')
+        self.assertEqual(first['name'], 'LAB.TAG_000')
         self.assertEqual(first['type'], 'Binary Tag')
-        self.assertEqual(first['group'], 'High_Valve')
-        self.assertEqual(first['addr'], 'DB62,D108.3')
+        self.assertEqual(first['group'], 'LAB_PUMPS')
+        self.assertEqual(first['addr'], 'DB1,D0.0')
 
         raw = first['raw_metadata']
         self.assertGreaterEqual(len(raw), 33, "Raw metadata must preserve all 33 columns")

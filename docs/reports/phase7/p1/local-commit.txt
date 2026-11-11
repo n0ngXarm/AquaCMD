@@ -1,0 +1,11 @@
+{
+  "scope": "index",
+  "files": 6,
+  "private_catalog_comparison": true,
+  "findings": [],
+  "history_clearance": "NOT_EVALUATED"
+}
+[test/phase7-p1-gui-reconciliation dcd3619] Reconcile GUI tests with current F3 contracts without runtime changes
+ 6 files changed, 572 insertions(+), 118 deletions(-)
+ create mode 100644 aqua-command-desktop/desktop/tests/f3_reconciliation_fixture.py
+ create mode 100644 aqua-command-desktop/desktop/tests/test_f3_active_reconciliation.py

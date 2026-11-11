@@ -1,7 +1,15 @@
 # AquaCMD repository routing
 
-Canonical repository: `/home/nong_ing/Documents/Work_SHCOOL/project_water/AquaCMD`.
+Desktop source is `aqua-command-desktop/`. Read its `AGENTS.md` and
+`PROJECT_PROGRESS.md` before changes. Installed application paths are private
+operator configuration; do not install automatically from a candidate checkout.
 
-Desktop application source: `aqua-command-desktop/`. Read its `AGENTS.md` and `PROJECT_PROGRESS.md` before changes. The Desktop/Menu icons launch `aqua-command-desktop/desktop/app.py` here.
+Phase 7 authorizes isolated P0 privacy/credential remediation and local commits.
+GUI source remediation, history rewrite, public push, main merge, deployment,
+real SCADA/PLC access, and real Telegram sends remain on hold. Historical
+authorization records do not expand this scope.
 
-The former Documents/Codex/.../waterlevels-desktop repository was moved here on 2026-11-08 with all Git history and uncommitted work. Do not recreate it. Evidence/scratch worktrees are historical candidates; do not install from them automatically.
+Never commit private catalogs, site identifiers, credentials, runtime databases,
+operator profiles, or unreviewed binary artifacts. Run the privacy preflight,
+functional contracts and `aqua-command-desktop/scripts/no_fake_check.sh` before
+delivery. Preserve all safety assertions and exact private mapping semantics.

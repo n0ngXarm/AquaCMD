@@ -46,20 +46,6 @@ class WaterMonitorService:
 
             logger.info("Baseline sync completed. Saved %d existing notices silently.", len(outages))
 
-            # Send a single polite startup notification
-            if self.notifier.default_chat_id:
-                startup_msg = (
-                    "🟢 <b>[ระบบเริ่มการเฝ้าระวังน้ำประปา 24/7]</b>\n"
-                    "──────────────────\n"
-                    f"บันทึกฐานข้อมูลประกาศเดิมแล้ว <b>{len(outages)}</b> รายการ\n"
-                    "ต่อจากนี้ระบบจะแจ้งเตือนเฉพาะเมื่อมี:\n"
-                    " • 🚨 <b>ประกาศใหม่ล่าสุด</b>\n"
-                    " • 🟢 <b>อัปเดตเมื่อการซ่อมบำรุงแล้วเสร็จ</b> (น้ำเริ่มกลับมาไหลปกติ)\n"
-                    "──────────────────\n"
-                    "🔔 <i>ระบบจะไม่ส่งประกาศเก่าย้อนหลังเพื่อไม่ให้รบกวนคุณ</i>"
-                )
-                self.notifier.send_message(self.notifier.default_chat_id, startup_msg)
-
         self.is_initialized = True
 
     def check_outages_once(self) -> int:

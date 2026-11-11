@@ -1,11 +1,12 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F1 Industrial Spectrum V2 Theme Refinement Report
 
-**Project:** AQUA COMMAND — WinCC V8.1 SCADA & Task Manager  
-**Platform:** Linux GTK4 Native (`aqua-command-desktop/desktop`)  
-**Design Phase:** Industrial Spectrum V2 Visual Theme Pass  
-**Target Environment:** 1366×768 (Field Laptop Standard) & 1920×1080 (Control Room Workstation)  
-**Status:** Verification Passed (100% Automated Regression & Visual Pass)  
-**Date:** 01/11/2026  
+**Project:** AQUA COMMAND — WinCC V8.1 SCADA & Task Manager
+**Platform:** Linux GTK4 Native (`aqua-command-desktop/desktop`)
+**Design Phase:** Industrial Spectrum V2 Visual Theme Pass
+**Target Environment:** 1366×768 (Field Laptop Standard) & 1920×1080 (Control Room Workstation)
+**Status:** Verification Passed (100% Automated Regression & Visual Pass)
+**Date:** 01/11/2026
 
 ---
 
@@ -62,27 +63,27 @@ All text and interactive badge color combinations were tested against their resp
 All captures were taken natively through the GTK4 rendering pipeline:
 
 ### 1. F1 Master Overview — All Groups Virtual Filter (1366×768)
-![F1 V2 All Groups 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_all_groups_1366x768.png)
+![F1 V2 All Groups 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_all_groups_1366x768.png)
 *Features: 4 Elevated KPI cards with semantic badges, selected virtual group in vibrant blue, orange F7 refresh actions, clean 6-column tag table fitting 1366×768 with zero horizontal overflow.*
 
 ### 2. High_VSD Equipment Group Selected (1366×768)
-![F1 V2 High VSD 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_high_vsd_1366x768.png)
+![F1 V2 High VSD 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_high_vsd_1366x768.png)
 *Features: Inverter pump signals (135 tags) filtered instantly; 4px solid Blue left indicator on selected row; Upper-right title card displays equipment context, tag count pill, and Verified Catalog badge.*
 
 ### 3. Properties Inspector Mode (1366×768)
-![F1 V2 Properties 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_properties_1366x768.png)
-*Features: Active tab in `#253549` with `#3489E8` border; inspected signal `CTM13PT.AUTO_C` details rendered on elevated surfaces with zero text clipping.*
+![F1 V2 Properties 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_properties_1366x768.png)
+*Features: Active tab in `#253549` with `#3489E8` border; inspected signal `[REDACTED_SITE_TAG]` details rendered on elevated surfaces with zero text clipping.*
 
 ### 4. F1 Master Overview — Full Workstation (1920×1080)
-![F1 V2 All Groups 1920x1080](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_all_groups_1920x1080.png)
+![F1 V2 All Groups 1920x1080]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_all_groups_1920x1080.png)
 *Features: Full control-room density displaying all 10 real equipment groups on the left with zero scrolling required, and extensive signal rows on the right.*
 
 ### 5. High_Valve Equipment Group (1366×768)
-![F1 V2 High Valve 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_high_valve_1366x768.png)
+![F1 V2 High Valve 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_high_valve_1366x768.png)
 *Features: Actuated valve signals (68 tags) with Boolean data types mapped cleanly and address offsets clearly visible.*
 
 ### 6. Empty State — Fresh Install Baseline (1366×768)
-![F1 V2 Empty State 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_empty_state_1366x768.png)
+![F1 V2 Empty State 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v2_empty_state_1366x768.png)
 *Features: Graceful empty state when no tags are loaded; neutral gray badges and clear instructions to trigger F7 scan.*
 
 ---
@@ -99,9 +100,9 @@ All captures were taken natively through the GTK4 rendering pipeline:
 ## 6. Technical Scope & Architecture
 
 ### Modified Files:
-- [f1_style.css](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_style.css): Complete rewrite implementing Industrial Spectrum V2 CSS tokens.
-- [f1_overview.py](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py): Semantic badge bindings (`f1-badge-verified`, `f1-badge-accent`, `f1-badge-neutral`), orange action buttons (`f1-btn-refresh`), and search highlight (`f1-search-active`).
-- [app.py](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py): Added `fkey-btn-orange` for F7 and `fkey-btn-exit` for F8.
+- [f1_style.css](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_style.css): Complete rewrite implementing Industrial Spectrum V2 CSS tokens.
+- [f1_overview.py](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py): Semantic badge bindings (`f1-badge-verified`, `f1-badge-accent`, `f1-badge-neutral`), orange action buttons (`f1-btn-refresh`), and search highlight (`f1-search-active`).
+- [app.py](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py): Added `fkey-btn-orange` for F7 and `fkey-btn-exit` for F8.
 
 ### Unmodified Protected Layers:
 - OPC UA / OPC DA telemetry engine

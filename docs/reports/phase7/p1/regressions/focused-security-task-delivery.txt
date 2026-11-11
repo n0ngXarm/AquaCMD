@@ -1,0 +1,79 @@
+COMMAND /usr/bin/python3 -B -m unittest test_credential_permissions test_opcua_security_gate test_task_alert_atomicity test_notification_delivery -v
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p1-tests/aqua-command-desktop/desktop/tests
+test_atomic_json_enforces_0600_mode (test_credential_permissions.TestCredentialFilePermissions.test_atomic_json_enforces_0600_mode)
+Verifies that save_atomic_json with mode=0o600 creates and replaces file with 0600 permissions. ... ok
+test_concurrent_writes (test_credential_permissions.TestCredentialFilePermissions.test_concurrent_writes)
+Verifies that concurrent writes across threads succeed without corruption or race condition collisions. ... ok
+test_crash_recovery_preserves_existing_data (test_credential_permissions.TestCredentialFilePermissions.test_crash_recovery_preserves_existing_data)
+Verifies that a failure during data dump aborts atomically and preserves the existing file intact. ... SEC-02: Error atomic saving /tmp/tmpcj48_3a8/config_sub/resilient.json [pre-commit]: Simulated disk error
+ok
+test_directory_ownership_mismatch_fails_closed (test_credential_permissions.TestCredentialFilePermissions.test_directory_ownership_mismatch_fails_closed)
+Negative test: Directory not owned by current user must fail closed with PermissionError. ... ok
+test_parent_directory_fsync_called_on_posix (test_credential_permissions.TestCredentialFilePermissions.test_parent_directory_fsync_called_on_posix)
+Verifies that parent directory fsync is invoked to persist directory entries on POSIX. ... ok
+test_post_commit_error_distinction_and_retry_prevention (test_credential_permissions.TestCredentialFilePermissions.test_post_commit_error_distinction_and_retry_prevention)
+SEC-02: Asserts distinct handling between pre-commit failure (retryable) and post-commit error (non-retryable). ... SEC-02: Error atomic saving /tmp/tmp8jtglg4d/config_sub/retry_check.json [pre-commit]: Simulated write failure
+SEC-02: Post-commit directory fsync failed on /tmp/tmp8jtglg4d/config_sub: Simulated hardware fsync failure
+SEC-02: Error atomic saving /tmp/tmp8jtglg4d/config_sub/retry_check.json [post-commit]: SEC-02: Post-commit directory fsync failed on /tmp/tmp8jtglg4d/config_sub: Simulated hardware fsync failure
+ok
+test_post_commit_fsync_failure_does_not_destroy_config (test_credential_permissions.TestCredentialFilePermissions.test_post_commit_fsync_failure_does_not_destroy_config)
+Post-commit test: If parent directory fsync fails, reports failure but never destroys target config. ... SEC-02: Post-commit directory fsync failed on /tmp/tmpwkotwf84/config_sub: Simulated parent dir fsync hardware fault
+SEC-02: Error atomic saving /tmp/tmpwkotwf84/config_sub/fsync_fail.json [post-commit]: SEC-02: Post-commit directory fsync failed on /tmp/tmpwkotwf84/config_sub: Simulated parent dir fsync hardware fault
+ok
+test_pre_replace_mode_verification_aborts_preserving_original (test_credential_permissions.TestCredentialFilePermissions.test_pre_replace_mode_verification_aborts_preserving_original)
+Pre-commit failure test: Mode mismatch on temp file aborts before replace, preserving original config intact. ... SEC-02: Error atomic saving /tmp/tmpra0mxm8j/config_sub/safe_original.json [pre-commit]: SEC-02: Pre-commit mode mismatch on /tmp/tmpra0mxm8j/config_sub/.safe_original.json.5b0d021d7f7293bf.tmp: expected 0o600, got 0o666
+ok
+test_randomized_temp_file_no_static_tmp (test_credential_permissions.TestCredentialFilePermissions.test_randomized_temp_file_no_static_tmp)
+Verifies that temporary files use random names and do not collide with static .tmp. ... ok
+test_symlink_directory_unowned_fails_closed (test_credential_permissions.TestCredentialFilePermissions.test_symlink_directory_unowned_fails_closed)
+Negative test: Parent directory symlink pointing to an unowned path fails closed. ... ok
+test_symlink_target_rejected_fail_closed (test_credential_permissions.TestCredentialFilePermissions.test_symlink_target_rejected_fail_closed)
+Negative test: Attempting to overwrite a symlinked target file must fail closed with PermissionError. ... ok
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+test_10_f1_read_once_via_secure_channel (test_opcua_security_gate.TestOpcUaLoopbackSecurityIntegration.test_10_f1_read_once_via_secure_channel)
+Verifies F1 single-shot read succeeds over trusted Basic256Sha256 SecureChannel. ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_11_wrong_credentials_rejected_without_leakage (test_opcua_security_gate.TestOpcUaLoopbackSecurityIntegration.test_11_wrong_credentials_rejected_without_leakage)
+Verifies wrong username/password rejected over SecureChannel without secret leakage. ... certificate does not contain the application uri (urn:example.org:FreeOpcUa:opcua-asyncio). Most applications will reject a connection without it.
+Requested session timeout to be 3600000ms, got 600000ms instead
+sending service fault response: User does not have permission to perform the requested operation. (BadUserAccessDenied)
+ServiceFault (BadUserAccessDenied, diagnostics: DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None)) from server received  in response to ActivateSessionRequest
+ok
+test_01_client_certificate_generation_and_permissions (test_opcua_security_gate.TestOpcUaSecurityGate.test_01_client_certificate_generation_and_permissions)
+Verifies client app certificate generation, RSA-2048, and 0600 key permissions. ... ok
+test_02_trusted_server_certificate_validation (test_opcua_security_gate.TestOpcUaSecurityGate.test_02_trusted_server_certificate_validation)
+Verifies valid server certificate in trusted/certs is accepted. ... ok
+test_03_unknown_certificate_rejection_and_quarantine (test_opcua_security_gate.TestOpcUaSecurityGate.test_03_unknown_certificate_rejection_and_quarantine)
+Verifies untrusted certificate is rejected with BadCertificateUntrusted and quarantined. ... Quarantined untrusted certificate to: /tmp/tmpdx4prj2e/pki/rejected/certs/rejected_127_0_0_1_B2FF442768A3311C.der (Reason: Untrusted by client trust store)
+ok
+test_04_expired_certificate_rejection (test_opcua_security_gate.TestOpcUaSecurityGate.test_04_expired_certificate_rejection)
+Verifies expired certificate is rejected with BadCertificateTimeInvalid. ... ok
+test_05_hostname_and_uri_mismatch_rejection (test_opcua_security_gate.TestOpcUaSecurityGate.test_05_hostname_and_uri_mismatch_rejection)
+Verifies hostname or ApplicationURI mismatch is rejected. ... ok
+test_06_certificate_replacement_detected (test_opcua_security_gate.TestOpcUaSecurityGate.test_06_certificate_replacement_detected)
+Verifies changed certificate thumbprint for known server is detected and quarantined. ... Quarantined untrusted certificate to: /tmp/tmpk7stwp52/pki/rejected/certs/rejected_127_0_0_1_0F33716D5743ABBD.der (Reason: Server certificate changed unexpectedly)
+ok
+test_07_no_auto_trust_and_manual_promotion (test_opcua_security_gate.TestOpcUaSecurityGate.test_07_no_auto_trust_and_manual_promotion)
+Verifies certificates are never auto-trusted; manual promotion required. ... Quarantined untrusted certificate to: /tmp/tmpefsix6ia/pki/rejected/certs/rejected_test_server_846BE58EB83B37E0.der (Reason: Untrusted)
+ok
+test_08_anti_downgrade_guardrail (test_opcua_security_gate.TestOpcUaSecurityGate.test_08_anti_downgrade_guardrail)
+Verifies username authentication over SecurityPolicy#None is rejected pre-network. ... SEC-04: Security gate check failed: SEC-04: Plaintext username/password is strictly forbidden when SecurityPolicy is None. Encrypted session (Basic256Sha256) is mandatory for credential transmission.
+ok
+test_09_reader_strictly_read_only (test_opcua_security_gate.TestOpcUaSecurityGate.test_09_reader_strictly_read_only)
+Verifies ManualOpcUaReader does not expose any write or mutation methods. ... ok
+test_failed_outbox_insert_does_not_advance_task_or_report_an_event (test_task_alert_atomicity.TaskAlertAtomicityTests.test_failed_outbox_insert_does_not_advance_task_or_report_an_event) ... Failed atomic event & outbox commit: test outbox failure
+Task lab trigger was not committed
+Task triggered: Untitled Task: LAB.TAG = 9.00  เกินเกณฑ์ที่กำหนด (> 5.00) -> Event evt_d7c701e6236c enqueued
+ok
+test_laboratory_default_prevents_external_dispatch (test_notification_delivery.DeliveryStateTests.test_laboratory_default_prevents_external_dispatch) ... ok
+test_legacy_exhausted_job_is_held_during_recovery (test_notification_delivery.DeliveryStateTests.test_legacy_exhausted_job_is_held_during_recovery) ... ok
+test_response_lost_after_request_keeps_job_and_does_not_repeat (test_notification_delivery.DeliveryStateTests.test_response_lost_after_request_keeps_job_and_does_not_repeat) ... ok
+test_restart_holds_interrupted_job_without_losing_id (test_notification_delivery.DeliveryStateTests.test_restart_holds_interrupted_job_without_losing_id) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 6.461s
+
+OK
+
+AUDIT_EXIT_CODE=0

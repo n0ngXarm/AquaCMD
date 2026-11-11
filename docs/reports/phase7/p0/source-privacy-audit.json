@@ -1,0 +1,60 @@
+{
+  "scope": "Full current indexed tree; all files including newly added source/tests; no Git history",
+  "files_scanned": 414,
+  "strict_sensitive_findings": [],
+  "unreviewed_binary_files": [],
+  "remaining_nonsecret_pattern_matches": [
+    {
+      "path": "aqua-command-desktop/backend/tests/deployed.test.js",
+      "categories": {
+        "private_ipv4": 3
+      }
+    },
+    {
+      "path": "aqua-command-desktop/backend/tests/lan-g1.test.js",
+      "categories": {
+        "private_ipv4": 3
+      }
+    },
+    {
+      "path": "aqua-command-desktop/desktop/production.py",
+      "categories": {
+        "private_ipv4": 3
+      }
+    },
+    {
+      "path": "aqua-command-desktop/desktop/tests/test_opcua_security_gate.py",
+      "categories": {
+        "private_ipv4": 2
+      }
+    },
+    {
+      "path": "aqua-command-desktop/desktop/tests/test_production.py",
+      "categories": {
+        "private_ipv4": 3
+      }
+    },
+    {
+      "path": "aqua-command-desktop/releases/windows-runtime-notices/microsoft.netcore.app.runtime.win-x64-10.0.14-THIRD-PARTY-NOTICES.TXT.txt",
+      "categories": {
+        "email": 7
+      }
+    },
+    {
+      "path": "aqua-command-desktop/tests/test_opcua_readiness.py",
+      "categories": {
+        "private_ipv4": 3
+      }
+    },
+    {
+      "path": "aqua-command-desktop/tools/check_opcua_readiness.py",
+      "categories": {
+        "private_ipv4": 3
+      }
+    }
+  ],
+  "interpretation": "RFC1918 network-class constants and deliberately synthetic test endpoints are functional validation data; public third-party copyright contacts are preserved attribution, not operator secrets. Review file-level list rather than treating any RFC1918 string as a field address.",
+  "known_private_catalog_names_compared": 457,
+  "history": "NOT_CLEARED",
+  "rotation": "PENDING_OWNER_ACTION"
+}

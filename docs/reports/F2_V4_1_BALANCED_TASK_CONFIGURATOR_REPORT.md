@@ -1,10 +1,11 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F2 V4.1 BALANCED TASK CONFIGURATOR
 ## Comprehensive Implementation & Verification Report
 
 > [!NOTE]
-> **Status:** Implementation Complete & 100% Verified  
-> **Environment:** Fedora Linux (GTK4 / Libadwaita / Python 3.13)  
-> **Repository:** `n0ngXarm/AquaCMD` (`aqua-command-desktop`)  
+> **Status:** Implementation Complete & 100% Verified
+> **Environment:** Fedora Linux (GTK4 / Libadwaita / Python 3.13)
+> **Repository:** `n0ngXarm/AquaCMD` (`aqua-command-desktop`)
 > **Working Tree:** Local modifications preserved (Zero Commit / Zero Push as instructed)
 
 ---
@@ -62,19 +63,19 @@ graph TD
 ## 3. Visual Verification & Interface States
 
 ````carousel
-![F2 V4.1 Task with Tags (1366x768)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_task_with_tags_1366x768.png)
+![F2 V4.1 Task with Tags (1366x768)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_task_with_tags_1366x768.png)
 <!-- slide -->
-![F2 V4.1 Default Group Filter Banner (1 Tag out of 457)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_default_filtered_1366x768.png)
+![F2 V4.1 Default Group Filter Banner (1 Tag out of 457)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_default_filtered_1366x768.png)
 <!-- slide -->
-![F2 V4.1 All Groups View (457 Tags)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_all_groups_1366x768.png)
+![F2 V4.1 All Groups View (457 Tags)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_all_groups_1366x768.png)
 <!-- slide -->
-![F2 V4.1 Multi-Group Selection across High_VSD and High_Valve](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_multigroup_selection_1366x768.png)
+![F2 V4.1 Multi-Group Selection across High_VSD and High_Valve]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_multigroup_selection_1366x768.png)
 <!-- slide -->
-![F2 V4.1 New Empty Task with Compact State](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_new_empty_task_1366x768.png)
+![F2 V4.1 New Empty Task with Compact State]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_new_empty_task_1366x768.png)
 <!-- slide -->
-![F2 V4.1 Auto-Scan Running State (Separation of Enabled vs Running)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_running_autoscan_1366x768.png)
+![F2 V4.1 Auto-Scan Running State (Separation of Enabled vs Running)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_running_autoscan_1366x768.png)
 <!-- slide -->
-![F2 V4.1 Full HD Workstation View (1920x1080)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_task_with_tags_1920x1080.png)
+![F2 V4.1 Full HD Workstation View (1920x1080)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_1_task_with_tags_1920x1080.png)
 ````
 
 ---
@@ -155,7 +156,7 @@ Both the core F2 test suite and the dedicated F2 V4.1 verification suite passed 
 ## 6. Git Diff & Working Tree Preservation
 
 - **Modified Files:**
-  - [`aqua-command-desktop/desktop/app.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py)
-  - [`aqua-command-desktop/desktop/f2_tasks.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py)
-  - [`aqua-command-desktop/desktop/f2_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_style.css)
+  - [`aqua-command-desktop/desktop/app.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py)
+  - [`aqua-command-desktop/desktop/f2_tasks.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py)
+  - [`aqua-command-desktop/desktop/f2_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_style.css)
 - **Local Working Tree:** All changes remain in the local working tree without `git commit` or `git push`.

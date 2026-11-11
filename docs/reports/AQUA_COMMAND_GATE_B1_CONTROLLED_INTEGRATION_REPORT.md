@@ -1,10 +1,11 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — GATE B1 CONTROLLED INTEGRATION REPORT
 
-**Author:** Antigravity AI Pair Programmer  
-**Date:** November 2, 2026  
-**Target Repository:** `n0ngXarm/AquaCMD` (`aqua-command-desktop`)  
-**Base Commit:** `cb4dc36f2ce57a415ba2f345822f3cf721b9979a`  
-**Execution Context:** Isolated Git Worktree (`scratch/gate_b1_worktree/`)  
+**Author:** Antigravity AI Pair Programmer
+**Date:** November 2, 2026
+**Target Repository:** `n0ngXarm/AquaCMD` (`aqua-command-desktop`)
+**Base Commit:** `cb4dc36f2ce57a415ba2f345822f3cf721b9979a`
+**Execution Context:** Isolated Git Worktree (`scratch/gate_b1_worktree/`)
 **Main Repository Protection:** 100% Unmodified (`git status` preserved, SHA256 verified)
 
 ---
@@ -31,7 +32,7 @@
 
 ## 2. Safety & Isolation Protocol
 
-To guarantee that active development in `/home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop` was not contaminated, the following multi-layer defense protocol was strictly enforced:
+To guarantee that active development in `[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop` was not contaminated, the following multi-layer defense protocol was strictly enforced:
 
 ```mermaid
 graph TD
@@ -44,7 +45,7 @@ graph TD
 ```
 
 1. **Preflight Backup:** Stored in private workspace outside Git at:
-   `/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scratch/backup/app.py.pre_b1_baseline.bak`
+   `[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scratch/backup/app.py.pre_b1_baseline.bak`
    - Initial SHA256: `652ea94fefdcb9811bebda6977ad9799193683e6e67a7ef459b075d51df293a8`
 2. **Isolated Worktree:** Created at `scratch/gate_b1_worktree/` linked to `cb4dc36` with uncommitted dark-mode UI preferences carried over.
 3. **Main Repository Verification:**

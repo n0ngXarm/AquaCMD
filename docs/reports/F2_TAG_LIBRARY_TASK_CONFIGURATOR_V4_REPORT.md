@@ -1,10 +1,11 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F2 TAG LIBRARY & TASK CONFIGURATOR V4
 ## Comprehensive Implementation & Verification Report
 
 > [!NOTE]
-> **Status:** Implementation Complete & 100% Verified  
-> **Environment:** Fedora Linux (GTK4 / Libadwaita / Python 3.13)  
-> **Repository:** `n0ngXarm/AquaCMD` (`aqua-command-desktop`)  
+> **Status:** Implementation Complete & 100% Verified
+> **Environment:** Fedora Linux (GTK4 / Libadwaita / Python 3.13)
+> **Repository:** `n0ngXarm/AquaCMD` (`aqua-command-desktop`)
 > **Working Tree:** Local modifications preserved (Zero Commit / Zero Push as instructed)
 
 ---
@@ -18,7 +19,7 @@ The interface directly answers the operational question: **"จะให้ร�
 ```mermaid
 graph TD
     A["Top Scan Toolbar (Scan Once, Auto-Scan, Countdown, Catalog 457 Tags)"] --> B["F2 Main Workspace (Gtk.Paned 55% / 45%)"]
-    
+
     subgraph LeftPanel ["LEFT PANEL (~55%): WinCC SCADA Tag Library"]
         L1["Equipment Group Selector (All Groups 457 + 10 Dynamic Catalog Groups)"]
         L2["Catalog Tag Table (Search, Checkboxes, Type Mapping, 'Not Observed' Status)"]
@@ -57,17 +58,17 @@ graph TD
 ## 3. Visual Verification & Interface States
 
 ````carousel
-![F2 V4 Task with Assigned Tags (1366x768)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_task_with_tags_1366x768.png)
+![F2 V4 Task with Assigned Tags (1366x768)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_task_with_tags_1366x768.png)
 <!-- slide -->
-![F2 V4 Assigned Tags Table & Sticky Save Bar (1366x768)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_assigned_scrolled_1366x768.png)
+![F2 V4 Assigned Tags Table & Sticky Save Bar (1366x768)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_assigned_scrolled_1366x768.png)
 <!-- slide -->
-![F2 V4 Multi-Group Selection across High_VSD and High_Valve](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_multigroup_selection_1366x768.png)
+![F2 V4 Multi-Group Selection across High_VSD and High_Valve]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_multigroup_selection_1366x768.png)
 <!-- slide -->
-![F2 V4 Running Auto-Scan & Live Status Tracking](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_running_autoscan_1366x768.png)
+![F2 V4 Running Auto-Scan & Live Status Tracking]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_running_autoscan_1366x768.png)
 <!-- slide -->
-![F2 V4 New Empty Task Creation State](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_new_empty_task_1366x768.png)
+![F2 V4 New Empty Task Creation State]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_new_empty_task_1366x768.png)
 <!-- slide -->
-![F2 V4 Full HD Workstation View (1920x1080)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_task_with_tags_1920x1080.png)
+![F2 V4 Full HD Workstation View (1920x1080)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v4_task_with_tags_1920x1080.png)
 ````
 
 ---
@@ -121,7 +122,7 @@ graph TD
 
 ## 5. Automated Verification Results
 
-All 12 automated regression and functional tests in [`scratch/test_f2_v4.py`](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scratch/test_f2_v4.py) passed 100%:
+All 12 automated regression and functional tests in [`scratch/test_f2_v4.py`](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/scratch/test_f2_v4.py) passed 100%:
 
 ```text
 >>> Starting F2 Tag Library & Task Configurator V4 Test Suite...
@@ -146,8 +147,8 @@ All 12 automated regression and functional tests in [`scratch/test_f2_v4.py`](fi
 ## 6. Git Status & Code Integrity
 
 - **Modified Files:**
-  - [`aqua-command-desktop/desktop/app.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py) — Mounted `F2TaskManagerView`, integrated `f2_style.css`, preserved public API hooks.
+  - [`aqua-command-desktop/desktop/app.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py) — Mounted `F2TaskManagerView`, integrated `f2_style.css`, preserved public API hooks.
 - **New Files:**
-  - [`aqua-command-desktop/desktop/f2_tasks.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) — Complete Two-Panel V4 implementation (~1,310 lines).
-  - [`aqua-command-desktop/desktop/f2_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_style.css) — Industrial Spectrum V2 CSS styling (~420 lines).
+  - [`aqua-command-desktop/desktop/f2_tasks.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) — Complete Two-Panel V4 implementation (~1,310 lines).
+  - [`aqua-command-desktop/desktop/f2_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_style.css) — Industrial Spectrum V2 CSS styling (~420 lines).
 - **Working Tree State:** All changes remain uncommitted in the local working directory. No git commit or push will be executed without explicit user confirmation.

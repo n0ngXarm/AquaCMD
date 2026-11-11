@@ -1,0 +1,199 @@
+{
+  "scope": "extracted directory",
+  "files": 117,
+  "private_catalog_comparison": true,
+  "findings": [],
+  "history_clearance": "NOT_EVALUATED"
+}
+Building target platforms: noarch
+Building for target noarch
+Executing(mkbuilddir): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.jl4xRc
+Creating(rpmbuild.env): [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/rpmbuild.env
+  RPM_SOURCE_DIR="[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/SOURCES"
+  RPM_BUILD_DIR="[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build"
+  RPM_OPT_FLAGS="-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wno-complain-wrong-lang -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"
+  RPM_LD_FLAGS="-Wl,-z,relro -Wl,--as-needed   -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1   "
+  RPM_ARCH="noarch"
+  RPM_OS="linux"
+  RPM_BUILD_NCPUS="8"
+  RPM_SPECPARTS_DIR="[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/SPECPARTS"
+  export RPM_SOURCE_DIR RPM_BUILD_DIR RPM_OPT_FLAGS RPM_ARCH RPM_OS RPM_BUILD_NCPUS RPM_SPECPARTS_DIR RPM_LD_FLAGS
+  RPM_DOC_DIR="/usr/share/doc"
+  export RPM_DOC_DIR
+  RPM_PACKAGE_NAME="aqua-command-desktop"
+  RPM_PACKAGE_VERSION="0.9.0"
+  RPM_PACKAGE_RELEASE="4.fc45"
+  export RPM_PACKAGE_NAME RPM_PACKAGE_VERSION RPM_PACKAGE_RELEASE
+  LANG=C.UTF-8
+  export LANG
+  unset CDPATH DISPLAY ||:
+  unset DEBUGINFOD_URLS ||:
+  unset RPM_CONFIG_DIR ||:
+  RPM_BUILD_ROOT="[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT"
+  export RPM_BUILD_ROOT
+  
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/usr/lib/pkgconfig:/usr/share/pkgconfig"
+  export PKG_CONFIG_PATH
+  CONFIG_SITE=${CONFIG_SITE:-NONE}
+  export CONFIG_SITE
+Executing(%prep): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.nOhISW
++ umask 022
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ rm -rf aqua-command-desktop-0.9.0
++ /usr/bin/rpmuncompress -x [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/SOURCES/aqua-command-desktop-0.9.0.tar.gz
++ STATUS=0
++ '[' 0 -ne 0 ']'
++ cd aqua-command-desktop-0.9.0
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%build): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.e5zvaH
++ umask 022
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed   -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1   '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd aqua-command-desktop-0.9.0
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%install): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.UUsDi0
++ umask 022
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ '[' [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT '!=' / ']'
++ rm -rf [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT
+++ dirname [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT
++ mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ mkdir [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT
++ CFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CFLAGS
++ CXXFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  '
++ export CXXFLAGS
++ FFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib/gfortran/modules  '
++ export FFLAGS
++ FCFLAGS='-O2 -flto=auto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -mtls-dialect=gnu2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -I/usr/lib/gfortran/modules  '
++ export FCFLAGS
++ VALAFLAGS=-g
++ export VALAFLAGS
++ RUSTFLAGS='-Copt-level=3 -Cdebuginfo=2 -Ccodegen-units=1 -Cstrip=none -Cforce-frame-pointers=yes --cap-lints=warn'
++ export RUSTFLAGS
++ LDFLAGS='-Wl,-z,relro -Wl,--as-needed   -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-hardened-ld-errors -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1   '
++ export LDFLAGS
++ LT_SYS_LIBRARY_PATH=/usr/lib:
++ export LT_SYS_LIBRARY_PATH
++ CC=gcc
++ export CC
++ CXX=g++
++ export CXX
++ cd aqua-command-desktop-0.9.0
++ mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/desktop
++ mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/backend/bin
++ mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/bin [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/applications
++ mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/icons/hicolor/scalable/apps
++ mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/backend/src
++ cp -a backend/src/lan [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/backend/src/
++ install -m 644 backend/package.json [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/backend/
++ install -m 644 backend/bin/aqua-service.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/backend/bin/
++ cp -a src [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/
++ cp -a collector [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/
++ install -d [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/config
++ install -m 644 config/opcua_tag_mapping.json [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/config/
++ cp -a desktop/actual_editor.py desktop/app.py desktop/client.py desktop/consent.py desktop/console.py desktop/deployed-host.mjs desktop/f1_api desktop/f1_api_view.py desktop/f1_overview.py desktop/f1_style.css desktop/f2_style.css desktop/f2_tasks.py desktop/f3_api desktop/f3_api_view.py desktop/f3_drawing.py desktop/f3_evidence.py desktop/f3_handoff.py desktop/f3_layout.py desktop/f3_local.py desktop/f3_network.py desktop/f3_opcua.py desktop/f3_projection.py desktop/f3_runtime.py desktop/help_manual.py desktop/host.mjs desktop/model.py desktop/notification_worker.py desktop/observability desktop/opcua_mapping.py desktop/opcua_pki.py desktop/opcua_policy.py desktop/opcua_polling_engine.py desktop/opcua_reader.py desktop/opcua_storage.py desktop/opcua_store.py desktop/presentation.py desktop/private_runtime.py desktop/production.py desktop/style.css desktop/task_engine.py desktop/telemetry_settings.py desktop/win_desktop.py desktop/workspace.py desktop/workspace_style.css [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/desktop/
++ rm -rf [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/desktop/tests
++ rm -f [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop/desktop/win_desktop.py
++ find [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop -name __pycache__ -type d -exec rm -rf '{}' +
++ find [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop -name '*.pyc' -delete
++ find [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop -name '*test*.py' -delete
++ find [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop -name '*.tmp' -delete
++ find [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop -type d -exec chmod 755 '{}' +
++ find [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/aqua-command-desktop -type f -exec chmod 644 '{}' +
++ install -m 755 packaging/aqua-command [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/bin/aqua-command
++ install -m 644 packaging/org.aquacommand.Desktop.desktop [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/applications/
++ install -m 644 packaging/icons/org.aquacommand.Desktop.svg [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/icons/hicolor/scalable/apps/
++ /usr/lib/rpm/check-buildroot
++ /usr/lib/rpm/redhat/brp-ldconfig
++ COMPRESS='gzip -9 -n'
++ COMPRESS_EXT=.gz
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
++ /usr/lib/rpm/redhat/brp-strip-lto /usr/bin/strip
++ /usr/lib/rpm/check-rpaths
++ /usr/lib/rpm/redhat/brp-mangle-shebangs
+mangling shebang in /usr/bin/aqua-command from /bin/sh to #!/usr/bin/sh
++ /usr/lib/rpm/brp-remove-la-files
++ /usr/lib/rpm/redhat/brp-python-rpm-in-distinfo
++ env /usr/lib/rpm/redhat/brp-python-bytecompile '' 1 0 -j8
++ /usr/lib/rpm/redhat/brp-python-hardlink
++ /usr/bin/add-det --brp -j8 [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT
+Scanned 22 directories and 86 files,
+    processed 2 inodes,
+    0 modified (0 replaced + 0 rewritten),
+    0 unsupported format, 0 errors
++ /usr/bin/linkdupes --brp [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr
+Scanned 21 directories and 86 files,
+    considered 86 files, read 4 files, linked 1 files, 0 errors
+    sum of sizes of linked files: 87403 bytes
+Processing files: aqua-command-desktop-0.9.0-4.fc45.noarch
+Executing(%doc): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.Dx6AZs
++ umask 022
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ cd aqua-command-desktop-0.9.0
++ DOCDIR=[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/doc/aqua-command-desktop
++ export LC_ALL=C.UTF-8
++ LC_ALL=C.UTF-8
++ export DOCDIR
++ /usr/bin/mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/doc/aqua-command-desktop
++ cp -pr [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/aqua-command-desktop-0.9.0/README.md [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/doc/aqua-command-desktop
++ cp -pr [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/aqua-command-desktop-0.9.0/VERIFICATION.md [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/doc/aqua-command-desktop
++ cp -pr [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/aqua-command-desktop-0.9.0/docs [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/doc/aqua-command-desktop
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Executing(%license): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.gPtEmt
++ umask 022
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ cd aqua-command-desktop-0.9.0
++ LICENSEDIR=[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/licenses/aqua-command-desktop
++ export LC_ALL=C.UTF-8
++ LC_ALL=C.UTF-8
++ export LICENSEDIR
++ /usr/bin/mkdir -p [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/licenses/aqua-command-desktop
++ cp -pr [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/aqua-command-desktop-0.9.0/LICENSE [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT/usr/share/licenses/aqua-command-desktop
++ RPM_EC=0
+++ jobs -p
++ exit 0
+Provides: application() application(org.aquacommand.Desktop.desktop) aqua-command-desktop = 0.9.0-4.fc45
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(FileDigests) <= 4.6.0-1 rpmlib(PartialHardlinkSets) <= 4.0.4-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires: /usr/bin/sh
+Recommends: python3-asyncua
+Checking for unpackaged file(s): /usr/lib/rpm/check-files [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build/BUILDROOT
+Wrote: [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/RPMS/noarch/aqua-command-desktop-0.9.0-4.fc45.noarch.rpm
+Executing(rmbuild): /bin/sh -e [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/tmp/rpm-tmp.ZMkjM8
++ umask 022
++ cd [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ test -d [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ rm -rf [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-build/BUILD/aqua-command-desktop-0.9.0-build
++ RPM_EC=0
+++ jobs -p
++ exit 0

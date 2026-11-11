@@ -1,10 +1,11 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F2 TASK STUDIO V3 REPORT
 ## Complete UI Rebuild & Task-First SCADA Experience
 
-**Document ID:** `DOC-AC-F2-STUDIO-V3`  
-**Date:** 2026-11-02  
-**Target Environment:** Linux GTK4 (`aqua-command-desktop/desktop/app.py`, `f2_tasks.py`, `f2_style.css`)  
-**Design Standard:** Industrial Spectrum V2 Design System  
+**Document ID:** `DOC-AC-F2-STUDIO-V3`
+**Date:** 2026-11-02
+**Target Environment:** Linux GTK4 (`aqua-command-desktop/desktop/app.py`, `f2_tasks.py`, `f2_style.css`)
+**Design Standard:** Industrial Spectrum V2 Design System
 **Status:** Verification & Testing 100% Passed (Awaiting User Acceptance)
 
 ---
@@ -53,9 +54,9 @@ $$\text{เลือก Task} \longrightarrow \text{ดู Tag ที่กำ�
 | │ [3 Tags] [Configured] [Enabled]       │ | - Action Row: Tag ที่กำหนดให้กับ Task นี้ (3 รายการ)            [+ เพิ่ม Tag (Add Tags)] |
 | ├───────────────────────────────────────┤ | - Technical Table:                                                                    |
 | │ [TASK-02] ตรวจสอบวาล์วปีกผีเสื้อไฟฟ้า │ |   TAG NAME / IDENTIFIER   | กลุ่ม (GROUP) | ชนิดข้อมูล | สถานะ | คำสั่ง (ACTION)       |
-| │ [3 Tags] [Configured] [Disabled]      │ |   CTM13PT.AUTO_C          | High_VSD      | Binary Tag | Online| [✕ นำออก]             |
-| └───────────────────────────────────────┘ |   CTM13PT.MODBUS_S        | High_VSD      | Binary Tag | Online| [✕ นำออก]             |
-|                                           |   CTM13PT.READY_S         | High_VSD      | Binary Tag | Online| [✕ นำออก]             |
+| │ [3 Tags] [Configured] [Disabled]      │ |   [REDACTED_SITE_TAG]          | High_VSD      | Binary Tag | Online| [✕ นำออก]             |
+| └───────────────────────────────────────┘ |   [REDACTED_SITE_TAG]        | High_VSD      | Binary Tag | Online| [✕ นำออก]             |
+|                                           |   [REDACTED_SITE_TAG]         | High_VSD      | Binary Tag | Online| [✕ นำออก]             |
 |                                           | --------------------------------------------------------------------------------------- |
 |                                           | (หรือเมื่อกด [+ เพิ่ม Tag] จะสลับเป็น Contextual Tag Picker ค้นหา/กรองจาก 457 Tags ทันที)|
 +-------------------------------------------+-----------------------------------------------------------------------------------------+
@@ -131,22 +132,22 @@ $$\text{เลือก Task} \longrightarrow \text{ดู Tag ที่กำ�
 
 | รูปภาพ | ลิงก์ไฟล์ | คำอธิบายรายละเอียด |
 |---|---|---|
-| **Tab 1: Assigned Tags** | [f2_v3_tab1_assigned_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab1_assigned_1366x768.png) | หน้าจอหลัก Tab 1 บนความละเอียด 1366×768 แสดง Task Navigator, Workspace Header, และตาราง Tag ที่กำหนด |
-| **Contextual Tag Picker** | [f2_v3_tab1_picker_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab1_picker_1366x768.png) | หน้าต่างเลือก Tag ในตัว Workspace แสดงตัวกรองกลุ่ม, กล่องค้นหา, เช็คบ็อกซ์หลายรายการ, และป้ายนับ |
-| **Tab 2: Settings** | [f2_v3_tab2_settings_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab2_settings_1366x768.png) | แบบฟอร์มตั้งค่า Task Name, รอบเวลาเฝ้าระวัง, Local Archive, และ Telegram Notification พร้อมลิงก์ F6 |
-| **Tab 3: Review & Save** | [f2_v3_tab3_review_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab3_review_1366x768.png) | การ์ดสรุปพารามิเตอร์, Live Validation Engine (แจ้งเตือนความถูกต้อง), และปุ่มบันทึก `💾 บันทึก Task` |
-| **Running Auto-Scan** | [f2_v3_running_autoscan_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_running_autoscan_1366x768.png) | สถานะเมื่อกดเริ่ม Auto-Scan ปุ่มเปลี่ยนเป็นสีแดง `⏹ หยุด Auto Scan` ป้ายเปลี่ยนเป็น `Running (Active)` สีเขียว |
-| **Task Empty State** | [f2_v3_empty_state_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_empty_state_1366x768.png) | แสดงการ์ด Empty State สุภาพเมื่อสร้าง Task ใหม่ที่ยังไม่มี Tag กำหนด พร้อมปุ่ม `+ เพิ่ม Tag เข้า Task นี้` |
-| **Full HD 1080p** | [f2_v3_tab1_assigned_1920x1080.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab1_assigned_1920x1080.png) | การเรนเดอร์บนจอ SCADA Workstation 1920×1080 สัดส่วนกว้างขวาง สวยงาม สบายตา |
+| **Tab 1: Assigned Tags** | [f2_v3_tab1_assigned_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab1_assigned_1366x768.png) | หน้าจอหลัก Tab 1 บนความละเอียด 1366×768 แสดง Task Navigator, Workspace Header, และตาราง Tag ที่กำหนด |
+| **Contextual Tag Picker** | [f2_v3_tab1_picker_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab1_picker_1366x768.png) | หน้าต่างเลือก Tag ในตัว Workspace แสดงตัวกรองกลุ่ม, กล่องค้นหา, เช็คบ็อกซ์หลายรายการ, และป้ายนับ |
+| **Tab 2: Settings** | [f2_v3_tab2_settings_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab2_settings_1366x768.png) | แบบฟอร์มตั้งค่า Task Name, รอบเวลาเฝ้าระวัง, Local Archive, และ Telegram Notification พร้อมลิงก์ F6 |
+| **Tab 3: Review & Save** | [f2_v3_tab3_review_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab3_review_1366x768.png) | การ์ดสรุปพารามิเตอร์, Live Validation Engine (แจ้งเตือนความถูกต้อง), และปุ่มบันทึก `💾 บันทึก Task` |
+| **Running Auto-Scan** | [f2_v3_running_autoscan_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_running_autoscan_1366x768.png) | สถานะเมื่อกดเริ่ม Auto-Scan ปุ่มเปลี่ยนเป็นสีแดง `⏹ หยุด Auto Scan` ป้ายเปลี่ยนเป็น `Running (Active)` สีเขียว |
+| **Task Empty State** | [f2_v3_empty_state_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_empty_state_1366x768.png) | แสดงการ์ด Empty State สุภาพเมื่อสร้าง Task ใหม่ที่ยังไม่มี Tag กำหนด พร้อมปุ่ม `+ เพิ่ม Tag เข้า Task นี้` |
+| **Full HD 1080p** | [f2_v3_tab1_assigned_1920x1080.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_v3_tab1_assigned_1920x1080.png) | การเรนเดอร์บนจอ SCADA Workstation 1920×1080 สัดส่วนกว้างขวาง สวยงาม สบายตา |
 
 ---
 
 ## 6. รายการไฟล์และสรุปการเปลี่ยนแปลง (Git Summary)
 
 - **ไฟล์ที่สร้าง/แก้ไขใน Working Tree:**
-  1. [`aqua-command-desktop/desktop/f2_tasks.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py): Rebuild presentation layer เป็น Task Studio V3 ทั้งหมด (~650 บรรทัด สะอาด เป็นระเบียบ)
-  2. [`aqua-command-desktop/desktop/f2_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_style.css): ชุดสไตล์ Industrial Spectrum V2 tokens สำหรับ Task Studio, Navigator cards, Tab bar, Dropdowns, และ Badges
-  3. [`aqua-command-desktop/desktop/app.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py): เชื่อมต่อ `f2_style.css` และ delegate callbacks ไปยัง `F2TaskManagerView` อย่างสมบูรณ์
+  1. [`aqua-command-desktop/desktop/f2_tasks.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py): Rebuild presentation layer เป็น Task Studio V3 ทั้งหมด (~650 บรรทัด สะอาด เป็นระเบียบ)
+  2. [`aqua-command-desktop/desktop/f2_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_style.css): ชุดสไตล์ Industrial Spectrum V2 tokens สำหรับ Task Studio, Navigator cards, Tab bar, Dropdowns, และ Badges
+  3. [`aqua-command-desktop/desktop/app.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py): เชื่อมต่อ `f2_style.css` และ delegate callbacks ไปยัง `F2TaskManagerView` อย่างสมบูรณ์
 - **สถานะ Git:**
   - สภาพ Working Tree แยกอิสระ ปลอดภัย
   - **ไม่มีการ Commit หรือ Git Push ใดๆ** ตามกฎความปลอดภัยที่ระบุไว้

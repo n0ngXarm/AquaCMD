@@ -1,0 +1,57 @@
+[
+  {
+    "id": "contracts-116",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "cwd": "work/aqua-phase7-p1-tests/aqua-command-desktop",
+    "exit_code": 0,
+    "duration_seconds": 26.761,
+    "log": "contracts-116.txt",
+    "source_state": "Phase7 P1 test tree from ca1a96fe9323d1758dc59a00498c39fde4c67d94"
+  },
+  {
+    "id": "focused-security-task-delivery",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "test_credential_permissions",
+      "test_opcua_security_gate",
+      "test_task_alert_atomicity",
+      "test_notification_delivery",
+      "-v"
+    ],
+    "cwd": "work/aqua-phase7-p1-tests/aqua-command-desktop/desktop/tests",
+    "exit_code": 0,
+    "duration_seconds": 8.545,
+    "log": "focused-security-task-delivery.txt",
+    "source_state": "Phase7 P1 test tree from ca1a96fe9323d1758dc59a00498c39fde4c67d94"
+  },
+  {
+    "id": "pwa-14",
+    "command": [
+      "/usr/bin/python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "cwd": "work/aqua-phase7-p1-tests",
+    "exit_code": 0,
+    "duration_seconds": 0.442,
+    "log": "pwa-14.txt",
+    "source_state": "Phase7 P1 test tree from ca1a96fe9323d1758dc59a00498c39fde4c67d94"
+  }
+]

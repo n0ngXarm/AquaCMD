@@ -2,17 +2,20 @@
 
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+from src.private_config import load_environment
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load .env file
-load_dotenv(BASE_DIR / ".env")
+ENV_FILE, ENV_SOURCE_FILE = load_environment(BASE_DIR / ".env")
 
 
 class Config:
     """Application configuration."""
+
+    ENV_FILE = ENV_FILE
+    ENV_SOURCE_FILE = ENV_SOURCE_FILE
 
     # Telegram Bot Settings
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
@@ -22,6 +25,25 @@ class Config:
     CHECK_INTERVAL_SECONDS = int(os.getenv("CHECK_INTERVAL_SECONDS", "300"))
     ENABLE_OUTAGE_ALERT = os.getenv("ENABLE_OUTAGE_ALERT", "true").lower() in ("true", "1", "yes")
     ENABLE_QUALITY_ALERT = os.getenv("ENABLE_QUALITY_ALERT", "true").lower() in ("true", "1", "yes")
+    # Environment & Deployment Mode (Strict Default-Deny Allowlist)
+    APP_ENV = os.getenv("APP_ENV", "lab").strip().lower()
+
+    # External Notification Delivery Authorization Gate (REL-02)
+    # Default-deny: APP_ENV must be strictly "production".
+    # Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
+    _DELIVERY_AUTH_RAW = os.getenv("TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", "false").strip().lower()
+    TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED = (
+        APP_ENV == "production" and _DELIVERY_AUTH_RAW in ("true", "1", "yes")
+    )
+
+    # Inbound Telegram Command Polling Authorization Gate (REL-02)
+    # Decoupled from outbound delivery authorization.
+    # Default-deny: APP_ENV must be strictly "production".
+    # Any other environment (lab, staging, qa, dev, test, unknown, empty, malformed) is denied.
+    _POLLING_AUTH_RAW = os.getenv("TELEGRAM_INBOUND_POLLING_AUTHORIZED", "false").strip().lower()
+    TELEGRAM_INBOUND_POLLING_AUTHORIZED = (
+        APP_ENV == "production" and _POLLING_AUTH_RAW in ("true", "1", "yes")
+    )
 
     # Quality alert threshold settings (PWA drinking water standard)
     PH_MIN = float(os.getenv("PH_MIN", "6.5"))

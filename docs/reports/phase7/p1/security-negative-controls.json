@@ -1,0 +1,26 @@
+[
+  {
+    "control": "authorization bypass",
+    "test": "TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate",
+    "intentional_mutation_detected": true,
+    "assertion_failures": 2,
+    "harness_errors": 0,
+    "runtime_files_modified": false
+  },
+  {
+    "control": "flags promoted to observation",
+    "test": "TestF3NetworkTopologyPhase9.test_03_status_led_updates",
+    "intentional_mutation_detected": true,
+    "assertion_failures": 1,
+    "harness_errors": 0,
+    "runtime_files_modified": false
+  },
+  {
+    "control": "security readiness made permissive",
+    "test": "TestF3Usability.test_live_actions_describe_the_implemented_capability",
+    "intentional_mutation_detected": true,
+    "assertion_failures": 1,
+    "harness_errors": 0,
+    "runtime_files_modified": false
+  }
+]

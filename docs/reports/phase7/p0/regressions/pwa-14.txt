@@ -1,0 +1,77 @@
+COMMAND /usr/bin/python3 -B -m unittest discover -s tests -v
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy
+test_cli_status_never_renders_recipient_or_token (test_cli_privacy.CredentialPrivacyTests.test_cli_status_never_renders_recipient_or_token) ... ok
+test_setup_migrates_without_overwriting_legacy_and_uses_private_permissions (test_cli_privacy.CredentialPrivacyTests.test_setup_migrates_without_overwriting_legacy_and_uses_private_permissions) ... ok
+test_setup_never_renders_stored_credentials (test_cli_privacy.CredentialPrivacyTests.test_setup_never_renders_stored_credentials) ... ok
+test_transport_errors_cannot_expose_token_or_recipient (test_cli_privacy.CredentialPrivacyTests.test_transport_errors_cannot_expose_token_or_recipient) ... 2026-11-11 10:47:17 [ERROR] src.telegram_notifier: Telegram message failed: <urlopen error request [REDACTED] [REDACTED]>
+ok
+test_arbitrary_binary_cannot_hide_under_font_directory (test_privacy_preflight.PrivacyPreflightTests.test_arbitrary_binary_cannot_hide_under_font_directory) ... ok
+test_credentials_are_blocked_without_returning_values (test_privacy_preflight.PrivacyPreflightTests.test_credentials_are_blocked_without_returning_values) ... ok
+test_deleted_private_file_does_not_block_staged_removal (test_privacy_preflight.PrivacyPreflightTests.test_deleted_private_file_does_not_block_staged_removal) ... ok
+test_private_file_names_and_runtime_mapping_are_blocked (test_privacy_preflight.PrivacyPreflightTests.test_private_file_names_and_runtime_mapping_are_blocked) ... ok
+test_private_names_are_detected_even_when_file_is_renamed (test_privacy_preflight.PrivacyPreflightTests.test_private_names_are_detected_even_when_file_is_renamed) ... ok
+test_reviewed_font_hashes_are_accepted (test_privacy_preflight.PrivacyPreflightTests.test_reviewed_font_hashes_are_accepted) ... ok
+test_staged_guard_reads_staged_bytes_even_when_worktree_is_safe (test_privacy_preflight.PrivacyPreflightTests.test_staged_guard_reads_staged_bytes_even_when_worktree_is_safe) ... ok
+test_default_private_path_inside_repository_is_rejected (test_private_config.PrivateStorageTests.test_default_private_path_inside_repository_is_rejected) ... ok
+test_explicit_missing_profile_never_loads_legacy (test_private_config.PrivateStorageTests.test_explicit_missing_profile_never_loads_legacy) ... ok
+test_failed_backup_stops_before_overwrite (test_private_config.PrivateStorageTests.test_failed_backup_stops_before_overwrite) ... ok
+test_failed_replace_leaves_original_and_exact_backup (test_private_config.PrivateStorageTests.test_failed_replace_leaves_original_and_exact_backup) ... ok
+test_insecure_private_profile_is_rejected (test_private_config.PrivateStorageTests.test_insecure_private_profile_is_rejected) ... ok
+test_newline_update_is_rejected_without_side_effects (test_private_config.PrivateStorageTests.test_newline_update_is_rejected_without_side_effects) ... ok
+test_post_replace_directory_sync_failure_reports_committed (test_private_config.PrivateStorageTests.test_post_replace_directory_sync_failure_reports_committed) ... ok
+test_private_profile_precedes_legacy_but_not_process_environment (test_private_config.PrivateStorageTests.test_private_profile_precedes_legacy_but_not_process_environment) ... ok
+test_real_non_tty_setup_refuses_echo_without_writing (test_private_config.PrivateStorageTests.test_real_non_tty_setup_refuses_echo_without_writing) ... ok
+test_symlink_ancestor_is_rejected (test_private_config.PrivateStorageTests.test_symlink_ancestor_is_rejected) ... ok
+test_symlink_file_and_backup_are_rejected_without_mutating_targets (test_private_config.PrivateStorageTests.test_symlink_file_and_backup_are_rejected_without_mutating_targets) ... ok
+test_unknown_values_round_trip_and_backup_is_exact (test_private_config.PrivateStorageTests.test_unknown_values_round_trip_and_backup_is_exact) ... ok
+test_save_and_retrieve_outage (test_water_system.TestDatabase.test_save_and_retrieve_outage) ... ok
+test_subscriber_management (test_water_system.TestDatabase.test_subscriber_management) ... ok
+test_bot_polling_zero_egress_in_lab (test_water_system.TestMonitorServiceSecurity.test_bot_polling_zero_egress_in_lab)
+Zero-egress test: Bot polling and getUpdates must make 0 network requests in LAB. ... 2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'lab' environment (REL-02)
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: Cannot start bot polling: APP_ENV='lab' (polling authorization not granted). Egress/Ingress policy prohibits network connection.
+ok
+test_decoupled_delivery_authorization_in_lab (test_water_system.TestMonitorServiceSecurity.test_decoupled_delivery_authorization_in_lab)
+Verifies that in LAB environment, external network delivery is strictly blocked by default. ... 2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='lab' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram photo delivery suppressed: APP_ENV='la[REDACTED_RENDERED_BYTES length=7353]staging' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'staging' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='qa' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'qa' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='unknown' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'unknown' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in '' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='   ' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in '   ' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='production_test' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'production_test' environment (REL-02)
+/usr/lib64/python3.15/unittest/mock.py:504: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f62a2325700>
+  _safe_super(NonCallableMock, self).__init__(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:504: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f62a2325620>
+  _safe_super(NonCallableMock, self).__init__(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:504: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f62a23258c0>
+  _safe_super(NonCallableMock, self).__init__(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/unittest/mock.py:504: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f62a2325540>
+  _safe_super(NonCallableMock, self).__init__(
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='prod' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'prod' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='dev' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'dev' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='test' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'test' environment (REL-02)
+2026-11-11 10:47:17 [INFO] src.telegram_notifier: External Telegram delivery suppressed: APP_ENV='malformed!env' (delivery authorization not granted). Notification recorded locally.
+2026-11-11 10:47:17 [WARNING] src.telegram_bot: getUpdates blocked: polling not authorized in 'malformed!env' environment (REL-02)
+ok
+test_branch_lookup (test_water_system.TestPWAClient.test_branch_lookup) ... ok
+test_quality_standards (test_water_system.TestPWAClient.test_quality_standards) ... ok
+test_outage_formatting (test_water_system.TestTelegramNotifier.test_outage_formatting) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.293s
+
+OK
+
+AUDIT_EXIT_CODE=0

@@ -43,7 +43,7 @@ EQUIPMENT_GROUPS_DEF = {
     'High1_PT1PT': {
         'name_en': 'Ping River Raw Water Intake Pumps',
         'short_en': 'Raw Water Intake',
-        'desc_th': 'สถานีสูบน้ำดิบแม่น้ำปิง (PT1_P1–P4)',
+        'desc_th': 'สถานีสูบน้ำดิบแหล่งน้ำดิบ (PT1_P1–P4)',
         'eq_class': 'raw_water_pump',
         'icon_name': 'weather-showers-symbolic',
         'db_ref': 'DB60',

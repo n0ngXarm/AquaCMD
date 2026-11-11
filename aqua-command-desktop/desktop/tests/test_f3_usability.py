@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import cairo
 import f3_network
 from gi.repository import GLib, Gtk
+from f3_reconciliation_fixture import assert_all_pages_fit
 
 
 class TestF3Usability(unittest.TestCase):
@@ -46,8 +47,13 @@ class TestF3Usability(unittest.TestCase):
         return window
 
     def test_startup_gives_the_diagram_full_attention(self):
-        self.assertEqual(self.view.stack.get_visible_child_name(), "topology")
-        self.assertFalse(self.view.inspector.get_visible(), "Details should open after device selection")
+        # G21: library dock is intentional; active F3 starts with its HTML dialog closed.
+        self.assertEqual(self.view.stack.get_visible_child_name(), 'topology')
+        self.assertIs(self.view.inspector.get_parent(), self.view.main_split)
+        self.assertTrue(self.view.inspector.get_visible())
+        self.assertIsNone(self.view.details_window)
+        minimum, _, _, _ = self.view.root_widget.measure(Gtk.Orientation.HORIZONTAL, -1)
+        self.assertLessEqual(minimum, 1366)
 
     def test_device_list_has_a_full_height_view(self):
         window = self.show_window()
@@ -77,11 +83,33 @@ class TestF3Usability(unittest.TestCase):
         self.assertGreaterEqual(float(re.findall(r"[\d.]+", address_calls[0].args[4])[-1]), 12)
 
     def test_live_actions_describe_the_implemented_capability(self):
-        self.view.select_device("PC1")
-        self.assertIn("พอร์ต", self.view.inspector.btn_test_opc.get_label())
-        self.assertFalse(self.view.inspector.btn_read_once.get_sensitive(), "F3 live single-tag read is unavailable")
+        # G20: implemented secure actions remain disabled until actual readiness passes.
+        from opcua_mapping import NodeIdMapper, TagMapping
+        from opcua_pki import PkiManager
+        self.view.select_device('PC1')
+        inspector = self.view.inspector
+        self.assertIn('Secure', inspector.btn_test_opc.get_label())
+        self.assertFalse(inspector.btn_read_once.get_sensitive())
+        self.assertIsNotNone(self.view.secure_opcua.readiness(
+            self.view.store.devices['PC1'], self.view._opcua_options(self.view.store.devices['PC1']), require_mapping=True))
+        self.view.secure_opcua.pki = PkiManager(Path(self.view.owner.config_dir) / 'pki')
+        mapper = NodeIdMapper()
+        self.view.secure_opcua.mapper = mapper
+        self.view.store.update_device('PC1', {'sec_policy': 'Basic256Sha256', 'test_tag': 'LAB.Level'})
+        self.view.select_device('PC1')
+        self.assertTrue(inspector.btn_test_opc.get_sensitive())
+        self.assertFalse(inspector.btn_read_once.get_sensitive())
+        mapper.add_mapping(TagMapping('LAB.Level', 's=Exact.LAB.Level', 'urn:lab:only', verified=True))
+        self.view.select_device('PC1')
+        self.assertTrue(inspector.btn_read_once.get_sensitive())
+        self.view.store.update_device('PC1', {'sec_policy': 'None'})
+        self.view.select_device('PC1')
+        self.assertFalse(inspector.btn_test_opc.get_sensitive())
+        self.assertFalse(inspector.btn_read_once.get_sensitive())
         self.view._on_mode_toggle(None)
-        self.assertTrue(self.view.inspector.btn_read_once.get_sensitive())
+        demo_id = next(k for k, d in self.view.store.devices.items() if d['type'] == 'wincc')
+        self.view.select_device(demo_id)
+        self.assertTrue(inspector.btn_read_once.get_sensitive())
 
     def test_unobserved_internet_does_not_claim_online_or_offline(self):
         with patch.object(Path, "home", return_value=self.view.store.config_file.parent):
@@ -95,20 +123,38 @@ class TestF3Usability(unittest.TestCase):
         self.assertNotIn("Offline", owner.pill_net.get_text())
 
     def test_default_stations_fit_a_shorter_operator_viewport(self):
+        # G05: all configured sources remain reachable via pages; no ScrolledWindow assumption.
         window = self.show_window()
-        scroll = self.view.canvas.get_ancestor(Gtk.ScrolledWindow)
-        window.set_default_size(1366, window.get_height() - scroll.get_height() + 407)
+        window.set_default_size(1366, 650)
         self.spin()
-        for name in ("PC1", "PC2", "PC3"):
-            _, y, _, height = self.view.canvas.node_rects[name]
-            self.assertLessEqual(y + height, scroll.get_height(), name)
+        assert_all_pages_fit(self, self.view, self.view.canvas.get_width(), self.view.canvas.get_height())
 
     def test_list_explains_status_and_accounts_for_configured_devices(self):
+        # G19: preserve UNKNOWN semantics and prohibit implicit-port service actions.
         self.assertEqual(len(self.view.cards), len(self.view.store.devices))
-        self.assertEqual(self.view.cards["PC1"].lbl_summary.get_text(), "ยังไม่ได้ตรวจสอบ")
-        self.assertFalse(self.view.cards["TELEGRAM"].btn_detect.get_sensitive())
-        self.view.select_device("TELEGRAM")
+        summary = self.view.cards['PC1'].lbl_summary.get_text()
+        self.assertIn('ยังไม่ได้ตรวจสอบ', summary)
+        self.assertIn('UNKNOWN', summary)
+        self.assertNotIn('Offline', summary)
+        self.assertIsNone(self.view.store.devices['TELEGRAM']['port'])
+        self.assertFalse(self.view.cards['TELEGRAM'].btn_detect.get_sensitive())
+        self.view.store.update_device('TELEGRAM', {'configured_ip': '127.0.0.2', 'port': 443})
+        self.view.select_device('TELEGRAM')
+        self.assertTrue(self.view.inspector.btn_detect.get_sensitive())
+        with patch('f3_network.OTAuthorizationDialog') as dialog, \
+                patch('f3_network.RealDetectionEngine.detect_device_network') as adapter:
+            self.view.trigger_device_detect('TELEGRAM')
+            dialog.assert_called_once()
+            adapter.assert_not_called()
+        self.view.store.update_device('TELEGRAM', {'port': None})
+        self.view.select_device('TELEGRAM')
+        self.assertFalse(self.view.cards['TELEGRAM'].btn_detect.get_sensitive())
         self.assertFalse(self.view.inspector.btn_detect.get_sensitive())
+        with patch('f3_network.OTAuthorizationDialog') as dialog, \
+                patch('f3_network.RealDetectionEngine.detect_device_network') as adapter:
+            self.view.trigger_device_detect('TELEGRAM')
+            dialog.assert_not_called()
+            adapter.assert_not_called()
 
     def test_device_outline_has_a_flat_bottom_and_rounded_corners(self):
         surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 240, 200)

@@ -1,8 +1,9 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F1 V1.2 Targeted UI Correction Report
-**Provincial Waterworks Authority, Chiang Mai (Umong Water Production Station)**  
-**Version:** 1.2-targeted-precision  
-**Branch:** `feature/f1-industrial-precision`  
-**Execution Environment:** Linux x86_64 / GTK 4.18 (Display :0 Wayland/X11)  
+**Provincial Waterworks Authority, Chiang Mai (Umong Water Production Station)**
+**Version:** 1.2-targeted-precision
+**Branch:** `feature/f1-industrial-precision`
+**Execution Environment:** Linux x86_64 / GTK 4.18 (Display :0 Wayland/X11)
 **Catalog Source:** Siemens WinCC V8.1 `Export all.txt` (457 Tags, 10 Equipment Groups)
 
 ---
@@ -39,16 +40,16 @@
 ### Embedded Visual Previews
 
 #### 1. All Groups (457 Tags) — 1366×768
-![All Groups View](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_all_groups_1366x768.png)
+![All Groups View](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_all_groups_1366x768.png)
 
 #### 2. Specific Group (High_VSD — 135 Tags) — 1366×768
-![High_VSD Group View](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_high_vsd_1366x768.png)
+![High_VSD Group View](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_high_vsd_1366x768.png)
 
 #### 3. Tag Properties Inspector — 1366×768
-![Tag Properties Inspector](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_properties_1366x768.png)
+![Tag Properties Inspector](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_properties_1366x768.png)
 
 #### 4. All Groups (457 Tags) — 1920×1080 Full HD
-![All Groups 1920x1080](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_all_groups_1920x1080.png)
+![All Groups 1920x1080](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v12_all_groups_1920x1080.png)
 
 ---
 
@@ -83,14 +84,14 @@
 
 ไฟล์ที่เกี่ยวข้องทั้งหมดอยู่ใน Working Tree ของ Branch `feature/f1-industrial-precision` (ยังไม่มีการ Commit หรือ Push):
 
-- [`f1_overview.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py):
+- [`f1_overview.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py):
   - เพิ่ม `'__ALL__'` definition ใน `EQUIPMENT_GROUPS_DEF`
   - นำ `drawing_area` และแถบตัวเลขจำลองออก
   - สร้าง `.f1-group-header-card` แบบ Compact
   - ปรับ `update_catalog_data` ให้ใส่แถว `ทั้งหมด (All Groups)` ที่หัวรายการ
   - ปรับ `render_tags_table` ให้รองรับ 7 คอลัมน์เมื่อเลือก All Groups และ 6 คอลัมน์เมื่อเลือกกลุ่มเฉพาะ
   - เพิ่มการค้นหาข้ามกลุ่มและตัวนับ `แสดง {filtered} / {total} Tags`
-- [`f1_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_style.css):
+- [`f1_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_style.css):
   - เพิ่มสไตล์ `.f1-group-header-card`
-- [`app.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py):
+- [`app.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py):
   - เพิ่มการตรวจสอบและ Preload `DEFAULT_WINCC_EXPORT` เพื่อให้แคตตาล็อกพร้อมใช้งานทันทีเมื่อเริ่มโปรแกรม

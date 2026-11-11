@@ -1,10 +1,11 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F2 TASK CONFIGURATION V2 (PHASE 1) REPORT
 ## Industrial Precision Task Management & Monitoring Rule Editor
 
-**Document ID:** `DOC-AC-F2-V2-PHASE1`  
-**Date:** 2026-11-01  
-**Target Environment:** Linux GTK4 (`aqua-command-desktop/desktop/app.py` & `f2_tasks.py`)  
-**Design Standard:** Industrial Spectrum V2 Design System  
+**Document ID:** `DOC-AC-F2-V2-PHASE1`
+**Date:** 2026-11-01
+**Target Environment:** Linux GTK4 (`aqua-command-desktop/desktop/app.py` & `f2_tasks.py`)
+**Design Standard:** Industrial Spectrum V2 Design System
 **Implementation Phase:** Phase 1 (UI & Interaction Architecture — Gate B Pending)
 
 ---
@@ -123,13 +124,13 @@
 ## 5. การวิเคราะห์ภาพหน้าจอเปรียบเทียบ (Visual Quality & Screenshots)
 
 ### ภาพหน้าจอหลักที่บันทึกแล้วในคลังเอกสาร:
-1. [f2_configured_task_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_configured_task_1366x768.png)
+1. [f2_configured_task_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_configured_task_1366x768.png)
    - ความละเอียดมาตรฐาน 1366×768 แสดงการทำงานใน Task ที่มีการกำหนดค่าและ Tag ครบถ้วน (Section A ถึง E ปรากฏในมุมมองโดยตรง Dropdown สี Dark Theme สวยงามกลมกลืน)
-2. [f2_configured_task_1920x1080.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_configured_task_1920x1080.png)
+2. [f2_configured_task_1920x1080.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_configured_task_1920x1080.png)
    - ความละเอียด Full HD 1920×1080 แสดงผลสวยงาม ช่องว่างและสัดส่วนคอลัมน์กว้างขวาง เหมาะสมกับหน้าจอ SCADA Workstation
-3. [f2_running_autoscan_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_running_autoscan_1366x768.png)
+3. [f2_running_autoscan_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_running_autoscan_1366x768.png)
    - แสดงสถานะเมื่อระบบกด `เริ่ม Auto Scan` ป้าย Section A เปลี่ยนเป็น `Running (Active Monitoring)` สีเขียวสดใส (`#27B785`) พร้อมเวลาถอยหลังรอบการสแกน
-4. [f2_empty_state_1366x768.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_empty_state_1366x768.png)
+4. [f2_empty_state_1366x768.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f2_empty_state_1366x768.png)
    - แสดง Empty State เมื่อเปิดโปรแกรมใหม่แบบ Zero-Mock (0 Tags)
 
 ---

@@ -1,0 +1,6 @@
+A	aqua-command-desktop/desktop/tests/f3_reconciliation_fixture.py
+A	aqua-command-desktop/desktop/tests/test_f3_active_reconciliation.py
+M	aqua-command-desktop/desktop/tests/test_f3_continuation.py
+M	aqua-command-desktop/desktop/tests/test_f3_details_window.py
+M	aqua-command-desktop/desktop/tests/test_f3_network_topology.py
+M	aqua-command-desktop/desktop/tests/test_f3_usability.py

@@ -1,5 +1,7 @@
 import https from 'node:https';
-export class DeliveryError extends Error{constructor(message='Telegram transport failed',retryAfterMs=0){super(message);this.retryAfterMs=retryAfterMs}}
+export class DeliveryError extends Error{constructor(message='Telegram transport failed',retryAfterMs=0,definitiveRejection=false){
+ super(message);this.retryAfterMs=retryAfterMs;this.definitiveRejection=definitiveRejection;
+}}
 export class TelegramTransport{
  constructor({env=process.env,request=https.request}={}){
   this.mode=env.TELEGRAM_ENABLED==='true'?'telegram':'dry-run';this.request=request;
@@ -18,7 +20,12 @@ export class TelegramTransport{
     res.once('aborted',interrupted);res.once('error',interrupted);res.once('close',()=>{if(!res.complete)interrupted()});
     res.on('data',p=>{size+=p.length;if(size>256*1024){done(new DeliveryError());req.destroy();return}parts.push(p)});
     res.on('end',()=>{try{const body=JSON.parse(Buffer.concat(parts).toString('utf8'));
-     if(res.statusCode!==200||body.ok!==true){const seconds=body.parameters?.retry_after;throw new DeliveryError('Telegram API rejected request',Number.isFinite(seconds)?Math.min(3600,Math.max(1,seconds))*1000:res.statusCode===429?5000:0)}
+     if(res.statusCode!==200||body.ok!==true){
+      const rejected=body.ok===false&&res.statusCode>=400&&res.statusCode<500&&res.statusCode!==408;
+      const seconds=body.parameters?.retry_after;
+      const retry=rejected&&res.statusCode===429?(Number.isFinite(seconds)?Math.min(3600,Math.max(1,seconds))*1000:5000):0;
+      throw new DeliveryError(rejected?'Telegram API rejected request':'Telegram response ambiguous',retry,rejected);
+     }
      done(null,body.result);
     }catch(e){done(e instanceof DeliveryError?e:new DeliveryError('Telegram response invalid or ambiguous'))}});
    });

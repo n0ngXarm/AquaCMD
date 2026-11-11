@@ -1,11 +1,12 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — UNIFIED WORKSPACE PROFESSIONAL UI PASS V2
 ## Presentation Layer Refinement, Table Contrast Fix & Visual Hierarchy Report
 
-> **Project:** AQUA COMMAND — SCADA & Edge Gateway Workstation (Linux GTK4 / Windows 11)  
-> **Topic:** Professional UI Pass V2 (Critical Table Contrast, 20/48/32 Proportion, Typography & Visual Polish)  
-> **Status:** Implementation Complete & Verified · 42/42 Automated Tests Passed  
-> **Date:** 2026-11-02  
-> **Compliance:** WCAG AA Contrast Certified (All Text >= 6.4:1, Body Text 16.1:1)  
+> **Project:** AQUA COMMAND — SCADA & Edge Gateway Workstation (Linux GTK4 / Windows 11)
+> **Topic:** Professional UI Pass V2 (Critical Table Contrast, 20/48/32 Proportion, Typography & Visual Polish)
+> **Status:** Implementation Complete & Verified · 42/42 Automated Tests Passed
+> **Date:** 2026-11-02
+> **Compliance:** WCAG AA Contrast Certified (All Text >= 6.4:1, Body Text 16.1:1)
 
 ---
 
@@ -68,32 +69,32 @@ $$\text{Contrast Ratio} = \frac{L_1 + 0.05}{L_2 + 0.05}$$
 บันทึกภาพหน้าจอจริงจาก Live Application ทั้งหมด 5 ภาพ:
 
 ````carousel
-![F1 Monitoring Mode 1366x768 After Fix](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f1_monitoring_1366x768.png)
+![F1 Monitoring Mode 1366x768 After Fix]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f1_monitoring_1366x768.png)
 <!-- slide -->
-![F2 Task Management Mode 1366x768 After Fix](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f2_taskmode_1366x768.png)
+![F2 Task Management Mode 1366x768 After Fix]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f2_taskmode_1366x768.png)
 <!-- slide -->
-![F1 Collapsed Inspector Full-Width Catalog 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f1_collapsed_inspector_1366x768.png)
+![F1 Collapsed Inspector Full-Width Catalog 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f1_collapsed_inspector_1366x768.png)
 <!-- slide -->
-![F1 Monitoring Mode 1920x1080 Full HD After Fix](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f1_monitoring_1920x1080.png)
+![F1 Monitoring Mode 1920x1080 Full HD After Fix]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f1_monitoring_1920x1080.png)
 <!-- slide -->
-![F2 Task Management Mode 1920x1080 Full HD After Fix](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f2_taskmode_1920x1080.png)
+![F2 Task Management Mode 1920x1080 Full HD After Fix]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_v2_f2_taskmode_1920x1080.png)
 ````
 
 ### คำอธิบายภาพหน้าจอ:
-1. **ภาพที่ 1: F1 Monitoring Mode (1366×768)**  
-   [unified_v2_f1_monitoring_1366x768.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1366x768.png)  
+1. **ภาพที่ 1: F1 Monitoring Mode (1366×768)**
+   [unified_v2_f1_monitoring_1366x768.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1366x768.png)
    ตารางกลางแสดงผลบนพื้นผิวสีเข้ม `#0E141B` คมชัด ตัวอักษรสีขาวสว่างอ่านง่าย สัดส่วน 20/48/32 ลงตัว แผงขวาแสดง Tag Inspector แบ่งเป็น 2 กลุ่มข้อมูล (1. ข้อมูลการระบุสัญญาณ, 2. สถานะสัญญาณและการเชื่อมต่อ) พร้อมปุ่ม `[◀ ยุบ Inspector]` ด้านล่าง
-2. **ภาพที่ 2: F2 Task Management Mode (1366×768)**  
-   [unified_v2_f2_taskmode_1366x768.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1366x768.png)  
+2. **ภาพที่ 2: F2 Task Management Mode (1366×768)**
+   [unified_v2_f2_taskmode_1366x768.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1366x768.png)
    โหมดจัดกลุ่ม Task ตารางกลางแสดง Checkbox สีเข้มและปุ่มเพิ่ม Tag ข้ามกลุ่ม แผงขวาจัดวาง Form Controls กะทัดรัด พร้อมตาราง Assigned Tags และแถบบันทึก Sticky Save Task ด้านล่าง
-3. **ภาพที่ 3: F1 Collapsed Inspector (1366×768)**  
-   [unified_v2_f1_collapsed_inspector_1366x768.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f1_collapsed_inspector_1366x768.png)  
+3. **ภาพที่ 3: F1 Collapsed Inspector (1366×768)**
+   [unified_v2_f1_collapsed_inspector_1366x768.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f1_collapsed_inspector_1366x768.png)
    เมื่อคลิกปุ่ม `[◀ ยุบ Inspector]` แผงขวาจะถูกซ่อน และ Center Tag Catalog จะขยายออกเต็มพื้นที่ถึง ~80% ของหน้าจอ โดยที่ Tag ที่เลือกและ State ยังคงอยู่ครบถ้วน
-4. **ภาพที่ 4: F1 Monitoring Mode (1920×1080 Full HD)**  
-   [unified_v2_f1_monitoring_1920x1080.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1920x1080.png)  
+4. **ภาพที่ 4: F1 Monitoring Mode (1920×1080 Full HD)**
+   [unified_v2_f1_monitoring_1920x1080.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1920x1080.png)
    การแสดงผลคมชัดบนจอความละเอียดสูง จัดวางพื้นที่ได้สมดุลและสง่างามแบบ Industrial Precision
-5. **ภาพที่ 5: F2 Task Management Mode (1920×1080 Full HD)**  
-   [unified_v2_f2_taskmode_1920x1080.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1920x1080.png)  
+5. **ภาพที่ 5: F2 Task Management Mode (1920×1080 Full HD)**
+   [unified_v2_f2_taskmode_1920x1080.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1920x1080.png)
    พื้นที่ Task Studio บนจอ Full HD มองเห็นรายละเอียดคอนฟิกและตารางสัญญาณได้กว้างขวาง
 
 ---
@@ -108,11 +109,11 @@ OK
 ```
 
 ### การตรวจสอบฟังก์ชันสำคัญ:
-* **Table Contrast Verification:** [`test_01_wcag_aa_table_contrast`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L38) — ผ่านเกณฑ์ทุกสถานะ
-* **20/48/32 Proportions Verification:** [`test_02_layout_proportions_20_48_32`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L65) — ทดสอบทั้ง 1366 และ 1920
-* **Inspector Collapse & Expansion:** [`test_03_inspector_collapse_and_restore`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L86) — ซ่อนแผงขวาและขยายตารางโดยไม่สูญเสีย State
-* **Factual Status Not Mock Hex:** [`test_04_factual_status_not_mock_hex`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L107) — ตรวจสอบว่าไม่มีการแสดง Mock `0x00000000`
-* **Verified Group Metadata:** [`test_05_verified_group_metadata`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L125) — ตรวจสอบกลุ่มอุปกรณ์ทั้ง 10 กลุ่มจริงตาม `Export all.txt`
+* **Table Contrast Verification:** [`test_01_wcag_aa_table_contrast`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L38) — ผ่านเกณฑ์ทุกสถานะ
+* **20/48/32 Proportions Verification:** [`test_02_layout_proportions_20_48_32`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L65) — ทดสอบทั้ง 1366 และ 1920
+* **Inspector Collapse & Expansion:** [`test_03_inspector_collapse_and_restore`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L86) — ซ่อนแผงขวาและขยายตารางโดยไม่สูญเสีย State
+* **Factual Status Not Mock Hex:** [`test_04_factual_status_not_mock_hex`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L107) — ตรวจสอบว่าไม่มีการแสดง Mock `0x00000000`
+* **Verified Group Metadata:** [`test_05_verified_group_metadata`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_v2_presentation.py#L125) — ตรวจสอบกลุ่มอุปกรณ์ทั้ง 10 กลุ่มจริงตาม `Export all.txt`
 * **Zero Regression:** ชุดทดสอบเดิม 30 ข้อ (`test_production`, `test_presentation`, `test_model`, `test_consent`) และ 7 ข้อของ `test_workspace_production` ยังคงผ่านทั้งหมด
 
 ---
@@ -134,7 +135,7 @@ Untracked files:
 	docs/screenshots/unified_workspace_preview/unified_v2_*.png
 ```
 
-* **ไม่มีการลบไฟล์เดิม:** ไฟล์ [`f1_overview.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py) และ [`f2_tasks.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) ยังคงอยู่ครบถ้วนเพื่อรองรับการ Rollback
+* **ไม่มีการลบไฟล์เดิม:** ไฟล์ [`f1_overview.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py) และ [`f2_tasks.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) ยังคงอยู่ครบถ้วนเพื่อรองรับการ Rollback
 * **ไม่มีการ Commit หรือ Push ขึ้น Git Remote ในรอบนี้ตามข้อกำหนด**
 
 ---

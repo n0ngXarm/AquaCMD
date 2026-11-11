@@ -1,0 +1,502 @@
+[
+  {
+    "path": "usr/bin/aqua-command",
+    "bytes": 273,
+    "sha256": "f26b8ad0fa9bb8d790dcfa066a0f890b5fd6cb30ede7c0c1837e2271f63a26ae"
+  },
+  {
+    "path": "usr/share/applications/org.aquacommand.Desktop.desktop",
+    "bytes": 255,
+    "sha256": "3719de6f9a6675707dd2faa2299e2808cdfadb8f25e46c832b8901aae2583a0c"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/bin/aqua-service.js",
+    "bytes": 3260,
+    "sha256": "8b8ec8af4506ec20d6f0fc694e4877f690509611c75e11070bc10f2707acd9a8"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/package.json",
+    "bytes": 997,
+    "sha256": "0373c524a37d8d23bf7eb1a962841726404651e8c8a1690e0e0cc61034a30f8e"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/adapters.js",
+    "bytes": 944,
+    "sha256": "bae0681e3986164894eb11e23dfb7bee37866388b1151b46c890f8edddbc7f05"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/config.js",
+    "bytes": 6826,
+    "sha256": "b2cad7c3cdc7ba75dfa20c4518e126f359ce3a4923f0255cce6a20b82a0d9879"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/csv-fixture.js",
+    "bytes": 2009,
+    "sha256": "5a16baa40059564aa2a9f89fef5bf3ea0479933d2959e97c7a581ced76568385"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/csv-source.js",
+    "bytes": 5643,
+    "sha256": "dbfbe37ae5ca16fcafdbf18c786b83c20cd95d094a099380c4394c8a5d612302"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/dashboard.js",
+    "bytes": 10774,
+    "sha256": "ec44ae27808631a3a695c2415075af6b42d9376a464e8fac90e462b46f7a4930"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/process-identity.js",
+    "bytes": 951,
+    "sha256": "af669bba92ccb346feca212f16a825fab5656a917c3c6ca3d8f05f8aab5e1060"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/protocol.js",
+    "bytes": 4772,
+    "sha256": "fe62ccc72647b0a265dfb65343046d52a7144dd3b07b82599a0d01f2c210bd48"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/services.js",
+    "bytes": 21513,
+    "sha256": "b8d7802d945893bdf974311dc87d5a1eb220987fb4f8e18a2ad2d79582888bf3"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/storage-boundary.js",
+    "bytes": 953,
+    "sha256": "96ba5f49749585cc8fac7ee157106210ab1e922bfad7e44f8f088242347bb048"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/store.js",
+    "bytes": 20438,
+    "sha256": "99495983ea30aacd0bf6002f537919e094e7d330d038bcb252846fbf28e724ed"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/supervisor.js",
+    "bytes": 5379,
+    "sha256": "7cd046eeb6cfa81f5e3adae9d0862dde43ab52a74125a0131414547591d7459e"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/backend/src/lan/telegram.js",
+    "bytes": 3491,
+    "sha256": "ce663b9e4c33120ba7d2d851750868baa336feeb2303301edfa642175a44a0cf"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/collector/__init__.py",
+    "bytes": 180,
+    "sha256": "b731df3923dddf48dad14c671153494ba48b5bee3f011df37d5d96bef44256f2"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/config/opcua_tag_mapping.json",
+    "bytes": 126,
+    "sha256": "fafc9a349164a6fc8542216114850428ec8bff86e12f605825226ba3b5ac3d36"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/actual_editor.py",
+    "bytes": 8961,
+    "sha256": "a3c42a79329b9bc51148559c5890c13459faf0cc23a9412dd778b6f0a4de4eb4"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/app.py",
+    "bytes": 150775,
+    "sha256": "3344972512746239603edca420857bddb7cdfe26ca73df7749d99cdfece3578e"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/client.py",
+    "bytes": 2276,
+    "sha256": "79ed2ccdfdbab53672a13165c9f73f5822dd309a8c1e957ef7fd77151d962c72"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/consent.py",
+    "bytes": 1245,
+    "sha256": "0df5d96c360ac15fbe7226cb69a486100644e9520aece6aa5101028d21fe23d3"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/console.py",
+    "bytes": 28171,
+    "sha256": "2e8800032cbef6b79474744cbdbc298ed74ebc746e9f7aca1ed268c3303b0be8"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/deployed-host.mjs",
+    "bytes": 10858,
+    "sha256": "dc14360b84a8e16730782a06e279df11df84ce2b18c02678ad0eebf96f2290d2"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_api/fonts_embedded.css",
+    "bytes": 87403,
+    "sha256": "15d31fb119367f34f5731121fab7cef5b8b224a54c2c5421ea8eced319be5b5b"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_api/formal-theme.css",
+    "bytes": 7354,
+    "sha256": "a59393a2eaee94457212a00c186698fb3447f38e753344804cb67004db602bcd"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_api/index.html",
+    "bytes": 3509,
+    "sha256": "113f9db9f674835b24f69397a2e06ed8e016b888908d917da6f119a21d423380"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_api/view.css",
+    "bytes": 17198,
+    "sha256": "92526633f925b48b7b9cc6e36d53e8976c9b4c4ea86164b6dba0c0d263d1a141"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_api/view.js",
+    "bytes": 56000,
+    "sha256": "737612a078868dbd78e753db9cf6c493aa18929030c9af7e12d3cec48871592b"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_api_view.py",
+    "bytes": 30397,
+    "sha256": "98d74127e0bb5ce7dbbe4715e37ce1fdc8de415c144c1227fc5554893fc30f91"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_overview.py",
+    "bytes": 60403,
+    "sha256": "0ac4c692618e7c03468e9292ad1471634392bc8189b3021e8592f50f165f864f"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f1_style.css",
+    "bytes": 11925,
+    "sha256": "4636eb5bd00ac46ffcb460ccd47ebbf7e55a4344a856a057b6919b30f8fedb0c"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f2_style.css",
+    "bytes": 12650,
+    "sha256": "40ced9811f7fa62eecd6ef14227863e85b4eec8bde3f03db36c483f64f5060fd"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f2_tasks.py",
+    "bytes": 63669,
+    "sha256": "049d82f5bbeae336063c2246ca1cd7a0e1eb016ebb9ecf41dd4b33b002c5c4d2"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_api/detect.mjs",
+    "bytes": 764,
+    "sha256": "cc2118e9a46c0a5be3c58e44e96cee327f23bc8e97f463d6de61de235bd04cf2"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_api/fonts_embedded.css",
+    "bytes": 87403,
+    "sha256": "15d31fb119367f34f5731121fab7cef5b8b224a54c2c5421ea8eced319be5b5b"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_api/index.html",
+    "bytes": 2934,
+    "sha256": "c0664853dde88fdaa4bfc649d2493a9543a7ef3eed0e4ab18c7167fc9c0eeac5"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_api/view.css",
+    "bytes": 9491,
+    "sha256": "07df928f839b03e39d02ee8458fc49511464f2babe923e036c3ac5b7895595c2"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_api/view.js",
+    "bytes": 22651,
+    "sha256": "be8fe1ee6f9bbdd676a0798b4936779d64beb729d933e14295cc326c4b16f1b9"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_api_view.py",
+    "bytes": 16089,
+    "sha256": "5bf4dd7ebc14ab298a6303866244631f5eee53e8524250b09aef0adde263d168"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_drawing.py",
+    "bytes": 7953,
+    "sha256": "8ce48ebade2fc9e825700723ec00e7b1165522fda50ca022b7f329ddda05e8e5"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_evidence.py",
+    "bytes": 13124,
+    "sha256": "750e5d14240cb8aa0e2f508583057088abf1aabd67bcc520766bf215dfc9666c"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_handoff.py",
+    "bytes": 7174,
+    "sha256": "a382c2d96d85582dcfc411c4ab02d5836c93c2f2f5002871ffafaac7d24094fd"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_layout.py",
+    "bytes": 4534,
+    "sha256": "a99105d58d19e82b861891189ea23bccecf87799a79daea6a2715b98671cd5fd"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_local.py",
+    "bytes": 9795,
+    "sha256": "2fc275dc5f2b3f128fd13dbd82f62e420771b542ef723a8babaac8ecc7a65e15"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_network.py",
+    "bytes": 139770,
+    "sha256": "b2a34dc897f05bd8d64f2662bc7e1881658d2d60de3882c90ca5a53cd9ce2333"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_opcua.py",
+    "bytes": 8238,
+    "sha256": "ded9ceabf2cb69f0a98a8c9ecfca0f34ec5ac77e4b953ff123626646bf5ad686"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_projection.py",
+    "bytes": 7274,
+    "sha256": "13a8ed13678130002f29989c360b80cdf2a091c18bdd95a0c86d89d27fc51429"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/f3_runtime.py",
+    "bytes": 4140,
+    "sha256": "f62a9dac628b058f49de5002a7e01fe094c20557ca0152514964301afe40aa6f"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/help_manual.py",
+    "bytes": 17335,
+    "sha256": "6b253c6d2f19fa20d459f951cac3ae7950dfefebe6b43b5124e826e4d24826b4"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/host.mjs",
+    "bytes": 7004,
+    "sha256": "78ca5d02052910d6328ee1fd149cc870566ecc3ee2d2d5eb99dcebaa830b071f"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/model.py",
+    "bytes": 6889,
+    "sha256": "94ea567d5bd98a27972befa8ea64fb6cb970a264c39f9cd132eee5222029b1a5"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/notification_worker.py",
+    "bytes": 10480,
+    "sha256": "30072d3377790a96313d346472e9fa425eb10778df9c9dec21b47b103e663942"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/__init__.py",
+    "bytes": 87,
+    "sha256": "4e438b68c2c994663d8b857a34e654e3265c2326275cc17ddfde5407664baa54"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/adapter.py",
+    "bytes": 9355,
+    "sha256": "28e03fd4a28899d5996d706c863df4b4f7fa58458583947576a883705459c3b5"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/contract.py",
+    "bytes": 6814,
+    "sha256": "d608a059f8940c4aba7b31c1cc1eead8797b51d2d72bd3d76f6720ad16c7d094"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/history.py",
+    "bytes": 7597,
+    "sha256": "b88fc5e56cd6cd88f6384d7083d3a38f362d71518d4fb0cb7ec1ce9e22c60b5c"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/integration.py",
+    "bytes": 3961,
+    "sha256": "9142ddae2208b7ba3e546f475feef823e5cbb3087f434faeac2541d422fc32a5"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/metrics.py",
+    "bytes": 3248,
+    "sha256": "f89838723004da286cf3ab53048f18a7b62ecf7b0bdc3b2d5a46d800cd04a1f6"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/proxy.py",
+    "bytes": 2355,
+    "sha256": "79f0bb30bccbf4411777aea0f01178ff68eee72ee5be8a5e49c4f144cd608e70"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/service.py",
+    "bytes": 7129,
+    "sha256": "feff404521de080817d5ad277716754c58a42d0ca65da40463f2e179dcd82f58"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/transport.py",
+    "bytes": 3142,
+    "sha256": "9772bc5ccbb32de9323cfbc5cb5b28cec1c6f69be9b8b574e4e11f79fe6ceb9f"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/observability/ui.py",
+    "bytes": 3527,
+    "sha256": "5dd70e51e2f8e4b078e17b7efb0dd472ad27c5c0050024638dad918d939c8aee"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_mapping.py",
+    "bytes": 4791,
+    "sha256": "3b6c81f02e26432a2ac02e72f8718d022a3f78e26307666e78409f6d3fbb358f"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_pki.py",
+    "bytes": 26181,
+    "sha256": "79533111e2350246f16e18ed6021b4a821c5113fac327ee8f6c8d8f1349d9b6c"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_policy.py",
+    "bytes": 3423,
+    "sha256": "66ae1b5147e24904d15d152eb74af1b6ff13e45fbdd7ac0fc4b9af9e3cb3a429"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_polling_engine.py",
+    "bytes": 21501,
+    "sha256": "076220c8afc1657f9673b2f534de67f35d889969b88bf1dc38f98056c2c97d47"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_reader.py",
+    "bytes": 10282,
+    "sha256": "8aa472ebdecc9d201c691a0840ea19e6671ef7bb0f9a235d6634ed8361d98099"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_storage.py",
+    "bytes": 25541,
+    "sha256": "757384005e9982439a5ccc2bd1ef3b1924641922ebceaa555df41400da161180"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/opcua_store.py",
+    "bytes": 9499,
+    "sha256": "4a36e291e74e1715a0f8f5852fd9dcf5c03b2e553f428d71e35a81701afab9aa"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/presentation.py",
+    "bytes": 14575,
+    "sha256": "573320e6912c95ea15c2fe4a926f03a78c3d41d4c86fb5368f458d6298472d34"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/private_runtime.py",
+    "bytes": 843,
+    "sha256": "2bff424b539f8a1d304e8ed1ce5317947c3cc6291a39a027d4c3c2148ce563fd"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/production.py",
+    "bytes": 5379,
+    "sha256": "12df9c1f22385c0634a8af56aca6cb51c450684df0db557845790633de97165d"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/style.css",
+    "bytes": 3172,
+    "sha256": "f1338a76b7a4cd03e51159a3ada52446df46c5213f1617dc955f98ddb712e0f6"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/task_engine.py",
+    "bytes": 12912,
+    "sha256": "1b0b833fa11095fb72ed72642d95f6bbc15e1b484be9987b1c0b1a764622febd"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/telemetry_settings.py",
+    "bytes": 12997,
+    "sha256": "7a10b2cbefdcaffb8b1fe4719be3dcc338691ca0ea3a8286e98541943e6db644"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/workspace.py",
+    "bytes": 84948,
+    "sha256": "3f919ea95aed02f10b3afcc34a1cb1fb0bcc3bbc1544b560586db9e9c0bc7ead"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/desktop/workspace_style.css",
+    "bytes": 30348,
+    "sha256": "8cee94ef4c45abc4eb6dee1806f3de4b502c50501ff49b19b167816ba3b49da9"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/__init__.py",
+    "bytes": 40,
+    "sha256": "6c457f2bab44442fbee6d81cdab5fa209814bd1a5578ef17552d04a3be70c1b9"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/collector/__init__.py",
+    "bytes": 47,
+    "sha256": "0ef3863566101c2d7ef4aa8581fc67e8cf591b3eb34dbe32da70a9e8b04e329e"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/collector/evidence_api.py",
+    "bytes": 24040,
+    "sha256": "ca658995247f933797ed89970c6d324c20655e122eac49f92c98a602524bf320"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/collector/opcua_read.py",
+    "bytes": 7934,
+    "sha256": "a58a68d5da128ddad55876e223fe10e4d27dc062d4a429bfb7fb3712c14d5595"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/collector/probe_once.py",
+    "bytes": 18947,
+    "sha256": "0db0b8b9617f3c844d9fb9615a1bdf66c261e84a01695115824361a006756189"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/collector/run.py",
+    "bytes": 2946,
+    "sha256": "e39b13ba40506ba8ff305b963e562846971bbca2717a5fce846022cdd7dd1890"
+  },
+  {
+    "path": "usr/share/aqua-command-desktop/src/collector/telemetry.py",
+    "bytes": 16493,
+    "sha256": "5c487ac26cdbe968996cdf5fc5d0b0af77c8b69c54d474e57543815b494ff969"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/README.md",
+    "bytes": 8810,
+    "sha256": "684b8b70119090dd6616baa98562f73558579fe2eba071451c716022919de0be"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/VERIFICATION.md",
+    "bytes": 12648,
+    "sha256": "8977c736b588447bb7370d5506c9beb2e69d3b5394a6c9d0a0de1a83e1d3b168"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/COMMISSIONING.md",
+    "bytes": 9344,
+    "sha256": "aaecf9854cc5e8919e00f2f848bfd8098d4cb6182fc5827f8d8db0d059038910"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/F1_README.md",
+    "bytes": 14773,
+    "sha256": "4ec3ccd22c09fa56a15883682a738f54bf31aab255e6a989708023d6e3e45585"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/F3_README.md",
+    "bytes": 8383,
+    "sha256": "84cd69753aec039e198abcac09b2166a8be0f77e6622f873d8cff16a1ff96cc4"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/OPCUA_READINESS.md",
+    "bytes": 5709,
+    "sha256": "8fabde9cbd35fb7c7ee0fecf0b9a02702bb1ad87a78573534dfd3c207622af1c"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/PROBE_PHASE1.md",
+    "bytes": 4322,
+    "sha256": "6b9f7a461e3684604341f6a17622612ef2971b9a40d63abff8f6823622dd2b3f"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/PROBE_PHASE2.md",
+    "bytes": 7952,
+    "sha256": "82c50c6804c2c7295393dbff63a574f5121562806f7f516988d3c167f606b54c"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/PROBE_PHASE3.md",
+    "bytes": 7793,
+    "sha256": "4ad056c7d9f7150dd2a98b06e1b30b06fe69490718eb3cba3fb945d16fd024c5"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/PROBE_PHASE3_1.md",
+    "bytes": 1759,
+    "sha256": "d25fc2dfc894cb5ac2c6dba44e00e666c8a816ff742fb6f2eb8503ce253e134f"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/PROBE_PHASE4.md",
+    "bytes": 7615,
+    "sha256": "4c878eeff3181edf482312074ddb7315c2a33c57c710faa09e75cca180286af1"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/REAL_USE_DESIGN.md",
+    "bytes": 1781,
+    "sha256": "fc80e3dc3f201ed2712fdde3e167d1e7c3663ec457acc94dd51bc65dacebfc4f"
+  },
+  {
+    "path": "usr/share/doc/aqua-command-desktop/docs/TELEMETRY_SOURCES.md",
+    "bytes": 9628,
+    "sha256": "1b521b133d9f0ff86aaf801f99b8fc0345de6534588e43fef23d42a0fce94962"
+  },
+  {
+    "path": "usr/share/icons/hicolor/scalable/apps/org.aquacommand.Desktop.svg",
+    "bytes": 370,
+    "sha256": "2f1d1706373f0f8b88d55e2784a77b95b087146e83b1342c1f710dd69187aa56"
+  },
+  {
+    "path": "usr/share/licenses/aqua-command-desktop/LICENSE",
+    "bytes": 823,
+    "sha256": "4f070508266be5d1054144a11420ac664f3033e0d14dcbe5fd216f97b74cfb51"
+  }
+]

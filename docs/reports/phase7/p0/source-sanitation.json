@@ -1,0 +1,1057 @@
+{
+  "quarantined_files": [
+    {
+      "path": "aqua-command-desktop/releases/AquaCommand.WinCCReader-0.9.0-win-x64.exe",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "715d16134eb3b65993812db89d52afb0f99bd379c02d305fab53a1ffc6b4bcae",
+      "bytes": 51698323
+    },
+    {
+      "path": "aqua-command-desktop/releases/aqua-command-desktop-0.9.0-1.fc44.noarch.rpm",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "68319c4677d465b400142d536eaa1feb3ee300247ce189e5b35c3496b902fe76",
+      "bytes": 366841
+    },
+    {
+      "path": "aqua-command-desktop/wincc/pump-status-tags.txt",
+      "reason": "Private Tag allowlist; no filename consumer found",
+      "sha256": "6e90b10ff9fd23a7fdee3babba96ae25c29696673dcd6f121f39e584b4bf907d",
+      "bytes": 90
+    },
+    {
+      "path": "docs/mockups/mockup_option_a_station_overview.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "96bf8cac01db22604e2fc840ca0814a9d900d398a30c62c0db759276449f9bc8",
+      "bytes": 281712
+    },
+    {
+      "path": "docs/mockups/mockup_option_b1_balanced_industrial.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "970fcc0ab339d442e9063146fe89de7dd2e7a9b64b963bd9f1f11378bf803b69",
+      "bytes": 200097
+    },
+    {
+      "path": "docs/mockups/mockup_option_b2_refined_technical.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "a0d59c9483e726f5a60a255343f875f75828f42085484ea1b31fca6bf8888360",
+      "bytes": 216887
+    },
+    {
+      "path": "docs/mockups/mockup_option_b_station_explorer.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "7302f679b0252429091232eb78cd8daea80cc5059dff03b299b4b90016270bd0",
+      "bytes": 259442
+    },
+    {
+      "path": "docs/mockups/mockup_page1_overview_b1_balanced.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "9d9e3aa6ff5dc30301c2ae94f108de50f971136cf9aa4e4082345e846eb28698",
+      "bytes": 215427
+    },
+    {
+      "path": "docs/mockups/mockup_page1_overview_b2_technical.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "d640daa85e430200b0f9884b8eeeefc270602cf2f89b1a083a786119d1992acb",
+      "bytes": 199796
+    },
+    {
+      "path": "docs/mockups/preview_b2_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "76e876c1fef03f02a622a44ad2e9eeab8ea3dfe1560eeb8368814b7247bbd515",
+      "bytes": 157835
+    },
+    {
+      "path": "docs/mockups/preview_b2_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "23d254195657231a40ecb55b2b2e63aa78dfb06e096910dd9da840a9eb07d5ab",
+      "bytes": 221449
+    },
+    {
+      "path": "docs/mockups/preview_page1_b1_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "10a400f5c1c008d94028fba951c3a2ed997afe512bdbc9496d1591c2075df8b6",
+      "bytes": 179665
+    },
+    {
+      "path": "docs/mockups/preview_page1_b1_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6449d0a2be152ca7118caeb99a29c6b739ebccb860a8dbcee91b105edd5a4b9d",
+      "bytes": 232074
+    },
+    {
+      "path": "docs/screenshots/f1_overview/f1_tag_overview_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "de22265c7bfbea811738df78e53a3be8182c34047ffeaf7e4e173e7e146ba954",
+      "bytes": 223164
+    },
+    {
+      "path": "docs/screenshots/f1_overview/f1_tag_overview_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "73d951abc337961be5cef7bd08881ade9ec3ffba5e3d77cbd02f2bd75a0002b6",
+      "bytes": 318008
+    },
+    {
+      "path": "docs/screenshots/f1_overview/f1_task_manager_dialog_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "45f5da4aaf6462b7de195437f29076dd90561739573250b4e03925422f27570a",
+      "bytes": 207000
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_all_groups_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "baec6bfe5f313a772cd8d52cead147f58302d3eb830f9aa227ca4dfd2bfa60b6",
+      "bytes": 236967
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_all_groups_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "72bdab2c5f3ef1bd8a9b060716d0550116972c48caa0b47072677fb3f5d88fac",
+      "bytes": 366643
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_empty_state_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f0447c3f0aa2924ef3f36b688671b3b5c7ad7ba03e29bcec590708811aff672b",
+      "bytes": 131996
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_high_vsd_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "25cd0124fff53768ee349f542e4594a4ae4d589edaeb8706b9f4b9344a935dee",
+      "bytes": 227776
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_properties_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "4910de2bf8f56d8bf9557ddf99e23881f9507d45a1f01b1c043ca85dbbd7a441",
+      "bytes": 214997
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_all_groups_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "aaf08091a02121e70b76aa1bc5abc917e7bbf05c02af21618c3a15bbb8073855",
+      "bytes": 206188
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_all_groups_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "252b09341faf49fba6d93a5c64e72da6eab47210fadff1bbc3c246c6bc7a2404",
+      "bytes": 299058
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_high_valve_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "2e4b40e68a1e0f1403c909bc7214993051848c3801ffab57f2d96eeb83da4f52",
+      "bytes": 199485
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_high_vsd_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "c114ec0bfca5983a2fd753a9312555ab71ea47a7cd3f60f3bd3332ab0991c7ef",
+      "bytes": 196189
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_properties_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e51a7a659476c7ce32ee78e6b1d3ca41aa18eb41c8c54db9a8874a2b04f2a8e3",
+      "bytes": 203701
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_all_groups_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f3a7d47f814d6d5ba0c41deaea5fc3e03f4f8c08b9a6c90bded4d68372e29b5c",
+      "bytes": 205199
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_all_groups_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e3971d5891fa8eda0975e849400f53d4b8c2a46a880a991f0ba00ce3b0fbd1e1",
+      "bytes": 298455
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_empty_state_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "1c93ba64b0cf883d8948bd85fc5ef340aea2e78c20cd507b90c51e7d38c84e7b",
+      "bytes": 138302
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_high_valve_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "3bf2b40495ed9703688cc860362bf7f5a619b88509b4e8f9fe1d2c7989b3cac3",
+      "bytes": 198830
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_high_vsd_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "190151e520027849d3373634eaba006f6c17cf6888dde25747e6ebed42052cd3",
+      "bytes": 196115
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_properties_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "a51f09d6fef1376a91d08f9f44262f49a7f99682eb9afb6d6a2782a45c2fdf98",
+      "bytes": 198590
+    },
+    {
+      "path": "docs/screenshots/f2_current_audit_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "91411fc3c8efbdef1b788bfdfef60834d400c374d1bf785ded7a4e55b463ef33",
+      "bytes": 203455
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_configured_task_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "d1d664ae18772f55b297a589fa52ce841d6bffa5a4189e2c267833f23e3207d8",
+      "bytes": 259574
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_configured_task_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "662740476bfd4c5590600f93194f869b02ede11a821c28b71722633cc9fd1ce1",
+      "bytes": 420126
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_current_audit_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "91411fc3c8efbdef1b788bfdfef60834d400c374d1bf785ded7a4e55b463ef33",
+      "bytes": 203455
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_empty_state_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "68e9d8321df81b3e44ce5631ee0ddadf40d756e502f9b7696fc7cfa5aab08f51",
+      "bytes": 235726
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_running_autoscan_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6d545b1639771c4f7f7e67c5e5dbb7d533d2620e315e4ee64f4b87fe7469ad24",
+      "bytes": 262513
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_empty_state_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6d81404bb145ab62f1e3f624ae78a883e0407714e9ae4f5de82c3c5638762977",
+      "bytes": 146795
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_running_autoscan_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "96841e7a3110865d49f624e008d2256288cd4a317a8ef3ba37c88d0a2e30bc13",
+      "bytes": 151662
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab1_assigned_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "068ec94d4e6fd00f2e6594ef067e11ac68506f754024167e2d6a090c2a222735",
+      "bytes": 151146
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab1_assigned_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "c70192a3a6348e89c1185b73df18efd184f13eb686870342a8fc507a92bfc837",
+      "bytes": 204459
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab1_picker_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "a65cc2dee329ec2fbf9189efffa5ff80ca33d5f31f2b099ba20a6393d98a4b4b",
+      "bytes": 180838
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab2_settings_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "7ac1045052ea7ba06a1701022e4dfdc8b421aa7de1151264d3b990c706fc9663",
+      "bytes": 178032
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab3_review_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "fc40b66d734842eebb15f9f43d04598c6c92480b450271d5ec2bc87a6748a837",
+      "bytes": 175925
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_assigned_scrolled_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "adac1d29bbc0a8cb392dac5f6eba85109c8492089be655f626418edc02035045",
+      "bytes": 257953
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_logging_telegram_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "d4cf8e31acf447f085a1a0448aa468244efc51be48d4c96eba12cf4a53ed0e3a",
+      "bytes": 250346
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_multigroup_selection_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "4d57abc0197d224fb4be543fd2266f919176f9aee376b6d42669c5d1d86ddbca",
+      "bytes": 251245
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_new_empty_task_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "2d4b29c578a6c7893c834eccaf36426ffc85016538c750a5eec548059f3bf530",
+      "bytes": 251603
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_running_autoscan_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "410f081c6516d7f9bdd9ba29b111e0f7015db75814fdebe1800948b0160cd3c9",
+      "bytes": 299696
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_task_with_tags_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "a45b5d56b31fdcbecb56a2ec3e78415d1cf008ab16bfa4421fac478fbbd20058",
+      "bytes": 253087
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_task_with_tags_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "2690f8c2b021971b0385f79349cfd956c22896e66d61dfa893161c1e59524a41",
+      "bytes": 426539
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_all_groups_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "c1db8be895ff2ecae568a03e519e6344b0555027b3269735fb9b95ec01290cd2",
+      "bytes": 248324
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_default_filtered_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f1e28ed7dd3bae75012212bbb34e3910314881d0940c389b3b73a7efbe7a76ea",
+      "bytes": 203699
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_multigroup_selection_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "c7e2052033abfe49dc1feaf450b9fa693bd2d04608f14d2cc1ba9c54cf496ad2",
+      "bytes": 249979
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_new_empty_task_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6085afacae13e2732285047b8b8345a5400fc53b6c53c31a9b98230375e8e0c4",
+      "bytes": 253685
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_running_autoscan_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "89566f1aa5870c9c62a2db4b444b6566bcb11cf39366a9e8824468ebb9de43ce",
+      "bytes": 293936
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_task_with_tags_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "5c114fce000e315894158f2307895c53fc87355c4fe67f7fc23dda6c43277a3d",
+      "bytes": 255639
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_task_with_tags_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "cc2718cc997387d61db8d85d04aa8e3ad2b219b6715be9e20a884cfeea7eb5ad",
+      "bytes": 399394
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_anim_frame_01.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "ecf47b15e8cb6182959b97978ae1f2dfdabf66012fdb9b9f11fa38d228f8b16a",
+      "bytes": 87617
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_anim_frame_02.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "1aedfbc9ec53db6d9f343651c136afd49d9d1f6e98d045a0ad863eede7c4db55",
+      "bytes": 87777
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_anim_frame_03.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "fccbe53bfda314733bfcf4cef06bbf99bf8ae13b9e15409fef10bddc28e50809",
+      "bytes": 87780
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_demo_mode_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f1a829b931c9b47774b2b495a26cf638caa9459c0c591d36d879886bd6cf5ac6",
+      "bytes": 259765
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_cards_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "3ea5e9dc4b1d94ec3e1ae0811b0025db743e3c4f45ced9c9b9f5f3c849a1871d",
+      "bytes": 165671
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_cards_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "97e8f6b3a065cb2c8b8b3b3490acf4610f96a0ef25ed49e11682423279ab4058",
+      "bytes": 194346
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_details_dialog_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "fadebda6b6c51b68edfaf0e31637b1406e6c5535b415252c2f5d0ccb4449b54e",
+      "bytes": 69785
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_settings_dialog_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "0491bff0b78d3a0095125ac56bceed5d46c8f17e1dcd6d727bbedc72ecaac7bb",
+      "bytes": 46094
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_diagnostics_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "80a47f697070838ba1c5b30c13ef586efbf04eabadc5e3df6336114248d00d5c",
+      "bytes": 233733
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_diagnostics_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "3609e7c230ece302178b2344986fa9ed3059b8b26d392f58f20d496cb030f66b",
+      "bytes": 439129
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_inspector_open_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "be6ffd4fd1ef3b791115bcb4fa7234a2d3c25de0c91ce20dc4d456616c5d06c1",
+      "bytes": 213136
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_ip_table_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e2b2531008a38d723e10c76975c93ff5750837b09d1c87f7ac4d8bf328612e5c",
+      "bytes": 194710
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_ip_table_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "97e8f6b3a065cb2c8b8b3b3490acf4610f96a0ef25ed49e11682423279ab4058",
+      "bytes": 194346
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_live_diagram_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "be6ffd4fd1ef3b791115bcb4fa7234a2d3c25de0c91ce20dc4d456616c5d06c1",
+      "bytes": 213136
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_live_diagram_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "de02d8ec75c9f9914e1430d9c419e53cfa2586b4657800066913a7faeb5bb416",
+      "bytes": 289416
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_ot_authorization_dialog_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "53b2688b33e0f351dbcc35b226eb4da1a3c83a58015c36e2f0000569e59f8dd0",
+      "bytes": 29677
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_topology_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "3ea5e9dc4b1d94ec3e1ae0811b0025db743e3c4f45ced9c9b9f5f3c849a1871d",
+      "bytes": 165671
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_topology_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "97e8f6b3a065cb2c8b8b3b3490acf4610f96a0ef25ed49e11682423279ab4058",
+      "bytes": 194346
+    },
+    {
+      "path": "docs/screenshots/gate_b1_f6_opcua_screenshot.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f58a5f89f88c0930c57572106f3ac9a53974fa400fa5d7d59667c36816366874",
+      "bytes": 225780
+    },
+    {
+      "path": "docs/screenshots/preview_real_topology.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "70eadf696c6b312cdafb5203a42bdb931df533729617e828308a0f8103a82d3f",
+      "bytes": 142635
+    },
+    {
+      "path": "docs/screenshots/preview_topology.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "77d4f79c75cadf32c2a106563f4081a46372b321a2f7b99d112ccefd0fcfce43",
+      "bytes": 61229
+    },
+    {
+      "path": "docs/screenshots/preview_topology_v2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "22da3b4cad1ee3c319ec21f3af27627830d8541009e718ebc3f0865c0e0a13c9",
+      "bytes": 122397
+    },
+    {
+      "path": "docs/screenshots/scada_after_scan_f1.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "9cc181efeff614ea2d716d5846842eea1e3681a5fd9248599acfcc50d03ff146",
+      "bytes": 160499
+    },
+    {
+      "path": "docs/screenshots/scada_alarms.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "3f36aeb5b55bfc072becf5f5a29178138d3317d21a165f71f18305157fd45d68",
+      "bytes": 124885
+    },
+    {
+      "path": "docs/screenshots/scada_all_tags.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "b7e5586eb8e8ef1b5771862c86c76817b9ee2512eee4e5c7df0afdbeea9ce482",
+      "bytes": 164832
+    },
+    {
+      "path": "docs/screenshots/scada_autoscan_f2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "4b0e6b27d7edf29912cbdaf74417c81a24c6a72ea249c83c2632c17ce1b5ba7a",
+      "bytes": 255515
+    },
+    {
+      "path": "docs/screenshots/scada_autoscan_f2_ready.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "7d353e857292a479921f29663f5423282598d32fe23908f3a8d322f507972cfc",
+      "bytes": 254303
+    },
+    {
+      "path": "docs/screenshots/scada_clean_network_f3.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "282b308bfcae46fd436542cfd2d7807a96a9c2bbd60a9f33263040314d242423",
+      "bytes": 204880
+    },
+    {
+      "path": "docs/screenshots/scada_clean_network_table.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "58028b2c130e789c65049d5436106214fd4707093b6e6d8ba16a60c512d564a0",
+      "bytes": 232570
+    },
+    {
+      "path": "docs/screenshots/scada_default_overview_f1.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "897bccd069eebfa628c6dfdd97ee30efd41174d48c9abc8058cdfcaeb6d98b1c",
+      "bytes": 159827
+    },
+    {
+      "path": "docs/screenshots/scada_default_tasks_f2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "4e4ac0050c49fa55c2c71cc097295003cbe92579cc9e6487730c5f6ed1d9d4ed",
+      "bytes": 254155
+    },
+    {
+      "path": "docs/screenshots/scada_dynamic_overview_f1.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "a7edbb058df24de512e663ddd9ccbb29202b76b21b296214e2ab2326135c911e",
+      "bytes": 162474
+    },
+    {
+      "path": "docs/screenshots/scada_fresh_empty_f1.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "98e9f762afe34736a1fec047eeec152f6347024a700ef7e6166c872c7bd73f8e",
+      "bytes": 110887
+    },
+    {
+      "path": "docs/screenshots/scada_fresh_empty_f2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e963e1613c9c0a7ac4fd63dfd896ab72b3b2b5d2a9b3515222488806f36f0a5e",
+      "bytes": 186547
+    },
+    {
+      "path": "docs/screenshots/scada_host_diagnostics_f4.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "d3af6d2ef9801709086211a8fe9b036ff708a87bcc9bc453dd98af9331d2de30",
+      "bytes": 118187
+    },
+    {
+      "path": "docs/screenshots/scada_machine.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "754dc7148e07b4373d7f9247f4c783804fc0890904400ab51f0c21a44f65a57b",
+      "bytes": 157280
+    },
+    {
+      "path": "docs/screenshots/scada_network_table.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "2575b5e66d23e92bc8c86c14a22fbacc5603d77d57c21379aff9c568bd8920d6",
+      "bytes": 308239
+    },
+    {
+      "path": "docs/screenshots/scada_network_topology.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "cb02428dee51f5c41bee3108538feabaa081be43e07ffced0f0c8896cc17605f",
+      "bytes": 234960
+    },
+    {
+      "path": "docs/screenshots/scada_opcua_settings_f6.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "5517bc58f3553d35fb9ebffb19cb02bb332c6f806b0598095cdb6e6561c7631c",
+      "bytes": 217533
+    },
+    {
+      "path": "docs/screenshots/scada_opcua_stable_f6.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "77699d706977899ddc73e8d89ec413daa50cb49e4ddda33c649fd3764bb0e9cd",
+      "bytes": 219184
+    },
+    {
+      "path": "docs/screenshots/scada_opcua_tested_f6.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f1ad895e12b89ea98822c9ee21f4df6a6dd1277dfa7bd1ad7d94c2cf21be0285",
+      "bytes": 221034
+    },
+    {
+      "path": "docs/screenshots/scada_overview.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "16bddb8e1f964b1b76a988229209eedce829f6eb46d0da1227082f07d331fd41",
+      "bytes": 128877
+    },
+    {
+      "path": "docs/screenshots/scada_overview_opcua_f1.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "0ae0eb1c20ac538aa7b5b1f367bf4ca36c26505f27cf9ee81ecde90875616eb4",
+      "bytes": 116686
+    },
+    {
+      "path": "docs/screenshots/scada_overview_v2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "3ab2ae7da422b74da295628d9671265051c2b1b72a808b13c2a1fceb3fabc3c5",
+      "bytes": 177799
+    },
+    {
+      "path": "docs/screenshots/scada_real_network.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6b24b4e151c1365c6f77a16d4fe588c47c8ca78cb85867d3f92cc970df0afa07",
+      "bytes": 250342
+    },
+    {
+      "path": "docs/screenshots/scada_real_overview.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e7a99cfec2222eed7e6adc34bb8ab48d1410eb886038f30e71fec8eee51f23a8",
+      "bytes": 175351
+    },
+    {
+      "path": "docs/screenshots/scada_real_table.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "a4df328d3beb875d51f42854ba33c349f12625b3fc82f9acdba3de7c42257885",
+      "bytes": 293855
+    },
+    {
+      "path": "docs/screenshots/scada_tags.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "828f0af0bfcb1a2c4b78a9b3783c3c0b73d21cefbb73374f5c8de14e289602c7",
+      "bytes": 197261
+    },
+    {
+      "path": "docs/screenshots/scada_task_manager.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "beedb9a258228ef3fe82188c8ed0c1e0823fee16e6ccfbb20c80ed2845cb9172",
+      "bytes": 224984
+    },
+    {
+      "path": "docs/screenshots/scada_tasks_v2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6ee7f5d6564e300b20fb292942fcf6d40190ee59829d5e01e505fee5633cad3d",
+      "bytes": 241357
+    },
+    {
+      "path": "docs/screenshots/scada_telegram_settings_f6.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "8db99c5be13ba2ba2578452b2d269852f819e4fd72a1dd8a36eddc958e1556f2",
+      "bytes": 165806
+    },
+    {
+      "path": "docs/screenshots/scada_telegram_tasks_f2.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "1bcc05f0b28a137f3b30b64840068a6c12c122088176bfee12e518e3ab228c3c",
+      "bytes": 193675
+    },
+    {
+      "path": "docs/screenshots/scada_telegram_test_result_f6.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "4890609a5ca9a2602b425eb4bc74f780109ed573e4233482e330e6ed3f869c59",
+      "bytes": 177892
+    },
+    {
+      "path": "docs/screenshots/security_gate_f1_screenshot.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e50e20a6f13becdcc12346e4e4261d6351ca94087eda01d7e706810e366a4d8a",
+      "bytes": 283549
+    },
+    {
+      "path": "docs/screenshots/security_gate_f6_screenshot.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "77ca7b69c9abf6dde443effd19c79e909876e82f9ebb56b44abe1e46ea820926",
+      "bytes": 191648
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f1_collapsed_inspector_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "2dc11e5c4a796db646edfb45b6a15b8a68a9ffaf7e48858d1efea86c56741444",
+      "bytes": 250145
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f1_monitoring_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "816523f25927234878f155397766e3a4abb88951bfe8a03fda8e272c205130bd",
+      "bytes": 317493
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f1_monitoring_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "adb3d841ddc323f9163aa14477b777ca671029efb8b3d4aae844507d89b0d88d",
+      "bytes": 460388
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f2_taskmode_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e568476a51cf7119fd910a2d5a47a39df12406fa38b8fb9c65cdd76308161c4a",
+      "bytes": 297437
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f2_taskmode_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "64eb438f44ecdc055ce3ff3f74eeca82bbf1501ace0554d61d3a351aa4c1eaae",
+      "bytes": 466208
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f2_unsaved_changes_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "128781b0f4661fd684a6f676f42138799070e94c41d5744e77531ba0c30936be",
+      "bytes": 299822
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "b06e0949e5c496d8ca4c10a0cd468d4a5c19458863dc6445caf15e290cb0a844",
+      "bytes": 292681
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "94169dd678babc8d83e4a9c2f42487609afa412e7fe861b2be8d381d183c231f",
+      "bytes": 424887
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "9bcc20e5195486889fce644d0422b235ea1b20fcf7745787bd1c95f25ba3b3c2",
+      "bytes": 286636
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "7668d2b7410d8265d768f088cd2b9cf6933a7de3f94f590663145be5ad389874",
+      "bytes": 432831
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f1_collapsed_inspector_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e90f4b18cd1fc8ab0b5147b7a8c72a3ffe147079ec58921e8bf1e335f79e025e",
+      "bytes": 255653
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "75788e5c311ee71afbe31dcfe5621790388dd53b23837f50b246b9e94466ff90",
+      "bytes": 330258
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "c193211dd528d8f0fb49b01f3bda9cea1c334249f3fa64e6fd3a8759dab818e2",
+      "bytes": 467921
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "8264ef47f7b83b3851c1df398d5cf64b325d0c22d485dc6d5bd5cf3d899952c6",
+      "bytes": 311404
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "7ded78e042dc31451c6e4b47df058c504474b1a97851a2d0db49a05309ff513c",
+      "bytes": 477603
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_default_group_filtered_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f0efc3812dc4fc4e6846567d07133c34811b6404113971e3b79868567ab77ff1",
+      "bytes": 226798
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f1_monitoring_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "e8c1708871b421a79eda01d35f5d8ff567b41cd3ed1add7fb1ea145a064ece54",
+      "bytes": 250417
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f1_monitoring_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "9ec37bfcb877d7b26e0cacbbc9bd965c2a91c26e06429115f5042ee7e7e1fc53",
+      "bytes": 376805
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f2_taskmode_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "6bc24d06c06ad214bd5fb6ddd250ce2b6fc2b09b2c77d8922236b8d3fdc2eeb0",
+      "bytes": 259087
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f2_taskmode_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "62225bb29e66367fc54f1a9fdc02c08878df6466e59b753848830477128b7a63",
+      "bytes": 383339
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_multigroup_selection_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "b49c0461ff0785d615219703640f2895db829735c2b34aa945211a5b61e2418e",
+      "bytes": 258781
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f1_inspector_disabled_action_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "d223e5eaaa961500ff0ad3b7c749cc05bc8b4f73882820315c485e3e51fa4527",
+      "bytes": 310163
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f1_monitoring_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "0fdd6f4cb5e3c1ef9117b83e480d7937d10c57e8ee0db846cee3821238126ded",
+      "bytes": 433115
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_add_selected_disabled_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "799c43a8e6c469ac27c83fa4ea7f9533f1f83e10c3d3ca5b6ceaa6cd46dd9155",
+      "bytes": 290476
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_add_selected_enabled_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "50ed2188bc2f257060b02ba04ac97e1e2b1d62666684555f4b63625fabe5d195",
+      "bytes": 291892
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_saved_state_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "799c43a8e6c469ac27c83fa4ea7f9533f1f83e10c3d3ca5b6ceaa6cd46dd9155",
+      "bytes": 290476
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_task_config_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "50ed2188bc2f257060b02ba04ac97e1e2b1d62666684555f4b63625fabe5d195",
+      "bytes": 291892
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_task_dropdown_open_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "1a0dcae27fab21093166ac21e94cce4d8e4fccbaafe759358deff7090160a0d7",
+      "bytes": 293302
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_taskmode_1920x1080.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "0f641499d8fe4e906efb77bdae50fcdff8f1ec19c364a4d72a4e25f185671456",
+      "bytes": 438174
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_unsaved_changes_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "f9bdc4676c115de617030fcfab7acb58694cc1f27adc636bce621ca8a3cb17e4",
+      "bytes": 295682
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f3_network_regression_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "bf182627407313feddbbf191d6cfc9b68c8440e540312cc82248b060c9068294",
+      "bytes": 222294
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f6_alarms_regression_1366x768.png",
+      "reason": "Unreviewed historical image or executable; original preserved privately and in original commits",
+      "sha256": "038df734534a33fc1e7a808c32eee0b218a0e66d2eaed5176323ca172f0f4bfd",
+      "bytes": 221069
+    },
+    {
+      "path": "docs/tags/pump-status-tags.txt",
+      "reason": "Private Tag allowlist; no filename consumer found",
+      "sha256": "376cc2ed8da0e55cf3c1d2923bb3b7726de23714da897719dfde5e062ef519e7",
+      "bytes": 70
+    }
+  ],
+  "text_redactions": [
+    {
+      "path": "AGENTS.md",
+      "redactions": {
+        "personal_home_path": 1
+      }
+    },
+    {
+      "path": "README.md",
+      "redactions": {
+        "site_or_user_literal": 1
+      }
+    },
+    {
+      "path": "aqua-command-desktop/PROJECT_PROGRESS.md",
+      "redactions": {
+        "personal_home_path": 25,
+        "private_ipv4": 1
+      }
+    },
+    {
+      "path": "aqua-command-desktop/releases/windows-runtime-notices/microsoft.netcore.app.runtime.win-x64-10.0.14-THIRD-PARTY-NOTICES.TXT.txt",
+      "redactions": {
+        "email": 7
+      },
+      "action": "Restored byte-for-byte public third-party attribution; copyright contacts are not operator secrets"
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_GATE_B1_CONTROLLED_INTEGRATION_REPORT.md",
+      "redactions": {
+        "personal_home_path": 2
+      }
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_UNIFIED_WORKSPACE_V1_REPORT.md",
+      "redactions": {
+        "personal_home_path": 20
+      }
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_V3_REMEDIATION_REPORT.md",
+      "redactions": {
+        "personal_home_path": 1
+      }
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_PRECISION_REPORT.md",
+      "redactions": {
+        "personal_home_path": 16,
+        "site_or_user_literal": 1
+      }
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_PRECISION_V1_1_REPORT.md",
+      "redactions": {
+        "personal_home_path": 7,
+        "site_or_user_literal": 1,
+        "private_ipv4": 2
+      }
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_SPECTRUM_V2_REPORT.md",
+      "redactions": {
+        "known_site_tag": 1,
+        "personal_home_path": 9
+      }
+    },
+    {
+      "path": "docs/reports/F1_OVERVIEW_VISUAL_MOCKUPS.md",
+      "redactions": {
+        "personal_home_path": 2
+      }
+    },
+    {
+      "path": "docs/reports/F1_V12_TARGETED_CORRECTION_REPORT.md",
+      "redactions": {
+        "personal_home_path": 7
+      }
+    },
+    {
+      "path": "docs/reports/F1_V13_COMFORTABLE_DENSITY_REPORT.md",
+      "redactions": {
+        "personal_home_path": 7
+      }
+    },
+    {
+      "path": "docs/reports/F2_TAG_LIBRARY_TASK_CONFIGURATOR_V4_REPORT.md",
+      "redactions": {
+        "personal_home_path": 10
+      }
+    },
+    {
+      "path": "docs/reports/F2_TASK_CONFIGURATION_V2_REPORT.md",
+      "redactions": {
+        "personal_home_path": 4
+      }
+    },
+    {
+      "path": "docs/reports/F2_TASK_STUDIO_V3_REPORT.md",
+      "redactions": {
+        "known_site_tag": 3,
+        "personal_home_path": 10
+      }
+    },
+    {
+      "path": "docs/reports/F2_V4_1_BALANCED_TASK_CONFIGURATOR_REPORT.md",
+      "redactions": {
+        "personal_home_path": 10
+      }
+    },
+    {
+      "path": "docs/reports/MODERN_INTERFACE_OVERHAUL_REPORT.md",
+      "redactions": {
+        "personal_home_path": 3
+      }
+    },
+    {
+      "path": "docs/reports/PHASE1A1_COMPLETION_REPORT.md",
+      "redactions": {
+        "credential_format": 1,
+        "private_ipv4": 3
+      }
+    },
+    {
+      "path": "docs/reports/PHASE1A_FINAL_CLOSURE_REPORT.md",
+      "redactions": {
+        "personal_home_path": 2
+      }
+    },
+    {
+      "path": "docs/reports/UNIFIED_WORKSPACE_PROFESSIONAL_UI_PASS_V2_REPORT.md",
+      "redactions": {
+        "personal_home_path": 17
+      }
+    },
+    {
+      "path": "docs/reports/WINCC_SCADA_MOD_REPORT.md",
+      "redactions": {
+        "personal_home_path": 17,
+        "site_or_user_literal": 1,
+        "private_ipv4": 5
+      }
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_AQUA_COMMAND_CODEX_MASTER_PROMPT.md",
+      "redactions": {
+        "site_or_user_literal": 1
+      }
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G0.md",
+      "redactions": {
+        "personal_home_path": 1
+      }
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G0_AUDIT_TH.md",
+      "redactions": {
+        "personal_home_path": 1
+      }
+    }
+  ],
+  "original_history": "UNCHANGED_NOT_CLEARED",
+  "archival_private_address_literals_replaced": 11,
+  "quarantine_counts_by_suffix": {
+    ".exe": 1,
+    ".rpm": 1,
+    ".txt": 2,
+    ".png": 143
+  },
+  "nonsensitive_network_mask_constant_preserved": true
+}

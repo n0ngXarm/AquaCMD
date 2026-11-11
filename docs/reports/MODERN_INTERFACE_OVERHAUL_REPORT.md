@@ -1,3 +1,4 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # 🌊 รายงานการปรับปรุงโฉม Interface ใหม่ (Modern Cyber-Industrial SCADA & HMI)
 
 ตามที่ท่านต้องการปรับปรุง Interface ทั้งหมดให้ทันสมัย ก้าวข้ามจากหน้าตาแบบยุคเก่า (Windows 95/98 สีเทาและขอบนูน Beveled) มาเป็น **Next-Gen Cyber-Industrial SCADA & HMI Theme** สไตล์ห้องควบคุมอวกาศ / Tesla Command Center ทั้งบน **Linux (GTK4)** และ **Windows 11 (.exe / Web App Mode)** โดยยังคงโครงสร้างและฟังก์ชันสำคัญครบถ้วน 100%
@@ -23,12 +24,12 @@
 ## 📦 2. ตำแหน่งไฟล์ที่พร้อมใช้งานทันที (Deliverables)
 
 ### 🪟 สำหรับ Windows 11 (เครื่องอื่น / พกพาได้ทันที):
-1. **[AQUA_COMMAND_SCADA.exe](file:///home/nong_ing/Desktop/AQUA_COMMAND_SCADA.exe)** (ขนาด 16 MB)
+1. **[AQUA_COMMAND_SCADA.exe](file://[REDACTED_HOME]/Desktop/AQUA_COMMAND_SCADA.exe)** (ขนาด 16 MB)
    - ไฟล์ `.exe` เดี่ยว ไม่ต้องติดตั้ง เปิดใช้งานได้ทันที ดับเบิลคลิกเดียวเปิดหน้าจอ Interface ทันสมัยทันที
    - วางไว้ให้บน **Desktop** และ **Downloads** เรียบร้อยแล้ว
-2. **[AQUA_COMMAND_Windows11_Portable.zip](file:///home/nong_ing/Desktop/AQUA_COMMAND_Windows11_Portable.zip)** (ขนาด 45 MB)
+2. **[AQUA_COMMAND_Windows11_Portable.zip](file://[REDACTED_HOME]/Desktop/AQUA_COMMAND_Windows11_Portable.zip)** (ขนาด 45 MB)
    - ชุด Portable สมบูรณ์แบบ พร้อม Python ฝังในตัว และแบตช์ไฟล์
-3. **[SHA256SUMS.txt](file:///home/nong_ing/Desktop/SHA256SUMS.txt)** — ตรวจสอบความถูกต้องของไฟล์
+3. **[SHA256SUMS.txt](file://[REDACTED_HOME]/Desktop/SHA256SUMS.txt)** — ตรวจสอบความถูกต้องของไฟล์
 
 ### 🐧 สำหรับ Linux (เครื่องนี้):
 - ตัวโปรแกรมบน Linux ได้รับการอัปเดตเป็นธีม Dark SCADA ใหม่นี้แล้ว และรันแสดงผลสดอยู่บนหน้าจอเครื่องของท่านในขณะนี้

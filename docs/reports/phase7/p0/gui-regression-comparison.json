@@ -1,0 +1,16 @@
+{
+  "previous_summary": [
+    "Ran 309 tests in 79.509s",
+    "FAILED (failures=16, errors=5)"
+  ],
+  "current_summary": [
+    "Ran 313 tests in 70.716s",
+    "FAILED (failures=16, errors=5)"
+  ],
+  "previous_failure_cases": 21,
+  "current_failure_cases": 21,
+  "added_failure_cases": [],
+  "resolved_failure_cases": [],
+  "same_failure_ids": true,
+  "old_safety_assertions_modified": false
+}

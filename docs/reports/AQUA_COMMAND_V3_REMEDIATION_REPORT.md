@@ -1,10 +1,11 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — V3 Critical UI & Task Safety Remediation Report
 ## รายงานผลการสืบสวนและแก้ไขข้อบกพร่อง GUI GTK4 & รายงานตรวจสอบความปลอดภัย Task Persistence (Gate B)
 
-> **บันทึกการตรวจสอบ**: วันที่ 2 พฤศจิกายน 2026  
-> **สภาพแวดล้อม**: Fedora Linux (GTK4 / Libadwaita Architecture)  
-> **สถานะ Git**: ทำงานบน Isolated Branch `feature/v3-ui-task-remediation` (Commit ล่าสุดบน `main` คือ `cb4dc36` ปลอดภัย ไม่มีการ Commit/Push อัตโนมัติ หรือ Rewrite History)  
-> **สถานะ Runtime**: โค้ด Backend / SCADA / OPC UA / Telegram คงเดิม ไม่มีการเปลี่ยน Persistence Semantics ในระบบจริงตามข้อกำหนด Gate B  
+> **บันทึกการตรวจสอบ**: วันที่ 2 พฤศจิกายน 2026
+> **สภาพแวดล้อม**: Fedora Linux (GTK4 / Libadwaita Architecture)
+> **สถานะ Git**: ทำงานบน Isolated Branch `feature/v3-ui-task-remediation` (Commit ล่าสุดบน `main` คือ `cb4dc36` ปลอดภัย ไม่มีการ Commit/Push อัตโนมัติ หรือ Rewrite History)
+> **สถานะ Runtime**: โค้ด Backend / SCADA / OPC UA / Telegram คงเดิม ไม่มีการเปลี่ยน Persistence Semantics ในระบบจริงตามข้อกำหนด Gate B
 
 ---
 
@@ -109,7 +110,7 @@
 ## 3. การปรับสัดส่วนพื้นที่ & Contrast Audit (Phase A3 & A4)
 
 ### 3.1 การจัดสรรพื้นที่แบบ Dynamic Allocation
-* **โหมด F1 Monitoring (Inspector)**: 
+* **โหมด F1 Monitoring (Inspector)**:
   * ปรับลดความกว้างของ Context Panel ขวาลงเหลือ ~340px (1366) และ ~440px (1920) เพื่อลดพื้นที่ว่างที่ไม่จำเป็น
   * ขยายความกว้างของ **Center Tag Table จาก 48% (655px) เพิ่มขึ้นเป็น 54% (737px)** บนหน้าจอ 1366×768 (เพิ่มขึ้นทันที +82px) ทำให้อ่านชื่อ Tag, ที่อยู่ PLC, และคำอธิบายภาษาไทยได้โดยไม่ต้องเพ่ง
 * **โหมด F2 Task Manager**:
@@ -133,7 +134,7 @@
 
 ## 4. รายงานการตรวจสอบความปลอดภัย Task Persistence & Proposed Patch (Phase B)
 
-จากการตรวจสอบ Source Code ล่าสุดใน `workspace.py` และ `app.py` พบข้อบกพร่องตามที่ระบุใน Phase B ครบทั้ง 4 ประเด็นจริง โดยได้สร้างชุดทดสอบจำลองใน [test_task_persistence_audit.py](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_task_persistence_audit.py) ยืนยันผล (5/5 Tests Pass):
+จากการตรวจสอบ Source Code ล่าสุดใน `workspace.py` และ `app.py` พบข้อบกพร่องตามที่ระบุใน Phase B ครบทั้ง 4 ประเด็นจริง โดยได้สร้างชุดทดสอบจำลองใน [test_task_persistence_audit.py](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_task_persistence_audit.py) ยืนยันผล (5/5 Tests Pass):
 
 ### 4.1 รายละเอียดข้อบกพร่องที่ยืนยันแล้ว
 1. **Unintended Auto-save on Switch (`workspace.py:1214`)**:
@@ -164,17 +165,17 @@
              json.dump(data, f, ensure_ascii=False, indent=2)
              f.flush()
 @@ -664,5 +664,5 @@ def load_tasks():
- 
+
  def save_tasks(tasks):
 -    save_atomic_json(TASKS_CONFIG_FILE, tasks)
 +    return save_atomic_json(TASKS_CONFIG_FILE, tasks)
- 
+
 @@ -1276,4 +1276,3 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
      def save_tasks(self):
 -        save_tasks(self.tasks)
 -        return True
 +        return bool(save_tasks(self.tasks))
- 
+
 --- a/aqua-command-desktop/desktop/workspace.py
 +++ b/aqua-command-desktop/desktop/workspace.py
 @@ -1212,3 +1212,3 @@ class AquaUnifiedWorkspaceView:
@@ -195,7 +196,7 @@
 +            self.has_unsaved_changes = True
 +            self.lbl_save_status.set_text("❌ บันทึกล้มเหลว (I/O Error)")
 +            self.lbl_save_status.add_css_class('f2-save-status-dirty')
- 
+
 @@ -1262,4 +1267,4 @@ class AquaUnifiedWorkspaceView:
              "cycle_sec": 5,
              "action_log": True,

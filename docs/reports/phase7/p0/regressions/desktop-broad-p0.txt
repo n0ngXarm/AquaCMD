@@ -1,0 +1,1717 @@
+COMMAND /usr/bin/python3 -B -m unittest discover -s desktop/tests -v
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop
+test_invalid_or_old_permissions_fail_closed (test_consent.ConsentTests.test_invalid_or_old_permissions_fail_closed) ... ok
+test_permissions_are_separate_and_bound_to_exact_source_and_destination (test_consent.ConsentTests.test_permissions_are_separate_and_bound_to_exact_source_and_destination) ... ok
+test_atomic_json_enforces_0600_mode (test_credential_permissions.TestCredentialFilePermissions.test_atomic_json_enforces_0600_mode)
+Verifies that save_atomic_json with mode=0o600 creates and replaces file with 0600 permissions. ... ok
+test_concurrent_writes (test_credential_permissions.TestCredentialFilePermissions.test_concurrent_writes)
+Verifies that concurrent writes across threads succeed without corruption or race condition collisions. ... ok
+test_crash_recovery_preserves_existing_data (test_credential_permissions.TestCredentialFilePermissions.test_crash_recovery_preserves_existing_data)
+Verifies that a failure during data dump aborts atomically and preserves the existing file intact. ... SEC-02: Error atomic saving /tmp/tmpphpdvul8/config_sub/resilient.json [pre-commit]: Simulated disk error
+ok
+test_directory_ownership_mismatch_fails_closed (test_credential_permissions.TestCredentialFilePermissions.test_directory_ownership_mismatch_fails_closed)
+Negative test: Directory not owned by current user must fail closed with PermissionError. ... ok
+test_parent_directory_fsync_called_on_posix (test_credential_permissions.TestCredentialFilePermissions.test_parent_directory_fsync_called_on_posix)
+Verifies that parent directory fsync is invoked to persist directory entries on POSIX. ... ok
+test_post_commit_error_distinction_and_retry_prevention (test_credential_permissions.TestCredentialFilePermissions.test_post_commit_error_distinction_and_retry_prevention)
+SEC-02: Asserts distinct handling between pre-commit failure (retryable) and post-commit error (non-retryable). ... SEC-02: Error atomic saving /tmp/tmpk0ywgcut/config_sub/retry_check.json [pre-commit]: Simulated write failure
+SEC-02: Post-commit directory fsync failed on /tmp/tmpk0ywgcut/config_sub: Simulated hardware fsync failure
+SEC-02: Error atomic saving /tmp/tmpk0ywgcut/config_sub/retry_check.json [post-commit]: SEC-02: Post-commit directory fsync failed on /tmp/tmpk0ywgcut/config_sub: Simulated hardware fsync failure
+ok
+test_post_commit_fsync_failure_does_not_destroy_config (test_credential_permissions.TestCredentialFilePermissions.test_post_commit_fsync_failure_does_not_destroy_config)
+Post-commit test: If parent directory fsync fails, reports failure but never destroys target config. ... SEC-02: Post-commit directory fsync failed on /tmp/tmphd20894h/config_sub: Simulated parent dir fsync hardware fault
+SEC-02: Error atomic saving /tmp/tmphd20894h/config_sub/fsync_fail.json [post-commit]: SEC-02: Post-commit directory fsync failed on /tmp/tmphd20894h/config_sub: Simulated parent dir fsync hardware fault
+ok
+test_pre_replace_mode_verification_aborts_preserving_original (test_credential_permissions.TestCredentialFilePermissions.test_pre_replace_mode_verification_aborts_preserving_original)
+Pre-commit failure test: Mode mismatch on temp file aborts before replace, preserving original config intact. ... SEC-02: Error atomic saving /tmp/tmpk3tj1e6w/config_sub/safe_original.json [pre-commit]: SEC-02: Pre-commit mode mismatch on /tmp/tmpk3tj1e6w/config_sub/.safe_original.json.53ad708b2e5e3fe8.tmp: expected 0o600, got 0o666
+ok
+test_randomized_temp_file_no_static_tmp (test_credential_permissions.TestCredentialFilePermissions.test_randomized_temp_file_no_static_tmp)
+Verifies that temporary files use random names and do not collide with static .tmp. ... ok
+test_symlink_directory_unowned_fails_closed (test_credential_permissions.TestCredentialFilePermissions.test_symlink_directory_unowned_fails_closed)
+Negative test: Parent directory symlink pointing to an unowned path fails closed. ... ok
+test_symlink_target_rejected_fail_closed (test_credential_permissions.TestCredentialFilePermissions.test_symlink_target_rejected_fail_closed)
+Negative test: Attempting to overwrite a symlinked target file must fail closed with PermissionError. ... ok
+No signing policy available, user certificate cannot get verified
+No encrypting policy available, password may get transferred in plaintext
+test_01_gtk_initial_state_safety_invariants (test_e2e_gtk_integration.TestE2EGtkIntegration.test_01_gtk_initial_state_safety_invariants)
+Phase 2 & 3: Verify initial GUI state ensures zero auto-start upon boot. ... 
+(process:41877): GLib-GIO-CRITICAL **: 10:46:56.749: g_application_set_application_id: assertion 'application_id == NULL || g_application_id_is_valid (application_id)' failed
+
+(process:41877): Gtk-CRITICAL **: 10:46:56.770: New application windows must be added after the GApplication::startup signal has been emitted.
+
+(process:41877): Gtk-WARNING **: 10:46:56.770: Use GtkSettings:gtk-interface-color-scheme instead
+/usr/lib64/python3.15/site-packages/gi/overrides/Gtk.py:1801: DeprecationWarning: Gtk.CssProvider.load_from_data is deprecated
+  super().load_from_data(text, length)
+Can't find a11y bus: GDBus.Error:org.freedesktop.DBus.Error.Spawn.ExecFailed: Failed to execute program org.a11y.Bus: Permission denied
+ok
+test_02_task_configuration_and_persistence (test_e2e_gtk_integration.TestE2EGtkIntegration.test_02_task_configuration_and_persistence)
+Phase 5: Verify task configuration in F2, debounce, cooldown, and task saving. ... 
+(process:41877): GLib-GIO-CRITICAL **: 10:46:57.138: g_application_set_application_id: assertion 'application_id == NULL || g_application_id_is_valid (application_id)' failed
+
+(process:41877): Gtk-CRITICAL **: 10:46:57.138: New application windows must be added after the GApplication::startup signal has been emitted.
+
+(process:41877): Gtk-WARNING **: 10:46:57.138: Use GtkSettings:gtk-interface-color-scheme instead
+ok
+test_03_e2e_monitoring_lifecycle_and_alert_delivery (test_e2e_gtk_integration.TestE2EGtkIntegration.test_03_e2e_monitoring_lifecycle_and_alert_delivery)
+Phase 2 & 4: Full End-to-End GTK Application Journey: ... 
+(process:41877): GLib-GIO-CRITICAL **: 10:46:57.241: g_application_set_application_id: assertion 'application_id == NULL || g_application_id_is_valid (application_id)' failed
+
+(process:41877): Gtk-CRITICAL **: 10:46:57.241: New application windows must be added after the GApplication::startup signal has been emitted.
+
+(process:41877): Gtk-WARNING **: 10:46:57.241: Use GtkSettings:gtk-interface-color-scheme instead
+Requested session timeout to be 3600000ms, got 600000ms instead
+Task triggered: E2E High Level Alarm: High_Analog.Tank01_Level = 82.75 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_eaca51758acb enqueued
+ok
+test_01_build_html_offline_contracts (test_f1_api_view.TestF1ApiViewContracts.test_01_build_html_offline_contracts) ... ok
+test_02_zero_hex_colors_in_f1_assets (test_f1_api_view.TestF1ApiViewContracts.test_02_zero_hex_colors_in_f1_assets) ... ok
+test_03_bridge_payload_validation (test_f1_api_view.TestF1ApiViewContracts.test_03_bridge_payload_validation) ... ok
+test_04_tags_serializable_not_observed_default (test_f1_api_view.TestF1ApiViewContracts.test_04_tags_serializable_not_observed_default) ... ok
+test_05_add_tag_undo_roundtrip (test_f1_api_view.TestF1ApiViewContracts.test_05_add_tag_undo_roundtrip) ... ok
+test_06_bulk_add_and_remove_tags (test_f1_api_view.TestF1ApiViewContracts.test_06_bulk_add_and_remove_tags) ... ok
+test_07_task_save_failure_atomic_rollback (test_f1_api_view.TestF1ApiViewContracts.test_07_task_save_failure_atomic_rollback) ... Transactional save failed for save_task; state rolled back.
+ok
+test_08_duplicate_add_rejection (test_f1_api_view.TestF1ApiViewContracts.test_08_duplicate_add_rejection) ... ok
+test_09_observable_state_store_integration_and_dynamic_age (test_f1_api_view.TestF1ApiViewContracts.test_09_observable_state_store_integration_and_dynamic_age) ... ok
+test_10_multiple_task_association (test_f1_api_view.TestF1ApiViewContracts.test_10_multiple_task_association) ... ok
+test_11_next_task_id_no_collision (test_f1_api_view.TestF1ApiViewContracts.test_11_next_task_id_no_collision) ... ok
+test_12_f2_single_dialog_delegation (test_f1_api_view.TestF1ApiViewContracts.test_12_f2_single_dialog_delegation) ... ok
+test_13_settings_shortcuts_and_group_styling (test_f1_api_view.TestF1ApiViewContracts.test_13_settings_shortcuts_and_group_styling) ... ok
+test_14_navigate_f6_dispatches_to_alarms (test_f1_api_view.TestF1ApiViewContracts.test_14_navigate_f6_dispatches_to_alarms) ... ok
+test_15_task_dialog_assigned_row_selection_and_sync (test_f1_api_view.TestF1ApiViewContracts.test_15_task_dialog_assigned_row_selection_and_sync) ... ok
+test_observation_tick_sends_only_changed_receipts (test_f1_api_view.TestF1ApiViewContracts.test_observation_tick_sends_only_changed_receipts) ... ok
+test_untrusted_receipts_do_not_look_current (test_f1_api_view.TestF1ApiViewContracts.test_untrusted_receipts_do_not_look_current) ... ok
+test_add_after_removal_preserves_remaining_device (test_f3_continuation.TestF3Continuation.test_add_after_removal_preserves_remaining_device) ... ok
+test_canvas_has_one_visible_parent (test_f3_continuation.TestF3Continuation.test_canvas_has_one_visible_parent) ... ok
+test_collector_does_not_draw_unverified_wan_as_link_up (test_f3_continuation.TestF3Continuation.test_collector_does_not_draw_unverified_wan_as_link_up) ... FAIL
+test_configuration_updates_cannot_replace_stable_identity (test_f3_continuation.TestF3Continuation.test_configuration_updates_cannot_replace_stable_identity) ... ok
+test_disabled_device_does_not_start_remote_actions (test_f3_continuation.TestF3Continuation.test_disabled_device_does_not_start_remote_actions) ... ok
+test_identity_save_preserves_existing_network_configuration (test_f3_continuation.TestF3Continuation.test_identity_save_preserves_existing_network_configuration) ... ok
+test_late_demo_callback_cannot_update_live_status (test_f3_continuation.TestF3Continuation.test_late_demo_callback_cannot_update_live_status) ... ERROR
+test_layout_fits_1366_with_inspector_visible (test_f3_continuation.TestF3Continuation.test_layout_fits_1366_with_inspector_visible) ... ok
+test_legacy_and_stable_selection_highlight_the_same_card (test_f3_continuation.TestF3Continuation.test_legacy_and_stable_selection_highlight_the_same_card) ... ok
+test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) ... 
+  test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='detect_opcua_session') ... FAIL
+  test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='read_opcua_single_tag') ... FAIL
+test_store_add_and_remove_update_cards_and_table (test_f3_continuation.TestF3Continuation.test_store_add_and_remove_update_cards_and_table) ... ok
+test_switching_to_live_clears_demo_observations (test_f3_continuation.TestF3Continuation.test_switching_to_live_clears_demo_observations) ... ERROR
+test_unverified_wan_has_no_online_badge_or_verified_flow (test_f3_continuation.TestF3Continuation.test_unverified_wan_has_no_online_badge_or_verified_flow) ... ERROR
+test_verified_connections_render_and_animate (test_f3_continuation.TestF3Continuation.test_verified_connections_render_and_animate) ... FAIL
+test_closing_the_main_window_closes_its_popup (test_f3_details_window.TestF3DetailsWindow.test_closing_the_main_window_closes_its_popup) ... /usr/lib64/python3.15/site-packages/gi/events.py:803: DeprecationWarning: 'asyncio.AbstractEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  AbstractEventLoopPolicy = getattr(asyncio, "AbstractEventLoopPolicy", object)
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+FAIL
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+test_opening_details_preserves_the_full_diagram_width (test_f3_details_window.TestF3DetailsWindow.test_opening_details_preserves_the_full_diagram_width) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_remote_confirmation_uses_the_popup_without_starting_a_probe (test_f3_details_window.TestF3DetailsWindow.test_remote_confirmation_uses_the_popup_without_starting_a_probe) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+FAIL
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+test_reuses_closes_and_reopens_the_same_window (test_f3_details_window.TestF3DetailsWindow.test_reuses_closes_and_reopens_the_same_window) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+FAIL
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+test_selection_opens_a_floating_owned_window (test_f3_details_window.TestF3DetailsWindow.test_selection_opens_a_floating_owned_window) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+FAIL
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+test_settings_are_owned_by_the_details_window (test_f3_details_window.TestF3DetailsWindow.test_settings_are_owned_by_the_details_window) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+FAIL
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+test_cancel_after_ping_prevents_tcp_and_returns_no_receipt (test_f3_final_actions.FinalActionTests.test_cancel_after_ping_prevents_tcp_and_returns_no_receipt) ... ok
+test_cancel_before_start_performs_no_io (test_f3_final_actions.FinalActionTests.test_cancel_before_start_performs_no_io) ... ok
+test_external_service_only_uses_its_explicit_tcp_port (test_f3_final_actions.FinalActionTests.test_external_service_only_uses_its_explicit_tcp_port) ... ok
+test_local_api_failures_are_not_remote_unreachable_evidence (test_f3_final_actions.FinalActionTests.test_local_api_failures_are_not_remote_unreachable_evidence) ... ok
+test_multi_target_or_hostname_never_causes_probe_or_dns (test_f3_final_actions.FinalActionTests.test_multi_target_or_hostname_never_causes_probe_or_dns) ... ok
+test_cancelled_read_remains_busy_until_worker_closes_and_discards_value (test_f3_final_data.FinalDataTests.test_cancelled_read_remains_busy_until_worker_closes_and_discards_value) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_device_inspector_is_docked_instead_of_an_owned_window (test_f3_final_data.FinalDataTests.test_device_inspector_is_docked_instead_of_an_owned_window) ... ok
+test_existing_collector_receipts_count_without_starting_a_poller_or_inventing_nic_state (test_f3_final_data.FinalDataTests.test_existing_collector_receipts_count_without_starting_a_poller_or_inventing_nic_state) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_expired_or_unmapped_collector_receipts_do_not_verify_sessions (test_f3_final_data.FinalDataTests.test_expired_or_unmapped_collector_receipts_do_not_verify_sessions) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_expired_runtime_snapshot_is_not_drawn_as_current_counts (test_f3_final_data.FinalDataTests.test_expired_runtime_snapshot_is_not_drawn_as_current_counts) ... ok
+test_expired_snapshot_cannot_validate_an_assigned_network_role (test_f3_final_data.FinalDataTests.test_expired_snapshot_cannot_validate_an_assigned_network_role) ... ok
+test_explicit_local_settings_persist_instead_of_being_dropped (test_f3_final_data.FinalDataTests.test_explicit_local_settings_persist_instead_of_being_dropped) ... ok
+test_external_delivery_log_is_not_a_bound_provider_ack (test_f3_final_data.FinalDataTests.test_external_delivery_log_is_not_a_bound_provider_ack) ... ok
+test_global_nic_badge_uses_fresh_snapshot_instead_of_legacy_carrier (test_f3_final_data.FinalDataTests.test_global_nic_badge_uses_fresh_snapshot_instead_of_legacy_carrier) ... ok
+test_host_metrics_uses_cached_network_snapshot_without_synchronous_os_query (test_f3_final_data.FinalDataTests.test_host_metrics_uses_cached_network_snapshot_without_synchronous_os_query) ... ok
+test_local_address_changes_replace_current_binding (test_f3_final_data.FinalDataTests.test_local_address_changes_replace_current_binding) ... ok
+test_local_configured_address_mismatch_is_explicit_without_zone_inference (test_f3_final_data.FinalDataTests.test_local_configured_address_mismatch_is_explicit_without_zone_inference) ... ok
+test_local_interfaces_and_remote_hosts_have_separate_counts (test_f3_final_data.FinalDataTests.test_local_interfaces_and_remote_hosts_have_separate_counts) ... ok
+test_local_mismatch_is_visible_in_primary_status (test_f3_final_data.FinalDataTests.test_local_mismatch_is_visible_in_primary_status) ... ok
+test_local_reader_failure_releases_pending_state_and_is_unknown (test_f3_final_data.FinalDataTests.test_local_reader_failure_releases_pending_state_and_is_unknown) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_missing_observation_and_expired_observation_are_not_healthy (test_f3_final_data.FinalDataTests.test_missing_observation_and_expired_observation_are_not_healthy) ... ok
+test_never_tested_session_is_not_reported_disconnected (test_f3_final_data.FinalDataTests.test_never_tested_session_is_not_reported_disconnected) ... ok
+test_one_busy_job_and_half_second_rate_guard (test_f3_final_data.FinalDataTests.test_one_busy_job_and_half_second_rate_guard) ... ok
+test_periodic_passive_refresh_replaces_changed_ip_without_remote_actions (test_f3_final_data.FinalDataTests.test_periodic_passive_refresh_replaces_changed_ip_without_remote_actions) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_remote_collector_does_not_inherit_this_hosts_runtime_or_nic (test_f3_final_data.FinalDataTests.test_remote_collector_does_not_inherit_this_hosts_runtime_or_nic) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_switch_has_no_implicit_opcua_action_or_port (test_f3_final_data.FinalDataTests.test_switch_has_no_implicit_opcua_action_or_port) ... ok
+test_type_or_interface_edit_invalidates_all_target_receipts (test_f3_final_data.FinalDataTests.test_type_or_interface_edit_invalidates_all_target_receipts) ... ok
+test_unknown_type_does_not_default_to_scada (test_f3_final_data.FinalDataTests.test_unknown_type_does_not_default_to_scada) ... ok
+test_compact_nodes_and_processing_stages_fit_without_intersection (test_f3_final_geometry.FinalGeometryTests.test_compact_nodes_and_processing_stages_fit_without_intersection) ... ok
+test_compact_view_fits_two_source_groups_without_wasting_a_page (test_f3_final_geometry.FinalGeometryTests.test_compact_view_fits_two_source_groups_without_wasting_a_page) ... ok
+test_extra_infrastructure_pages_keep_valid_source_ranges_and_all_devices (test_f3_final_geometry.FinalGeometryTests.test_extra_infrastructure_pages_keep_valid_source_ranges_and_all_devices) ... ok
+test_actual_silent_probe_times_out_and_closes_socket (test_f3_final_timeout.SilentLoopbackTests.test_actual_silent_probe_times_out_and_closes_socket) ... ok
+test_actual_silent_read_times_out_without_fabricated_value (test_f3_final_timeout.SilentLoopbackTests.test_actual_silent_read_times_out_without_fabricated_value) ... Error reading tag LAB.Level: 
+ok
+test_cancel_during_silent_probe_keeps_ui_heartbeat_and_waits_for_cleanup (test_f3_final_timeout.SilentLoopbackTests.test_cancel_during_silent_probe_keeps_ui_heartbeat_and_waits_for_cleanup) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_timeout_has_a_reason_and_is_not_auth_or_certificate_failure (test_f3_final_timeout.SilentLoopbackTests.test_timeout_has_a_reason_and_is_not_auth_or_certificate_failure) ... ok
+test_bridge_generic_and_p2p_type_codes_are_not_interchanged (test_f3_local.LocalAdapterTests.test_bridge_generic_and_p2p_type_codes_are_not_interchanged) ... ok
+test_current_wifi_rate_addresses_and_inactive_ethernet_are_distinct (test_f3_local.LocalAdapterTests.test_current_wifi_rate_addresses_and_inactive_ethernet_are_distinct) ... ok
+test_disabled_connectivity_check_does_not_show_cached_full (test_f3_local.LocalAdapterTests.test_disabled_connectivity_check_does_not_show_cached_full) ... ok
+test_kernel_route_preserves_preferred_source_and_intermediate_gateway (test_f3_local.LocalAdapterTests.test_kernel_route_preserves_preferred_source_and_intermediate_gateway) ... ok
+test_lowest_metric_default_route_is_primary_without_role_inference (test_f3_local.LocalAdapterTests.test_lowest_metric_default_route_is_primary_without_role_inference) ... ok
+test_no_route_and_unavailable_kernel_are_distinct (test_f3_local.LocalAdapterTests.test_no_route_and_unavailable_kernel_are_distinct) ... ok
+test_unavailable_nm_remains_a_visible_partial_snapshot (test_f3_local.LocalAdapterTests.test_unavailable_nm_remains_a_visible_partial_snapshot) ... ok
+test_zero_wifi_rate_is_unknown (test_f3_local.LocalAdapterTests.test_zero_wifi_rate_is_unknown) ... ok
+test_01_f3_rendering_bounds (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_01_f3_rendering_bounds)
+1. Verify F3 initializes and renders within bounds at 1366x768, 1600x900, 1920x1080 without window overflow. ... FAIL
+test_02_diagram_click_selection (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_02_diagram_click_selection)
+2. Verify clicking a device node on the diagram updates selected device and inspector. ... ok
+test_03_status_led_updates (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_03_status_led_updates)
+3. Verify device status LED and badge change according to actual state. ... FAIL
+test_04_animation_stops_when_unknown_stale (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_04_animation_stops_when_unknown_stale)
+4. Verify connection line animation halts when state is UNKNOWN, STALE, or ERROR. ... ok
+test_05_pc4_local_nic_detection (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_05_pc4_local_nic_detection)
+5. Verify PC4 local NIC detection reads directly from OS sysfs/procfs with zero network packets. ... ok
+test_06_synthetic_remote_detection (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_06_synthetic_remote_detection)
+6. Verify synthetic remote ICMP/TCP detection works in DEMO mode. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_07_opcua_endpoint_port_configurable (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_07_opcua_endpoint_port_configurable)
+7. Verify OPC UA endpoint URL and port are dynamically configurable and not hardcoded. ... ok
+test_08_opcua_loopback_connect_disconnect (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_08_opcua_loopback_connect_disconnect)
+8. Verify clean OPC UA loopback connect and disconnect state transitions. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_09_tcp_open_not_opcua_connected (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_09_tcp_open_not_opcua_connected)
+9. Verify strict separation: TCP port open does NOT imply OPC UA session connected. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_10_pki_trust_failure_status (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_10_pki_trust_failure_status)
+10. Verify PKI trust failure displays CERTIFICATE_UNTRUSTED status. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_11_read_once_datavalue (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_11_read_once_datavalue)
+11. Verify Read Once action returns DataValue with value, quality, and timestamp. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_12_add_remove_device_updates_ui (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_12_add_remove_device_updates_ui)
+12. Verify adding and removing a device dynamically updates cards and store. ... ok
+test_13_device_config_persistence (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_13_device_config_persistence)
+13. Verify device configuration persists atomically to JSON and reloads on restart. ... ok
+test_14_demo_data_isolation (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_14_demo_data_isolation)
+14. Verify DEMO mode uses synthetic loopback and does NOT touch live production IPs. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_15_no_network_traffic_on_f3_open (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_15_no_network_traffic_on_f3_open)
+15. Verify zero outbound network packets / sockets on F3 tab open. ... ok
+test_16_no_unauthorized_scada_probe (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_16_no_unauthorized_scada_probe)
+16. Verify remote device probing in LIVE mode is gated by OT Safety Authorization Dialog. ... ok
+test_17_no_security_downgrade (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_17_no_security_downgrade)
+17. Verify that security settings cannot be auto-trusted or downgraded without authorization. ... ok
+test_18_gtk_thread_safety (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_18_gtk_thread_safety)
+18. Verify network detection runs on background thread and dispatches to GLib main thread. ... ok
+test_19_f1_f2_f6_regression (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_19_f1_f2_f6_regression)
+19. Verify F1, F2, F6 tabs and underlying models remain completely intact. ... ok
+test_20_polling_storage_invariants (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_20_polling_storage_invariants)
+20. Verify 5-second polling runtime and SQLite Outbox engine remain untouched. ... ok
+test_compat_device_details_dialog (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_device_details_dialog) ... ok
+test_compat_ip_table_update (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_ip_table_update) ... FAIL
+test_compat_pc4_details (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_pc4_details) ... ok
+test_compat_pc4_dual_nic_layout (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_pc4_dual_nic_layout) ... ok
+test_identity_01_local_hostname_from_os (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_01_local_hostname_from_os)
+1. Verify local machine reads actual OS hostname (fedora) and never username or PC4. ... ok
+test_identity_02_unknown_remote_hostname_shows_unknown (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_02_unknown_remote_hostname_shows_unknown)
+2. Verify remote SCADA workstation without verified asset record shows Hostname Unknown. ... ok
+test_identity_03_dns_ptr_not_auto_verified (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_03_dns_ptr_not_auto_verified)
+3. Verify DNS/PTR reverse lookup is classified as UNVERIFIED and not auto-promoted. ... ok
+test_identity_04_user_alias_not_actual_hostname (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_04_user_alias_not_actual_hostname)
+4. Verify user alias is tagged [User-defined] and does not mutate factual hostname. ... ok
+test_identity_05_device_id_stable_across_hostname_ip_changes (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_05_device_id_stable_across_hostname_ip_changes)
+5. Verify stable device_id remains immutable across alias, IP, and hostname changes. ... ok
+test_identity_06_tasks_and_opcua_mapping_intact (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_06_tasks_and_opcua_mapping_intact)
+6. Verify task engine and OPC UA node mappings stay intact after identity changes. ... ok
+test_identity_07_dynamic_devices_render_correctly (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_07_dynamic_devices_render_correctly)
+7. Verify adding dynamic devices renders correctly without hardcoded limits. ... ok
+test_identity_08_demo_data_isolated_from_live (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_08_demo_data_isolated_from_live)
+8. Verify DEMO mode uses clearly labeled synthetic hostnames with [DEMO]. ... ERROR
+test_identity_09_no_fake_online_connected_status (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_09_no_fake_online_connected_status)
+9. Verify remote SCADA devices do not show fake online or connected status initially. ... ok
+test_identity_10_no_unauthorized_network_traffic (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_10_no_unauthorized_network_traffic)
+10. Verify opening F3 emits zero outbound network traffic and remote probes require authorization. ... ok
+test_identity_11_f3_gui_displays_names_and_status (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_11_f3_gui_displays_names_and_status)
+11. Verify GUI cards and table display factual hostname/IP and role, abolishing PC1-PC4. ... ok
+test_identity_12_regression_f1_f2_f6_all_pass (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_12_regression_f1_f2_f6_all_pass)
+12. Verify full system regression: F1, F2, F6 tabs and underlying engines remain intact. ... 
+(process:41877): Gtk-WARNING **: 10:47:24.867: Use GtkSettings:gtk-interface-color-scheme instead
+FAIL
+test_actual_read_receipt_keeps_manual_session_disconnected (test_f3_production_actions.TestF3ProductionActions.test_actual_read_receipt_keeps_manual_session_disconnected) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_changed_target_discards_pending_worker_result (test_f3_production_actions.TestF3ProductionActions.test_changed_target_discards_pending_worker_result) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_credentials_are_never_borrowed_from_another_endpoint (test_f3_production_actions.TestF3ProductionActions.test_credentials_are_never_borrowed_from_another_endpoint) ... ok
+test_missing_network_target_cannot_be_probed_or_classified_unreachable (test_f3_production_actions.TestF3ProductionActions.test_missing_network_target_cannot_be_probed_or_classified_unreachable) ... ok
+test_changing_target_invalidates_previous_observations (test_f3_production_data.TestF3ProductionData.test_changing_target_invalidates_previous_observations) ... ok
+test_configured_metadata_cannot_be_used_as_observation_evidence (test_f3_production_data.TestF3ProductionData.test_configured_metadata_cannot_be_used_as_observation_evidence) ... ok
+test_demo_inventory_is_isolated_from_live_configuration (test_f3_production_data.TestF3ProductionData.test_demo_inventory_is_isolated_from_live_configuration) ... ok
+test_expired_observations_do_not_count_as_reachable (test_f3_production_data.TestF3ProductionData.test_expired_observations_do_not_count_as_reachable) ... ok
+test_invalid_network_definition_is_a_configuration_mismatch (test_f3_production_data.TestF3ProductionData.test_invalid_network_definition_is_a_configuration_mismatch) ... ok
+test_local_carrier_does_not_assign_ot_or_wan_roles (test_f3_production_data.TestF3ProductionData.test_local_carrier_does_not_assign_ot_or_wan_roles) ... ok
+test_malformed_typed_configuration_is_disabled_and_cannot_crash_the_view (test_f3_production_data.TestF3ProductionData.test_malformed_typed_configuration_is_disabled_and_cannot_crash_the_view) ... ok
+test_missing_inventory_does_not_invent_remote_devices (test_f3_production_data.TestF3ProductionData.test_missing_inventory_does_not_invent_remote_devices) ... ok
+test_missing_target_and_port_stay_unknown (test_f3_production_data.TestF3ProductionData.test_missing_target_and_port_stay_unknown) ... ok
+test_persisted_observations_are_not_current_live_evidence (test_f3_production_data.TestF3ProductionData.test_persisted_observations_are_not_current_live_evidence) ... ok
+test_router_configuration_does_not_verify_its_identity (test_f3_production_data.TestF3ProductionData.test_router_configuration_does_not_verify_its_identity) ... ok
+test_successful_manual_session_close_is_not_an_unreachable_service (test_f3_production_data.TestF3ProductionData.test_successful_manual_session_close_is_not_an_unreachable_service) ... ok
+test_logical_processing_nodes_never_fabricate_inventory_ids (test_f3_production_layout.TestF3FlowLayout.test_logical_processing_nodes_never_fabricate_inventory_ids) ... ok
+test_many_sources_remain_distinct_readable_and_inside_each_width (test_f3_production_layout.TestF3FlowLayout.test_many_sources_remain_distinct_readable_and_inside_each_width) ... ok
+test_source_pages_keep_processing_visible_and_cover_every_device (test_f3_production_layout.TestF3FlowLayout.test_source_pages_keep_processing_visible_and_cover_every_device) ... ok
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+test_existing_secure_reader_uses_verified_mapping_and_actual_value (test_f3_production_opcua.TestF3SecureLoopback.test_existing_secure_reader_uses_verified_mapping_and_actual_value) ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_manual_authorization_to_actual_read_to_inspector_end_to_end (test_f3_production_opcua.TestF3SecureLoopback.test_manual_authorization_to_actual_read_to_inspector_end_to_end) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+Requested session timeout to be 3600000ms, got 600000ms instead
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_trusted_certificate_with_wrong_hostname_is_still_rejected (test_f3_production_opcua.TestF3SecureLoopback.test_trusted_certificate_with_wrong_hostname_is_still_rejected) ... ok
+test_trusted_session_is_connected_then_explicitly_closed (test_f3_production_opcua.TestF3SecureLoopback.test_trusted_session_is_connected_then_explicitly_closed) ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_untrusted_certificate_never_opens_a_session_or_reads (test_f3_production_opcua.TestF3SecureLoopback.test_untrusted_certificate_never_opens_a_session_or_reads) ... Quarantined untrusted certificate to: /tmp/aqua-f3-client-esratfak/pki/rejected/certs/rejected_127_0_0_1_5DA13A272C700D82.der (Reason: Untrusted by client trust store)
+Quarantined untrusted certificate to: /tmp/aqua-f3-client-esratfak/pki/rejected/certs/rejected_127_0_0_1_5DA13A272C700D82.der (Reason: Untrusted by client trust store)
+Server certificate validation failed: BadCertificateUntrusted (Server certificate is untrusted. Quarantined to: /tmp/aqua-f3-client-esratfak/pki/rejected/certs/rejected_127_0_0_1_5DA13A272C700D82.der. An administrator must trust this certificate before connection is permitted.)
+Error reading tag LAB.Level: The certificate is not trusted.(BadCertificateUntrusted)
+ok
+test_invalid_mapping_policy_and_port_are_refused_without_a_socket (test_f3_production_opcua.TestF3SecureReadPreflight.test_invalid_mapping_policy_and_port_are_refused_without_a_socket) ... ok
+test_committed_sqlite_event_changes_pulse_pixels_then_expires (test_f3_production_render.TestF3EventRendering.test_committed_sqlite_event_changes_pulse_pixels_then_expires) ... ok
+test_idle_and_configured_state_have_identical_pixels_across_ticks (test_f3_production_render.TestF3EventRendering.test_idle_and_configured_state_have_identical_pixels_across_ticks) ... ok
+test_reopening_view_does_not_animate_commits_from_when_it_was_hidden (test_f3_production_render.TestF3EventRendering.test_reopening_view_does_not_animate_commits_from_when_it_was_hidden) ... ok
+test_failed_or_missing_snapshot_clears_pulses_and_never_replays_history (test_f3_production_runtime.TestF3RuntimeEvidence.test_failed_or_missing_snapshot_clears_pulses_and_never_replays_history) ... ok
+test_initial_history_emits_no_pulses_new_commit_emits_one_finite_pulse (test_f3_production_runtime.TestF3RuntimeEvidence.test_initial_history_emits_no_pulses_new_commit_emits_one_finite_pulse) ... ok
+test_missing_database_is_not_created (test_f3_production_runtime.TestF3RuntimeEvidence.test_missing_database_is_not_created) ... ok
+test_mock_success_is_labelled_synthetic_and_payload_secrets_are_not_exposed (test_f3_production_runtime.TestF3RuntimeEvidence.test_mock_success_is_labelled_synthetic_and_payload_secrets_are_not_exposed) ... ok
+test_stale_and_disconnected_read_never_emits_success_pulse (test_f3_production_runtime.TestF3RuntimeEvidence.test_stale_and_disconnected_read_never_emits_success_pulse) ... ok
+test_default_stations_fit_a_shorter_operator_viewport (test_f3_usability.TestF3Usability.test_default_stations_fit_a_shorter_operator_viewport) ... /usr/lib64/python3.15/site-packages/gi/overrides/GLib.py:289: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb17a00>
+  def unpack(self) -> typing.Any:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/site-packages/gi/overrides/GLib.py:289: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb175a0>
+  def unpack(self) -> typing.Any:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/site-packages/gi/overrides/GLib.py:289: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb16ea0>
+  def unpack(self) -> typing.Any:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/site-packages/gi/overrides/GLib.py:289: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb17ca0>
+  def unpack(self) -> typing.Any:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/site-packages/gi/overrides/GLib.py:289: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb17920>
+  def unpack(self) -> typing.Any:
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ERROR
+test_device_list_has_a_full_height_view (test_f3_usability.TestF3Usability.test_device_list_has_a_full_height_view) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_device_outline_has_a_flat_bottom_and_rounded_corners (test_f3_usability.TestF3Usability.test_device_outline_has_a_flat_bottom_and_rounded_corners) ... ok
+test_list_explains_status_and_accounts_for_configured_devices (test_f3_usability.TestF3Usability.test_list_explains_status_and_accounts_for_configured_devices) ... <frozen importlib._bootstrap>:637: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fc38200>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+FAIL
+test_live_actions_describe_the_implemented_capability (test_f3_usability.TestF3Usability.test_live_actions_describe_the_implemented_capability) ... FAIL
+test_selected_device_details_do_not_take_half_the_screen (test_f3_usability.TestF3Usability.test_selected_device_details_do_not_take_half_the_screen) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_startup_gives_the_diagram_full_attention (test_f3_usability.TestF3Usability.test_startup_gives_the_diagram_full_attention) ... FAIL
+test_station_nodes_and_addresses_are_readable (test_f3_usability.TestF3Usability.test_station_nodes_and_addresses_are_readable) ... ok
+test_unobserved_internet_does_not_claim_online_or_offline (test_f3_usability.TestF3Usability.test_unobserved_internet_does_not_claim_online_or_offline) ... ok
+test_idle_agent_without_first_observation_stays_unknown (test_model.ModelTests.test_idle_agent_without_first_observation_stays_unknown) ... ok
+test_profiles_preserve_private_configuration_and_reject_invalid_names (test_model.ModelTests.test_profiles_preserve_private_configuration_and_reject_invalid_names) ... ok
+test_settings_fail_closed_before_writing_through_source_alias (test_model.ModelTests.test_settings_fail_closed_before_writing_through_source_alias) ... ok
+test_status_never_turns_missing_bad_or_stale_values_into_off (test_model.ModelTests.test_status_never_turns_missing_bad_or_stale_values_into_off) ... ok
+test_tag_import_reads_configuration_without_selecting_command_tags (test_model.ModelTests.test_tag_import_reads_configuration_without_selecting_command_tags) ... ok
+test_01_telegram_429_outage_and_exponential_backoff (test_network_resilience_and_recovery.TestNetworkResilienceAndRecovery.test_01_telegram_429_outage_and_exponential_backoff)
+Verify handling of HTTP 429 outage, backoff computation, and recovery on service return. ... /usr/lib64/python3.15/tempfile.py:538: ResourceWarning: Implicitly cleaning up <HTTPError 429: 'Too Many Requests'>
+  _warnings.warn(self.warn_message, ResourceWarning)
+ok
+test_02_total_internet_offline_and_accumulation (test_network_resilience_and_recovery.TestNetworkResilienceAndRecovery.test_02_total_internet_offline_and_accumulation)
+Verify safe queue accumulation during total network disconnect (connection refused). ... ok
+test_03_crash_recovery_sending_to_unknown (test_network_resilience_and_recovery.TestNetworkResilienceAndRecovery.test_03_crash_recovery_sending_to_unknown)
+Verify cold start recovery holds interrupted Telegram requests as DELIVERY_UNKNOWN. ... ok
+test_04_rate_limiting_prevents_api_hammering (test_network_resilience_and_recovery.TestNetworkResilienceAndRecovery.test_04_rate_limiting_prevents_api_hammering)
+Verify rate limiter caps dispatch rate to specified per-minute limit. ... ok
+test_laboratory_default_prevents_external_dispatch (test_notification_delivery.DeliveryStateTests.test_laboratory_default_prevents_external_dispatch) ... ok
+test_legacy_exhausted_job_is_held_during_recovery (test_notification_delivery.DeliveryStateTests.test_legacy_exhausted_job_is_held_during_recovery) ... ok
+test_response_lost_after_request_keeps_job_and_does_not_repeat (test_notification_delivery.DeliveryStateTests.test_response_lost_after_request_keeps_job_and_does_not_repeat) ... ok
+test_restart_holds_interrupted_job_without_losing_id (test_notification_delivery.DeliveryStateTests.test_restart_holds_interrupted_job_without_losing_id) ... ok
+test_dynamic_graph_has_valid_logical_edges_and_no_delivery_ack (test_observability_adapter.AdapterTests.test_dynamic_graph_has_valid_logical_edges_and_no_delivery_ack) ... ok
+test_existing_core_receipt_target_and_closed_session (test_observability_adapter.AdapterTests.test_existing_core_receipt_target_and_closed_session) ... ok
+test_poll_success_without_receipts_never_means_read_verified (test_observability_adapter.AdapterTests.test_poll_success_without_receipts_never_means_read_verified) ... ok
+test_probe_history_uses_its_own_kind_result (test_observability_adapter.AdapterTests.test_probe_history_uses_its_own_kind_result) ... ok
+test_refresh_records_only_a_local_event (test_observability_adapter.AdapterTests.test_refresh_records_only_a_local_event) ... ok
+test_synthetic_inventory_and_ambiguous_endpoint_do_not_bind (test_observability_adapter.AdapterTests.test_synthetic_inventory_and_ambiguous_endpoint_do_not_bind) ... ok
+test_unknown_quality_is_unknown_instead_of_an_invented_error (test_observability_adapter.AdapterTests.test_unknown_quality_is_unknown_instead_of_an_invented_error) ... ok
+test_bad_unknown_stale_unbound_and_good_zero_false (test_observability_contract.ContractTests.test_bad_unknown_stale_unbound_and_good_zero_false) ... ok
+test_configuration_and_raw_flags_do_not_prove_connection (test_observability_contract.ContractTests.test_configuration_and_raw_flags_do_not_prove_connection) ... ok
+test_future_timestamp_and_nonfinite_payload_fail_closed (test_observability_contract.ContractTests.test_future_timestamp_and_nonfinite_payload_fail_closed) ... ok
+test_invalid_evidence_or_missing_endpoint_cannot_verify_read (test_observability_contract.ContractTests.test_invalid_evidence_or_missing_endpoint_cannot_verify_read) ... ok
+test_read_and_closed_manual_session_are_distinct (test_observability_contract.ContractTests.test_read_and_closed_manual_session_are_distinct) ... ok
+test_synthetic_and_private_fields_do_not_enter_runtime (test_observability_contract.ContractTests.test_synthetic_and_private_fields_do_not_enter_runtime) ... ok
+test_tcp_does_not_prove_opcua_and_target_change_invalidates (test_observability_contract.ContractTests.test_tcp_does_not_prove_opcua_and_target_change_invalidates) ... ok
+test_attempt_count_is_not_retry_count (test_observability_history.HistoryTests.test_attempt_count_is_not_retry_count) ... [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_observability_history.py:37: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f1860a0>
+  db.execute("INSERT INTO delivery_attempts(outbox_id,attempt_time,status,http_status,response_body,error_message) VALUES(?,?,?,?,?,?)",
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_observability_history.py:37: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f1852a0>
+  db.execute("INSERT INTO delivery_attempts(outbox_id,attempt_time,status,http_status,response_body,error_message) VALUES(?,?,?,?,?,?)",
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_observability_history.py:37: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f1866c0>
+  db.execute("INSERT INTO delivery_attempts(outbox_id,attempt_time,status,http_status,response_body,error_message) VALUES(?,?,?,?,?,?)",
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_observability_history.py:37: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f186dc0>
+  db.execute("INSERT INTO delivery_attempts(outbox_id,attempt_time,status,http_status,response_body,error_message) VALUES(?,?,?,?,?,?)",
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_bounded_sanitized_history_does_not_write_owner (test_observability_history.HistoryTests.test_bounded_sanitized_history_does_not_write_owner) ... ok
+test_empty_missing_corrupt_and_invalid_window (test_observability_history.HistoryTests.test_empty_missing_corrupt_and_invalid_window) ... ok
+test_explicit_grafana_range_uses_selected_past_interval (test_observability_history.HistoryTests.test_explicit_grafana_range_uses_selected_past_interval) ... ok
+test_sqlite_dynamic_type_does_not_leak_a_message_in_http_status (test_observability_history.HistoryTests.test_sqlite_dynamic_type_does_not_leak_a_message_in_http_status) ... ok
+test_tag_filter_applies_before_observation_limit (test_observability_history.HistoryTests.test_tag_filter_applies_before_observation_limit) ... [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_observability_history.py:86: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb17220>
+  [("OTHER_TAG", i, "m", "GOOD", iso(self.now - 1)) for i in range(2000)])
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_observability_history.py:86: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3fb16ea0>
+  [("OTHER_TAG", i, "m", "GOOD", iso(self.now - 1)) for i in range(2000)])
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_bad_config_and_socket_collision_do_not_escape_into_owner (test_observability_integration.IntegrationTests.test_bad_config_and_socket_collision_do_not_escape_into_owner) ... ok
+test_default_disabled_has_no_owner_calls_or_socket (test_observability_integration.IntegrationTests.test_default_disabled_has_no_owner_calls_or_socket) ... ok
+test_enabled_uses_same_owner_and_hashed_deeplink (test_observability_integration.IntegrationTests.test_enabled_uses_same_owner_and_hashed_deeplink) ... ok
+test_external_credential_and_path_urls_are_rejected (test_observability_integration.IntegrationTests.test_external_credential_and_path_urls_are_rejected) ... ok
+test_rate_warmup_reset_and_elapsed_time (test_observability_metrics.MetricsTests.test_rate_warmup_reset_and_elapsed_time) ... ok
+test_real_host_first_cpu_and_rates_are_unknown (test_observability_metrics.MetricsTests.test_real_host_first_cpu_and_rates_are_unknown) ... ok
+test_host_metrics_does_not_connect_to_external_address_or_resolve_dns (test_observability_passive_host.PassiveHostTests.test_host_metrics_does_not_connect_to_external_address_or_resolve_dns) ... ok
+test_local_carrier_refresh_never_claims_scada_online (test_observability_passive_host.PassiveHostTests.test_local_carrier_refresh_never_claims_scada_online) ... ok
+test_invalid_endpoint_never_binds_a_current_good_value (test_observability_privacy.PrivacyTests.test_invalid_endpoint_never_binds_a_current_good_value) ... ok
+test_unknown_session_metadata_cannot_export_a_raw_message (test_observability_privacy.PrivacyTests.test_unknown_session_metadata_cannot_export_a_raw_message) ... ok
+test_actual_datavalue_retains_target_and_closed_manual_session (test_observability_receipts.ReceiptTests.test_actual_datavalue_retains_target_and_closed_manual_session) ... ok
+test_old_callers_remain_unbound (test_observability_receipts.ReceiptTests.test_old_callers_remain_unbound) ... ok
+test_snapshot_does_not_expose_mutable_store_entries (test_observability_receipts.ReceiptTests.test_snapshot_does_not_expose_mutable_store_entries) ... ok
+test_authenticated_unix_service_start_collision_and_owned_cleanup (test_observability_service.ServiceTests.test_authenticated_unix_service_start_collision_and_owned_cleanup) ... ok
+test_fresh_owner_cannot_refresh_an_old_individual_read (test_observability_service.ServiceTests.test_fresh_owner_cannot_refresh_an_old_individual_read) ... ok
+test_frozen_owner_cannot_keep_live_values_or_green_graph (test_observability_service.ServiceTests.test_frozen_owner_cannot_keep_live_values_or_green_graph) ... ok
+test_missing_data_and_synthetic_routes_fail_closed (test_observability_service.ServiceTests.test_missing_data_and_synthetic_routes_fail_closed) ... ok
+test_authentication_readonly_paths_and_no_cache (test_observability_transport.TransportTests.test_authentication_readonly_paths_and_no_cache) ... ok
+test_unsafe_duplicate_and_unbounded_queries_are_rejected (test_observability_transport.TransportTests.test_unsafe_duplicate_and_unbounded_queries_are_rejected) ... ok
+test_browser_failure_does_not_change_or_stop_core (test_observability_ui.DashboardUITests.test_browser_failure_does_not_change_or_stop_core) ... ok
+test_close_preserves_existing_lifecycle_and_only_stops_optional_bridge (test_observability_ui.DashboardUITests.test_close_preserves_existing_lifecycle_and_only_stops_optional_bridge) ... ok
+test_context_link_and_tag_use_existing_bridge_only (test_observability_ui.DashboardUITests.test_context_link_and_tag_use_existing_bridge_only) ... ok
+test_disabled_integration_retains_native_navigation_without_browser (test_observability_ui.DashboardUITests.test_disabled_integration_retains_native_navigation_without_browser) ... ok
+[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase2-acceptance/python-deps/asyncua/server/address_space.py:551: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f186f80>
+  variant = ua.Variant(value, vtype, is_array=is_array)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+test_01_preflight_and_authorization (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_01_preflight_and_authorization)
+Verifies engine rejects starting without valid preflight / task tags. ... Requested session timeout to be 3600000ms, got 600000ms instead
+Task triggered: Water Level High: High_Analog.Tank01_Level = 82.65 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_67b965af7d1a enqueued
+ok
+test_02_monotonic_polling_and_jitter (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_02_monotonic_polling_and_jitter)
+Verifies monotonic clock scheduling and jitter calculation. ... Requested session timeout to be 3600000ms, got 600000ms instead
+Task triggered: Water Level High: High_Analog.Tank01_Level = 82.65 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_48709e15acd2 enqueued
+ok
+test_03_non_overlapping_execution (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_03_non_overlapping_execution)
+Verifies that slow poll cycles do not execute concurrently. ... Requested session timeout to be 3600000ms, got 600000ms instead
+Task triggered: Water Level High: High_Analog.Tank01_Level = 82.65 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_7f6404c56130 enqueued
+ok
+test_04_task_evaluation_and_deduplication (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_04_task_evaluation_and_deduplication)
+Verifies analog threshold triggering, deduplication, and cooldown. ... Task triggered: Tank 01 High Level: High_Analog.Tank01_Level = 82.68 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_ec31ebbbac27 enqueued
+ok
+test_05_boolean_transition (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_05_boolean_transition)
+Verifies pump running transition (False -> True) triggers transition_on. ... Task triggered: CTM13PT Started: High_VSD.CTM13PT_Run เปลี่ยนสถานะเป็นเปิด (ON / Running) -> Event evt_e78f66bfcdb6 enqueued
+ok
+test_06_bad_quality_isolation (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_06_bad_quality_isolation)
+Verifies Bad quality does NOT trigger false transition_off or false thresholds. ... ok
+test_07_multi_task_fanout (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_07_multi_task_fanout)
+Verifies multiple tasks sharing the same tag evaluate from a single observation. ... Task triggered: High Water Alert: High_Analog.Tank01_Level = 82.65 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_1ca9a70785ef enqueued
+ok
+test_08_sqlite_durable_storage_and_wal (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_08_sqlite_durable_storage_and_wal)
+Verifies WAL journal mode, atomic batch observation insert, and stats. ... ok
+test_09_outbox_crash_recovery (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_09_outbox_crash_recovery)
+Verifies items stuck in SENDING state during a crash are held as DELIVERY_UNKNOWN. ... ok
+test_10_offline_notification_retry (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_10_offline_notification_retry)
+Verifies that delivery failures trigger exponential backoff and eventual success. ... ok
+test_11_opcua_reconnect_backoff (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_11_opcua_reconnect_backoff)
+Verifies polling engine handles session disconnect and enters reconnect state. ... Connection failure (attempt 1): [Errno 111] Connect call failed ('127.0.0.1', 49999). Reconnecting in 1.0s
+ok
+test_12_strict_read_only_audit (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_12_strict_read_only_audit)
+Verifies that OpcUaPollingEngine source code contains zero write calls. ... ok
+test_13_soak_test_telemetry (test_opcua_5s_polling_and_task_engine.TestOpcUa5sPollingAndTaskEngine.test_13_soak_test_telemetry)
+Runs multi-cycle polling soak test to measure Jitter, Latency, ... Requested session timeout to be 3600000ms, got 600000ms instead
+Task triggered: Soak Monitor: High_Analog.Tank01_Level = 82.65 m เกินเกณฑ์ที่กำหนด (> 80.00) -> Event evt_65d3e0ac5554 enqueued
+ok
+<string>:2: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f184ba0>
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+certificate does not contain the hostname in DNSNames fedora. Some applications will check this.
+test_10_f1_read_once_via_secure_channel (test_opcua_security_gate.TestOpcUaLoopbackSecurityIntegration.test_10_f1_read_once_via_secure_channel)
+Verifies F1 single-shot read succeeds over trusted Basic256Sha256 SecureChannel. ... Requested session timeout to be 3600000ms, got 600000ms instead
+ok
+test_11_wrong_credentials_rejected_without_leakage (test_opcua_security_gate.TestOpcUaLoopbackSecurityIntegration.test_11_wrong_credentials_rejected_without_leakage)
+Verifies wrong username/password rejected over SecureChannel without secret leakage. ... certificate does not contain the application uri (urn:example.org:FreeOpcUa:opcua-asyncio). Most applications will reject a connection without it.
+Requested session timeout to be 3600000ms, got 600000ms instead
+sending service fault response: User does not have permission to perform the requested operation. (BadUserAccessDenied)
+ServiceFault (BadUserAccessDenied, diagnostics: DiagnosticInfo(SymbolicId=None, NamespaceURI=None, Locale=None, LocalizedText=None, AdditionalInfo=None, InnerStatusCode=None, InnerDiagnosticInfo=None)) from server received  in response to ActivateSessionRequest
+ok
+test_01_client_certificate_generation_and_permissions (test_opcua_security_gate.TestOpcUaSecurityGate.test_01_client_certificate_generation_and_permissions)
+Verifies client app certificate generation, RSA-2048, and 0600 key permissions. ... ok
+test_02_trusted_server_certificate_validation (test_opcua_security_gate.TestOpcUaSecurityGate.test_02_trusted_server_certificate_validation)
+Verifies valid server certificate in trusted/certs is accepted. ... ok
+test_03_unknown_certificate_rejection_and_quarantine (test_opcua_security_gate.TestOpcUaSecurityGate.test_03_unknown_certificate_rejection_and_quarantine)
+Verifies untrusted certificate is rejected with BadCertificateUntrusted and quarantined. ... Quarantined untrusted certificate to: /tmp/tmp22ips9z9/pki/rejected/certs/rejected_127_0_0_1_008898908817E920.der (Reason: Untrusted by client trust store)
+ok
+test_04_expired_certificate_rejection (test_opcua_security_gate.TestOpcUaSecurityGate.test_04_expired_certificate_rejection)
+Verifies expired certificate is rejected with BadCertificateTimeInvalid. ... ok
+test_05_hostname_and_uri_mismatch_rejection (test_opcua_security_gate.TestOpcUaSecurityGate.test_05_hostname_and_uri_mismatch_rejection)
+Verifies hostname or ApplicationURI mismatch is rejected. ... ok
+test_06_certificate_replacement_detected (test_opcua_security_gate.TestOpcUaSecurityGate.test_06_certificate_replacement_detected)
+Verifies changed certificate thumbprint for known server is detected and quarantined. ... Quarantined untrusted certificate to: /tmp/tmpqkiwlk6m/pki/rejected/certs/rejected_127_0_0_1_C25218B6D26919C7.der (Reason: Server certificate changed unexpectedly)
+ok
+test_07_no_auto_trust_and_manual_promotion (test_opcua_security_gate.TestOpcUaSecurityGate.test_07_no_auto_trust_and_manual_promotion)
+Verifies certificates are never auto-trusted; manual promotion required. ... Quarantined untrusted certificate to: /tmp/tmpc_ck94_u/pki/rejected/certs/rejected_test_server_6DFF214332BEF210.der (Reason: Untrusted)
+ok
+test_08_anti_downgrade_guardrail (test_opcua_security_gate.TestOpcUaSecurityGate.test_08_anti_downgrade_guardrail)
+Verifies username authentication over SecurityPolicy#None is rejected pre-network. ... SEC-04: Security gate check failed: SEC-04: Plaintext username/password is strictly forbidden when SecurityPolicy is None. Encrypted session (Basic256Sha256) is mandatory for credential transmission.
+ok
+test_09_reader_strictly_read_only (test_opcua_security_gate.TestOpcUaSecurityGate.test_09_reader_strictly_read_only)
+Verifies ManualOpcUaReader does not expose any write or mutation methods. ... ok
+test_01_opcua_server_disappears_and_returns (test_operational_failures.TestOperationalFailures.test_01_opcua_server_disappears_and_returns)
+Failure 1: When OPC UA server disconnects, poller transitions to RECONNECTING with backoff, then recovers. ... No signing policy available, user certificate cannot get verified
+No encrypting policy available, password may get transferred in plaintext
+Requested session timeout to be 3600000ms, got 600000ms instead
+Failed reading node for tag High_Analog.Tank01_Level: client is disconnected
+Failed reading node for tag High_Analog.Tank01_Level: client is disconnected
+Failed reading node for tag High_Analog.Tank01_Level: client is disconnected
+Failed reading node for tag High_Analog.Tank01_Level: client is disconnected
+Failed reading node for tag High_Analog.Tank01_Level: client is disconnected
+close_session was called but connection is closed
+close_secure_channel was called but connection is closed
+ok
+test_02_bad_quality_stale_data_isolation (test_operational_failures.TestOperationalFailures.test_02_bad_quality_stale_data_isolation)
+Failure 2: Bad Quality status code must NEVER be converted to False/0 or trigger false OFF alarms. ... ok
+test_03_user_pause_and_stop_controls (test_operational_failures.TestOperationalFailures.test_03_user_pause_and_stop_controls)
+Failure 3: User Pause and Stop controls manage background engine safely without orphan threads. ... ok
+test_04_app_restart_zero_auto_start (test_operational_failures.TestOperationalFailures.test_04_app_restart_zero_auto_start)
+Failure 4: App initialization with pre-existing active tasks must remain strictly STOPPED. ... 
+(process:41877): GLib-GIO-CRITICAL **: 10:47:59.032: g_application_set_application_id: assertion 'application_id == NULL || g_application_id_is_valid (application_id)' failed
+
+(process:41877): Gtk-CRITICAL **: 10:47:59.033: New application windows must be added after the GApplication::startup signal has been emitted.
+
+(process:41877): Gtk-WARNING **: 10:47:59.033: Use GtkSettings:gtk-interface-color-scheme instead
+ok
+test_05_sqlite_disk_full_and_permission_denied (test_operational_failures.TestOperationalFailures.test_05_sqlite_disk_full_and_permission_denied)
+Failure 5: When database size reaches limit, storage refuses new writes gracefully without crashing. ... Database size limit exceeded (500 bytes). Skipping observation write.
+Database size limit exceeded (500 bytes). Skipping observation write.
+ok
+test_06_outbox_crash_recovery_sending_to_unknown (test_operational_failures.TestOperationalFailures.test_06_outbox_crash_recovery_sending_to_unknown)
+Failure 6: Cold start retains the Telegram job without automatically resending. ... ok
+test_07_duplicate_delivery_risk_analysis (test_operational_failures.TestOperationalFailures.test_07_duplicate_delivery_risk_analysis)
+Failure 7: Sustained threshold violations over consecutive cycles are deduplicated to prevent spam. ... Task triggered: Tank High: High_Analog.Tank01_Level = 83.00 m เกินเกณฑ์ที่กำหนด (> 82.50) -> Event evt_addb4710cede enqueued
+ok
+test_08_certificate_changed_or_expired_quarantine (test_operational_failures.TestOperationalFailures.test_08_certificate_changed_or_expired_quarantine)
+Failure 8: Expired certificate or unexpected thumbprint change is quarantined and rejected. ... ok
+test_09_tasks_enabled_monitoring_stopped_safety (test_operational_failures.TestOperationalFailures.test_09_tasks_enabled_monitoring_stopped_safety)
+Failure 9: Tasks configured with enabled=True produce zero network activity when engine is STOPPED. ... ok
+test_10_strict_readonly_and_zero_unauthorized_probes (test_operational_failures.TestOperationalFailures.test_10_strict_readonly_and_zero_unauthorized_probes)
+Failure 10: Verify source code contains zero write calls and zero network ping probes. ... ok
+test_ack_notification_and_source_counters_keep_cached_provenance (test_presentation.PresentationTests.test_ack_notification_and_source_counters_keep_cached_provenance) ... ok
+test_bad_and_unconfirmed_values_do_not_become_off (test_presentation.PresentationTests.test_bad_and_unconfirmed_values_do_not_become_off) ... ok
+test_bearer_and_quoted_json_secret_values_are_redacted_completely (test_presentation.PresentationTests.test_bearer_and_quoted_json_secret_values_are_redacted_completely) ... ok
+test_central_accepted_and_gateway_ack_are_distinct_receipts (test_presentation.PresentationTests.test_central_accepted_and_gateway_ack_are_distinct_receipts) ... ok
+test_fresh_status_timestamp_cannot_refresh_an_old_sample (test_presentation.PresentationTests.test_fresh_status_timestamp_cannot_refresh_an_old_sample) ... ok
+test_gateway_delivery_unknown_has_independent_provenance (test_presentation.PresentationTests.test_gateway_delivery_unknown_has_independent_provenance) ... ok
+test_idle_never_invents_live_hostnames_or_nic_addresses (test_presentation.PresentationTests.test_idle_never_invents_live_hostnames_or_nic_addresses) ... ok
+test_missing_gateway_placeholder_zero_is_not_an_observed_zero (test_presentation.PresentationTests.test_missing_gateway_placeholder_zero_is_not_an_observed_zero) ... ok
+test_no_per_item_receipt_last_good_or_os_login_is_fabricated (test_presentation.PresentationTests.test_no_per_item_receipt_last_good_or_os_login_is_fabricated) ... ok
+test_null_optional_containers_and_extreme_timestamp_fail_to_unknown (test_presentation.PresentationTests.test_null_optional_containers_and_extreme_timestamp_fail_to_unknown) ... ok
+test_old_sample_and_future_clock_are_unknown_without_mutating_raw_quality (test_presentation.PresentationTests.test_old_sample_and_future_clock_are_unknown_without_mutating_raw_quality) ... ok
+test_partial_local_total_reports_coverage_and_not_a_complete_zero (test_presentation.PresentationTests.test_partial_local_total_reports_coverage_and_not_a_complete_zero) ... ok
+test_real_file_is_not_labelled_live_wincc_and_zero_is_preserved (test_presentation.PresentationTests.test_real_file_is_not_labelled_live_wincc_and_zero_is_preserved) ... ok
+test_runtime_unavailable_cannot_display_file_or_simulated_readings (test_presentation.PresentationTests.test_runtime_unavailable_cannot_display_file_or_simulated_readings) ... ok
+test_safe_view_excludes_secrets_and_does_not_mutate_backend_state (test_presentation.PresentationTests.test_safe_view_excludes_secrets_and_does_not_mutate_backend_state) ... ok
+test_stale_gateway_cannot_advertise_verified_internet (test_presentation.PresentationTests.test_stale_gateway_cannot_advertise_verified_internet) ... ok
+test_reported_simulation_is_visible_even_when_selected_source_is_file (test_presentation.ReportedModeTests.test_reported_simulation_is_visible_even_when_selected_source_is_file) ... ok
+test_existing_private_mapping_keeps_exact_tag_node_and_namespace (test_private_runtime.PrivateRuntimeTests.test_existing_private_mapping_keeps_exact_tag_node_and_namespace) ... ok
+test_explicit_private_catalog_has_priority_and_missing_does_not_fallback (test_private_runtime.PrivateRuntimeTests.test_explicit_private_catalog_has_priority_and_missing_does_not_fallback) ... ok
+test_new_install_mapping_is_an_empty_template (test_private_runtime.PrivateRuntimeTests.test_new_install_mapping_is_an_empty_template) ... ok
+test_private_profile_catalog_precedes_legacy_downloads (test_private_runtime.PrivateRuntimeTests.test_private_profile_catalog_precedes_legacy_downloads) ... ok
+test_gateway_received_values_are_not_reported_as_live_agent_or_lab (test_production.ActualBindingTests.test_gateway_received_values_are_not_reported_as_live_agent_or_lab) ... ok
+test_certificate_change_invalidates_permission_material (test_production.ActualProfileTests.test_certificate_change_invalidates_permission_material) ... ok
+test_no_lab_fallback_for_missing_real_csv (test_production.ActualProfileTests.test_no_lab_fallback_for_missing_real_csv) ... ok
+test_real_profile_is_private_and_never_creates_fixture (test_production.ActualProfileTests.test_real_profile_is_private_and_never_creates_fixture) ... ok
+test_source_storage_overlap_rejected_without_source_writes (test_production.ActualProfileTests.test_source_storage_overlap_rejected_without_source_writes) ... ok
+test_tag_and_source_changes_preserve_source_dataset_identity (test_production.ActualProfileTests.test_tag_and_source_changes_preserve_source_dataset_identity) ... ok
+test_validation_prepares_no_runtime_and_rejects_unsafe_modes (test_production.ActualProfileTests.test_validation_prepares_no_runtime_and_rejects_unsafe_modes) ... ok
+test_failed_outbox_insert_does_not_advance_task_or_report_an_event (test_task_alert_atomicity.TaskAlertAtomicityTests.test_failed_outbox_insert_does_not_advance_task_or_report_an_event) ... Failed atomic event & outbox commit: test outbox failure
+Task lab trigger was not committed
+Task triggered: Untitled Task: LAB.TAG = 9.00  เกินเกณฑ์ที่กำหนด (> 5.00) -> Event evt_2c52b0dbbeb7 enqueued
+ok
+test_task_round_trip_keeps_schema_and_unknown_fields (test_task_persistence_audit.TestTaskPersistenceSafetyAudit.test_task_round_trip_keeps_schema_and_unknown_fields) ... ok
+test_write_failure_reaches_workspace_caller (test_task_persistence_audit.TestTaskPersistenceSafetyAudit.test_write_failure_reaches_workspace_caller) ... SEC-02: Error atomic saving /tmp/tmpyop92rcr/not-a-directory/wincc_tasks.json [pre-commit]: [Errno 20] Not a directory: '/tmp/tmpyop92rcr/not-a-directory/.wincc_tasks.json.9fea7aa587012f9f.tmp'
+Error saving tasks: SEC-02: [pre-commit] [Errno 20] Not a directory: '/tmp/tmpyop92rcr/not-a-directory/.wincc_tasks.json.9fea7aa587012f9f.tmp'
+ok
+test_parse_column_mismatch_and_incomplete_rows (test_wincc_parser.TestWinCCExportParser.test_parse_column_mismatch_and_incomplete_rows) ... ok
+test_parse_empty_and_non_existent (test_wincc_parser.TestWinCCExportParser.test_parse_empty_and_non_existent) ... ok
+test_parse_full_synthetic_export_file (test_wincc_parser.TestWinCCExportParser.test_parse_full_synthetic_export_file) ... [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/app.py:699: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7fce3f187220>
+  tags.append({
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_parse_utf16_le_bom (test_wincc_parser.TestWinCCExportParser.test_parse_utf16_le_bom) ... ok
+test_parse_utf8_bom_odd_and_even_lengths (test_wincc_parser.TestWinCCExportParser.test_parse_utf8_bom_odd_and_even_lengths) ... ok
+
+(process:41877): Gtk-WARNING **: 10:47:59.972: Use GtkSettings:gtk-interface-color-scheme instead
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:01.189: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+test_01_synthetic_catalog_and_search (test_workspace_production.TestWorkspaceProductionIntegration.test_01_synthetic_catalog_and_search) ... ok
+test_02_f2_opens_task_popup_on_overview (test_workspace_production.TestWorkspaceProductionIntegration.test_02_f2_opens_task_popup_on_overview) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:01.833: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_03_task_fields_and_tags_round_trip (test_workspace_production.TestWorkspaceProductionIntegration.test_03_task_fields_and_tags_round_trip) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_04_single_add_undo_and_bulk_membership (test_workspace_production.TestWorkspaceProductionIntegration.test_04_single_add_undo_and_bulk_membership) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.047: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.095: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+ok
+test_05_inspector_opens_without_claiming_live_values (test_workspace_production.TestWorkspaceProductionIntegration.test_05_inspector_opens_without_claiming_live_values) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.128: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.204: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_06_failed_editor_save_keeps_draft_and_original_file (test_workspace_production.TestWorkspaceProductionIntegration.test_06_failed_editor_save_keeps_draft_and_original_file) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.254: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+ok
+test_07_catalog_columns_align_with_long_task_name (test_workspace_production.TestWorkspaceProductionIntegration.test_07_catalog_columns_align_with_long_task_name) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.281: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_08_selection_and_details_are_separate (test_workspace_production.TestWorkspaceProductionIntegration.test_08_selection_and_details_are_separate) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.548: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_09_task_editor_shows_nine_plain_rows (test_workspace_production.TestWorkspaceProductionIntegration.test_09_task_editor_shows_nine_plain_rows) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:02.642: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_10_f6_sections_and_local_telegram_save (test_workspace_production.TestWorkspaceProductionIntegration.test_10_f6_sections_and_local_telegram_save) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_11_f6_uses_available_width (test_workspace_production.TestWorkspaceProductionIntegration.test_11_f6_uses_available_width) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+
+(process:41877): Gtk-WARNING **: 10:48:03.385: Trying to measure GtkBox 0x559a20725f50 for width of 717, but it needs at least 718
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_01_wcag_aa_table_contrast (test_workspace_v2_presentation.TestWorkspaceV2Presentation.test_01_wcag_aa_table_contrast)
+Verify contrast ratios for all table states meet WCAG AA (>= 4.5:1) with Industrial Graphite tokens ... ok
+test_05_verified_group_metadata (test_workspace_v2_presentation.TestWorkspaceV2Presentation.test_05_verified_group_metadata)
+Verify all 10 real equipment groups have factual Thai translations without guesswork ... ok
+
+======================================================================
+ERROR: test_late_demo_callback_cannot_update_live_status (test_f3_continuation.TestF3Continuation.test_late_demo_callback_cannot_update_live_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 95, in test_late_demo_callback_cannot_update_live_status
+    callback = detect.call_args.args[2]
+               ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'args'
+
+======================================================================
+ERROR: test_switching_to_live_clears_demo_observations (test_f3_continuation.TestF3Continuation.test_switching_to_live_clears_demo_observations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 79, in test_switching_to_live_clears_demo_observations
+    self.view.store.devices["PC1"].update({
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/f3_network.py", line 385, in __getitem__
+    raise KeyError(key)
+KeyError: 'PC1'
+
+======================================================================
+ERROR: test_unverified_wan_has_no_online_badge_or_verified_flow (test_f3_continuation.TestF3Continuation.test_unverified_wan_has_no_online_badge_or_verified_flow)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 134, in test_unverified_wan_has_no_online_badge_or_verified_flow
+    self.assertEqual(draw.call_args_list[1].args[-1], ConnectionState.UNKNOWN)
+                     ~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+ERROR: test_identity_08_demo_data_isolated_from_live (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_08_demo_data_isolated_from_live)
+8. Verify DEMO mode uses clearly labeled synthetic hostnames with [DEMO].
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_network_topology.py", line 506, in test_identity_08_demo_data_isolated_from_live
+    disp_name, status = compute_display_name(view.store.devices["dev-scada-01"], is_demo=True)
+                                             ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/f3_network.py", line 385, in __getitem__
+    raise KeyError(key)
+KeyError: 'dev-scada-01'
+
+======================================================================
+ERROR: test_default_stations_fit_a_shorter_operator_viewport (test_f3_usability.TestF3Usability.test_default_stations_fit_a_shorter_operator_viewport)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_usability.py", line 103, in test_default_stations_fit_a_shorter_operator_viewport
+    _, y, _, height = self.view.canvas.node_rects[name]
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+KeyError: 'PC3'
+
+======================================================================
+FAIL: test_collector_does_not_draw_unverified_wan_as_link_up (test_f3_continuation.TestF3Continuation.test_collector_does_not_draw_unverified_wan_as_link_up)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 160, in test_collector_does_not_draw_unverified_wan_as_link_up
+    self.assertIn("NOT VERIFIED", labels)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'NOT VERIFIED' not found in ['fedora', 'IP Unknown', 'ยังไม่ได้ตรวจสอบ (UNKNOWN)', 'SCADA_OT: UNASSIGNED / UNKNOWN', 'EXTERNAL_WAN: UNASSIGNED / UNKNOWN']
+
+======================================================================
+FAIL: test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='detect_opcua_session')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 113, in test_remote_opcua_actions_require_existing_authorization_gate
+    engine.assert_called_once()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib64/python3.15/unittest/mock.py", line 965, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'detect_opcua_session' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='read_opcua_single_tag')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 110, in test_remote_opcua_actions_require_existing_authorization_gate
+    dialog.assert_called_once()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib64/python3.15/unittest/mock.py", line 965, in assert_called_once
+    raise AssertionError(msg)
+AssertionError: Expected 'OTAuthorizationDialog' to have been called once. Called 0 times.
+
+======================================================================
+FAIL: test_verified_connections_render_and_animate (test_f3_continuation.TestF3Continuation.test_verified_connections_render_and_animate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_continuation.py", line 146, in test_verified_connections_render_and_animate
+    self.assertNotEqual(first_frame, bytes(surface.get_data()))
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [REDACTED_RENDERED_BYTES length=9127226] == [REDACTED_RENDERED_BYTES length=9127226]
+
+======================================================================
+FAIL: test_closing_the_main_window_closes_its_popup (test_f3_details_window.TestF3DetailsWindow.test_closing_the_main_window_closes_its_popup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 117, in test_closing_the_main_window_closes_its_popup
+    popup = self.popup()
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 55, in popup
+    self.assertIsNot(root, self.window, "Details must use a separate window")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly identical: <Gtk.Window object at 0x7fce4daa3a80 (GtkWindow at 0x559a21498340)> : Details must use a separate window
+
+======================================================================
+FAIL: test_remote_confirmation_uses_the_popup_without_starting_a_probe (test_f3_details_window.TestF3DetailsWindow.test_remote_confirmation_uses_the_popup_without_starting_a_probe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 108, in test_remote_confirmation_uses_the_popup_without_starting_a_probe
+    popup = self.popup()
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 55, in popup
+    self.assertIsNot(root, self.window, "Details must use a separate window")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly identical: <Gtk.Window object at 0x7fce4daf27c0 (GtkWindow at 0x559a21b225d0)> : Details must use a separate window
+
+======================================================================
+FAIL: test_reuses_closes_and_reopens_the_same_window (test_f3_details_window.TestF3DetailsWindow.test_reuses_closes_and_reopens_the_same_window)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 75, in test_reuses_closes_and_reopens_the_same_window
+    popup = self.popup()
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 55, in popup
+    self.assertIsNot(root, self.window, "Details must use a separate window")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly identical: <Gtk.Window object at 0x7fce4db01e00 (GtkWindow at 0x559a23b550c0)> : Details must use a separate window
+
+======================================================================
+FAIL: test_selection_opens_a_floating_owned_window (test_f3_details_window.TestF3DetailsWindow.test_selection_opens_a_floating_owned_window)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 59, in test_selection_opens_a_floating_owned_window
+    self.assertFalse(self.view.inspector.get_visible())
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_settings_are_owned_by_the_details_window (test_f3_details_window.TestF3DetailsWindow.test_settings_are_owned_by_the_details_window)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 91, in test_settings_are_owned_by_the_details_window
+    popup = self.popup()
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_details_window.py", line 55, in popup
+    self.assertIsNot(root, self.window, "Details must use a separate window")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly identical: <Gtk.Window object at 0x7fcec3d7b8c0 (GtkWindow at 0x559a24d53360)> : Details must use a separate window
+
+======================================================================
+FAIL: test_01_f3_rendering_bounds (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_01_f3_rendering_bounds)
+1. Verify F3 initializes and renders within bounds at 1366x768, 1600x900, 1920x1080 without window overflow.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_network_topology.py", line 104, in test_01_f3_rendering_bounds
+    self.assertGreaterEqual(view.canvas.get_content_height(), 450)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 340 not greater than or equal to 450
+
+======================================================================
+FAIL: test_03_status_led_updates (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_03_status_led_updates)
+3. Verify device status LED and badge change according to actual state.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_network_topology.py", line 136, in test_03_status_led_updates
+    self.assertEqual(card.lbl_badge.get_text(), "REACHABLE")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'UNKNOWN' != 'REACHABLE'
+- UNKNOWN
++ REACHABLE
+
+
+======================================================================
+FAIL: test_compat_ip_table_update (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_ip_table_update)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_network_topology.py", line 409, in test_compat_ip_table_update
+    self.assertTrue(found_new_ip)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_identity_12_regression_f1_f2_f6_all_pass (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_12_regression_f1_f2_f6_all_pass)
+12. Verify full system regression: F1, F2, F6 tabs and underlying engines remain intact.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_network_topology.py", line 548, in test_identity_12_regression_f1_f2_f6_all_pass
+    self.assertEqual(len(win.scanned_tags), 457)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 457
+
+======================================================================
+FAIL: test_list_explains_status_and_accounts_for_configured_devices (test_f3_usability.TestF3Usability.test_list_explains_status_and_accounts_for_configured_devices)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_usability.py", line 108, in test_list_explains_status_and_accounts_for_configured_devices
+    self.assertEqual(self.view.cards["PC1"].lbl_summary.get_text(), "ยังไม่ได้ตรวจสอบ")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'ยังไม่ได้ตรวจสอบ (UNKNOWN)' != 'ยังไม่ได้ตรวจสอบ'
+- ยังไม่ได้ตรวจสอบ (UNKNOWN)
+?                 ----------
++ ยังไม่ได้ตรวจสอบ
+
+
+======================================================================
+FAIL: test_live_actions_describe_the_implemented_capability (test_f3_usability.TestF3Usability.test_live_actions_describe_the_implemented_capability)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_usability.py", line 81, in test_live_actions_describe_the_implemented_capability
+    self.assertIn("พอร์ต", self.view.inspector.btn_test_opc.get_label())
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'พอร์ต' not found in 'ทดสอบ Secure Session'
+
+======================================================================
+FAIL: test_startup_gives_the_diagram_full_attention (test_f3_usability.TestF3Usability.test_startup_gives_the_diagram_full_attention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_f3_usability.py", line 50, in test_startup_gives_the_diagram_full_attention
+    self.assertFalse(self.view.inspector.get_visible(), "Details should open after device selection")
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false : Details should open after device selection
+
+----------------------------------------------------------------------
+Ran 313 tests in 70.716s
+
+FAILED (failures=16, errors=5)
+/usr/lib64/python3.15/asyncio/base_events.py:763: ResourceWarning: unclosed event loop <_UnixSelectorEventLoop running=False closed=False debug=False>
+
+AUDIT_EXIT_CODE=1

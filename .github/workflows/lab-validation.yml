@@ -1,0 +1,72 @@
+name: AQUA LAB validation
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  node-lab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run web and Gateway tests with loopback only
+        run: |
+          docker run --rm --network none -e HOME=/tmp -v "$PWD:/src:ro" node:22-bookworm \
+            sh -ec 'node --check /src/aqua-command/server.mjs
+              node --check /src/aqua-command/public/app.js
+              npm test --prefix /src/aqua-command
+              npm test --prefix /src/aqua-command-desktop/backend'
+      - name: Check evidence and generated files
+        run: |
+          git show --format= --check HEAD
+          bash aqua-command-desktop/scripts/no_fake_check.sh
+
+  rpm-lab:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fedora: ['44', '45']
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Build twice and install RPM
+        run: |
+          output=$(mktemp -d)
+          source_epoch=$(git log -1 --format=%ct)
+          docker run --name aqua-rpm-lab -e SOURCE_DATE_EPOCH="$source_epoch" \
+            -v "$PWD:/src:ro" -v "$output:/output" "registry.fedoraproject.org/fedora:${{ matrix.fedora }}" \
+            sh -ec 'dnf -y install rpm-build tar gzip findutils
+              sh /src/aqua-command-desktop/packaging/build-rpm.sh /output/first
+              sh /src/aqua-command-desktop/packaging/build-rpm.sh /output/second
+              cmp /output/first/RPMS/noarch/*.rpm /output/second/RPMS/noarch/*.rpm
+              sha256sum /output/first/RPMS/noarch/*.rpm
+              dnf -y --setopt=install_weak_deps=False install /output/first/RPMS/noarch/*.rpm'
+          docker commit aqua-rpm-lab aqua-rpm-lab:installed
+          docker run --rm --network none -e HOME=/tmp aqua-rpm-lab:installed aqua-command --help
+
+  windows-reader-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run Reader Core with loopback only
+        run: |
+          docker run --rm --network none -e DOTNET_CLI_TELEMETRY_OPTOUT=1 -v "$PWD:/src:ro" \
+            mcr.microsoft.com/dotnet/sdk:10.0 sh -ec '
+              cp -R /src/aqua-command-desktop/windows-reader /tmp/reader
+              dotnet run --project /tmp/reader/Tests/Aqua.Reader.Tests.csproj -c Release'
+      - name: Cross-build the Windows candidate
+        run: |
+          docker run --rm -e DOTNET_CLI_TELEMETRY_OPTOUT=1 -v "$PWD:/src:ro" \
+            mcr.microsoft.com/dotnet/sdk:10.0 sh -ec '
+              mkdir /tmp/aqua
+              cp -R /src/aqua-command-desktop/windows-reader /src/aqua-command-desktop/packaging /tmp/aqua/
+              sh /tmp/aqua/packaging/build-windows.sh /tmp/release
+              sha256sum /tmp/release/*.exe'

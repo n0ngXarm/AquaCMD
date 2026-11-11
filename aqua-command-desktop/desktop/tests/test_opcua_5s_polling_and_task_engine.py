@@ -83,10 +83,10 @@ class MockTelegramHandler(BaseHTTPRequestHandler):
         })
 
         if MockTelegramHandler.fail_requests:
-            self.send_response(503)
+            self.send_response(429)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(b'{"ok": false, "error_code": 503, "description": "Service Unavailable"}')
+            self.wfile.write(b'{"ok": false, "error_code": 429, "description": "Rate limited"}')
         else:
             self.send_response(MockTelegramHandler.return_code)
             self.send_header("Content-Type", "application/json")
@@ -552,7 +552,7 @@ class TestOpcUa5sPollingAndTaskEngine(unittest.TestCase):
     # Test 9: Outbox Crash Recovery
     # =========================================================================
     def test_09_outbox_crash_recovery(self):
-        """Verifies items stuck in SENDING state during a crash are recovered to PENDING."""
+        """Verifies items stuck in SENDING state during a crash are held as DELIVERY_UNKNOWN."""
         # Insert an event and an outbox item directly in SENDING state
         evt = TaskEvent("evt_test_crash", "task_01", "Task Crash", "Tag1", "threshold_above", 85.0, 80.0, "Desc")
         self.storage.record_event_and_enqueue_outbox(evt, [("telegram", "999", {"msg": "Crash test"})])
@@ -569,10 +569,10 @@ class TestOpcUa5sPollingAndTaskEngine(unittest.TestCase):
         recovered = self.storage.recover_uncommitted_outbox()
         self.assertEqual(recovered, 1)
 
-        # Item must be back in PENDING
-        pending_after = self.storage.get_pending_outbox_items()
-        self.assertEqual(len(pending_after), 1)
-        self.assertEqual(pending_after[0].outbox_id, out_id)
+        self.assertEqual(self.storage.get_pending_outbox_items(), [])
+        with self.storage._get_connection() as conn:
+            item = conn.execute("SELECT outbox_id, status FROM notification_outbox").fetchone()
+        self.assertEqual(tuple(item), (out_id, "DELIVERY_UNKNOWN"))
 
     # =========================================================================
     # Test 10: Offline Network Outage & Notification Retry with Backoff
@@ -590,7 +590,7 @@ class TestOpcUa5sPollingAndTaskEngine(unittest.TestCase):
         evt = TaskEvent("evt_tg_1", "task_tg", "Water Alert", "High_Analog.Tank01_Level", "threshold_above", 83.0, 82.5, "High Water")
         self.storage.record_event_and_enqueue_outbox(evt, [("telegram", "12345678", {"value": 83.0, "unit": "m"})])
 
-        # 1. Simulate network failure / 503 error
+        # 1. Simulate a definitive rate-limit rejection
         MockTelegramHandler.fail_requests = True
         worker.start()
 

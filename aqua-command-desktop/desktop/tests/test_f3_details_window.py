@@ -1,4 +1,4 @@
-"""Verify that F3 details float above the unchanged main diagram."""
+"""Historical test IDs retained: current dock ownership; active WebKit lifecycle has separate coverage."""
 import sys
 import tempfile
 import time
@@ -52,17 +52,20 @@ class TestF3DetailsWindow(unittest.TestCase):
     def popup(self):
         root = self.view.inspector.get_root()
         self.assertIsInstance(root, Gtk.Window)
-        self.assertIsNot(root, self.window, "Details must use a separate window")
+        self.assertIs(root, self.window, "Docked details must belong to the real owner")
+        self.assertIs(self.view.inspector.get_parent(), self.view.main_split)
+        self.assertIsNone(self.view.details_window)
         return root
 
     def test_selection_opens_a_floating_owned_window(self):
-        self.assertFalse(self.view.inspector.get_visible())
-        self.view.select_device("PC1")
+        # G13: current library docks details; no second native window is created.
+        self.assertTrue(self.view.inspector.get_visible())
+        self.view.select_device('PC1')
         self.spin()
-        popup = self.popup()
-        self.assertTrue(popup.get_visible())
-        self.assertIs(popup.get_transient_for(), self.window)
-        self.assertFalse(popup.get_modal())
+        self.assertIs(self.popup(), self.window)
+        self.assertTrue(self.view.inspector.get_mapped())
+        self.assertEqual(self.view.inspector.current_device_id, 'PC1')
+        self.assertFalse(self.window.get_modal())
 
     def test_opening_details_preserves_the_full_diagram_width(self):
         width = self.view.canvas.get_width()
@@ -71,20 +74,21 @@ class TestF3DetailsWindow(unittest.TestCase):
         self.assertEqual(self.view.canvas.get_width(), width)
 
     def test_reuses_closes_and_reopens_the_same_window(self):
-        self.view.select_device("PC1")
-        popup = self.popup()
-        self.view.select_device("PC2")
-        self.assertIs(self.popup(), popup)
-        address = self.view.store.devices["PC2"]["configured_ip"]
-        self.assertIn(address, popup.get_title())
-        popup.close()
+        # G12: reuse the dock; HTML dialog close/reopen/focus is tested in the active view.
+        self.view.select_device('PC1')
+        inspector = self.view.inspector
+        self.view.select_device('PC2')
+        self.assertIs(self.view.inspector, inspector)
+        self.assertIs(self.popup(), self.window)
+        self.assertEqual(inspector.current_device_id, 'PC2')
+        self.assertIn(self.view.store.devices['PC2']['configured_ip'], inspector.lbl_disp_name.get_text())
+        self.view.toggle_inspector(False)
         self.spin()
-        self.assertFalse(popup.get_visible())
-        self.assertFalse(self.view.inspector.get_visible())
-        self.view.btn_toggle_insp.emit("clicked")
+        self.assertFalse(inspector.get_visible())
+        self.view.btn_toggle_insp.emit('clicked')
         self.spin()
-        self.assertIs(self.popup(), popup)
-        self.assertTrue(popup.get_visible())
+        self.assertIs(self.view.inspector, inspector)
+        self.assertTrue(inspector.get_mapped())
 
     def test_settings_are_owned_by_the_details_window(self):
         self.view.select_device("PC1")
@@ -113,11 +117,13 @@ class TestF3DetailsWindow(unittest.TestCase):
             probe.assert_not_called()
 
     def test_closing_the_main_window_closes_its_popup(self):
-        self.view.select_device("PC1")
-        popup = self.popup()
+        # G10: no orphan dock after owner destruction; listener teardown is covered separately.
+        self.view.select_device('PC1')
+        self.assertIs(self.popup(), self.window)
         self.window.destroy()
         self.spin()
-        self.assertFalse(popup.get_visible())
+        self.assertFalse(self.view.inspector.get_mapped())
+        self.assertIsNone(self.view.details_window)
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUACMD — PHASE 1A FINAL CLOSURE & PHASE 1B DISCOVERY REPORT
 
-**Repository:** `https://github.com/n0ngXarm/AquaCMD`  
-**Working Branch:** `fix/phase-1a-security-hardening`  
-**Target Baseline Commit (main):** `74027e22426f021a975b7e0d3beaf591234612d8`  
-**Previous Verified Remote HEAD:** `024391f409bedc0fc2bcc1d683bed85c16249d9f`  
+**Repository:** `https://github.com/n0ngXarm/AquaCMD`
+**Working Branch:** `fix/phase-1a-security-hardening`
+**Target Baseline Commit (main):** `74027e22426f021a975b7e0d3beaf591234612d8`
+**Previous Verified Remote HEAD:** `024391f409bedc0fc2bcc1d683bed85c16249d9f`
 **Phase 1A Final Closure Commits:**
 1. `5204811237b914b5cde70e56ac3ecfbb4730dfd5`: `fix(queue): support legacy alert schemas, enforce capacity backpressure and prioritize immutable payload (DATA-02)`
 2. `aa4e21b6392366a123fcea1a59cb61f9b8501d2d`: `fix(security): distinguish pre-commit from post-commit errors and prevent automated retries (SEC-02)`
@@ -134,8 +135,8 @@ As approved under Phase 1B Discovery (Read-Only), an inventory, dependency closu
 ### A. Target Environment
 - **Host Platform:** Fedora Linux 44 (Workstation Edition), Kernel x86_64
 - **Packaging Target:** `aqua-command-desktop-0.9.0-1.fc44.noarch.rpm`
-- **Spec Location:** [`aqua-command-desktop/packaging/aqua-command-desktop.spec`](../../aqua-command-desktop/packaging/aqua-command-desktop.spec)
-- **Build Script:** [`aqua-command-desktop/packaging/build-rpm.sh`](../../aqua-command-desktop/packaging/build-rpm.sh)
+- **Spec Location:** [`aqua-command-desktop/packaging/aqua-command-desktop.spec`](file://[REDACTED_HOME]/Documents/Work_SHCOOL/project_water/AquaCMD/aqua-command-desktop/packaging/aqua-command-desktop.spec)
+- **Build Script:** [`aqua-command-desktop/packaging/build-rpm.sh`](file://[REDACTED_HOME]/Documents/Work_SHCOOL/project_water/AquaCMD/aqua-command-desktop/packaging/build-rpm.sh)
 
 ### B. Dependency Closure & Host Package Availability
 
@@ -192,7 +193,7 @@ index 7334c8f..f80475f 100644
 @@ -172,6 +172,29 @@ TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
  TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
  OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
- 
+
 +class AtomicSaveError(OSError):
 +    """Base error for atomic configuration save failures."""
 +    def __init__(self, message: str, committed: bool = False):
@@ -238,7 +239,7 @@ index 7334c8f..f80475f 100644
                  )
                  if raise_on_error:
 @@ -227,7 +250,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
- 
+
          # Reject overwrite if target file itself is a symlink
          if p.is_symlink():
 -            err = PermissionError(
@@ -254,7 +255,7 @@ index 7334c8f..f80475f 100644
 +                raise PreCommitPermissionError(
                      f"SEC-02: fchmod mode mismatch on temp file {temp_p}: expected {oct(mode)}, got {oct(actual_mode)}"
                  )
- 
+
 @@ -272,7 +295,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
              pre_st = temp_p.stat()
              pre_mode = pre_st.st_mode & 0o777
@@ -263,7 +264,7 @@ index 7334c8f..f80475f 100644
 +                raise PreCommitPermissionError(
                      f"SEC-02: Pre-commit mode mismatch on {temp_p}: expected {oct(mode)}, got {oct(pre_mode)}"
                  )
- 
+
 @@ -290,7 +313,7 @@ def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
                  err_msg = f"SEC-02: Post-commit directory fsync failed on {parent_dir}: {sync_err}"
                  logger.error(err_msg)
@@ -280,9 +281,9 @@ index 7334c8f..f80475f 100644
 -                        raise PermissionError(err_msg)
 +                        raise PostCommitDurabilityError(err_msg)
                      return False
- 
+
          return True
- 
+
 +    except AtomicSaveError as e:
 +        phase = "post-commit" if e.committed else "pre-commit"
 +        logger.error(f"SEC-02: Error atomic saving {filepath} [{phase}]: {e}")
@@ -313,7 +314,7 @@ index 7334c8f..f80475f 100644
 +            else:
 +                raise PreCommitSaveError(f"SEC-02: [{phase}] {e}") from e
          return False
- 
+
  MAX_OPCUA_BROWSE_NODES = 500
 diff --git a/aqua-command-desktop/desktop/tests/test_credential_permissions.py b/aqua-command-desktop/desktop/tests/test_credential_permissions.py
 index a5ef9fa..9b4566c 100644
@@ -322,7 +323,7 @@ index a5ef9fa..9b4566c 100644
 @@ -20,7 +20,14 @@ desktop_dir = Path(__file__).resolve().parent.parent
  if str(desktop_dir) not in sys.path:
      sys.path.insert(0, str(desktop_dir))
- 
+
 -from app import save_atomic_json, IS_WINDOWS
 +from app import (
 +    save_atomic_json,
@@ -332,25 +333,25 @@ index a5ef9fa..9b4566c 100644
 +    PreCommitPermissionError,
 +    PostCommitDurabilityError
 +)
- 
- 
+
+
  class TestCredentialFilePermissions(unittest.TestCase):
 @@ -188,14 +195,50 @@ class TestCredentialFilePermissions(unittest.TestCase):
              return real_fsync(fd)
- 
+
          with patch("os.fsync", side_effect=fail_dir_fsync):
 -            with self.assertRaises(OSError) as ctx:
 +            with self.assertRaises(PostCommitDurabilityError) as ctx:
                  save_atomic_json(test_file, data, mode=0o600)
              self.assertIn("post-commit directory fsync failed", str(ctx.exception).lower())
 +            self.assertTrue(ctx.exception.committed, "Exception must explicitly reflect committed=True")
- 
+
          # Target file must still exist and contain the data (not destroyed)
          self.assertTrue(test_file.exists(), "Target config must never be deleted on post-commit fsync failure")
          with open(test_file, "r", encoding="utf-8") as f:
              saved = json.load(f)
          self.assertEqual(saved["key"], "important_config")
- 
+
 +    def test_post_commit_error_distinction_and_retry_prevention(self):
 +        """SEC-02: Asserts distinct handling between pre-commit failure (retryable) and post-commit error (non-retryable)."""
 +        if IS_WINDOWS:
@@ -496,23 +497,23 @@ index 9e06180..682498d 100644
 +}
  catch (e) {if (e.code!=='ENOENT') console.error('Could not read state:',e.message);}
  const MAX_ALERT_STORE = 400;
- 
+
  function isAlertReferenced(alertId) {
 -  return store.queue.some(j => (j.status === 'pending' || j.status === 'blocked_by_policy') && j.alertId === alertId);
 +  return store.queue.some(j => (j.status === 'pending' || j.status === 'blocked_by_policy' || (j.status === 'failed' && j.attempt < 6)) && j.alertId === alertId);
  }
- 
+
  function canPruneAlert(alert) {
    if (isAlertReferenced(alert.id)) return false;
 -  if (alert.acknowledgedAt === null && alert.resolvedAt === null) return false;
 +  if (!isAlertAcknowledged(alert) && !isAlertResolved(alert)) return false;
    return true;
  }
- 
+
  function canPruneAlerts() {
    return store.alerts.some(canPruneAlert);
  }
- 
+
 -function trimAlerts() {
 -  if (store.alerts.length <= MAX_ALERT_STORE) return;
 -  const excess = store.alerts.length - MAX_ALERT_STORE;
@@ -531,7 +532,7 @@ index 9e06180..682498d 100644
 -    if (j.status === 'pending' || j.status === 'blocked_by_policy') continue;
 +    // NEVER prune pending, blocked_by_policy, or actively retrying jobs
 +    if (j.status === 'pending' || j.status === 'blocked_by_policy' || (j.status === 'failed' && j.attempt < 6)) continue;
- 
+
 -    // Check associated alert
 +    // Check associated alert: keep job if alert is still unacknowledged and unresolved (retaining ACK evidence)
      const alert = store.alerts.find(a => a.id === j.alertId);
@@ -540,7 +541,7 @@ index 9e06180..682498d 100644
 +    if (alert && !isAlertAcknowledged(alert) && !isAlertResolved(alert)) {
 +      continue;
      }
- 
+
      if (j.status === 'sent' || j.status === 'simulated' || (j.status === 'failed' && j.attempt >= 6)) {
 @@ -252,6 +308,13 @@ const uid=()=>crypto.randomUUID().slice(0,8).toUpperCase();
  function createAlert(station,rule,severity,value,{resolved=false,demo=DEMO}={}) {

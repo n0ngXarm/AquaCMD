@@ -1,3 +1,4 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # 🎨 AQUA COMMAND — Visual Design Mockups: F1 Overview
 
 เอกสารนี้แสดงภาพจำลองจริง (Visual Mockups) สำหรับการออกแบบ **พื้นที่เนื้อหาภายในหน้า F1 (Overview)** ใหม่ทั้งหมด โดย**คงโครงสร้างระบบนำทางเดิมไว้ 100% (Global Navigation Freeze)**
@@ -14,9 +15,9 @@
 ## 🖼️ 2. แบบจำลองภาพจริง (Visual Mockups Comparison)
 
 ````carousel
-![Option A — Station Overview Grid](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/mockup_option_a_station_overview.png)
+![Option A — Station Overview Grid]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/mockup_option_a_station_overview.png)
 <!-- slide -->
-![Option B — Station Explorer Master-Detail](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/mockup_option_b_station_explorer.png)
+![Option B — Station Explorer Master-Detail]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/mockup_option_b_station_explorer.png)
 ````
 
 ---

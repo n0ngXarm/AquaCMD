@@ -1,0 +1,1027 @@
+{
+  "scope": "current tracked tree",
+  "files": 551,
+  "private_catalog_comparison": true,
+  "findings": [
+    {
+      "path": "AGENTS.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "aqua-command-desktop/PROJECT_PROGRESS.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "aqua-command-desktop/releases/AquaCommand.WinCCReader-0.9.0-win-x64.exe",
+      "reasons": [
+        "private/runtime/artifact filename",
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "aqua-command-desktop/releases/aqua-command-desktop-0.9.0-1.fc44.noarch.rpm",
+      "reasons": [
+        "private/runtime/artifact filename",
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "aqua-command-desktop/wincc/pump-status-tags.txt",
+      "reasons": [
+        "private/runtime/artifact filename"
+      ]
+    },
+    {
+      "path": "docs/mockups/mockup_option_a_station_overview.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/mockup_option_b1_balanced_industrial.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/mockup_option_b2_refined_technical.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/mockup_option_b_station_explorer.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/mockup_page1_overview_b1_balanced.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/mockup_page1_overview_b2_technical.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/preview_b2_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/preview_b2_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/preview_page1_b1_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/mockups/preview_page1_b1_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_GATE_B1_CONTROLLED_INTEGRATION_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_UNIFIED_WORKSPACE_V1_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_V3_REMEDIATION_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_PRECISION_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_PRECISION_V1_1_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_SPECTRUM_V2_REPORT.md",
+      "reasons": [
+        "personal home path",
+        "known private Tag"
+      ]
+    },
+    {
+      "path": "docs/reports/F1_OVERVIEW_VISUAL_MOCKUPS.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F1_V12_TARGETED_CORRECTION_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F1_V13_COMFORTABLE_DENSITY_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F2_TAG_LIBRARY_TASK_CONFIGURATOR_V4_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F2_TASK_CONFIGURATION_V2_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/F2_TASK_STUDIO_V3_REPORT.md",
+      "reasons": [
+        "personal home path",
+        "known private Tag"
+      ]
+    },
+    {
+      "path": "docs/reports/F2_V4_1_BALANCED_TASK_CONFIGURATOR_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/MODERN_INTERFACE_OVERHAUL_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/PHASE1A1_COMPLETION_REPORT.md",
+      "reasons": [
+        "credential shape"
+      ]
+    },
+    {
+      "path": "docs/reports/PHASE1A_FINAL_CLOSURE_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/UNIFIED_WORKSPACE_PROFESSIONAL_UI_PASS_V2_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/WINCC_SCADA_MOD_REPORT.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G0.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G0_AUDIT_TH.md",
+      "reasons": [
+        "personal home path"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_overview/f1_tag_overview_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_overview/f1_tag_overview_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_overview/f1_task_manager_dialog_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_all_groups_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_all_groups_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_empty_state_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_high_vsd_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v12/f1_v12_properties_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_all_groups_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_all_groups_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_high_valve_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_high_vsd_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v13/f1_v13_properties_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_all_groups_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_all_groups_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_empty_state_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_high_valve_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_high_vsd_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f1_v2/f1_v2_properties_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_current_audit_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_configured_task_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_configured_task_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_current_audit_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_empty_state_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v2/f2_running_autoscan_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_empty_state_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_running_autoscan_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab1_assigned_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab1_assigned_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab1_picker_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab2_settings_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v3/f2_v3_tab3_review_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_assigned_scrolled_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_logging_telegram_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_multigroup_selection_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_new_empty_task_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_running_autoscan_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_task_with_tags_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4/f2_v4_task_with_tags_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_all_groups_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_default_filtered_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_multigroup_selection_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_new_empty_task_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_running_autoscan_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_task_with_tags_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f2_v4_1/f2_v4_1_task_with_tags_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_anim_frame_01.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_anim_frame_02.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_anim_frame_03.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_demo_mode_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_cards_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_cards_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_details_dialog_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_device_settings_dialog_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_diagnostics_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_diagnostics_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_inspector_open_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_ip_table_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_ip_table_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_live_diagram_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_live_diagram_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_ot_authorization_dialog_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_topology_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/f3_network/f3_topology_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/gate_b1_f6_opcua_screenshot.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/preview_real_topology.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/preview_topology.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/preview_topology_v2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_after_scan_f1.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_alarms.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_all_tags.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_autoscan_f2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_autoscan_f2_ready.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_clean_network_f3.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_clean_network_table.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_default_overview_f1.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_default_tasks_f2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_dynamic_overview_f1.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_fresh_empty_f1.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_fresh_empty_f2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_host_diagnostics_f4.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_machine.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_network_table.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_network_topology.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_opcua_settings_f6.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_opcua_stable_f6.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_opcua_tested_f6.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_overview.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_overview_opcua_f1.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_overview_v2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_real_network.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_real_overview.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_real_table.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_tags.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_task_manager.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_tasks_v2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_telegram_settings_f6.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_telegram_tasks_f2.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/scada_telegram_test_result_f6.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/security_gate_f1_screenshot.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/security_gate_f6_screenshot.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f1_collapsed_inspector_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f1_monitoring_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f1_monitoring_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f2_taskmode_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f2_taskmode_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/graphite_f2_unsaved_changes_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f1_collapsed_inspector_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f1_monitoring_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_v2_f2_taskmode_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_default_group_filtered_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f1_monitoring_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f1_monitoring_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f2_taskmode_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_f2_taskmode_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/unified_workspace_multigroup_selection_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f1_inspector_disabled_action_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f1_monitoring_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_add_selected_disabled_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_add_selected_enabled_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_saved_state_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_task_config_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_task_dropdown_open_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_taskmode_1920x1080.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f2_unsaved_changes_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f3_network_regression_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/screenshots/unified_workspace_preview/v3_f6_alarms_regression_1366x768.png",
+      "reasons": [
+        "binary requires separate distribution review"
+      ]
+    },
+    {
+      "path": "docs/tags/pump-status-tags.txt",
+      "reasons": [
+        "private/runtime/artifact filename",
+        "known private Tag"
+      ]
+    }
+  ],
+  "history_clearance": "NOT_EVALUATED"
+}

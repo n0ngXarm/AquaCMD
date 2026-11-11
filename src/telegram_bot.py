@@ -17,15 +17,51 @@ logger = logging.getLogger(__name__)
 class TelegramBot:
     """Handles Telegram Bot interactive commands and polling."""
 
-    def __init__(self, db: Database, pwa: PWAClient, notifier: TelegramNotifier):
+    def __init__(
+        self,
+        db: Database,
+        pwa: PWAClient,
+        notifier: TelegramNotifier,
+        polling_authorized: Optional[bool] = None
+    ):
         self.db = db
         self.pwa = pwa
         self.notifier = notifier
+        self._polling_authorized = polling_authorized
         self.is_running = False
         self.last_update_id = 0
 
+    @property
+    def is_polling_authorized(self) -> bool:
+        """
+        Inbound command polling authorization check (REL-02).
+        Decoupled from outbound notification delivery authorization.
+        Strict default-deny:
+        1. APP_ENV must be strictly 'production'.
+        2. Deployment policy Config.TELEGRAM_INBOUND_POLLING_AUTHORIZED must be True.
+        3. Constructor override can only further restrict/disable polling (polling_authorized=False),
+           never bypass or override the deployment policy to True when deployment policy is False.
+        """
+        env = getattr(Config, "APP_ENV", "").strip().lower()
+        if env != "production":
+            return False
+        deployment_authorized = bool(getattr(Config, "TELEGRAM_INBOUND_POLLING_AUTHORIZED", False))
+        if not deployment_authorized:
+            return False
+        if self._polling_authorized is False:
+            return False
+        return True
+
     def start_polling(self) -> None:
         """Starts the long-polling loop for receiving Telegram commands."""
+        if not self.is_polling_authorized:
+            logger.warning(
+                "Cannot start bot polling: APP_ENV='%s' (polling authorization not granted). "
+                "Egress/Ingress policy prohibits network connection.",
+                Config.APP_ENV
+            )
+            return
+
         if not self.notifier.is_configured:
             logger.error("Cannot start bot polling: TELEGRAM_BOT_TOKEN is not set.")
             return
@@ -40,7 +76,7 @@ class TelegramBot:
                     self.last_update_id = max(self.last_update_id, update.get("update_id", 0))
                     self._handle_update(update)
             except Exception as e:
-                logger.error("Error during bot polling: %s", e)
+                logger.error("Bot polling failed: %s", self.notifier.redact(e))
                 time.sleep(3)
 
     def stop(self) -> None:
@@ -50,11 +86,21 @@ class TelegramBot:
 
     def _get_updates(self, offset: int = 0, timeout: int = 20) -> list[dict[str, Any]]:
         """Calls getUpdates from Telegram API."""
+        if not self.is_polling_authorized:
+            logger.warning(
+                "getUpdates blocked: polling not authorized in '%s' environment (REL-02)",
+                Config.APP_ENV
+            )
+            return []
+
         url = self.notifier._api_url(f"getUpdates?offset={offset}&timeout={timeout}")
         req = urllib.request.Request(url, headers={"User-Agent": "PWA-Water-Bot/1.0"})
-        with urllib.request.urlopen(req, timeout=timeout + 5) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            return data.get("result", [])
+        try:
+            with urllib.request.urlopen(req, timeout=timeout + 5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data.get("result", [])
+        except Exception as error:
+            raise RuntimeError(self.notifier.redact(error)) from None
 
     def _handle_update(self, update: dict[str, Any]) -> None:
         """Dispatches an update to the corresponding handler."""
@@ -70,7 +116,7 @@ class TelegramBot:
             if not text:
                 return
 
-            logger.info("Received command from %s (@%s): %s", chat_id, username, text)
+            logger.info("Received Telegram command: %s", self.notifier.redact(text.split(maxsplit=1)[0], chat_id))
 
             if text.startswith("/start"):
                 self._cmd_start(chat_id, username, first_name)

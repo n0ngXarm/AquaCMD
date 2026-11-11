@@ -1,0 +1,121 @@
+{
+  "contracts-116.txt": {
+    "python_summary": [
+      "Ran 116 tests in 26.723s",
+      "OK"
+    ],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "desktop-broad-p0.txt": {
+    "python_summary": [
+      "Ran 313 tests in 70.716s",
+      "FAILED (failures=16, errors=5)"
+    ],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "1"
+    ]
+  },
+  "focused-security-task-delivery.txt": {
+    "python_summary": [
+      "Ran 27 tests in 11.519s",
+      "OK"
+    ],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "gateway-59-host-loopback.txt": {
+    "python_summary": [],
+    "node_summary": [
+      "# tests 59",
+      "# pass 59",
+      "# fail 0",
+      "# skipped 0"
+    ],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "gtk-compositor.txt": {
+    "python_summary": [],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": []
+  },
+  "native-private-runtime.txt": {
+    "python_summary": [],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "native-rpm-payload-private-runtime.txt": {
+    "python_summary": [],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "payload-gtk-compositor.txt": {
+    "python_summary": [],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": []
+  },
+  "pwa-14.txt": {
+    "python_summary": [
+      "Ran 37 tests in 0.293s",
+      "OK"
+    ],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "pwa-final.txt": {
+    "python_summary": [
+      "Ran 39 tests in 0.259s",
+      "OK"
+    ],
+    "node_summary": [],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "reader-core-59.txt": {
+    "python_summary": [],
+    "node_summary": [],
+    "core": [
+      "PASS 59 core assertions; test doubles only in Tests project"
+    ],
+    "recorded_exit": [
+      "0"
+    ]
+  },
+  "web-20.txt": {
+    "python_summary": [],
+    "node_summary": [
+      "# tests 20",
+      "# pass 20",
+      "# fail 0",
+      "# skipped 0"
+    ],
+    "core": [],
+    "recorded_exit": [
+      "0"
+    ]
+  }
+}

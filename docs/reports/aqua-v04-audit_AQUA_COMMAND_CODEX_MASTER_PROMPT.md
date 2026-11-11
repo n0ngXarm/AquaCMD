@@ -1,3 +1,4 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — MASTER PROMPT FOR CODEX
 ## v0.4 · Real LAN Demo, Offline-first, Isometric UI preserved
 
@@ -94,7 +95,7 @@ Durability / Transfer:
 เพิ่ม persist+fsync/transaction, ACK หลัง commit, retry, dedupe, replay หลัง reboot/restart, queue bounded + log, simulate internet outage บน Gateway. ทดสอบ interruption ก่อน/หลัง ACK และ concurrent exports.
 
 ### G3 — Event Rules + Telegram Transport (Priority 2)
-ทำ state transition และ Telegram Dry-run sink ที่มี mock HTTP server ทดสอบได้; หากมี test bot config จึงเปิด real Telegram. ต้องไม่ยิงทุก snapshot. Central/nongserver เป็น **optional LAB receiver** ไม่ใช่ dependency บังคับของ MVP และห้ามส่งข้อมูลหน้างานจริงออกไปเอง.
+ทำ state transition และ Telegram Dry-run sink ที่มี mock HTTP server ทดสอบได้; หากมี test bot config จึงเปิด real Telegram. ต้องไม่ยิงทุก snapshot. Central/[REDACTED_IDENTITY] เป็น **optional LAB receiver** ไม่ใช่ dependency บังคับของ MVP และห้ามส่งข้อมูลหน้างานจริงออกไปเอง.
 
 ### G4 — UI Integration + Overflow Fix (Priority 2)
 เชื่อม scene และ panel ที่มีอยู่กับข้อมูล Backend จริง; visual regression เทียบ v0.3; แก้ UI overflow และเพิ่ม health/connectivity/queue/diagnostics โดยไม่รื้อหน้าเดิม.

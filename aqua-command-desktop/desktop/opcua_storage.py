@@ -239,9 +239,11 @@ class DurableStorage:
     def record_event_and_enqueue_outbox(
         self,
         event: TaskEvent,
-        outbox_channels: List[Tuple[str, Optional[str], Dict[str, Any]]]
+        outbox_channels: List[Tuple[str, Optional[str], Dict[str, Any]]],
+        *,
+        runtime_state: Optional[TaskRuntimeState] = None,
     ) -> bool:
-        """Atomically saves a triggered TaskEvent and enqueues corresponding outbox items."""
+        """Commit the triggered event, outbox jobs and optional rule state together."""
         now_iso = datetime.now(timezone.utc).isoformat()
         if not event.created_at:
             event.created_at = now_iso
@@ -274,6 +276,10 @@ class DurableStorage:
             ))
 
         with self._lock:
+            if self.is_db_full():
+                self.disk_full_flag = True
+                logger.error("Task event write refused: database size limit reached")
+                return False
             conn = self._get_connection()
             try:
                 conn.execute("BEGIN TRANSACTION;")
@@ -303,10 +309,15 @@ class DurableStorage:
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, outbox_rows)
 
+                if runtime_state is not None:
+                    self._write_runtime_state(conn, runtime_state)
                 conn.commit()
+                self.disk_full_flag = False
                 return True
             except Exception as e:
                 conn.rollback()
+                if getattr(e, "sqlite_errorcode", None) == sqlite3.SQLITE_FULL:
+                    self.disk_full_flag = True
                 logger.error("Failed atomic event & outbox commit: %s", e)
                 return False
             finally:
@@ -334,32 +345,36 @@ class DurableStorage:
             finally:
                 conn.close()
 
+    @staticmethod
+    def _write_runtime_state(conn: sqlite3.Connection, state: TaskRuntimeState):
+        conn.execute("""
+        INSERT INTO task_runtime_state (
+            task_id, active_state, consecutive_samples,
+            last_evaluated_value, last_evaluated_quality,
+            last_evaluated_at, last_triggered_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(task_id) DO UPDATE SET
+            active_state=excluded.active_state,
+            consecutive_samples=excluded.consecutive_samples,
+            last_evaluated_value=excluded.last_evaluated_value,
+            last_evaluated_quality=excluded.last_evaluated_quality,
+            last_evaluated_at=excluded.last_evaluated_at,
+            last_triggered_at=excluded.last_triggered_at
+        """, (
+            state.task_id,
+            state.active_state,
+            state.consecutive_samples,
+            state.last_evaluated_value,
+            state.last_evaluated_quality,
+            state.last_evaluated_at,
+            state.last_triggered_at
+        ))
+
     def save_runtime_state(self, state: TaskRuntimeState):
         with self._lock:
             conn = self._get_connection()
             try:
-                conn.execute("""
-                INSERT INTO task_runtime_state (
-                    task_id, active_state, consecutive_samples,
-                    last_evaluated_value, last_evaluated_quality,
-                    last_evaluated_at, last_triggered_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(task_id) DO UPDATE SET
-                    active_state=excluded.active_state,
-                    consecutive_samples=excluded.consecutive_samples,
-                    last_evaluated_value=excluded.last_evaluated_value,
-                    last_evaluated_quality=excluded.last_evaluated_quality,
-                    last_evaluated_at=excluded.last_evaluated_at,
-                    last_triggered_at=excluded.last_triggered_at
-                """, (
-                    state.task_id,
-                    state.active_state,
-                    state.consecutive_samples,
-                    state.last_evaluated_value,
-                    state.last_evaluated_quality,
-                    state.last_evaluated_at,
-                    state.last_triggered_at
-                ))
+                self._write_runtime_state(conn, state)
                 conn.commit()
             finally:
                 conn.close()
@@ -372,7 +387,7 @@ class DurableStorage:
             try:
                 rows = conn.execute("""
                 SELECT * FROM notification_outbox
-                WHERE status = 'PENDING' AND (next_retry_at IS NULL OR next_retry_at <= ?)
+                WHERE status IN ('PENDING', 'RETRY_PENDING') AND (next_retry_at IS NULL OR next_retry_at <= ?)
                 ORDER BY created_at ASC
                 LIMIT ?
                 """, (now_iso, limit)).fetchall()
@@ -395,15 +410,17 @@ class DurableStorage:
                 conn.close()
         return items
 
-    def mark_outbox_sending(self, outbox_id: str):
+    def mark_outbox_sending(self, outbox_id: str) -> bool:
         with self._lock:
             conn = self._get_connection()
             try:
-                conn.execute(
-                    "UPDATE notification_outbox SET status = 'SENDING' WHERE outbox_id = ?",
+                result = conn.execute(
+                    "UPDATE notification_outbox SET status = 'SENDING' "
+                    "WHERE outbox_id = ? AND status IN ('PENDING', 'RETRY_PENDING')",
                     (outbox_id,)
                 )
                 conn.commit()
+                return result.rowcount == 1
             finally:
                 conn.close()
 
@@ -413,7 +430,7 @@ class DurableStorage:
             conn = self._get_connection()
             try:
                 conn.execute(
-                    "UPDATE notification_outbox SET status = 'SENT', sent_at = ?, last_error = NULL WHERE outbox_id = ?",
+                    "UPDATE notification_outbox SET status = 'SENT', sent_at = ?, last_error = NULL WHERE outbox_id = ? AND status = 'SENDING'",
                     (now_iso, outbox_id)
                 )
                 conn.commit()
@@ -432,13 +449,27 @@ class DurableStorage:
                 ).fetchone()
                 if row:
                     retries = row["retry_count"] + 1
-                    status = "FAILED" if retries >= row["max_retries"] else "PENDING"
+                    status = "FAILED" if retries >= row["max_retries"] else "RETRY_PENDING"
                     conn.execute("""
                     UPDATE notification_outbox
                     SET status = ?, retry_count = ?, next_retry_at = ?, last_error = ?
-                    WHERE outbox_id = ?
+                    WHERE outbox_id = ? AND status = 'SENDING'
                     """, (status, retries, next_try, error_msg[:255], outbox_id))
                     conn.commit()
+            finally:
+                conn.close()
+
+    def hold_outbox(self, outbox_id: str, status: str, reason: str):
+        """Retain a completed, ambiguous or policy-blocked attempt without retry."""
+        with self._lock:
+            conn = self._get_connection()
+            try:
+                conn.execute(
+                    "UPDATE notification_outbox SET status = ?, next_retry_at = NULL, last_error = ? "
+                    "WHERE outbox_id = ? AND status = 'SENDING'",
+                    (status, reason[:255], outbox_id),
+                )
+                conn.commit()
             finally:
                 conn.close()
 
@@ -471,18 +502,21 @@ class DurableStorage:
                 conn.close()
 
     def recover_uncommitted_outbox(self) -> int:
-        """Recovers any items stuck in 'SENDING' state after an unexpected process crash."""
+        """Hold interrupted Telegram sends; only the local relay can be replayed."""
         with self._lock:
             conn = self._get_connection()
             try:
-                cur = conn.execute(
+                unknown = conn.execute(
+                    "UPDATE notification_outbox SET status = 'DELIVERY_UNKNOWN', "
+                    "next_retry_at = NULL, last_error = 'Previous Telegram acceptance could not be confirmed' "
+                    "WHERE channel = 'telegram' AND (status = 'SENDING' OR "
+                    "(status IN ('PENDING', 'FAILED') AND retry_count > 0))"
+                ).rowcount
+                replay = conn.execute(
                     "UPDATE notification_outbox SET status = 'PENDING' WHERE status = 'SENDING'"
-                )
+                ).rowcount
                 conn.commit()
-                recovered = cur.rowcount
-                if recovered > 0:
-                    logger.info("Outbox Recovery: Restored %d uncommitted 'SENDING' items to 'PENDING'", recovered)
-                return recovered
+                return unknown + replay
             finally:
                 conn.close()
 
@@ -583,9 +617,10 @@ class DurableStorage:
             try:
                 obs_cnt = conn.execute("SELECT COUNT(*) FROM tag_observations").fetchone()[0]
                 evt_cnt = conn.execute("SELECT COUNT(*) FROM task_events").fetchone()[0]
-                out_pending = conn.execute("SELECT COUNT(*) FROM notification_outbox WHERE status = 'PENDING'").fetchone()[0]
+                out_pending = conn.execute("SELECT COUNT(*) FROM notification_outbox WHERE status IN ('PENDING', 'RETRY_PENDING')").fetchone()[0]
                 out_sent = conn.execute("SELECT COUNT(*) FROM notification_outbox WHERE status = 'SENT'").fetchone()[0]
                 out_failed = conn.execute("SELECT COUNT(*) FROM notification_outbox WHERE status = 'FAILED'").fetchone()[0]
+                out_unknown = conn.execute("SELECT COUNT(*) FROM notification_outbox WHERE status = 'DELIVERY_UNKNOWN'").fetchone()[0]
                 size_b = self.db_path.stat().st_size if self.db_path.is_file() else 0
                 return {
                     "observations_count": obs_cnt,
@@ -593,6 +628,7 @@ class DurableStorage:
                     "outbox_pending": out_pending,
                     "outbox_sent": out_sent,
                     "outbox_failed": out_failed,
+                    "outbox_delivery_unknown": out_unknown,
                     "db_size_bytes": size_b,
                     "is_full": size_b >= self.max_db_size_bytes
                 }

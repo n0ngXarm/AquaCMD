@@ -1,7 +1,6 @@
 # Hybrid Lab operations
 
 คำสั่งในเอกสารนี้ใช้เฉพาะ isolated Lab ที่สร้างไว้แล้ว จาก `aqua-command-desktop`
-ไม่ใช้กับ nongserver/Production และไม่แก้ systemd, firewall, host routing หรือ SCADA
 ผู้ใช้ทั่วไปเปิดผ่านไอคอน Desktop; คำสั่งด้านล่างสำหรับผู้ดูแล Lab
 
 ## Health และการกู้คืน
@@ -27,7 +26,6 @@ python3 observability/grafana/lab_owner_manage.py start
 ```
 
 การ restart ในการทดสอบที่ผ่านมาแตะเฉพาะสอง container และ owner ของ Lab นี้
-ไม่ restart บริการบน nongserver; การเปลี่ยนบริการที่นั่นต้องผ่าน Dashboard ตามกฎของเครื่องนั้น
 ไม่มีระบบ auto-upgrade; `--pull=never` ใช้ images ที่ตรวจ digest แล้ว
 
 ## ปิด/disable

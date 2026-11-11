@@ -14,19 +14,25 @@ Strict Safety Invariants:
 """
 
 import os
-import sys
 import time
 import json
 import logging
 import threading
 import urllib.request
 import urllib.error
+from urllib.parse import urlsplit
+from ipaddress import ip_address
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 
 from opcua_storage import DurableStorage, OutboxItem
 
 logger = logging.getLogger("aqua.notification")
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 
 class NotificationWorker:
@@ -44,7 +50,8 @@ class NotificationWorker:
         self.poll_interval = poll_interval
         self.rate_limit_per_min = rate_limit_per_min
         self.base_backoff_seconds = base_backoff_seconds
-        self.mock_endpoint_url = mock_endpoint_url or os.environ.get("AQUA_MOCK_TELEGRAM_URL")  # e.g. "http://127.0.0.1:8088"
+        self.mock_endpoint_url = mock_endpoint_url or os.environ.get("AQUA_MOCK_TELEGRAM_URL")
+        self._opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
 
         self.running = False
         self.thread: Optional[threading.Thread] = None
@@ -60,11 +67,10 @@ class NotificationWorker:
 
     def start(self):
         with self._lock:
-            if self.running:
+            if self.running or (self.thread and self.thread.is_alive()):
                 return
-            self.running = True
-            # Crash recovery on worker startup
             self.storage.recover_uncommitted_outbox()
+            self.running = True
             self.thread = threading.Thread(target=self._worker_loop, daemon=True, name="AquaNotificationWorker")
             self.thread.start()
             logger.info("NotificationWorker started (interval: %.1fs, rate limit: %d/min)", self.poll_interval, self.rate_limit_per_min)
@@ -76,7 +82,10 @@ class NotificationWorker:
             self.running = False
         if self.thread and self.thread.is_alive():
             self.thread.join(timeout=timeout)
-        logger.info("NotificationWorker stopped cleanly.")
+        if self.thread and self.thread.is_alive():
+            logger.warning("NotificationWorker still finishing an in-flight request")
+        else:
+            logger.info("NotificationWorker stopped")
 
     def _worker_loop(self):
         while self.running:
@@ -108,49 +117,40 @@ class NotificationWorker:
         self._sent_timestamps.append(time.monotonic())
 
     def _process_outbox_item(self, item: OutboxItem):
-        self.storage.mark_outbox_sending(item.outbox_id)
-        success = False
-        http_code = None
-        resp_body = None
-        err_msg = None
-
+        if not self.storage.mark_outbox_sending(item.outbox_id):
+            return
+        self._record_rate_limit_send()
         try:
             if item.channel == "telegram":
-                success, http_code, resp_body, err_msg = self._dispatch_telegram(item)
+                status, code, receipt, reason, retry_after = self._dispatch_telegram(item)
             elif item.channel == "mock_relay":
-                success, http_code, resp_body, err_msg = self._dispatch_mock_relay(item)
+                status, code, receipt, reason, retry_after = "SIMULATED", None, None, "Local simulation only", 0
             else:
-                err_msg = f"Unknown channel: {item.channel}"
-                success = False
-        except Exception as ex:
-            err_msg = str(ex)
-            success = False
-
-        if success:
-            self._record_rate_limit_send()
-            self.storage.mark_outbox_sent(item.outbox_id)
-            self.storage.record_delivery_attempt(
-                outbox_id=item.outbox_id,
-                status="SUCCESS",
-                http_status=http_code,
-                response_body=resp_body
+                status, code, receipt, reason, retry_after = "FAILED", None, None, "Unknown channel", 0
+        except Exception:
+            status, code, receipt, reason, retry_after = (
+                "DELIVERY_UNKNOWN", None, None, "Delivery acceptance could not be confirmed", 0
             )
+
+        if status == "SENT":
+            self.storage.mark_outbox_sent(item.outbox_id)
             self.delivered_count += 1
             self.last_delivery_time = datetime.now(timezone.utc).isoformat()
-            logger.info("Outbox item %s delivered successfully to %s", item.outbox_id, item.channel)
-        else:
-            backoff = min(300.0, self.base_backoff_seconds * (2 ** item.retry_count))
-            self.storage.mark_outbox_retry(item.outbox_id, err_msg or "Delivery failed", backoff)
-            self.storage.record_delivery_attempt(
-                outbox_id=item.outbox_id,
-                status="FAILURE",
-                http_status=http_code,
-                response_body=resp_body,
-                error_message=err_msg
-            )
+        elif status == "RETRY_PENDING":
+            backoff = max(retry_after, min(300.0, self.base_backoff_seconds * (2 ** item.retry_count)))
+            self.storage.mark_outbox_retry(item.outbox_id, reason, backoff)
             self.retry_count += 1
-            self.last_error = err_msg
-            logger.warning("Outbox item %s delivery failed (%s). Scheduled retry in %.1fs", item.outbox_id, err_msg, backoff)
+        else:
+            self.storage.hold_outbox(item.outbox_id, status, reason)
+            self.failed_count += status == "FAILED"
+        self.last_error = reason
+        self.storage.record_delivery_attempt(
+            outbox_id=item.outbox_id,
+            status="SUCCESS" if status == "SENT" else "FAILURE" if status == "RETRY_PENDING" else status,
+            http_status=code,
+            response_body=receipt,
+            error_message=reason,
+        )
 
     def _format_telegram_message(self, payload: Dict[str, Any]) -> str:
         sev_icon = "⚠️"
@@ -173,45 +173,54 @@ class NotificationWorker:
         )
         return msg
 
-    def _dispatch_telegram(self, item: OutboxItem) -> tuple[bool, Optional[int], Optional[str], Optional[str]]:
-        bot_token = item.payload.get("bot_token") or "dummy_bot_token"
+    def _dispatch_telegram(self, item: OutboxItem):
+        bot_token = item.payload.get("bot_token")
         chat_id = item.recipient or item.payload.get("chat_id")
         if not chat_id:
-            return False, None, None, "Missing recipient chat_id"
+            return "FAILED", None, None, "Missing recipient chat_id", 0
 
-        text = self._format_telegram_message(item.payload)
-
-        # Allow URL override for mock loopback testing
         if self.mock_endpoint_url:
-            url = f"{self.mock_endpoint_url.rstrip('/')}/bot{bot_token}/sendMessage"
+            try:
+                endpoint = urlsplit(self.mock_endpoint_url)
+                allowed = (endpoint.scheme == "http" and ip_address(endpoint.hostname).is_loopback
+                           and not any((endpoint.username, endpoint.password, endpoint.query, endpoint.fragment)))
+            except ValueError:
+                allowed = False
+            if not allowed:
+                return "BLOCKED_BY_POLICY", None, None, "LAB relay requires a loopback HTTP address", 0
+            url = f"{self.mock_endpoint_url.rstrip('/')}/bot{bot_token or 'lab-token'}/sendMessage"
         else:
+            if os.environ.get("APP_ENV") != "production" or os.environ.get("TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED") != "true":
+                return "BLOCKED_BY_POLICY", None, None, "External Telegram delivery is not authorized", 0
+            if not bot_token:
+                return "FAILED", None, None, "Missing Telegram bot token", 0
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
-        req_data = json.dumps({
-            "chat_id": chat_id,
-            "text": text,
-            "parse_mode": "HTML"
-        }).encode("utf-8")
-
-        req = urllib.request.Request(
-            url,
-            data=req_data,
-            headers={"Content-Type": "application/json"}
-        )
-
+        request = urllib.request.Request(url, data=json.dumps({
+            "chat_id": chat_id, "text": self._format_telegram_message(item.payload), "parse_mode": "HTML",
+        }).encode("utf-8"), headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req, timeout=5.0) as resp:
-                code = resp.getcode()
-                body = resp.read().decode("utf-8", errors="replace")
-                return (code == 200), code, body, None
-        except urllib.error.HTTPError as e:
-            err_body = e.read().decode("utf-8", errors="replace") if hasattr(e, "read") else ""
-            return False, e.code, err_body, f"HTTP Error {e.code}: {e.reason}"
-        except urllib.error.URLError as e:
-            return False, None, None, f"Network Error: {e.reason}"
-        except Exception as e:
-            return False, None, None, str(e)
-
-    def _dispatch_mock_relay(self, item: OutboxItem) -> tuple[bool, Optional[int], Optional[str], Optional[str]]:
-        # Mock relay dispatch directly succeeds in tests
-        return True, 200, json.dumps({"ok": True, "message_id": 12345}), None
+            with self._opener.open(request, timeout=5.0) as response:
+                code = response.getcode()
+                result = json.loads(response.read(65536))
+                message_id = (result.get("result") or {}).get("message_id")
+                if code == 200 and result.get("ok") is True and type(message_id) is int:
+                    return "SENT", code, json.dumps({"message_id": message_id}), None, 0
+                return "DELIVERY_UNKNOWN", code, None, "Telegram acceptance could not be confirmed", 0
+        except urllib.error.HTTPError as error:
+            try:
+                rejection = json.loads(error.read(65536))
+            except (ValueError, OSError):
+                rejection = {}
+            if isinstance(rejection, dict) and rejection.get("ok") is False and rejection.get("error_code") == error.code:
+                if error.code == 429:
+                    seconds = (rejection.get("parameters") or {}).get("retry_after")
+                    delay = seconds if type(seconds) is int and 0 < seconds <= 86400 else 0
+                    return "RETRY_PENDING", error.code, None, "Telegram rate limit", delay
+                if 400 <= error.code < 500 and error.code != 408:
+                    return "FAILED", error.code, None, f"Telegram rejected the request (HTTP {error.code})", 0
+            return "DELIVERY_UNKNOWN", error.code, None, "Telegram acceptance could not be confirmed", 0
+        except urllib.error.URLError as error:
+            if isinstance(error.reason, ConnectionRefusedError):
+                return "RETRY_PENDING", None, None, "Connection refused before dispatch", 0
+            return "DELIVERY_UNKNOWN", None, None, "Telegram acceptance could not be confirmed", 0

@@ -1,7 +1,5 @@
 # AQUA COMMAND readiness decision
 
-Report publication on main was explicitly authorized on 2026-11-11. The readiness decision below concerns implementation integration, release and operational use of the LAB candidate.
-
 **NO-GO for public distribution, production deployment and merge to main.**
 
 1. Final Linux RPM privacy checks pass for the recorded patterns. Source/history privacy remains open because archival source, earlier artifacts and historical commits require review. Credential revocation has no verified receipt.

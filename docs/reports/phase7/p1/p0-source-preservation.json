@@ -1,0 +1,1257 @@
+{
+  "p0_commit": "ca1a96fe9323d1758dc59a00498c39fde4c67d94",
+  "unchanged_non_test_files": 310,
+  "all_runtime_and_non_test_files_byte_identical": true,
+  "original_test_methods_preserved": 472,
+  "deleted_original_test_methods": [],
+  "changed_paths": [
+    "aqua-command-desktop/desktop/tests/f3_reconciliation_fixture.py",
+    "aqua-command-desktop/desktop/tests/test_f3_active_reconciliation.py",
+    "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+    "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+    "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+    "aqua-command-desktop/desktop/tests/test_f3_usability.py"
+  ],
+  "files": [
+    {
+      "path": ".dockerignore",
+      "sha256": "92cfe673765914d17214c93ba9ef3625aa66606d5e06440bb4f5999cff1ce6a6"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "f266aeaddfcaa0cf6adee36c91dbece9cbd35e0dfd96ea0b55b14f561c4edf29"
+    },
+    {
+      "path": ".githooks/pre-commit",
+      "sha256": "ce31244d6f9ef1fce72ba488ad1f99e69cb6a3c9da52aa952cd593c9d00b76b8"
+    },
+    {
+      "path": ".github/workflows/lab-validation.yml",
+      "sha256": "239f1153f89f23158c7641714110cc6ca1ba02942e22ab509883d3218169c748"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "99cda16ee0d7abda025f9a0aa60c9d693852e9c5356a3b0c514450ae43aa089e"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "c031a89265e1452f293b112c45fffcbd72e82b09f2bcc6fb343211c0743f4244"
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "c814310e9414bf15ebdfb5e6eb837e559eb90169f04a1cf5da653f9a3a0338d6"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3257c29e0e9acd173c060d086a0128ac7e9adfe9b77b1d971e70fbbc68ebc1c6"
+    },
+    {
+      "path": "aqua-command-desktop/.gitattributes",
+      "sha256": "b1cf06b4419232232019c15fe88d3cab91f88968dec00ce70b9be51275a5eea2"
+    },
+    {
+      "path": "aqua-command-desktop/.gitignore",
+      "sha256": "a48088edbdaf941a6be6ab3b07e5f1eaf443055912915199a5b04e33dcc55601"
+    },
+    {
+      "path": "aqua-command-desktop/AGENTS.md",
+      "sha256": "5855e5454d6cbe8da3e7339cd47018d64612c56cc17d1cd0cdfa0cb8d745f425"
+    },
+    {
+      "path": "aqua-command-desktop/LICENSE",
+      "sha256": "4f070508266be5d1054144a11420ac664f3033e0d14dcbe5fd216f97b74cfb51"
+    },
+    {
+      "path": "aqua-command-desktop/PLAN.md",
+      "sha256": "17486b8beee3f7fa4445e55c7fa79243af4aa1579ce202cd19456fa6c18f5ce8"
+    },
+    {
+      "path": "aqua-command-desktop/PROJECT_PROGRESS.md",
+      "sha256": "2ffb13d6740d8148494f8d496c77aa65cc29a29ad7e8daad9680f7af35338d36"
+    },
+    {
+      "path": "aqua-command-desktop/README.md",
+      "sha256": "684b8b70119090dd6616baa98562f73558579fe2eba071451c716022919de0be"
+    },
+    {
+      "path": "aqua-command-desktop/VERIFICATION.md",
+      "sha256": "8977c736b588447bb7370d5506c9beb2e69d3b5394a6c9d0a0de1a83e1d3b168"
+    },
+    {
+      "path": "aqua-command-desktop/backend/LICENSE",
+      "sha256": "4f070508266be5d1054144a11420ac664f3033e0d14dcbe5fd216f97b74cfb51"
+    },
+    {
+      "path": "aqua-command-desktop/backend/bin/aqua-demo.js",
+      "sha256": "b12d7f2cf435c5e0aeee1319ef69248515f821f5de22205d87de0d9cca4544aa"
+    },
+    {
+      "path": "aqua-command-desktop/backend/bin/aqua-lab.js",
+      "sha256": "6d6520b95887e33e346eb5b750b9822690603962a7838af6866c1411807984fa"
+    },
+    {
+      "path": "aqua-command-desktop/backend/bin/aqua-service.js",
+      "sha256": "8b8ec8af4506ec20d6f0fc694e4877f690509611c75e11070bc10f2707acd9a8"
+    },
+    {
+      "path": "aqua-command-desktop/backend/package-lock.json",
+      "sha256": "79b2f90c4de3e08921dcc406795d99ce90baf58549c89ea2a09ee7d11c98a34b"
+    },
+    {
+      "path": "aqua-command-desktop/backend/package.json",
+      "sha256": "0373c524a37d8d23bf7eb1a962841726404651e8c8a1690e0e0cc61034a30f8e"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/app.js",
+      "sha256": "e67807e2e1d9f4920169d984dad03a1b9dafa66006e796086d3597f3c60857c5"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/aqua-isometric-pump-scene.svg",
+      "sha256": "082d576067c3a064731c93e310210f87322e4a30a66cba19e6633ad0e37fee37"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/index.html",
+      "sha256": "2a56e4e7caaba1d87aa4fb7d7509bb4b286c93fc39d5f6c96420609bad3ff773"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/simple.css",
+      "sha256": "add4c36ce14e21bb641401c971055800b51f8cc03318a3f911e95dab12fb871d"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/simple.html",
+      "sha256": "b044bf12a7f7bebbbb8bcd4f097cd14ee0a168c490e4cb0c084dcca068d0c762"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/simple.js",
+      "sha256": "dfc550efa627f1b1dc91e5367137a3d7ed92af4d75e786cc03091c650e7a0657"
+    },
+    {
+      "path": "aqua-command-desktop/backend/public/styles.css",
+      "sha256": "bde950a044b0d5d43475733d84c6eef6b8cac20dba4572087efafb68c0c518d8"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/adapters.js",
+      "sha256": "bae0681e3986164894eb11e23dfb7bee37866388b1151b46c890f8edddbc7f05"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/config.js",
+      "sha256": "b2cad7c3cdc7ba75dfa20c4518e126f359ce3a4923f0255cce6a20b82a0d9879"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/csv-fixture.js",
+      "sha256": "5a16baa40059564aa2a9f89fef5bf3ea0479933d2959e97c7a581ced76568385"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/csv-source.js",
+      "sha256": "dbfbe37ae5ca16fcafdbf18c786b83c20cd95d094a099380c4394c8a5d612302"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/dashboard.js",
+      "sha256": "ec44ae27808631a3a695c2415075af6b42d9376a464e8fac90e462b46f7a4930"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/process-identity.js",
+      "sha256": "af669bba92ccb346feca212f16a825fab5656a917c3c6ca3d8f05f8aab5e1060"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/protocol.js",
+      "sha256": "fe62ccc72647b0a265dfb65343046d52a7144dd3b07b82599a0d01f2c210bd48"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/services.js",
+      "sha256": "b8d7802d945893bdf974311dc87d5a1eb220987fb4f8e18a2ad2d79582888bf3"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/storage-boundary.js",
+      "sha256": "96ba5f49749585cc8fac7ee157106210ab1e922bfad7e44f8f088242347bb048"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/store.js",
+      "sha256": "99495983ea30aacd0bf6002f537919e094e7d330d038bcb252846fbf28e724ed"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/supervisor.js",
+      "sha256": "7cd046eeb6cfa81f5e3adae9d0862dde43ab52a74125a0131414547591d7459e"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/lan/telegram.js",
+      "sha256": "ce663b9e4c33120ba7d2d851750868baa336feeb2303301edfa642175a44a0cf"
+    },
+    {
+      "path": "aqua-command-desktop/backend/src/simulator.js",
+      "sha256": "8640dc176d6addcc2b6c43742f73e6aa60f2d102dfddcd0a8697d5d374018fb2"
+    },
+    {
+      "path": "aqua-command-desktop/collector/__init__.py",
+      "sha256": "b731df3923dddf48dad14c671153494ba48b5bee3f011df37d5d96bef44256f2"
+    },
+    {
+      "path": "aqua-command-desktop/config/opcua_tag_mapping.json",
+      "sha256": "fafc9a349164a6fc8542216114850428ec8bff86e12f605825226ba3b5ac3d36"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/actual_editor.py",
+      "sha256": "a3c42a79329b9bc51148559c5890c13459faf0cc23a9412dd778b6f0a4de4eb4"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/actual_ui_test.py",
+      "sha256": "b3474caef6931e65c7cdc089090fce042e8787432ad5e4792d49bd1c2e0650a6"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/app.py",
+      "sha256": "3344972512746239603edca420857bddb7cdfe26ca73df7749d99cdfece3578e"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/client.py",
+      "sha256": "79ed2ccdfdbab53672a13165c9f73f5822dd309a8c1e957ef7fd77151d962c72"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/consent.py",
+      "sha256": "0df5d96c360ac15fbe7226cb69a486100644e9520aece6aa5101028d21fe23d3"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/console.py",
+      "sha256": "2e8800032cbef6b79474744cbdbc298ed74ebc746e9f7aca1ed268c3303b0be8"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/deployed-host.mjs",
+      "sha256": "dc14360b84a8e16730782a06e279df11df84ce2b18c02678ad0eebf96f2290d2"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_api/fonts_embedded.css",
+      "sha256": "15d31fb119367f34f5731121fab7cef5b8b224a54c2c5421ea8eced319be5b5b"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_api/formal-theme.css",
+      "sha256": "a59393a2eaee94457212a00c186698fb3447f38e753344804cb67004db602bcd"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_api/index.html",
+      "sha256": "113f9db9f674835b24f69397a2e06ed8e016b888908d917da6f119a21d423380"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_api/view.css",
+      "sha256": "92526633f925b48b7b9cc6e36d53e8976c9b4c4ea86164b6dba0c0d263d1a141"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_api/view.js",
+      "sha256": "737612a078868dbd78e753db9cf6c493aa18929030c9af7e12d3cec48871592b"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_api_view.py",
+      "sha256": "98d74127e0bb5ce7dbbe4715e37ce1fdc8de415c144c1227fc5554893fc30f91"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_overview.py",
+      "sha256": "0ac4c692618e7c03468e9292ad1471634392bc8189b3021e8592f50f165f864f"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f1_style.css",
+      "sha256": "4636eb5bd00ac46ffcb460ccd47ebbf7e55a4344a856a057b6919b30f8fedb0c"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f2_style.css",
+      "sha256": "40ced9811f7fa62eecd6ef14227863e85b4eec8bde3f03db36c483f64f5060fd"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f2_tasks.py",
+      "sha256": "049d82f5bbeae336063c2246ca1cd7a0e1eb016ebb9ecf41dd4b33b002c5c4d2"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_api/detect.mjs",
+      "sha256": "cc2118e9a46c0a5be3c58e44e96cee327f23bc8e97f463d6de61de235bd04cf2"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_api/fonts_embedded.css",
+      "sha256": "15d31fb119367f34f5731121fab7cef5b8b224a54c2c5421ea8eced319be5b5b"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_api/index.html",
+      "sha256": "c0664853dde88fdaa4bfc649d2493a9543a7ef3eed0e4ab18c7167fc9c0eeac5"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_api/view.css",
+      "sha256": "07df928f839b03e39d02ee8458fc49511464f2babe923e036c3ac5b7895595c2"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_api/view.js",
+      "sha256": "be8fe1ee6f9bbdd676a0798b4936779d64beb729d933e14295cc326c4b16f1b9"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_api_view.py",
+      "sha256": "5bf4dd7ebc14ab298a6303866244631f5eee53e8524250b09aef0adde263d168"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_drawing.py",
+      "sha256": "8ce48ebade2fc9e825700723ec00e7b1165522fda50ca022b7f329ddda05e8e5"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_evidence.py",
+      "sha256": "750e5d14240cb8aa0e2f508583057088abf1aabd67bcc520766bf215dfc9666c"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_handoff.py",
+      "sha256": "a382c2d96d85582dcfc411c4ab02d5836c93c2f2f5002871ffafaac7d24094fd"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_layout.py",
+      "sha256": "a99105d58d19e82b861891189ea23bccecf87799a79daea6a2715b98671cd5fd"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_local.py",
+      "sha256": "2fc275dc5f2b3f128fd13dbd82f62e420771b542ef723a8babaac8ecc7a65e15"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_network.py",
+      "sha256": "b2a34dc897f05bd8d64f2662bc7e1881658d2d60de3882c90ca5a53cd9ce2333"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_opcua.py",
+      "sha256": "ded9ceabf2cb69f0a98a8c9ecfca0f34ec5ac77e4b953ff123626646bf5ad686"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_projection.py",
+      "sha256": "13a8ed13678130002f29989c360b80cdf2a091c18bdd95a0c86d89d27fc51429"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/f3_runtime.py",
+      "sha256": "f62a9dac628b058f49de5002a7e01fe094c20557ca0152514964301afe40aa6f"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/help_manual.py",
+      "sha256": "6b253c6d2f19fa20d459f951cac3ae7950dfefebe6b43b5124e826e4d24826b4"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/host.mjs",
+      "sha256": "78ca5d02052910d6328ee1fd149cc870566ecc3ee2d2d5eb99dcebaa830b071f"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/layout_test.py",
+      "sha256": "d8964de21dac8e22e0aa51e0cfd4246e0636ff2a5217261ba7965f03e05a440d"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/model.py",
+      "sha256": "94ea567d5bd98a27972befa8ea64fb6cb970a264c39f9cd132eee5222029b1a5"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/notification_worker.py",
+      "sha256": "30072d3377790a96313d346472e9fa425eb10778df9c9dec21b47b103e663942"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/__init__.py",
+      "sha256": "4e438b68c2c994663d8b857a34e654e3265c2326275cc17ddfde5407664baa54"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/adapter.py",
+      "sha256": "28e03fd4a28899d5996d706c863df4b4f7fa58458583947576a883705459c3b5"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/contract.py",
+      "sha256": "d608a059f8940c4aba7b31c1cc1eead8797b51d2d72bd3d76f6720ad16c7d094"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/history.py",
+      "sha256": "b88fc5e56cd6cd88f6384d7083d3a38f362d71518d4fb0cb7ec1ce9e22c60b5c"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/integration.py",
+      "sha256": "9142ddae2208b7ba3e546f475feef823e5cbb3087f434faeac2541d422fc32a5"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/metrics.py",
+      "sha256": "f89838723004da286cf3ab53048f18a7b62ecf7b0bdc3b2d5a46d800cd04a1f6"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/proxy.py",
+      "sha256": "79f0bb30bccbf4411777aea0f01178ff68eee72ee5be8a5e49c4f144cd608e70"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/service.py",
+      "sha256": "feff404521de080817d5ad277716754c58a42d0ca65da40463f2e179dcd82f58"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/transport.py",
+      "sha256": "9772bc5ccbb32de9323cfbc5cb5b28cec1c6f69be9b8b574e4e11f79fe6ceb9f"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/observability/ui.py",
+      "sha256": "5dd70e51e2f8e4b078e17b7efb0dd472ad27c5c0050024638dad918d939c8aee"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_mapping.py",
+      "sha256": "3b6c81f02e26432a2ac02e72f8718d022a3f78e26307666e78409f6d3fbb358f"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_pki.py",
+      "sha256": "79533111e2350246f16e18ed6021b4a821c5113fac327ee8f6c8d8f1349d9b6c"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_policy.py",
+      "sha256": "66ae1b5147e24904d15d152eb74af1b6ff13e45fbdd7ac0fc4b9af9e3cb3a429"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_polling_engine.py",
+      "sha256": "076220c8afc1657f9673b2f534de67f35d889969b88bf1dc38f98056c2c97d47"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_reader.py",
+      "sha256": "8aa472ebdecc9d201c691a0840ea19e6671ef7bb0f9a235d6634ed8361d98099"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_storage.py",
+      "sha256": "757384005e9982439a5ccc2bd1ef3b1924641922ebceaa555df41400da161180"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/opcua_store.py",
+      "sha256": "4a36e291e74e1715a0f8f5852fd9dcf5c03b2e553f428d71e35a81701afab9aa"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/presentation.py",
+      "sha256": "573320e6912c95ea15c2fe4a926f03a78c3d41d4c86fb5368f458d6298472d34"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/private_runtime.py",
+      "sha256": "2bff424b539f8a1d304e8ed1ce5317947c3cc6291a39a027d4c3c2148ce563fd"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/production.py",
+      "sha256": "12df9c1f22385c0634a8af56aca6cb51c450684df0db557845790633de97165d"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/style.css",
+      "sha256": "f1338a76b7a4cd03e51159a3ada52446df46c5213f1617dc955f98ddb712e0f6"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/task_engine.py",
+      "sha256": "1b0b833fa11095fb72ed72642d95f6bbc15e1b484be9987b1c0b1a764622febd"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/telemetry_settings.py",
+      "sha256": "7a10b2cbefdcaffb8b1fe4719be3dcc338691ca0ea3a8286e98541943e6db644"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/ui_test.py",
+      "sha256": "cb4a04b202db09c640c1d402f78eb0cb628d7b7e384be7ec9e66354c5a74c9d3"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/win_desktop.py",
+      "sha256": "9bf165a1c62fd01a92940f23b99f00ebcbde6ace23ed139ff1704c1f11074c0b"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/workspace.py",
+      "sha256": "3f919ea95aed02f10b3afcc34a1cb1fb0bcc3bbc1544b560586db9e9c0bc7ead"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/workspace_style.css",
+      "sha256": "8cee94ef4c45abc4eb6dee1806f3de4b502c50501ff49b19b167816ba3b49da9"
+    },
+    {
+      "path": "aqua-command-desktop/docs/COMMISSIONING.md",
+      "sha256": "aaecf9854cc5e8919e00f2f848bfd8098d4cb6182fc5827f8d8db0d059038910"
+    },
+    {
+      "path": "aqua-command-desktop/docs/F1_README.md",
+      "sha256": "4ec3ccd22c09fa56a15883682a738f54bf31aab255e6a989708023d6e3e45585"
+    },
+    {
+      "path": "aqua-command-desktop/docs/F3_README.md",
+      "sha256": "84cd69753aec039e198abcac09b2166a8be0f77e6622f873d8cff16a1ff96cc4"
+    },
+    {
+      "path": "aqua-command-desktop/docs/OPCUA_READINESS.md",
+      "sha256": "8fabde9cbd35fb7c7ee0fecf0b9a02702bb1ad87a78573534dfd3c207622af1c"
+    },
+    {
+      "path": "aqua-command-desktop/docs/PROBE_PHASE1.md",
+      "sha256": "6b9f7a461e3684604341f6a17622612ef2971b9a40d63abff8f6823622dd2b3f"
+    },
+    {
+      "path": "aqua-command-desktop/docs/PROBE_PHASE2.md",
+      "sha256": "82c50c6804c2c7295393dbff63a574f5121562806f7f516988d3c167f606b54c"
+    },
+    {
+      "path": "aqua-command-desktop/docs/PROBE_PHASE3.md",
+      "sha256": "4ad056c7d9f7150dd2a98b06e1b30b06fe69490718eb3cba3fb945d16fd024c5"
+    },
+    {
+      "path": "aqua-command-desktop/docs/PROBE_PHASE3_1.md",
+      "sha256": "d25fc2dfc894cb5ac2c6dba44e00e666c8a816ff742fb6f2eb8503ce253e134f"
+    },
+    {
+      "path": "aqua-command-desktop/docs/PROBE_PHASE4.md",
+      "sha256": "4c878eeff3181edf482312074ddb7315c2a33c57c710faa09e75cca180286af1"
+    },
+    {
+      "path": "aqua-command-desktop/docs/REAL_USE_DESIGN.md",
+      "sha256": "fc80e3dc3f201ed2712fdde3e167d1e7c3663ec457acc94dd51bc65dacebfc4f"
+    },
+    {
+      "path": "aqua-command-desktop/docs/TELEMETRY_SOURCES.md",
+      "sha256": "1b521b133d9f0ff86aaf801f99b8fc0345de6534588e43fef23d42a0fce94962"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/IBMPlexMono-Medium.woff2",
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/IBMPlexMono-Regular.woff2",
+      "sha256": "08949f728dc52d528e69b1667d15c89a5686a4ee9a296ff90983985f99c380f7"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/IBMPlexSansThai-Medium.woff2",
+      "sha256": "7e01c133031aba4ca902d81930096f0224d83f808014c1232016b49e0a7ecff6"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/IBMPlexSansThai-Regular.woff2",
+      "sha256": "2d66381c26d32bf2a95bfe559d1a5ed5475fcdac3fa128e45a33301010d42056"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/IBMPlexSansThai-SemiBold.woff2",
+      "sha256": "ea935955dc3bccb684f8fb772dbd429250dd0d3dfee9483995a3ee3456471df8"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/OFL.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    {
+      "path": "aqua-command-desktop/fonts/fonts.css",
+      "sha256": "0afde7ae955759f01f6f31df89a475817107b654dd0becf171c12f417a305f9f"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/.gitignore",
+      "sha256": "e3fc19c33ad6daaed8c4283755134783c76e6ec4c3028144238f764d840c324a"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/OPERATIONS.md",
+      "sha256": "b92d9cdd6926bb3c7bfd1ae1cc8a05450b0169d44bfd716998bbaf15d955e9ee"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/README.md",
+      "sha256": "fac448c351365306383251ed59dfa51e0840bfe5a5e86894fa6f153e8d52bdc0"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/VERSION_MATRIX.md",
+      "sha256": "c418c86a58cdcf92a3b6aca9c3e2502659d7658e965709bc12930cb6f44d5ad8"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/build_diagnostics.py",
+      "sha256": "7981fabd2d462c074dccd26a7cedbc626b300a867e217c3fb692f01498930af9"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/build_f1.py",
+      "sha256": "52c1767ffe1f0692a7b04a39af0eb8f142c31aeeef9d03acb0292a94d1271d10"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/build_f2.py",
+      "sha256": "945da30f24bae942f664094196969b86a35b179b71ec5ac7aa3255e28b5ff9bd"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/build_f3.py",
+      "sha256": "d30ab1b7301d128dbb154c380931376c7f0eeccbb99756247819c041b4ce691e"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/build_f4.py",
+      "sha256": "696c0d2c88fe3fa7a33ee3affddc404c1c99e8a8212e60653c3e440a59b7e0ae"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/dashboard_common.py",
+      "sha256": "9f98291fd80ebd29c9c360bcbb54944f1d2ca25b4d68297661cafc94ec17e4d4"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/dashboards/diagnostics.json",
+      "sha256": "c1206df8770011a34ff0b908381e39341c308ff5eec2ca13397375365d6e4dee"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/dashboards/f1.json",
+      "sha256": "bcb8e21efc61396e32c6d776d02df7ee0c3979ff76088562b96492a745192d97"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/dashboards/f2.json",
+      "sha256": "a311a77995ef58b0045845673a7e585124bc0c54e8985359acb1e1430113761c"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/dashboards/f3.json",
+      "sha256": "c458e1bb04118aad162b1f3ddb252e055cda916a93aee62546c2b12975ca81b9"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/dashboards/f4.json",
+      "sha256": "c7de43a3c348818f2ca9f939e5e49c4c313a98e5eb4b11f48377a6c8994255f7"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/datasources/runtime.template.json",
+      "sha256": "e12f41022cd76451f22495b4c04ccf8d462ff9883ebf7a7887e246b394fa5340"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/grafana.ini",
+      "sha256": "2e322625bddf71f92179698c9fb60b25775fae0674ab4c1c8168123afdeb2740"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_api.py",
+      "sha256": "6f3562245988e90c280b6b61dbe5fb389a9421e35da0d3b8c95867aac7278680"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_config.py",
+      "sha256": "b85976c518d792d2b981d8e6213647521f8a3169f50cb970aa37b7a0603bf253"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_control.py",
+      "sha256": "749c29e7df872f9900f74bc082995b06ce46f5e75dd88cec05185427ab6829f9"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_desktop.py",
+      "sha256": "4ec1a088d3cca0bd99ed890d8078afd84ff91e5520c0d19301bdf0867a5f4ad8"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_owner.py",
+      "sha256": "360fb7790dae4cf26b1f591997edd8791f87faa9af7c40c5ddf56511d7d5860c"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_owner_manage.py",
+      "sha256": "94e06f8a23e9cdcb52428e9973dfc65801a82a84b936384de79fa2e3c27c6374"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/lab_start.py",
+      "sha256": "fc7a2f0700746a2a46225abf552f8bc81db4c7310b785d835c750252acebaa29"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/mcp_launch.py",
+      "sha256": "00529307db77121122b69ee5781e5633ded574fa5e0532f59975d927a2b65c6e"
+    },
+    {
+      "path": "aqua-command-desktop/observability/grafana/provisioning/dashboards/aqua.yaml",
+      "sha256": "e55f9d235131a3f34737342f650220eb008c08dd5f2aa4e1f61bdb52ecf3da84"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/aqua-command",
+      "sha256": "ca1da074d3f8e746bc473b7294e140459e2a2f1ef2e330804e832adafb83a20e"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/aqua-command-desktop.spec",
+      "sha256": "eb73443b22b9c3905a30d7cb4f1e2305ece5456eace1cdcdd669baa5b7f6a5f1"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/build-rpm.sh",
+      "sha256": "4f06db14f26ec18648a0fa4323a9ff98ddd2241209c567392a1c0a9e58eec798"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/build-windows.sh",
+      "sha256": "fe3524c81e6976c08e824953adb8f8baace03bce57ee09dc1138079b0f8dc1b9"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/icons/org.aquacommand.Desktop.svg",
+      "sha256": "2f1d1706373f0f8b88d55e2784a77b95b087146e83b1342c1f710dd69187aa56"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/org.aquacommand.Desktop.desktop",
+      "sha256": "3719de6f9a6675707dd2faa2299e2808cdfadb8f25e46c832b8901aae2583a0c"
+    },
+    {
+      "path": "aqua-command-desktop/packaging/privacy_preflight.py",
+      "sha256": "4417eb600d745834e5dad3ee2ccb074beec16d9827b7519dd05e6dedb0730c70"
+    },
+    {
+      "path": "aqua-command-desktop/releases/SHA256SUMS",
+      "sha256": "a54c1e1ca64c1311bed7037fc4af0aa2d95c2bde70b22c7dead749e8a4f9cc76"
+    },
+    {
+      "path": "aqua-command-desktop/releases/windows-runtime-notices/microsoft.netcore.app.runtime.win-x64-10.0.14-LICENSE.TXT.txt",
+      "sha256": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b"
+    },
+    {
+      "path": "aqua-command-desktop/releases/windows-runtime-notices/microsoft.netcore.app.runtime.win-x64-10.0.14-THIRD-PARTY-NOTICES.TXT.txt",
+      "sha256": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21"
+    },
+    {
+      "path": "aqua-command-desktop/releases/windows-runtime-notices/microsoft.windowsdesktop.app.runtime.win-x64-10.0.14-LICENSE.txt",
+      "sha256": "a89886665765362eb77e0f8e26602c924520041d1711b2eedc136434fe4d01ab"
+    },
+    {
+      "path": "aqua-command-desktop/scripts/capture_f1_screenshots.py",
+      "sha256": "57f1f24aaf4db4ad21539c91c563371406fd32100b780478a6d7e2b867f60d62"
+    },
+    {
+      "path": "aqua-command-desktop/scripts/capture_f3_screenshots.py",
+      "sha256": "4518d0a68eb6c21611c5ceb6aa612e0a4246c41a11218584b77916406fb35e64"
+    },
+    {
+      "path": "aqua-command-desktop/scripts/no_fake_check.sh",
+      "sha256": "fd70af6f0351e377d037b8ca8a44b9f1b8a6282da9906ced8e091500444bb3c3"
+    },
+    {
+      "path": "aqua-command-desktop/scripts/run_soak_test.py",
+      "sha256": "520f5eda619afc2d0366c4c3e228ec84ef7045bee0bffbde46585fb02eb1f473"
+    },
+    {
+      "path": "aqua-command-desktop/src/__init__.py",
+      "sha256": "6c457f2bab44442fbee6d81cdab5fa209814bd1a5578ef17552d04a3be70c1b9"
+    },
+    {
+      "path": "aqua-command-desktop/src/collector/__init__.py",
+      "sha256": "0ef3863566101c2d7ef4aa8581fc67e8cf591b3eb34dbe32da70a9e8b04e329e"
+    },
+    {
+      "path": "aqua-command-desktop/src/collector/evidence_api.py",
+      "sha256": "ca658995247f933797ed89970c6d324c20655e122eac49f92c98a602524bf320"
+    },
+    {
+      "path": "aqua-command-desktop/src/collector/opcua_read.py",
+      "sha256": "a58a68d5da128ddad55876e223fe10e4d27dc062d4a429bfb7fb3712c14d5595"
+    },
+    {
+      "path": "aqua-command-desktop/src/collector/probe_once.py",
+      "sha256": "0db0b8b9617f3c844d9fb9615a1bdf66c261e84a01695115824361a006756189"
+    },
+    {
+      "path": "aqua-command-desktop/src/collector/run.py",
+      "sha256": "e39b13ba40506ba8ff305b963e562846971bbca2717a5fce846022cdd7dd1890"
+    },
+    {
+      "path": "aqua-command-desktop/src/collector/telemetry.py",
+      "sha256": "5c487ac26cdbe968996cdf5fc5d0b0af77c8b69c54d474e57543815b494ff969"
+    },
+    {
+      "path": "aqua-command-desktop/tools/check_opcua_readiness.py",
+      "sha256": "17101baeb35b9e3ca2c9be0351f9c42f4821fed5115eed00cd030466172a8b8c"
+    },
+    {
+      "path": "aqua-command-desktop/tools/sim/f3_demo.py",
+      "sha256": "57a2c24691551944328638cb7280b6ce4605712b902518b04b9e63bd8fff419e"
+    },
+    {
+      "path": "aqua-command-desktop/tools/sim/f3_demo_delivery.py",
+      "sha256": "f9e09327a0067dd3d382076c33d0e0dc91535bf7baa7b2ff3f6c143d0a494407"
+    },
+    {
+      "path": "aqua-command-desktop/tools/sim/opcua_server.py",
+      "sha256": "d8a558eaef983f52f46c195d26eed42c23b28016c2be662f2b4e7e90b9e51ec9"
+    },
+    {
+      "path": "aqua-command-desktop/tools/sim/set_level.py",
+      "sha256": "998f71947bdc0ab6f25e171f091a055b6dd46ec9a7286cfe3f123abd6f188e66"
+    },
+    {
+      "path": "aqua-command-desktop/tools/sim/tcp_accept_server.py",
+      "sha256": "bf7473950edc379b5c1f96d7796193d294b59ec18c94b622311d1e369e4ba4ff"
+    },
+    {
+      "path": "aqua-command-desktop/wincc/AQUA_WinCC_V81_ACTION_BODY.vbs.txt",
+      "sha256": "fa113b29ab82bf8b11acddef4538f86213d95358875a627b7557a281b9699324"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/.gitignore",
+      "sha256": "79810615b4063be5474618fd002df934762fe9ccebb448537ce74ce23b319202"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Core/Aqua.Reader.Core.csproj",
+      "sha256": "c68e8dabe75621f2d7a5f868e33f8df2918abf78d4cc865f911064c83987efdb"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Core/Model.cs",
+      "sha256": "39f1d49f14c6dafd28cbf3c03f616223594c47a888ef468e9760ef7c54e3819b"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Core/Sender.cs",
+      "sha256": "67efc132c4d2becf7b0c2ce9a89fb8091952be8c422a743502f09513a9ec5a3b"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Core/Spool.cs",
+      "sha256": "b1fa03b514268e28d3d5cea939ff4d0bbd77fb74984dc13d38ddef1c7eb8eba9"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/README.md",
+      "sha256": "c1207a0ff93a6658a30f8acadf3b5340f1e5fec08ba5e286f1dd05ad98aedddf"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Tests/Aqua.Reader.Tests.csproj",
+      "sha256": "04dd1475fbbc2dc69b7b82633da99404c696423ced3f14342247057209a8b01b"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Tests/FakeGateway.cs",
+      "sha256": "f132792da2fa3cbc087d3a31b732e841f3d0d176298b7d431bd260332a220c6e"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Tests/Program.cs",
+      "sha256": "87fa88219ac43bc7c2145f9d1293f041ca810b252f879fc064607b85bc3dbee8"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Windows/Aqua.Reader.Windows.csproj",
+      "sha256": "bf6ba10f192ca29e19a97ca02de9673236d45bb63fedfca66b2520229fb71654"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Windows/LocalOpcReader.cs",
+      "sha256": "d653decf6153d60a34dc544d6d32edff29e0e9c305d25dd2846f9da4a4327e6a"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Windows/Program.cs",
+      "sha256": "1b16f2e78d03ebea63cca22404c3ee3ccf1d22dd06f13a15ce99cb9a7fd787a7"
+    },
+    {
+      "path": "aqua-command-desktop/windows-reader/Windows/WorkerSession.cs",
+      "sha256": "9575c0134360d47e4781be49ce2579fe44a6478d7fa7cf12fb2107ce1e4f2157"
+    },
+    {
+      "path": "aqua-command/.env.example",
+      "sha256": "a01736da36bf3d6dc59934e9338522f2824006807de54c7199b6587028bad0d6"
+    },
+    {
+      "path": "aqua-command/.gitignore",
+      "sha256": "070849bcb836b97739a4197ddd76337947e31c080c7aafddf68ab55d0cae99ce"
+    },
+    {
+      "path": "aqua-command/Dockerfile",
+      "sha256": "b90935352ad9576d17171fdca22db73bdf0c267116daf00f181a29bb89a59270"
+    },
+    {
+      "path": "aqua-command/README.md",
+      "sha256": "2e1371994caa267af88c3e761940fcd4ff550d55fd6e77d164514ee051c1d5cc"
+    },
+    {
+      "path": "aqua-command/compose.yaml",
+      "sha256": "eaad21567f4aef8f359d5078b52e6ffa7c6f328da400521d4b9279b925ca06d1"
+    },
+    {
+      "path": "aqua-command/package.json",
+      "sha256": "ac0de2964186a952d242aa041672cd5de42d2cbe58ab06903fdfa2ece10c9744"
+    },
+    {
+      "path": "aqua-command/public/app.js",
+      "sha256": "078892bcf1b3885ab8efb752ed74886c73cec1e984f7d7ced9500288a3cc18f1"
+    },
+    {
+      "path": "aqua-command/public/chiangmai_boundary.geojson",
+      "sha256": "3077a311b46f7d66539d632fb7bf6c2d2cc3ec8c0286deafdee5c6063ab4d339"
+    },
+    {
+      "path": "aqua-command/public/chiangmai_districts.geojson",
+      "sha256": "8f88905ab5a1ebff65a61ef923558de891aa036bd3d2c2dca3a51b0e3b23e908"
+    },
+    {
+      "path": "aqua-command/public/chiangmai_svg_districts.json",
+      "sha256": "693cc4dc6cc16071205cd5b10ddafbbd9ab485104384a5f98b59e7aa8def4f74"
+    },
+    {
+      "path": "aqua-command/public/favicon.svg",
+      "sha256": "47d5cc10b775828bbdf425295c7bba80d640f328033e9d022c8bc43598364921"
+    },
+    {
+      "path": "aqua-command/public/index.html",
+      "sha256": "960779065f173ab08c46aced34ce583b26cc0ab256020792af8a92eda906abe7"
+    },
+    {
+      "path": "aqua-command/public/style.css",
+      "sha256": "1288bba752b57fa35dde57e1edd827676cf59604bcd9afd7c5598cd600d3d557"
+    },
+    {
+      "path": "aqua-command/rules.mjs",
+      "sha256": "cf18198d83e131676751c15bf74a024c0263ab907db2e1a5ebdd3e84ca850cca"
+    },
+    {
+      "path": "aqua-command/server.mjs",
+      "sha256": "ee30a1f0c10f40fbe8db008de5c1973ddfbb3bc786d0befd4909c760f63c6074"
+    },
+    {
+      "path": "branches.json",
+      "sha256": "3b125d46f175e4726767e8daeee3a3d371706e39229df05caa3f6541222817ac"
+    },
+    {
+      "path": "data/branches.json",
+      "sha256": "3b125d46f175e4726767e8daeee3a3d371706e39229df05caa3f6541222817ac"
+    },
+    {
+      "path": "docker-compose.yml",
+      "sha256": "425ac5af62d48b9899463b4f580e5defdbe4f144efb4831f6fec40becf1d7cbf"
+    },
+    {
+      "path": "docs/PRIVATE_CONFIGURATION.md",
+      "sha256": "39ac6bf4ea1fce81842ae684c821426683255ddda7e996f069852bc75161cde9"
+    },
+    {
+      "path": "docs/gallery/\u0e14\u0e39\u0e41\u0e1a\u0e1a_F1_MOCKUPS.html",
+      "sha256": "8903551b5b52c402c759d0066079bd2abd849e60eba434680398a6da2ff6aa03"
+    },
+    {
+      "path": "docs/reports/00_REPOSITORY_INVENTORY.md",
+      "sha256": "a4597a8a7375a70750a732246ec5b2f0bb139fb01b784a861a4321e47fddb450"
+    },
+    {
+      "path": "docs/reports/01_ARCHITECTURE_AND_DATA_FLOW.md",
+      "sha256": "b9ff20421fae9f2c2b57a0317ba2bf37d8690b47f7a93977da3a317afe8b313c"
+    },
+    {
+      "path": "docs/reports/02_SECURITY_FINDINGS.md",
+      "sha256": "57d0b3ed371b8d0fdc400a7bc0f2f4bcfac00c9e8612490126de2f126c61392a"
+    },
+    {
+      "path": "docs/reports/03_RELIABILITY_FINDINGS.md",
+      "sha256": "6fc894688be5775fe3075f8e9d66720cb0dc451b277b0c066b44d2808f8053dc"
+    },
+    {
+      "path": "docs/reports/04_UI_UX_FINDINGS.md",
+      "sha256": "b2b6663d55aeccdc6e7c14b6adc8563e7c4e80f67274f7454ead61060e88816f"
+    },
+    {
+      "path": "docs/reports/05_RELEASE_BLOCKERS.md",
+      "sha256": "2bb5bfd4624abdcc1ae6c33be70f6254d5ac08728f51fef3b7f4ae71275620e7"
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_GATE_B1_CONTROLLED_INTEGRATION_REPORT.md",
+      "sha256": "c01975795244ee50a9227bf23c2019263464d778dea019916d395a5d9c90cecd"
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_INDUSTRIAL_GRAPHITE_REPORT.md",
+      "sha256": "a90f14152c1ddb25ffaf1019e27d7ac515577dc823ba873ade726cd30b5ee496"
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_UNIFIED_WORKSPACE_V1_REPORT.md",
+      "sha256": "4be6a36b991846af566e11ac2244e998a62b2f66da224bb6e249b8b1d023c3b7"
+    },
+    {
+      "path": "docs/reports/AQUA_COMMAND_V3_REMEDIATION_REPORT.md",
+      "sha256": "19abdc0733f5246a40a729a9980dd3aa19c81197d6afe35f87d97dac65759be7"
+    },
+    {
+      "path": "docs/reports/BASELINE_RESULTS.md",
+      "sha256": "be2718139df5b53dc646b5eee003997346059f6a139a1b510f4573f61dce76fb"
+    },
+    {
+      "path": "docs/reports/CHANGELOG.md",
+      "sha256": "051fc57920ddd827106cf34ab44bade6dec61baa03231c1bc6956ef999265bf1"
+    },
+    {
+      "path": "docs/reports/COMPATIBILITY_MATRIX.md",
+      "sha256": "3226271bb1f743d80cf3f35c8da108ceba3aeda3d77568071011c2d8b97f134e"
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_PRECISION_REPORT.md",
+      "sha256": "aff97966252b29ad0bb2d0b32e7523b35a2c960de705b50ff8693541144bc279"
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_PRECISION_V1_1_REPORT.md",
+      "sha256": "f557fd5cf14570aa88feb6278c51151cc2ef36bbd3cdc77098df4509be58050e"
+    },
+    {
+      "path": "docs/reports/F1_INDUSTRIAL_SPECTRUM_V2_REPORT.md",
+      "sha256": "01ef1fdabf0b4a4fd7db14ca577be91b6301f6af4f70fedf3fbcf8c8f13faae8"
+    },
+    {
+      "path": "docs/reports/F1_OVERVIEW_VISUAL_MOCKUPS.md",
+      "sha256": "3a6072bfd56545247524fceba397a4d12f2c02655aa663fbb4c1b91915bf9697"
+    },
+    {
+      "path": "docs/reports/F1_V12_TARGETED_CORRECTION_REPORT.md",
+      "sha256": "0b1c102999b8a8d001b92e988475fb306052dc0e8dee8f5024d73e73ce1149f3"
+    },
+    {
+      "path": "docs/reports/F1_V13_COMFORTABLE_DENSITY_REPORT.md",
+      "sha256": "5e6ad1af73ff28b47bc4823f8e860b7199c032afaa21eabac279ec2bb2575c0a"
+    },
+    {
+      "path": "docs/reports/F2_TAG_LIBRARY_TASK_CONFIGURATOR_V4_REPORT.md",
+      "sha256": "af5e56b8a0a1a2e2e6f6a4cf4701487f307e9de58a606387c384295ae60c2335"
+    },
+    {
+      "path": "docs/reports/F2_TASK_CONFIGURATION_V2_REPORT.md",
+      "sha256": "3316e990ce0551e731274ea264a98da7e227c689739a47dc175764f9ce40dd1f"
+    },
+    {
+      "path": "docs/reports/F2_TASK_STUDIO_V3_REPORT.md",
+      "sha256": "698b7b3b0fb4d415b88b40282168436d3a2028dde67a069eb8c11289c2543631"
+    },
+    {
+      "path": "docs/reports/F2_V4_1_BALANCED_TASK_CONFIGURATOR_REPORT.md",
+      "sha256": "f8b3ee49ada20dd22f2794314eed96760a0256a57afb32299969ef21fff4e9ca"
+    },
+    {
+      "path": "docs/reports/FINAL_GO_NO_GO.md",
+      "sha256": "7fb9c667ec193414320e9ae45084a89ab13c00d752990612b9b101bd869b2f69"
+    },
+    {
+      "path": "docs/reports/INTEGRATION_TEST_RESULTS.md",
+      "sha256": "f78b133a3b3e2f334f00e8e1cc6dab5dadf7ecd424f7a8a0ff7b87c5a7f6b87a"
+    },
+    {
+      "path": "docs/reports/MASTER_REMEDIATION_PLAN.md",
+      "sha256": "f57cabbfb88f44b6d846f4e111a0c03481c99c8ad9a401aeed6a68e524d43c8f"
+    },
+    {
+      "path": "docs/reports/MODERN_INTERFACE_OVERHAUL_REPORT.md",
+      "sha256": "321208a3026683175275579d7be2042756bd3cf59e909328ed789e7d72a2a223"
+    },
+    {
+      "path": "docs/reports/PACKAGE_VALIDATION.md",
+      "sha256": "624a4afb70c472ca615890be77e5424e028d7d921e8b051a065ca882bbc89cad"
+    },
+    {
+      "path": "docs/reports/PHASE0_AUDIT_REPORT.md",
+      "sha256": "726a6cebc948d649b9f20112118f9317586ddb9fbfe6f662942cca1c3669bb61"
+    },
+    {
+      "path": "docs/reports/PHASE1A1_COMPLETION_REPORT.md",
+      "sha256": "56b029eda32ea2ff8a89e64abc87338b2e5e3c8bcf1d2e7b328ef6dedd297583"
+    },
+    {
+      "path": "docs/reports/PHASE1A1_FINAL_ACCEPTANCE_EVIDENCE.md",
+      "sha256": "70c7288d262c7bf04a394b71c5ae52a6f01dcbad3c88fc9c56d6246df64fc221"
+    },
+    {
+      "path": "docs/reports/PHASE1A2_FINAL_ACCEPTANCE_REPORT.md",
+      "sha256": "f3701971763d8d8d46cc0d0f87a720e7f2362c11f6a49c7cd6cf0d17862234eb"
+    },
+    {
+      "path": "docs/reports/PHASE1A2_TARGETED_CORRECTIONS_REPORT.md",
+      "sha256": "9d9fe3609288310a2bfad9bac4af1d1262915869909b15a9865c6077267799a8"
+    },
+    {
+      "path": "docs/reports/PHASE1A_COMPLETION_REPORT.md",
+      "sha256": "6de961f4626ec7c86ca35089b4e6af0f4ae97abe2682d76c15cc4cfefd002214"
+    },
+    {
+      "path": "docs/reports/PHASE1A_FINAL_CLOSURE_REPORT.md",
+      "sha256": "4ebd2890f8685d9949ecd96a7a25ac1dc122d5bcf2e3f36c022007e782ff901d"
+    },
+    {
+      "path": "docs/reports/PHASE1B_RPM_COMPLETION_REPORT.md",
+      "sha256": "6769c75945947737ea9c58937e6e69cd6439c678e7de48adc331a6c5ab87a505"
+    },
+    {
+      "path": "docs/reports/PHASE_ACCEPTANCE_MATRIX.md",
+      "sha256": "e905d1c85e73b4694e6fdc782eb3f645d02e9335d74995a8e6374bee6d8eaa57"
+    },
+    {
+      "path": "docs/reports/REGRESSION_RESULTS.md",
+      "sha256": "25c9f15cbf43fe8894a94cc52c0972067253c4f5adde002f971e8521543d18b4"
+    },
+    {
+      "path": "docs/reports/RELEASE_CANDIDATE_REPORT.md",
+      "sha256": "bd4f287085545b6ebe1bcc549cb2fe70b5679a90ffdcd99aafd5dabaccde0a77"
+    },
+    {
+      "path": "docs/reports/RELIABILITY_TEST_RESULTS.md",
+      "sha256": "51ad8136bec98597870a85ab4d593565967daead6e598b7469af974538b65b31"
+    },
+    {
+      "path": "docs/reports/RISK_REGISTER.md",
+      "sha256": "7a9b4fe42f775cd3907afc2b57205f3fb08d3bf7216dcee293e1a1e73a84d7cb"
+    },
+    {
+      "path": "docs/reports/ROADMAP_DELIVERABLE_INDEX.md",
+      "sha256": "5c1e25f212a69a3729fcf4bd6894cc48ec9efd859ab84ef40a80e5fb185eb172"
+    },
+    {
+      "path": "docs/reports/ROLLBACK_PLAN.md",
+      "sha256": "d2257d83d0a3393931e1ccd7728fbf1572e65baea20f22c2002800c69e9c2eee"
+    },
+    {
+      "path": "docs/reports/SECURITY_TEST_RESULTS.md",
+      "sha256": "8ce670bef82dadc79daf0aa2cfaa3458bf8e512400b6a9fc58bb20136c628d10"
+    },
+    {
+      "path": "docs/reports/UNIFIED_WORKSPACE_PROFESSIONAL_UI_PASS_V2_REPORT.md",
+      "sha256": "496ed269b1d68935577ce051c46901e783da087e7c791750c10a1b5ebb95c9a0"
+    },
+    {
+      "path": "docs/reports/WINCC_SCADA_MOD_REPORT.md",
+      "sha256": "1a15ee0ac8f92b904c6d7af0efdba8b956e12488e72e5791de95087709481a2d"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_COMMISSIONING.md",
+      "sha256": "aadc7f63a25920dbaa52a2ecb3188c8ae1061466b67d3b439f91768940f74c6b"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_README.md",
+      "sha256": "684b8b70119090dd6616baa98562f73558579fe2eba071451c716022919de0be"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_STAGE_REPORT.md",
+      "sha256": "95f55b81e559a488293ad135d0ef0af03491ed5b2e596c491c00356048e8025d"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_WINDOWS_READER_GUIDE.md",
+      "sha256": "b8b33eb3517af9a65b0b03078dc6111debcf7d86bc6ef7a470fa5a3027117c5b"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_network-implementation.md",
+      "sha256": "394f1e3cae08882e6bc39e6d64d0115a91190fbfbd8051a7757d1a45a308a119"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_review.md",
+      "sha256": "dc398162d2cf3296a2fb8524c6ce52d17c8861504fc2336caaccdca24736049f"
+    },
+    {
+      "path": "docs/reports/aqua-command-0.9-actual_windows-implementation-report.md",
+      "sha256": "4f5ff8867979f13cf92f4725ea413f43eebb2ec923a9764228832f1230cf3c58"
+    },
+    {
+      "path": "docs/reports/aqua-uiux-v2.1-g0-g1_DATA_BINDING_MATRIX.md",
+      "sha256": "6077df6ad77b5f9d78a7026e00fb2b0fe9cb1e7f036f405e2dd9de81132e6962"
+    },
+    {
+      "path": "docs/reports/aqua-uiux-v2.1-g0-g1_G0_AUDIT_REPORT.md",
+      "sha256": "6548e8cf1a7076ac7c2f633c3f056f6168d25d48efd46b262766e59499e563db"
+    },
+    {
+      "path": "docs/reports/aqua-uiux-v2.1-g0-g1_G1_DESIGN_PROPOSAL.md",
+      "sha256": "fec6c6c48f1de6711d1d9c86961068828f87871c4abe180303a9b298c9b3ae28"
+    },
+    {
+      "path": "docs/reports/aqua-uiux-v2.1-g0-g1_README_START_HERE.md",
+      "sha256": "855373279694f41749d9409ac147f50d734453c0549e2b79d4cf1a8f3137bd7a"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_ACCEPTANCE.md",
+      "sha256": "b76cb713ee16264e47ecef1b4671994dec73bca286b9b751bf1fe1191b516ef7"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_AGENTS.md",
+      "sha256": "2d8380ece94c7081b310697b23a60a92d8247926e851cfa35b03c7ceecc9825f"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_AQUA_COMMAND_CODEX_MASTER_PROMPT.md",
+      "sha256": "9f29a0149af34c415c0e9febc87651950b63143b1f44e6453a4cecc7410d02c1"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_DEMO_SCRIPT_TH.md",
+      "sha256": "f47e37695eecb95f8f27f82b2a03ad2c839f938c2cfe969c57e78bf0a9ee93fb"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G0.md",
+      "sha256": "ac0bdb9687785621ff884a5494a4013e8d5dce8f9556ba6cd51055e504392f19"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G0_AUDIT_TH.md",
+      "sha256": "ac0bdb9687785621ff884a5494a4013e8d5dce8f9556ba6cd51055e504392f19"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G1.md",
+      "sha256": "4aa36edc2c19d176a0b1e578635db57c09d0a4f58d52408fc1ca3f7211b2c2dc"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G1_REPORT_TH.md",
+      "sha256": "4aa36edc2c19d176a0b1e578635db57c09d0a4f58d52408fc1ca3f7211b2c2dc"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G2.md",
+      "sha256": "fa944b0191fc1f6f50b265be4fa978b73af628913ae33983ccf46e6a5ffdcb0e"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G2_REPORT_TH.md",
+      "sha256": "fa944b0191fc1f6f50b265be4fa978b73af628913ae33983ccf46e6a5ffdcb0e"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G3.md",
+      "sha256": "5e2c43861b00e6763dab8cc230c17f91cc05f03a70e92f0285e2374b578d2560"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G3_REPORT_TH.md",
+      "sha256": "5e2c43861b00e6763dab8cc230c17f91cc05f03a70e92f0285e2374b578d2560"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G4.md",
+      "sha256": "0593a1d4699d7343e7ce6ed8b721bf6e5167beef3fe6c3cd226b157d49802e95"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G4_REPORT_TH.md",
+      "sha256": "0593a1d4699d7343e7ce6ed8b721bf6e5167beef3fe6c3cd226b157d49802e95"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G5.md",
+      "sha256": "c6b989e5632f85a30e7a689a68831e4328e300ed7de3b7e1136c022525f4879d"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_G5_REPORT.md",
+      "sha256": "c6b989e5632f85a30e7a689a68831e4328e300ed7de3b7e1136c022525f4879d"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_HANDOVER_TH.md",
+      "sha256": "5218ca4d1a59609474f219e23535f5806518f5673b8cabef238cb511320e4ea1"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_LAN_SETUP_TH.md",
+      "sha256": "a4672f5946e9c0027de4a456a6add4cc98c298187498276dba06fc85ad59581f"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_PLAN_V04.md",
+      "sha256": "0a6044fe69a15f20897aeb06c4a67e91dc411666c2bec89299f0665208d7a478"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_README.md",
+      "sha256": "54089923a6cb4028c198b0e6a3f399ea830e3dd5f00cab64950df7b420a05ac8"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_README_TH.md",
+      "sha256": "a5e35dc275c8501c826f553cc7d942e4eef32f2f3149cb1457b55c6894235e1f"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_REVIEW_FOLLOWUP.md",
+      "sha256": "ffbb4ee01048778d71c8195b9a261f3fd80538b741a0b23165e16e780fe1d533"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_REVIEW_INITIAL.md",
+      "sha256": "3c4c9d4ed88ef48fe44e7ba24dffd71db2aa4139b484ca2cd65b34f23e2c9c81"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_ROLLBACK.md",
+      "sha256": "6e15589860d8e09ba08b27aa4f20838e02a546feeb97df452edc7945ccfb1ef2"
+    },
+    {
+      "path": "docs/reports/aqua-v04-audit_WINCC_READONLY_PREFLIGHT.md",
+      "sha256": "0d3b6542d823e24403bc43d603c6c0474f58e333219c024374ccaf3fc7937a7c"
+    },
+    {
+      "path": "docs/tags/README.md",
+      "sha256": "1fa56b998922eed16190b1b47aa0bc8ee4d5a1a7a581bcd2d6d072904138a641"
+    },
+    {
+      "path": "healthcheck.py",
+      "sha256": "c5616e69971d24030419ba94246b6886dffd34eeb508deb099ce16ec7b71ab7b"
+    },
+    {
+      "path": "main.py",
+      "sha256": "ba2c4af5413e9888e56ba9ff991796b1d52dffa22ae44d44ce18a2fbc8eee7a8"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "6695f2894877ee9f6b09df1563e91071e1f0aead152741648e4c65a3656079bb"
+    },
+    {
+      "path": "scripts/privacy_preflight.py",
+      "sha256": "b62ad76e2f10ed48db1ee08cf932f380b27a8d0bfa697061b8ac4a451ac337a9"
+    },
+    {
+      "path": "src/__init__.py",
+      "sha256": "a9d05b30bf94ca4e1c38c181c37f568467e9f9b15adca8d53cb1c4d2b6e1c5fa"
+    },
+    {
+      "path": "src/aqua_bridge.py",
+      "sha256": "c8545d2f2ca9ab4225b29e9425744a237073a20c17f16bd61f6325ad046dd1fb"
+    },
+    {
+      "path": "src/config.py",
+      "sha256": "130790f95b27082007ec46cf3d218c1d9455e9c7cc6694fc57ed8c57b30abff4"
+    },
+    {
+      "path": "src/database.py",
+      "sha256": "904ad88061301b1fa85fae3c89a4b69a0fedaccdb182f6592dfb80e1f9f2b1b4"
+    },
+    {
+      "path": "src/monitor_service.py",
+      "sha256": "9f27e75436de0784418e4f7585037dccb43bbd7c4d8f51b0ad4067cce84180eb"
+    },
+    {
+      "path": "src/private_config.py",
+      "sha256": "804751755567167cf62e0479ee4e921573f7df7055f53a763e6e72bd549ed969"
+    },
+    {
+      "path": "src/pwa_client.py",
+      "sha256": "19a4027111166d3dfcccf39505c5040a3c8f6f0d7b5d627b7a36196f72665b57"
+    },
+    {
+      "path": "src/telegram_bot.py",
+      "sha256": "4de7749ee66dc3270a8fd3762f432c3f1a7ecb688923ad50a5ab04f4bf508cd6"
+    },
+    {
+      "path": "src/telegram_notifier.py",
+      "sha256": "864f80d1b46eea3e7f0ce9dc3cbe182031f0c9601ac40b80626206a376b32768"
+    }
+  ]
+}

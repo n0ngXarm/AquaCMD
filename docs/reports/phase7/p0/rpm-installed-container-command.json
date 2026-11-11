@@ -1,0 +1,30 @@
+{
+  "command": [
+    "podman",
+    "--root",
+    "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-roadmap-phase1b-fix/lab-storage",
+    "--runroot",
+    "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-roadmap-phase1b-fix/lab-run",
+    "--storage-driver=vfs",
+    "run",
+    "--rm",
+    "--network",
+    "none",
+    "--security-opt",
+    "label=disable",
+    "--tmpfs",
+    "/tmp:rw",
+    "-e",
+    "HOME=/tmp/phase7-home",
+    "-e",
+    "XDG_CONFIG_HOME=/tmp/phase7-home/.config",
+    "-v",
+    "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/rpm-final/RPMS/noarch/aqua-command-desktop-0.9.0-4.fc45.noarch.rpm:/candidate.rpm:ro",
+    "localhost/aqua-phase1b-rpm-lab:final",
+    "sh",
+    "-ec",
+    "mkdir -p \"$HOME\"; rpm -Uvh --replacepkgs --nosignature /candidate.rpm; rpm -q aqua-command-desktop; /usr/bin/aqua-command --help; python3 -c 'import sys,json,pathlib; p=pathlib.Path(\"/usr/share/aqua-command-desktop\");sys.path.insert(0,str(p/\"desktop\")); from private_runtime import catalog_path; assert not catalog_path().exists(); assert json.loads((p/\"config/opcua_tag_mapping.json\").read_text())[\"mappings\"]=={}; assert not (p/\"desktop/win_desktop.py\").exists(); print(\"PASS installed private helper, empty template, absent legacy preview/catalog\")'; rpm -V aqua-command-desktop"
+  ],
+  "exit_code": 0,
+  "scope": "Ephemeral offline Fedora45 container only; no host install or real Windows/OT acceptance"
+}

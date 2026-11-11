@@ -7,6 +7,7 @@ from typing import Any, Optional
 import urllib.request
 import urllib.error
 from src.config import Config
+from src.private_config import redact_credentials
 
 logger = logging.getLogger(__name__)
 
@@ -16,14 +17,39 @@ class TelegramNotifier:
 
     API_BASE = "https://api.telegram.org/bot"
 
-    def __init__(self, bot_token: Optional[str] = None):
+    def __init__(self, bot_token: Optional[str] = None, delivery_authorized: Optional[bool] = None):
         self.bot_token = bot_token or Config.TELEGRAM_BOT_TOKEN
         self.default_chat_id = Config.TELEGRAM_CHAT_ID
+        self._delivery_authorized = delivery_authorized
 
     @property
     def is_configured(self) -> bool:
         """Returns True if bot token is configured."""
         return bool(self.bot_token)
+
+    @property
+    def is_delivery_authorized(self) -> bool:
+        """
+        External delivery authorization check (REL-02).
+        Decoupled from notification trigger generation.
+        Strict default-deny:
+        1. APP_ENV must be strictly 'production'.
+        2. Deployment policy Config.TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED must be True.
+        3. Constructor override can only further restrict/disable delivery (delivery_authorized=False),
+           never bypass or override the deployment policy to True when deployment policy is False.
+        """
+        env = getattr(Config, "APP_ENV", "").strip().lower()
+        if env != "production":
+            return False
+        deployment_authorized = bool(getattr(Config, "TELEGRAM_EXTERNAL_DELIVERY_AUTHORIZED", False))
+        if not deployment_authorized:
+            return False
+        if self._delivery_authorized is False:
+            return False
+        return True
+
+    def redact(self, message, *additional):
+        return redact_credentials(message, self.bot_token, self.default_chat_id, *additional)
 
     def _api_url(self, method: str) -> str:
         """Constructs Telegram Bot API endpoint URL."""
@@ -34,6 +60,9 @@ class TelegramNotifier:
         if not self.is_configured:
             return False, "TELEGRAM_BOT_TOKEN ยังไม่ได้ตั้งค่าใน .env"
 
+        if not self.is_delivery_authorized:
+            return False, f"External network probe blocked in {Config.APP_ENV} environment (delivery not authorized)"
+
         try:
             req = urllib.request.Request(self._api_url("getMe"), headers={"User-Agent": "PWA-Water-Alert/1.0"})
             with urllib.request.urlopen(req, timeout=10) as resp:
@@ -41,10 +70,10 @@ class TelegramNotifier:
                 if data.get("ok"):
                     bot_user = data.get("result", {}).get("username", "Unknown")
                     bot_name = data.get("result", {}).get("first_name", "Unknown")
-                    return True, f"เชื่อมต่อสำเร็จ: {bot_name} (@{bot_user})"
-                return False, f"Telegram API error: {data.get('description')}"
+                    return True, self.redact(f"เชื่อมต่อสำเร็จ: {bot_name} (@{bot_user})")
+                return False, self.redact(f"Telegram API error: {data.get('description')}")
         except Exception as e:
-            return False, f"การเชื่อมต่อล้มเหลว: {e}"
+            return False, self.redact(f"การเชื่อมต่อล้มเหลว: {e}")
 
     def send_message(
         self,
@@ -56,6 +85,14 @@ class TelegramNotifier:
         """Sends an HTML formatted text message."""
         if not self.is_configured:
             logger.warning("Telegram Bot Token is not configured. Message skipped.")
+            return False
+
+        if not self.is_delivery_authorized:
+            logger.info(
+                "External Telegram delivery suppressed: APP_ENV='%s' (delivery authorization not granted). "
+                "Notification recorded locally.",
+                Config.APP_ENV
+            )
             return False
 
         payload: dict[str, Any] = {
@@ -79,7 +116,7 @@ class TelegramNotifier:
                 res = json.loads(resp.read().decode("utf-8"))
                 return bool(res.get("ok"))
         except Exception as e:
-            logger.error("Failed to send Telegram message to %s: %s", chat_id, e)
+            logger.error("Telegram message failed: %s", self.redact(e, chat_id))
             return False
 
     def send_photo(
@@ -94,6 +131,14 @@ class TelegramNotifier:
         or if caption length exceeds Telegram's 1024-character photo caption limit.
         """
         if not self.is_configured:
+            return False
+
+        if not self.is_delivery_authorized:
+            logger.info(
+                "External Telegram photo delivery suppressed: APP_ENV='%s' (delivery authorization not granted). "
+                "Photo notification recorded locally.",
+                Config.APP_ENV
+            )
             return False
 
         # Telegram photo caption limit is 1024 chars
@@ -118,7 +163,7 @@ class TelegramNotifier:
                 # Send the rest as text message
                 return self.send_message(chat_id, caption, reply_markup=reply_markup)
             except Exception as e:
-                logger.warning("Failed to send photo, falling back to message: %s", e)
+                logger.warning("Photo delivery failed: %s", self.redact(e, chat_id))
                 return self.send_message(chat_id, caption, reply_markup=reply_markup)
 
         payload: dict[str, Any] = {
@@ -144,7 +189,7 @@ class TelegramNotifier:
                 # Fallback to sendMessage if photo URL rejected
                 return self.send_message(chat_id, caption, reply_markup=reply_markup)
         except Exception as e:
-            logger.warning("sendPhoto failed (%s), falling back to text message", e)
+            logger.warning("Photo delivery failed: %s", self.redact(e, chat_id))
             return self.send_message(chat_id, caption, reply_markup=reply_markup)
 
     # ---------------- Formatters ----------------

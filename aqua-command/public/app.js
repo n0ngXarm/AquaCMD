@@ -350,7 +350,7 @@ function cmMapPanel() {
   const reservoirs = [
     { name: 'เขื่อนแม่งัดสมบูรณ์ชล', px: 388.7, py: 189.8, type: 'dam' },
     { name: 'เขื่อนแม่กวงอุดมธารา', px: 420.6, py: 232.8, type: 'dam' },
-    { name: 'จุดสูบน้ำดิบแม่น้ำปิง', px: 371.4, py: 248.6, type: 'river' }
+    { name: 'จุดสูบน้ำดิบตัวอย่าง LAB', px: 371.4, py: 248.6, type: 'river' }
   ];
 
   const resSvg = reservoirs.map(r => `
@@ -565,7 +565,7 @@ function reservoirPanel() {
   const reservoirs = d.reservoirs || [
     { name: 'เขื่อนแม่งัดสมบูรณ์ชล', storagePct: 80.2, storageMcm: 212.5, capacityMcm: 265.0, statusText: 'ปกติ (80.2%)' },
     { name: 'เขื่อนแม่กวงอุดมธารา', storagePct: 72.0, storageMcm: 189.4, capacityMcm: 263.0, statusText: 'ปกติ (72.0%)' },
-    { name: 'จุดสูบน้ำดิบแม่น้ำปิง (ป่าตัน)', storagePct: 93.2, waterLevelM: 3.45, statusText: 'ระดับน้ำปกติ (3.45 ม.รทก.)' }
+    { name: 'จุดสูบน้ำดิบตัวอย่าง LAB (ป่าตัน)', storagePct: 93.2, waterLevelM: 3.45, statusText: 'ระดับน้ำปกติ (3.45 ม.รทก.)' }
   ];
 
   return `
@@ -990,13 +990,13 @@ SEND_DEMO_ALERTS=false
         <div style="padding:18px">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
             <div class="notice-box">
-              <div style="font-size:10px;color:var(--muted)">ส่งสำเร็จ</div>
+              <div style="font-size:10px;color:var(--muted)">Telegram รับแล้ว</div>
               <div style="font-size:24px;font-weight:800;color:var(--success);margin:4px 0">${d.queueStats.sent}</div>
-              <div style="font-size:9.5px;color:var(--muted)">DELIVERED</div>
+              <div style="font-size:9.5px;color:var(--muted)">ACCEPTED BY TELEGRAM</div>
             </div>
             <div class="notice-box">
               <div style="font-size:10px;color:var(--muted)">กำลังรอส่ง</div>
-              <div style="font-size:24px;font-weight:800;color:var(--primary);margin:4px 0">${d.queueStats.pending}</div>
+              <div style="font-size:24px;font-weight:800;color:var(--primary);margin:4px 0">${d.queueStats.pending + (d.queueStats.retryPending ?? 0)}</div>
               <div style="font-size:9.5px;color:var(--muted)">PENDING / RETRY</div>
             </div>
             <div class="notice-box">
@@ -1011,6 +1011,13 @@ SEND_DEMO_ALERTS=false
             </div>
           </div>
 
+          <p class="panel-caption">กำลังส่ง ${d.queueStats.sending ?? 0} · ไม่ทราบผลการส่ง ${d.queueStats.deliveryUnknown ?? 0}</p>
+          ${(d.queueUnknown ?? []).map(job => `
+            <div class="notice-box">
+              <div>ไม่ทราบผลการส่ง · ${esc(job.alertId)} · ส่งแล้ว ${esc(job.attempt)} ครั้ง</div>
+              ${actionButton('retryUnknown', 'ส่งรายการนี้อีกครั้ง', 'button-ghost', `data-job="${esc(job.id)}"`)}
+            </div>
+          `).join('')}
           ${actionButton('retry', icon('refresh') + ' Retry Failed Messages', 'button-ghost')}
         </div>
       </div>
@@ -1190,6 +1197,15 @@ async function runAction(name, extra) {
       notify(`เพิ่มข้อความทดสอบเข้าคิวส่งแล้ว (${result.id})`);
       return;
     }
+    if (name === 'retryUnknown') {
+      if (!confirm('ข้อความครั้งก่อนอาจถึงปลายทางแล้ว ยืนยันส่งอีกครั้งและยอมรับความเสี่ยงที่ข้อความจะซ้ำหรือไม่')) return;
+      const key = state.adminKey || prompt('กรอก ADMIN_API_KEY เพื่อส่งรายการนี้อีกครั้ง');
+      if (!key) return;
+      state.adminKey = key;
+      await sendReq(`/api/queue/${encodeURIComponent(extra)}/retry-unknown`, 'POST', {confirmDuplicateRisk: true});
+      notify('นำรายการกลับเข้าคิวแล้ว');
+      return;
+    }
     if (name === 'retry') {
       let key = state.adminKey || prompt('กรอก ADMIN_API_KEY เพื่อ Retry ข้อความที่ล้มเหลว');
       if (!key) return;
@@ -1290,7 +1306,7 @@ document.addEventListener('click', e => {
 
   const act = e.target.closest('[data-action]');
   if (act && (!e.target.closest('[data-stop]') || act.closest('button'))) {
-    runAction(act.dataset.action);
+    runAction(act.dataset.action, act.dataset.job);
   }
 });
 

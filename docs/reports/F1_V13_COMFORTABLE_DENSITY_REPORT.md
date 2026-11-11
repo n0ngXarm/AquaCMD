@@ -1,8 +1,9 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — F1 V1.3 Comfortable Density Refinement Report
-**Provincial Waterworks Authority, Chiang Mai (Umong Water Production Station)**  
-**Version:** 1.3-comfortable-density  
-**Branch:** `feature/f1-industrial-precision`  
-**Execution Environment:** Linux x86_64 / GTK 4.18 (Display :0 Wayland/X11)  
+**Provincial Waterworks Authority, Chiang Mai (Umong Water Production Station)**
+**Version:** 1.3-comfortable-density
+**Branch:** `feature/f1-industrial-precision`
+**Execution Environment:** Linux x86_64 / GTK 4.18 (Display :0 Wayland/X11)
 **Catalog Source:** Siemens WinCC V8.1 `Export all.txt` (457 Tags, 10 Equipment Groups)
 
 ---
@@ -62,19 +63,19 @@
 ### Embedded Visual Previews
 
 #### 1. All Groups (457 Tags) — 1366×768 (Comfortable Density)
-![All Groups 1366x768](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_all_groups_1366x768.png)
+![All Groups 1366x768](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_all_groups_1366x768.png)
 
 #### 2. Specific Group (High_VSD — 135 Tags) — 1366×768
-![High_VSD 1366x768](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_high_vsd_1366x768.png)
+![High_VSD 1366x768](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_high_vsd_1366x768.png)
 
 #### 3. Tag Properties Inspector — 1366×768
-![Tag Properties Inspector](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_properties_1366x768.png)
+![Tag Properties Inspector](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_properties_1366x768.png)
 
 #### 4. All Groups (457 Tags) — 1920×1080 Full HD (Widescreen Adaptation)
-![All Groups 1920x1080](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_all_groups_1920x1080.png)
+![All Groups 1920x1080](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_all_groups_1920x1080.png)
 
 #### 5. Specific Group (High_Valve — 68 Tags) — 1366×768
-![High_Valve 1366x768](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_high_valve_1366x768.png)
+![High_Valve 1366x768](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_v13_high_valve_1366x768.png)
 
 ---
 
@@ -99,13 +100,13 @@
 
 ไฟล์ที่เกี่ยวข้องใน Working Tree ของ Branch `feature/f1-industrial-precision`:
 
-- [`f1_overview.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py):
+- [`f1_overview.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py):
   - เพิ่ม `DATA_TYPE_MAPPING` และ `format_data_type()`
   - กำหนดความกว้างคอลัมน์แบบกระจายตัวสมดุล (All Groups: 260px min + hexpand, 130px, 85px, 125px, 85px, 105px, 95px)
   - เพิ่ม `attach_row_events()` สำหรับ Full-row Hover (`EventControllerMotion`) และ Click (`GestureClick`)
   - เพิ่ม `select_tag()` สลับสถานะแถว In-place รักษาระดับการเลื่อนหน้าจอ
   - ปรับความกว้าง Paned เป็น 340px และเพิ่ม Margin ให้ Header
-- [`f1_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_style.css):
+- [`f1_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_style.css):
   - ปรับ Typography Scale ตามเกณฑ์
   - ปรับความสูงแถวตาราง `min-height: 38px; padding: 8px 12px;`
   - ปรับสไตล์แถว Explorer `min-height: 48px; padding: 7px 10px; border-left: 3px solid #4D91CD;`

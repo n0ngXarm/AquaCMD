@@ -1,0 +1,72 @@
+[
+  {
+    "log": "contracts-116.txt",
+    "summary": [
+      "Ran 116 tests in 25.337s",
+      "OK",
+      "AUDIT_EXIT_CODE=0"
+    ]
+  },
+  {
+    "log": "focused-security-task-delivery.txt",
+    "summary": [
+      "Ran 27 tests in 6.461s",
+      "OK",
+      "AUDIT_EXIT_CODE=0"
+    ]
+  },
+  {
+    "log": "gtk-compositor.txt",
+    "summary": []
+  },
+  {
+    "log": "gui-baseline.txt",
+    "summary": [
+      "Ran 313 tests in 62.834s",
+      "FAILED (failures=16, errors=5)",
+      "AUDIT_EXIT_CODE=1"
+    ]
+  },
+  {
+    "log": "gui-final.txt",
+    "summary": [
+      "Ran 319 tests in 68.940s",
+      "OK",
+      "AUDIT_EXIT_CODE=0"
+    ]
+  },
+  {
+    "log": "gui-focused-v2.txt",
+    "summary": [
+      "Ran 70 tests in 11.899s",
+      "OK",
+      "AUDIT_EXIT_CODE=0"
+    ]
+  },
+  {
+    "log": "gui-focused.txt",
+    "summary": [
+      "Ran 65 tests in 8.219s",
+      "FAILED (failures=4, errors=1)",
+      "AUDIT_EXIT_CODE=1"
+    ]
+  },
+  {
+    "log": "negative-compositor.txt",
+    "summary": []
+  },
+  {
+    "log": "negative-controls.txt",
+    "summary": [
+      "AUDIT_EXIT_CODE=0"
+    ]
+  },
+  {
+    "log": "pwa-14.txt",
+    "summary": [
+      "Ran 39 tests in 0.218s",
+      "OK",
+      "AUDIT_EXIT_CODE=0"
+    ]
+  }
+]

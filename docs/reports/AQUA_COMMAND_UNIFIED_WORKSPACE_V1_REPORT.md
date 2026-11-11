@@ -1,11 +1,12 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — UNIFIED MONITORING & TASK WORKSPACE V1
 ## Final Implementation, Production Integration & Live Verification Report
 
-> **Project:** AQUA COMMAND — SCADA & Edge Gateway Workstation (Linux GTK4 / Windows 11)  
-> **Topic:** Unified Monitoring & Task Workspace V1 (Merging F1 Overview & F2 Task Studio)  
-> **Status:** Implementation Complete & Production Verified · 37/37 Automated Tests Passed  
-> **Date:** 2026-11-02  
-> **Gate Compliance:** Gate B Runtime & Persistence Invariant Preserved · Safe Fallback Mechanism Active  
+> **Project:** AQUA COMMAND — SCADA & Edge Gateway Workstation (Linux GTK4 / Windows 11)
+> **Topic:** Unified Monitoring & Task Workspace V1 (Merging F1 Overview & F2 Task Studio)
+> **Status:** Implementation Complete & Production Verified · 37/37 Automated Tests Passed
+> **Date:** 2026-11-02
+> **Gate Compliance:** Gate B Runtime & Persistence Invariant Preserved · Safe Fallback Mechanism Active
 
 ---
 
@@ -13,8 +14,8 @@
 
 สืบเนื่องจากการอนุมัติของ USER ในการรวมหน้า **F1 ภาพรวมสถานีสูบน้ำ (Overview & Inspector)** และ **F2 ตัวจัดการ Task (Task Studio)** เข้าด้วยกันเป็น **Unified Workspace** ชุดเดียว:
 
-1. **สร้างโมดูลรวม [`workspace.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace.py)** และสไตล์ชีต [`workspace_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace_style.css) เรียบร้อยแล้ว
-2. **ผสานเข้าสู่โปรดักชัน [`app.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py)** ผ่านระบบ **Feature Flag (`USE_UNIFIED_WORKSPACE = True`)** โดยยังคงเก็บรักษา [`f1_overview.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py) และ [`f2_tasks.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) ไว้เป็น Safety Rollback Module
+1. **สร้างโมดูลรวม [`workspace.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace.py)** และสไตล์ชีต [`workspace_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace_style.css) เรียบร้อยแล้ว
+2. **ผสานเข้าสู่โปรดักชัน [`app.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py)** ผ่านระบบ **Feature Flag (`USE_UNIFIED_WORKSPACE = True`)** โดยยังคงเก็บรักษา [`f1_overview.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py) และ [`f2_tasks.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) ไว้เป็น Safety Rollback Module
 3. **รันชุดทดสอบอัตโนมัติ 37/37 รายการ ผ่านทั้งหมด 100% (Zero Regression)**
 4. **บันทึกภาพหน้าจอสดจาก Live Application** ทั้งบนความละเอียด **1366×768** และ **1920×1080** ครบถ้วน
 
@@ -53,49 +54,49 @@
 
 | รายการไฟล์ | บทบาทหน้าที่ | รายละเอียดการเปลี่ยนแปลง |
 | :--- | :---: | :--- |
-| [`aqua-command-desktop/desktop/workspace.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace.py) | **สร้างใหม่** | คลาส `AquaUnifiedWorkspaceView` รวม `SharedGroupExplorer`, `SharedTagCatalogTable`, `SharedTagInspector`, และ `SharedTaskConfigurator` พร้อม State Management และ Unsaved Changes Safeguard |
-| [`aqua-command-desktop/desktop/workspace_style.css`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace_style.css) | **สร้างใหม่** | สไตล์ชีต Industrial Spectrum V2 ที่กำหนด Surface Panels, Table Cells, Badges, Inspector Grid, และ Sticky Save Bar |
-| [`aqua-command-desktop/desktop/app.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py) | **แก้ไข** | เพิ่ม `USE_UNIFIED_WORKSPACE = True`, โหลด CSS เพิ่มเติม, เชื่อมต่อ `build_overview_page` เข้ากับ Unified Workspace, และกำหนดเส้นทาง F1/F2 ให้สลับโหมด Context Panel แบบ In-place |
-| [`aqua-command-desktop/desktop/tests/test_workspace_production.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_production.py) | **สร้างใหม่** | ชุดทดสอบ Integration อัตโนมัติ 7 ข้อ ครอบคลุมการโหลด Tag 457 รายการ, การสลับโหมด F1/F2, Multi-group Selection, Task CRUD, Dirty Safeguard, และ Gate B Persistence Schema |
-| [`aqua-command-desktop/desktop/f1_overview.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py) | **คงเดิม** | เก็บรักษาไว้เป็น Fallback Module กรณีต้องการ Rollback |
-| [`aqua-command-desktop/desktop/f2_tasks.py`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) | **คงเดิม** | เก็บรักษาไว้เป็น Fallback Module กรณีต้องการ Rollback |
+| [`aqua-command-desktop/desktop/workspace.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace.py) | **สร้างใหม่** | คลาส `AquaUnifiedWorkspaceView` รวม `SharedGroupExplorer`, `SharedTagCatalogTable`, `SharedTagInspector`, และ `SharedTaskConfigurator` พร้อม State Management และ Unsaved Changes Safeguard |
+| [`aqua-command-desktop/desktop/workspace_style.css`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/workspace_style.css) | **สร้างใหม่** | สไตล์ชีต Industrial Spectrum V2 ที่กำหนด Surface Panels, Table Cells, Badges, Inspector Grid, และ Sticky Save Bar |
+| [`aqua-command-desktop/desktop/app.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/app.py) | **แก้ไข** | เพิ่ม `USE_UNIFIED_WORKSPACE = True`, โหลด CSS เพิ่มเติม, เชื่อมต่อ `build_overview_page` เข้ากับ Unified Workspace, และกำหนดเส้นทาง F1/F2 ให้สลับโหมด Context Panel แบบ In-place |
+| [`aqua-command-desktop/desktop/tests/test_workspace_production.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests/test_workspace_production.py) | **สร้างใหม่** | ชุดทดสอบ Integration อัตโนมัติ 7 ข้อ ครอบคลุมการโหลด Tag 457 รายการ, การสลับโหมด F1/F2, Multi-group Selection, Task CRUD, Dirty Safeguard, และ Gate B Persistence Schema |
+| [`aqua-command-desktop/desktop/f1_overview.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f1_overview.py) | **คงเดิม** | เก็บรักษาไว้เป็น Fallback Module กรณีต้องการ Rollback |
+| [`aqua-command-desktop/desktop/f2_tasks.py`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/f2_tasks.py) | **คงเดิม** | เก็บรักษาไว้เป็น Fallback Module กรณีต้องการ Rollback |
 
 ---
 
 ## 4. ภาพหน้าจอสดจาก Live Application (Production Screenshots)
 
 ````carousel
-![Live App F1 Monitoring 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f1_monitoring_1366x768.png)
+![Live App F1 Monitoring 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f1_monitoring_1366x768.png)
 <!-- slide -->
-![Live App F2 Task Mode 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f2_taskmode_1366x768.png)
+![Live App F2 Task Mode 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f2_taskmode_1366x768.png)
 <!-- slide -->
-![Live App F1 Monitoring 1920x1080 Full HD](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f1_monitoring_1920x1080.png)
+![Live App F1 Monitoring 1920x1080 Full HD]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f1_monitoring_1920x1080.png)
 <!-- slide -->
-![Live App F2 Task Mode 1920x1080 Full HD](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f2_taskmode_1920x1080.png)
+![Live App F2 Task Mode 1920x1080 Full HD]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/unified_app_f2_taskmode_1920x1080.png)
 ````
 
 ### คำอธิบายภาพหน้าจอจริง:
-1. **ภาพที่ 1: Live App F1 Monitoring Mode (1366×768)**  
-   [unified_app_f1_monitoring_1366x768.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1366x768.png)  
+1. **ภาพที่ 1: Live App F1 Monitoring Mode (1366×768)**
+   [unified_app_f1_monitoring_1366x768.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1366x768.png)
    แสดงหน้าจอโปรแกรมจริงพร้อม Global Status Header ด้านบน, สัญญาณเตือน Ribbon สีเขียว `[CATALOG VERIFIED]`, คอลัมน์ซ้ายกลุ่มอุปกรณ์ 10 กลุ่ม, ตารางกลาง Tag 457 สัญญาณ, และแผงขวาแสดงคุณสมบัติทางวิศวกรรมของ `High_VSD_01_Speed_Feedback` (S7 PLC Offset, Quality Code 0x00000000 · Not Observed)
 
-2. **ภาพที่ 2: Live App F2 Task Management Mode (1366×768)**  
-   [unified_app_f2_taskmode_1366x768.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1366x768.png)  
+2. **ภาพที่ 2: Live App F2 Task Management Mode (1366×768)**
+   [unified_app_f2_taskmode_1366x768.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1366x768.png)
    เมื่อสลับมาที่ F2 แผงขวาจะเปลี่ยนเป็น 3 ส่วนสมดุล (1. ข้อมูล Task, 2. Actions Local Log & Telegram, 3. ตาราง Assigned Tags กะทัดรัด) และตารางกลางมีปุ่ม `➕ เพิ่ม Tag ที่เลือกเข้าสู่ Task (2 รายการ)` พร้อมแถบบันทึก Sticky Save Task ด้านล่าง
 
-3. **ภาพที่ 3: Live App F1 Monitoring Mode (1920×1080 Full HD)**  
-   [unified_app_f1_monitoring_1920x1080.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1920x1080.png)  
+3. **ภาพที่ 3: Live App F1 Monitoring Mode (1920×1080 Full HD)**
+   [unified_app_f1_monitoring_1920x1080.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f1_monitoring_1920x1080.png)
    การแสดงผลแบบความละเอียดสูง คมชัด สัดส่วน 3 คอลัมน์กว้างขวางและอ่านง่าย
 
-4. **ภาพที่ 4: Live App F2 Task Management Mode (1920×1080 Full HD)**  
-   [unified_app_f2_taskmode_1920x1080.png](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1920x1080.png)  
+4. **ภาพที่ 4: Live App F2 Task Management Mode (1920×1080 Full HD)**
+   [unified_app_f2_taskmode_1920x1080.png](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/docs/screenshots/unified_workspace_preview/unified_app_f2_taskmode_1920x1080.png)
    การจัดการ Task บนหน้าจอ Full HD แสดงรายการสัญญาณและตัวเลือกคอนฟิกครบถ้วน
 
 ---
 
 ## 5. ผลการทดสอบระบบอัตโนมัติ (Automated Test Results)
 
-รันชุดทดสอบทั้งหมดใน [`desktop/tests`](file:///home/nong_ing/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests) จำนวน **37 รายการ ผ่านทั้งหมด (37/37 Passed)**:
+รันชุดทดสอบทั้งหมดใน [`desktop/tests`](file://[REDACTED_HOME]/Documents/Codex/2026-10-27/referenced-chatgpt-conversation-this-is-an-2/work/waterlevels-desktop/aqua-command-desktop/desktop/tests) จำนวน **37 รายการ ผ่านทั้งหมด (37/37 Passed)**:
 
 ```
 Ran 37 tests in 0.366s

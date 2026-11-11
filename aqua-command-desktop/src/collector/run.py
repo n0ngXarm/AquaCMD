@@ -42,13 +42,12 @@ def run(config_path,db_path,output=print,*,loop=False,stop_event=None):
         emit(store.record(hostname,'ua_client',('ok',None,(time.perf_counter()-started)*1000,{'library':'asyncua','version':library_version,
             'mode':'read-only','interval_s':settings['interval_s'],'loop_requested':loop})))
         while not stop.is_set():
-            started=time.monotonic()
             collect_transport(settings,store,output)
             for target in settings['targets']:
                 if stop.is_set():break
                 if 'ua' in target:asyncio.run(read_target(target,settings['tcp_timeout_s'],store,output))
             if not loop:break
-            if stop.wait(max(0,settings['interval_s']-(time.monotonic()-started))):break
+            if stop.wait(settings['interval_s']):break
     finally:
         store.close()
 

@@ -1,0 +1,40 @@
+{
+  "baseline_summary": [
+    "Ran 313 tests in 62.834s",
+    "FAILED (failures=16, errors=5)",
+    "AUDIT_EXIT_CODE=1"
+  ],
+  "baseline_diagnostics": [
+    "test_late_demo_callback_cannot_update_live_status (test_f3_continuation.TestF3Continuation.test_late_demo_callback_cannot_update_live_status)",
+    "test_switching_to_live_clears_demo_observations (test_f3_continuation.TestF3Continuation.test_switching_to_live_clears_demo_observations)",
+    "test_unverified_wan_has_no_online_badge_or_verified_flow (test_f3_continuation.TestF3Continuation.test_unverified_wan_has_no_online_badge_or_verified_flow)",
+    "test_identity_08_demo_data_isolated_from_live (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_08_demo_data_isolated_from_live)",
+    "test_default_stations_fit_a_shorter_operator_viewport (test_f3_usability.TestF3Usability.test_default_stations_fit_a_shorter_operator_viewport)",
+    "test_collector_does_not_draw_unverified_wan_as_link_up (test_f3_continuation.TestF3Continuation.test_collector_does_not_draw_unverified_wan_as_link_up)",
+    "test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='detect_opcua_session')",
+    "test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='read_opcua_single_tag')",
+    "test_verified_connections_render_and_animate (test_f3_continuation.TestF3Continuation.test_verified_connections_render_and_animate)",
+    "test_closing_the_main_window_closes_its_popup (test_f3_details_window.TestF3DetailsWindow.test_closing_the_main_window_closes_its_popup)",
+    "test_remote_confirmation_uses_the_popup_without_starting_a_probe (test_f3_details_window.TestF3DetailsWindow.test_remote_confirmation_uses_the_popup_without_starting_a_probe)",
+    "test_reuses_closes_and_reopens_the_same_window (test_f3_details_window.TestF3DetailsWindow.test_reuses_closes_and_reopens_the_same_window)",
+    "test_selection_opens_a_floating_owned_window (test_f3_details_window.TestF3DetailsWindow.test_selection_opens_a_floating_owned_window)",
+    "test_settings_are_owned_by_the_details_window (test_f3_details_window.TestF3DetailsWindow.test_settings_are_owned_by_the_details_window)",
+    "test_01_f3_rendering_bounds (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_01_f3_rendering_bounds)",
+    "test_03_status_led_updates (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_03_status_led_updates)",
+    "test_compat_ip_table_update (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_ip_table_update)",
+    "test_identity_12_regression_f1_f2_f6_all_pass (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_12_regression_f1_f2_f6_all_pass)",
+    "test_list_explains_status_and_accounts_for_configured_devices (test_f3_usability.TestF3Usability.test_list_explains_status_and_accounts_for_configured_devices)",
+    "test_live_actions_describe_the_implemented_capability (test_f3_usability.TestF3Usability.test_live_actions_describe_the_implemented_capability)",
+    "test_startup_gives_the_diagram_full_attention (test_f3_usability.TestF3Usability.test_startup_gives_the_diagram_full_attention)"
+  ],
+  "final_summary": [
+    "Ran 319 tests in 68.940s",
+    "OK",
+    "AUDIT_EXIT_CODE=0"
+  ],
+  "final_diagnostics": [],
+  "traced_rows": 21,
+  "deleted_original_methods": 0,
+  "skips_added": 0,
+  "xfails_added": 0
+}

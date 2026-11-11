@@ -8,7 +8,7 @@ Tests and verifies all 10 operational failure and recovery scenarios:
 3. User Pause and Stop controls (GTK UI buttons update and manage background workers).
 4. Application restart zero auto-start (even with active=True tasks, engine starts in STOPPED).
 5. SQLite Disk Full / Size Limit protection (quota enforcement, zero app crash).
-6. Outbox Crash Recovery (Cold start restores uncommitted 'SENDING' items to 'PENDING').
+6. Outbox Crash Recovery (Cold start holds unconfirmed Telegram sends).
 7. Duplicate Delivery Risk & Deduplication (prevents continuous alert spam).
 8. Certificate changed or expired (quarantine to rejected/certs/, anti-downgrade).
 9. Tasks enabled while Monitoring is STOPPED (zero unauthorized network traffic).
@@ -336,8 +336,8 @@ class TestOperationalFailures(unittest.TestCase):
         self.assertTrue(storage.disk_full_flag)
 
     # 6. Outbox Crash Recovery
-    def test_06_outbox_crash_recovery_sending_to_pending(self):
-        """Failure 6: Crashed in-flight SENDING items are recovered to PENDING upon cold start."""
+    def test_06_outbox_crash_recovery_sending_to_unknown(self):
+        """Failure 6: Cold start retains the Telegram job without automatically resending."""
         db_path = self.work_path / "test_crash_recovery.db"
         storage = DurableStorage(db_path)
 
@@ -360,11 +360,10 @@ class TestOperationalFailures(unittest.TestCase):
         recovered_count = storage.recover_uncommitted_outbox()
         self.assertEqual(recovered_count, 1)
 
-        # Verify status is now PENDING
-        items = storage.get_pending_outbox_items(limit=5)
-        self.assertEqual(len(items), 1)
-        self.assertEqual(items[0].outbox_id, "out_c1")
-        self.assertEqual(items[0].status, "PENDING")
+        self.assertEqual(storage.get_pending_outbox_items(limit=5), [])
+        with storage._get_connection() as conn:
+            item = conn.execute("SELECT outbox_id, status FROM notification_outbox").fetchone()
+        self.assertEqual(tuple(item), ("out_c1", "DELIVERY_UNKNOWN"))
 
     # 7. Duplicate Delivery Risk & Deduplication
     def test_07_duplicate_delivery_risk_analysis(self):

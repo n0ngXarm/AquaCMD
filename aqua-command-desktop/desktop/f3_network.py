@@ -263,7 +263,7 @@ def get_local_hostname() -> str:
       1. socket.gethostname()
       2. platform.node()
       3. /etc/hostname file read (Linux)
-    Strictly avoids username (e.g. nong_ing) and synthetic hardcoded names (PC4).
+    Strictly avoids username and synthetic hardcoded names (PC4).
     """
     candidates = []
     try:

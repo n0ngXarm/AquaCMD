@@ -1,0 +1,14 @@
+[
+  {
+    "id": "LAB_RPM_TEST_ONLY_NOT_FOR_RELEASE",
+    "name": "aqua-command-desktop-0.9.0-4.fc45.noarch.rpm",
+    "sha256": "99b9339504edd489f843ad3307274951587ef2fff00c9c73c85a14a677f5da8c",
+    "bytes": 355914
+  },
+  {
+    "id": "EXACT_DESKTOP_BUILD_SOURCE_ARCHIVE",
+    "name": "aqua-command-desktop-0.9.0.tar.gz",
+    "sha256": "1644f0fb7d3553c5f8f9b470bec8d85195987318947ba9509404d5cacc587427",
+    "bytes": 520103
+  }
+]

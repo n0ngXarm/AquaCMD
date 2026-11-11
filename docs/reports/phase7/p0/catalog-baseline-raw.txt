@@ -1,0 +1,71 @@
+test_existing_private_mapping_keeps_exact_tag_node_and_namespace (test_private_runtime.PrivateRuntimeTests.test_existing_private_mapping_keeps_exact_tag_node_and_namespace) ... ok
+test_explicit_private_catalog_has_priority_and_missing_does_not_fallback (test_private_runtime.PrivateRuntimeTests.test_explicit_private_catalog_has_priority_and_missing_does_not_fallback) ... FAIL
+test_new_install_mapping_is_an_empty_template (test_private_runtime.PrivateRuntimeTests.test_new_install_mapping_is_an_empty_template) ... FAIL
+test_private_profile_catalog_precedes_legacy_downloads (test_private_runtime.PrivateRuntimeTests.test_private_profile_catalog_precedes_legacy_downloads) ... FAIL
+
+======================================================================
+FAIL: test_explicit_private_catalog_has_priority_and_missing_does_not_fallback (test_private_runtime.PrivateRuntimeTests.test_explicit_private_catalog_has_priority_and_missing_does_not_fallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 17, in resolver
+    return importlib.import_module('private_runtime')
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.15/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1389, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1353, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1242, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'private_runtime'. Did you mean: 'test_private_runtime'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 26, in test_explicit_private_catalog_has_priority_and_missing_does_not_fallback
+    self.assertEqual(self.resolver().catalog_path(root / 'profile'), private)
+                     ~~~~~~~~~~~~~^^
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 19, in resolver
+    self.fail('Private catalog selection is unavailable')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Private catalog selection is unavailable
+
+======================================================================
+FAIL: test_new_install_mapping_is_an_empty_template (test_private_runtime.PrivateRuntimeTests.test_new_install_mapping_is_an_empty_template)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 43, in test_new_install_mapping_is_an_empty_template
+    self.assertEqual(json.loads(path.read_text())['mappings'], {})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'High_VSD.CTM13PT_Speed': {'node_id_ident[1432 chars]rue}} != {}
+Diff is 2472 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_private_profile_catalog_precedes_legacy_downloads (test_private_runtime.PrivateRuntimeTests.test_private_profile_catalog_precedes_legacy_downloads)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 17, in resolver
+    return importlib.import_module('private_runtime')
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.15/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1389, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1353, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1242, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'private_runtime'. Did you mean: 'test_private_runtime'?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 37, in test_private_profile_catalog_precedes_legacy_downloads
+    self.assertEqual(self.resolver().catalog_path(profile), path)
+                     ~~~~~~~~~~~~~^^
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/desktop/tests/test_private_runtime.py", line 19, in resolver
+    self.fail('Private catalog selection is unavailable')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Private catalog selection is unavailable
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.063s
+
+FAILED (failures=3)

@@ -41,10 +41,10 @@ class TestF1ApiViewContracts(unittest.TestCase):
         self.assertTrue(validate_payload('undo_last_action', {})[0])
         self.assertTrue(validate_payload('navigate_f6', {})[0])
 
-        self.assertTrue(validate_payload('add_tag_to_task', {'tag_name': 'BVEC1PT.AUTO_C', 'task_id': 'TASK-01'})[0])
-        self.assertTrue(validate_payload('add_tags_to_task', {'tag_names': ['BVEC1PT.AUTO_C', 'PT01.PV_BAR'], 'task_id': 'TASK-01'})[0])
-        self.assertTrue(validate_payload('remove_tag_from_task', {'tag_name': 'BVEC1PT.AUTO_C', 'task_id': 'TASK-01'})[0])
-        self.assertTrue(validate_payload('remove_tags_from_task', {'tag_names': ['BVEC1PT.AUTO_C'], 'task_id': 'TASK-01'})[0])
+        self.assertTrue(validate_payload('add_tag_to_task', {'tag_name': 'LAB_TAG_294', 'task_id': 'TASK-01'})[0])
+        self.assertTrue(validate_payload('add_tags_to_task', {'tag_names': ['LAB_TAG_294', 'PT01.PV_BAR'], 'task_id': 'TASK-01'})[0])
+        self.assertTrue(validate_payload('remove_tag_from_task', {'tag_name': 'LAB_TAG_294', 'task_id': 'TASK-01'})[0])
+        self.assertTrue(validate_payload('remove_tags_from_task', {'tag_names': ['LAB_TAG_294'], 'task_id': 'TASK-01'})[0])
 
         valid_task = {
             'id': 'TASK-01',
@@ -70,8 +70,8 @@ class TestF1ApiViewContracts(unittest.TestCase):
     def test_04_tags_serializable_not_observed_default(self):
         owner = MagicMock()
         owner.scanned_tags = [
-            {'name': 'TAG_1', 'comment': 'C1', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD0', 'raw_metadata': {'Col': 'Val'}},
-            {'name': 'TAG_2', 'comment': 'C2', 'type': 'Binary Tag', 'group': 'High_Valve', 'addr': 'DB2,D0.0', 'raw_metadata': {}}
+            {'name': 'TAG_1', 'comment': 'C1', 'type': 'Float', 'group': 'High_VSD', 'addr': 'LAB_OFFSET', 'raw_metadata': {'Col': 'Val'}},
+            {'name': 'TAG_2', 'comment': 'C2', 'type': 'Binary Tag', 'group': 'High_Valve', 'addr': 'LAB_OFFSET', 'raw_metadata': {}}
         ]
         owner.tasks = []
         owner.opcua_store = None
@@ -108,8 +108,8 @@ class TestF1ApiViewContracts(unittest.TestCase):
         view._send_bridge_response = MagicMock()
 
         # Add single tag
-        view._dispatch_action('add_tag_to_task', {'tag_name': 'BVEC1PT.AUTO_C', 'task_id': 'TASK-01'}, 'req_001')
-        self.assertIn('BVEC1PT.AUTO_C', owner.tasks[0]['tags'])
+        view._dispatch_action('add_tag_to_task', {'tag_name': 'LAB_TAG_294', 'task_id': 'TASK-01'}, 'req_001')
+        self.assertIn('LAB_TAG_294', owner.tasks[0]['tags'])
         self.assertFalse(owner.tasks[0]['action_notify'], "Must not auto-enable action_notify")
         self.assertFalse(owner.tasks[0]['active'], "Must not auto-enable active")
         self.assertEqual(len(view._undo_stack), 1)
@@ -117,7 +117,7 @@ class TestF1ApiViewContracts(unittest.TestCase):
 
         # Undo addition
         view._dispatch_action('undo_last_action', {}, 'req_002')
-        self.assertNotIn('BVEC1PT.AUTO_C', owner.tasks[0]['tags'])
+        self.assertNotIn('LAB_TAG_294', owner.tasks[0]['tags'])
         self.assertEqual(len(view._undo_stack), 0)
         self.assertEqual(view.revision, 2)
 
@@ -227,10 +227,10 @@ class TestF1ApiViewContracts(unittest.TestCase):
     def test_09_observable_state_store_integration_and_dynamic_age(self):
         owner = MagicMock()
         owner.scanned_tags = [
-            {'name': 'TAG_GOOD', 'comment': 'C1', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD0'},
-            {'name': 'TAG_STALE', 'comment': 'C2', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD4'},
-            {'name': 'TAG_BAD', 'comment': 'C3', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD8'},
-            {'name': 'TAG_NOT_OBSERVED', 'comment': 'C4', 'type': 'Float', 'group': 'High_VSD', 'addr': 'DB1,DBD12'},
+            {'name': 'TAG_GOOD', 'comment': 'C1', 'type': 'Float', 'group': 'High_VSD', 'addr': 'LAB_OFFSET'},
+            {'name': 'TAG_STALE', 'comment': 'C2', 'type': 'Float', 'group': 'High_VSD', 'addr': 'LAB_OFFSET'},
+            {'name': 'TAG_BAD', 'comment': 'C3', 'type': 'Float', 'group': 'High_VSD', 'addr': 'LAB_OFFSET'},
+            {'name': 'TAG_NOT_OBSERVED', 'comment': 'C4', 'type': 'Float', 'group': 'High_VSD', 'addr': 'LAB_OFFSET'},
         ]
         owner.tasks = []
 
@@ -340,7 +340,7 @@ class TestF1ApiViewContracts(unittest.TestCase):
     def test_10_multiple_task_association(self):
         owner = MagicMock()
         owner.scanned_tags = [
-            {'name': 'VALVE_01', 'comment': 'Main Valve', 'type': 'Binary Tag', 'group': 'High_Valve', 'addr': 'DB1,D0.0'}
+            {'name': 'VALVE_01', 'comment': 'Main Valve', 'type': 'Binary Tag', 'group': 'High_Valve', 'addr': 'LAB_OFFSET'}
         ]
         # Same tag belongs to both TASK-01 and TASK-02
         owner.tasks = [

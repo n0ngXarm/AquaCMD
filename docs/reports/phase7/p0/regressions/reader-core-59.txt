@@ -1,0 +1,7 @@
+An issue was encountered verifying workloads. For more information, run "dotnet workload update".
+  Determining projects to restore...
+  Restored /auditwork/reader/Tests/Aqua.Reader.Tests.csproj (in 120 ms).
+  Restored /auditwork/reader/Core/Aqua.Reader.Core.csproj (in 105 ms).
+PASS 59 core assertions; test doubles only in Tests project
+
+AUDIT_EXIT_CODE=0

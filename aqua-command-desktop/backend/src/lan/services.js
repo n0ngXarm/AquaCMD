@@ -154,13 +154,36 @@ export function createGateway(config,options={}){
   }
   if(!allowed())return;
   const row=app.store.nextNotification();if(!row)return;
+  if(config.notificationSink||app.telegram.mode==='dry-run'){
+   try{
+    if(config.notificationSink){
+     const response=await requestJSON(config.notificationSink.url,'/v1/notification',{id:'PC-04',secret:config.notificationSink.secret},{event:JSON.parse(row.payload)},config);
+     if(response.event_id!==row.id||response.sha256!==digest(row.payload))throw Error('Notification ACK mismatch');
+    }
+    app.store.markNotification(row.id,config.notificationSink?'mock-http':'dry-run');
+   }catch{
+    app.store.failNotification(row.id,Math.min(60000,500*2**Math.min(row.attempts,7)));
+    app.lastError='Notification retained; digest ACK unavailable';
+   }
+   return;
+  }
+  if(!app.store.beginTelegramNotification(row.id))return;
+  app.store.set('telegramNotBefore',Date.now()+1100);
   try{
-   if(config.notificationSink){const response=await requestJSON(config.notificationSink.url,'/v1/notification',{id:'PC-04',secret:config.notificationSink.secret},{event:JSON.parse(row.payload)},config);if(response.event_id!==row.id||response.sha256!==digest(row.payload))throw Error('Notification ACK mismatch');app.store.markNotification(row.id,'mock-http')}
-   else if(app.telegram.mode==='dry-run')app.store.markNotification(row.id,'dry-run');
-   else{app.store.set('telegramNotBefore',Date.now()+1100);const messageId=await app.telegram.send(row.text);app.store.markNotification(row.id,'telegram',messageId)}
-  }catch(e){const delay=e.retryAfterMs||Math.min(60000,500*2**Math.min(row.attempts,7));app.store.failNotification(row.id,delay);if(app.telegram.mode==='telegram')app.store.set('telegramNotBefore',Date.now()+delay);app.lastError='Notification retained; response failed or ambiguous'}
+   const messageId=await app.telegram.send(row.text);
+   if(!Number.isSafeInteger(messageId))throw Error('Telegram response missing message ID');
+   app.store.markNotification(row.id,'telegram',messageId);
+  }catch(error){
+   const delay=error.retryAfterMs||0;
+   const state=delay?'pending':error.definitiveRejection?'failed':'delivery_unknown';
+   app.store.finishTelegramFailure(row.id,state,delay);
+   if(delay)app.store.set('telegramNotBefore',Date.now()+delay);
+   app.lastError=state==='delivery_unknown'?'Telegram acceptance unknown; retained without automatic retry':'Telegram rejected notification';
+  }
  };
- app.start=async()=>{await open(app);app.timer=setInterval(()=>{if(!app.busy){app.busy=app.deliver().catch(()=>{app.lastError='Gateway outbound/storage failure'}).finally(()=>app.busy=null)}},150);return app};app.close=()=>close(app);return app;
+ app.start=async()=>{
+  app.store.recoverTelegramNotifications(!config.notificationSink&&app.telegram.mode==='telegram');
+  await open(app);app.timer=setInterval(()=>{if(!app.busy){app.busy=app.deliver().catch(()=>{app.lastError='Gateway outbound/storage failure'}).finally(()=>app.busy=null)}},150);return app};app.close=()=>close(app);return app;
 }
 export function createCentral(config){
  const app={config,store:new Store(config.dataDir,{...config.storage,allowReorderedRuntime:true}),stopped:false,port:null};

@@ -1,0 +1,15 @@
+test_staged_symlink_is_rejected_even_when_worktree_is_regular (tests.test_privacy_preflight.PrivacyPreflightTests.test_staged_symlink_is_rejected_even_when_worktree_is_regular) ... FAIL
+
+======================================================================
+FAIL: test_staged_symlink_is_rejected_even_when_worktree_is_regular (tests.test_privacy_preflight.PrivacyPreflightTests.test_staged_symlink_is_rejected_even_when_worktree_is_regular)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "[REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/tests/test_privacy_preflight.py", line 88, in test_staged_symlink_is_rejected_even_when_worktree_is_regular
+    self.assertEqual(guard.main(['--staged']), 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 1 test in 0.011s
+
+FAILED (failures=1)

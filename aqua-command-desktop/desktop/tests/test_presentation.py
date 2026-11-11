@@ -37,6 +37,15 @@ class PresentationTests(unittest.TestCase):
   for field in ('agents','events'):
    s=fixture();s[field]=None;self.state(s)
   s=fixture();s['gateway']['messages']=None;s['agents'][0]['disk']=True;s['agents'][0]['lastSeen']='9999-12-31T23:59:59Z';v=self.state(s);self.assertEqual(v['devices'][0]['last_seen'],'Not reported')
+ def test_gateway_delivery_unknown_has_independent_provenance(self):
+  s=fixture()
+  self.assertIsNone(self.state(s)['notification']['unknown_metric']['value'])
+  s['gateway']['notificationDeliveryUnknown']=2
+  shown=self.state(s)['notification']
+  self.assertEqual(shown['unknown_metric']['value'],2)
+  self.assertEqual(shown['count'],2)
+  self.assertFalse(shown['unknown_metric']['cached'])
+
  def test_ack_notification_and_source_counters_keep_cached_provenance(self):
   s=fixture();s['agents'][0].update(online=False,lastSeen='2026-10-28T08:20:00Z');s['gateway'].update(online=False,lastSeen='2026-10-28T08:20:00Z');v=self.state(s);self.assertTrue(v['ack_metric']['cached']);self.assertTrue(v['notification']['count_metric']['cached']);self.assertTrue(v['sources'][0]['cached']);self.assertIn('+07:00',v['ack_metric']['as_of'])
  def test_bearer_and_quoted_json_secret_values_are_redacted_completely(self):

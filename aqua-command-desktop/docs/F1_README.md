@@ -20,8 +20,7 @@ aqua-command-desktop/
 │       └── fonts_embedded.css # @font-face base64 ฟอนต์ IBM Plex Sans Thai และ Mono
 ├── docs/
 │   ├── F1_README.md         # เอกสารนี้
-│   └── tags/
-│       └── Export all.txt   # แคตตาล็อก Tag จริงของ WinCC V8.1 (457 Tags, 10 กลุ่ม, 33 คอลัมน์)
+
 └── desktop/tests/
     ├── test_wincc_parser.py # Unit tests สำหรับ Parser 33 คอลัมน์, UTF-16 LE, UTF-8 BOM
     ├── test_f1_api_view.py  # Contract tests สำหรับ WebKit Bridge, CSP, ปลอด hex color, Allowlist
@@ -36,14 +35,14 @@ aqua-command-desktop/
 
 | ลำดับ | Technical Header (บรรทัด 2) | Human Header (บรรทัด 3) | การใช้งานในระบบ AQUA COMMAND |
 |:---:|---|---|---|
-| 0 | `[NAME][100][1]` | Name | `name`: ชื่อ Tag หลัก (เช่น `BVEC1PT.AUTO_C`) |
+| 0 | `[NAME][100][1]` | Name | `name`: ชื่อ Tag หลัก (เช่น `LAB_TAG_294`) |
 | 1 | `[COMMENT][211][1]` | Comment | `comment`: คำอธิบายสัญญาณภาษาไทย/อังกฤษ |
 | 2 | `[TYPE][101][1]` | Data type | `type`: ชนิดข้อมูล (Binary Tag, Float, Word, etc.) |
 | 3 | `[LENGTH][105][1]` | Length | `length`: ขนาดความยาวข้อมูล |
 | 4 | `[FORMAT][106][1]` | Format adaptation | `fmt`: การปรับแต่งฟอร์แมตสัญญาณ |
 | 5 | `[CONNECTION][102][1]` | Connection | `conn`: ชื่อการเชื่อมต่อ S7 Connection |
 | 6 | `[GROUP][104][1]` | Group | `group`: กลุ่มอุปกรณ์ (10 กลุ่ม เช่น `High_VSD`, `High_Valve`) |
-| 7 | `[ADDRPARAMS][108][1]` | Address | `addr`: ที่อยู่ PLC / S7 Offset (เช่น `DB62,D108.3`) |
+| 7 | `[ADDRPARAMS][108][1]` | Address | `addr`: ที่อยู่ PLC / S7 Offset (เช่น `LAB_OFFSET`) |
 | 8 | `[SCALEVALID][112][2]` | Linear scaling | `raw_metadata['Linear scaling']` |
 | 9 | `[SCALEPARAM1][113][1]` | AS value range from | `raw_metadata['AS value range from']` |
 | 10 | `[SCALEPARAM2][114][1]` | AS value range to | `raw_metadata['AS value range to']` |
@@ -85,8 +84,8 @@ Task จัดเก็บในไฟล์ `~/.config/aqua-command/wincc_tasks
   "action_notify": true,
   "active": true,
   "tags": [
-    "BVEC1PT.AUTO_C",
-    "BVEC1PT.CLOSE_C"
+    "LAB_TAG_294",
+    "LAB_TAG_170"
   ],
   "scan_count": 0,
   "log_count": 0,

@@ -1,0 +1,7 @@
+COMMAND /usr/bin/python3 -B [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-evidence/native_runtime.py
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an
+MODE first-run EXIT 0
+MODE private-legacy-import EXIT 0
+PASS: empty first run; legacy private catalog 457 entries; exact private mapping unchanged; original catalog bytes unchanged
+
+AUDIT_EXIT_CODE=0

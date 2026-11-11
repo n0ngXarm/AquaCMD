@@ -1,12 +1,13 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUACMD — PHASE 1A.1 AUDIT & REMEDIATION COMPLETION REPORT
 
-**Project:** AquaCMD — SCADA Monitoring, Gateway & Notification System  
-**Repository:** https://github.com/n0ngXarm/AquaCMD  
-**Working Branch:** `fix/phase-1a-security-hardening`  
-**Base Commit:** `74027e2` (`origin/main`)  
-**HEAD Commit:** `ac3f2ff`  
-**Status:** **PHASE 1A.1 COMPLETED — STOPPED AND AWAITING INDEPENDENT REVIEW**  
-**Production Invariant:** **STRICT READ-ONLY / NO REMOTE PUSH / NO MERGE TO MAIN / NO REAL TELEGRAM SEND / NO SCADA PROBING**  
+**Project:** AquaCMD — SCADA Monitoring, Gateway & Notification System
+**Repository:** https://github.com/n0ngXarm/AquaCMD
+**Working Branch:** `fix/phase-1a-security-hardening`
+**Base Commit:** `74027e2` (`origin/main`)
+**HEAD Commit:** `ac3f2ff`
+**Status:** **PHASE 1A.1 COMPLETED — STOPPED AND AWAITING INDEPENDENT REVIEW**
+**Production Invariant:** **STRICT READ-ONLY / NO REMOTE PUSH / NO MERGE TO MAIN / NO REAL TELEGRAM SEND / NO SCADA PROBING**
 
 ---
 
@@ -110,18 +111,18 @@ index 688f84d..4ed4ab5 100644
 +++ b/.env.example
 @@ -4,12 +4,12 @@
  # ==========================================
- 
+
  # 1. Telegram Bot Settings
 -# นำมาจาก @BotFather บน Telegram
 -TELEGRAM_BOT_TOKEN=[REDACTED_ORIGINAL_EXPOSED_TOKEN]
-+# นำมาจาก @BotFather บน Telegram (เช่น [REDACTED_TOKEN_EXAMPLE])
++# นำมาจาก @BotFather บน Telegram (เช่น [REDACTED_CREDENTIAL])
 +TELEGRAM_BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN_FROM_BOTFATHER
- 
+
  # Chat ID ของผู้รับหลัก (บุคคล หรือ กลุ่ม หรือ Channel เช่น -100xxxxxxxxxx)
  # หา Chat ID ได้จากการพิมพ์คุยกับ @userinfobot
 -TELEGRAM_CHAT_ID=[REDACTED_ORIGINAL_EXPOSED_CHAT_ID]
 +TELEGRAM_CHAT_ID=YOUR_TELEGRAM_CHAT_ID
- 
+
  # 2. Monitoring Frequency (หน่วยเป็นวินาที)
  # แนะนำ: 300 วินาที (5 นาที) หรือ 600 วินาที (10 นาที)
 diff --git a/aqua-command-desktop/desktop/app.py b/aqua-command-desktop/desktop/app.py
@@ -141,7 +142,7 @@ index 621bc9f..85a7296 100644
 @@ -154,31 +157,137 @@ if IS_WINDOWS:
  else:
      CONFIG_DIR = Path.home() / '.config' / 'aqua-command'
- 
+
 -CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 +if not IS_WINDOWS:
 +    try:
@@ -157,7 +158,7 @@ index 621bc9f..85a7296 100644
  TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
  TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
  OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
- 
+
 -def save_atomic_json(filepath, data):
 -    """Crash-resistant atomic file save: writes to .tmp before replacing target."""
 +def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
@@ -280,7 +281,7 @@ index 621bc9f..85a7296 100644
 +        if raise_on_error:
 +            raise
          return False
- 
+
 @@ -330,2 +332,6 @@ def save_opcua_config(cfg):
      clean_cfg.pop('password', None)  # Safety: never save plaintext password to disk
 -    return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg)
@@ -452,7 +453,7 @@ index a577717..bc4f0d6 100644
          self.bot_token = bot_token or Config.TELEGRAM_BOT_TOKEN
          self.default_chat_id = Config.TELEGRAM_CHAT_ID
 +        self._delivery_authorized = delivery_authorized
- 
+
      @property
      def is_configured(self) -> bool:
          """Returns True if bot token is configured."""
@@ -512,8 +513,8 @@ flowchart TD
 
 #### Detailed Findings & Architectural Corrections for SEC-03:
 1. **Docker Bridge IP Translation (`172.x.x.x`)**:
-   - In containerized deployments with bridge networking, Docker translates inbound traffic so that Node.js inspects `req.socket.remoteAddress` as the gateway bridge IP (e.g. `172.17.0.1` or `172.28.0.1`), **not** `127.0.0.1`.
-   - Naively checking `isLoopback(req)` inside a Docker container fails: it either breaks internal loopback communication or tempts administrators into whitelisting `172.17.0.1`, which inadvertently opens unauthenticated access to any host on the external network.
+   - In containerized deployments with bridge networking, Docker translates inbound traffic so that Node.js inspects `req.socket.remoteAddress` as the gateway bridge IP (e.g. `[REDACTED_PRIVATE_IP]` or `[REDACTED_PRIVATE_IP]`), **not** `127.0.0.1`.
+   - Naively checking `isLoopback(req)` inside a Docker container fails: it either breaks internal loopback communication or tempts administrators into whitelisting `[REDACTED_PRIVATE_IP]`, which inadvertently opens unauthenticated access to any host on the external network.
 2. **Dual-Profile Isolation**:
    - **Profile 1 (Local-Only)**: In local desktop mode, the process binds strictly to `127.0.0.1:8787`. Zero ports published to `0.0.0.0`.
    - **Profile 2 (Enterprise LAN Gateway)**:

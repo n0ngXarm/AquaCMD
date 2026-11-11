@@ -1,0 +1,389 @@
+COMMAND node --test [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/deployed.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/desktop.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g1.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g2.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g3.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g4.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/lan-g5.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/readonly.test.js [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend/tests/simulator.test.js
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command-desktop/backend
+TAP version 13
+# (node:42318) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: actual profile rejects implicit trust, wildcard/public/non-TLS Gateway and simulation settings before storage
+ok 1 - actual profile rejects implicit trust, wildcard/public/non-TLS Gateway and simulation settings before storage
+  ---
+  duration_ms: 9.960139
+  type: 'test'
+  ...
+# Subtest: real-only v3 preserves source time/quality and rejects simulated or contradictory GOOD states
+ok 2 - real-only v3 preserves source time/quality and rejects simulated or contradictory GOOD states
+  ---
+  duration_ms: 23.545701
+  type: 'test'
+  ...
+# Subtest: OPC DA Analog keeps scalar, quality and source time without becoming a pump transition
+ok 3 - OPC DA Analog keeps scalar, quality and source time without becoming a pump transition
+  ---
+  duration_ms: 19.200745
+  type: 'test'
+  ...
+# Subtest: deployed HTTPS Gateway requires local receive approval, preserves lost ACK/dedup/restart and never probes before outbound approval
+ok 4 - deployed HTTPS Gateway requires local receive approval, preserves lost ACK/dedup/restart and never probes before outbound approval
+  ---
+  duration_ms: 1258.546381
+  type: 'test'
+  ...
+# Subtest: actual CSV Agent captures independently and resumes backlog without reading source when only transfer is allowed
+ok 5 - actual CSV Agent captures independently and resumes backlog without reading source when only transfer is allowed
+  ---
+  duration_ms: 694.985491
+  type: 'test'
+  ...
+# Subtest: large actual CSV backlog makes forward progress with byte-bounded HTTPS batches
+ok 6 - large actual CSV backlog makes forward progress with byte-bounded HTTPS batches
+  ---
+  duration_ms: 1455.426918
+  type: 'test'
+  ...
+# Subtest: capture revisions retain one source sequence and immutable backlog across changed folders and Tag selections
+ok 7 - capture revisions retain one source sequence and immutable backlog across changed folders and Tag selections
+  ---
+  duration_ms: 499.55138
+  type: 'test'
+  ...
+# Subtest: approved actual Agent uses immutable custom CA trust while files change
+ok 8 - approved actual Agent uses immutable custom CA trust while files change
+  ---
+  duration_ms: 376.1679
+  type: 'test'
+  ...
+# (node:42319) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: CSV history reports truncation at both record and byte bounds
+ok 9 - CSV history reports truncation at both record and byte bounds
+  ---
+  duration_ms: 79.485669
+  type: 'test'
+  ...
+# Subtest: revoking transfer during an egress probe cannot start a notification afterwards
+ok 10 - revoking transfer during an egress probe cannot start a notification afterwards
+  ---
+  duration_ms: 32.39089
+  type: 'test'
+  ...
+# Subtest: stopping capture cancels a fixture restart already scheduled after a crash
+ok 11 - stopping capture cancels a fixture restart already scheduled after a crash
+  ---
+  duration_ms: 4307.939507
+  type: 'test'
+  ...
+# Subtest: desktop status model has no HTTP UI server or listener
+ok 12 - desktop status model has no HTTP UI server or listener
+  ---
+  duration_ms: 8.637526
+  type: 'test'
+  ...
+# Subtest: desktop starts with no capture or transfer permission, including after restart
+ok 13 - desktop starts with no capture or transfer permission, including after restart
+  ---
+  duration_ms: 5924.469198
+  type: 'test'
+  ...
+# Subtest: native host only allows local recording/export and never binds the dashboard port
+ok 14 - native host only allows local recording/export and never binds the dashboard port
+  ---
+  duration_ms: 2235.229267
+  type: 'test'
+  ...
+# (node:42320) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: G1 validates explicit LAB endpoints and never accepts default public/wildcard destinations
+ok 15 - G1 validates explicit LAB endpoints and never accepts default public/wildcard destinations
+  ---
+  duration_ms: 161.085481
+  type: 'test'
+  ...
+# Subtest: G1 authenticates handshake and rejects unknown members or incorrect keys
+ok 16 - G1 authenticates handshake and rejects unknown members or incorrect keys
+  ---
+  duration_ms: 127.770125
+  type: 'test'
+  ...
+# Subtest: G1 three independent agent OS processes spool while Gateway is absent then transfer over HTTP
+ok 17 - G1 three independent agent OS processes spool while Gateway is absent then transfer over HTTP
+  ---
+  duration_ms: 2548.455329
+  type: 'test'
+  ...
+# {"verification":"TESTED ON ONE HOST","agentPids":[42371,42373,42374],"gatewayPid":42320,"gatewayPort":46665,"received":9,"acked":[5,6,8],"lastAckAt":["2026-11-11T03:47:09.441Z","2026-11-11T03:47:09.426Z","2026-11-11T03:47:09.456Z"]}
+# (node:42321) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: G2 pending quota never purges unACKed records and ACKed retention preserves sequence
+ok 18 - G2 pending quota never purges unACKed records and ACKed retention preserves sequence
+  ---
+  duration_ms: 25.3457
+  type: 'test'
+  ...
+# Subtest: G2 failed storage commits do not advance sequence or silently reset data
+ok 19 - G2 failed storage commits do not advance sequence or silently reset data
+  ---
+  duration_ms: 6.404788
+  type: 'test'
+  ...
+# Subtest: G2 interruption before commit and lost ACK after commit retain/retry same event without duplicates
+ok 20 - G2 interruption before commit and lost ACK after commit retain/retry same event without duplicates
+  ---
+  duration_ms: 156.207768
+  type: 'test'
+  ...
+# Subtest: G2 actual HTTP rejects replay/nonfinite time and client retains data on a signed mismatched ACK
+ok 21 - G2 actual HTTP rejects replay/nonfinite time and client retains data on a signed mismatched ACK
+  ---
+  duration_ms: 65.073878
+  type: 'test'
+  ...
+# Subtest: G2 data ownership guard and SIGKILL recovery preserve immutable source and Gateway records
+ok 22 - G2 data ownership guard and SIGKILL recovery preserve immutable source and Gateway records
+  ---
+  duration_ms: 5628.401657
+  type: 'test'
+  ...
+# {"verification":"TESTED ON ONE HOST","initialAgentPid":42410,"restartedAgentPid":42645,"restartedGatewayPid":42644,"recoveredEventIds":["PC-01:6bbcf303-aab9-41d1-8c15-38a4384c83a1","PC-01:b112c677-fdc7-44c4-bd75-be1129d790d5"]}
+# Subtest: G2 snapshot producer continues while authenticated network handshake is stalled
+ok 23 - G2 snapshot producer continues while authenticated network handshake is stalled
+  ---
+  duration_ms: 1558.528113
+  type: 'test'
+  ...
+# (node:42322) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: G3 snapshots never notify; one transition notifies once across repeated ingest and restart
+ok 24 - G3 snapshots never notify; one transition notifies once across repeated ingest and restart
+  ---
+  duration_ms: 87.715149
+  type: 'test'
+  ...
+# Subtest: G3 real HTTP Central buffers while Internet down and deduplicates after lost upstream ACK
+ok 25 - G3 real HTTP Central buffers while Internet down and deduplicates after lost upstream ACK
+  ---
+  duration_ms: 198.784475
+  type: 'test'
+  ...
+# Subtest: G3 mock HTTP notification sink creates one effect even if first response is lost
+ok 26 - G3 mock HTTP notification sink creates one effect even if first response is lost
+  ---
+  duration_ms: 48.694559
+  type: 'test'
+  ...
+# Subtest: G3 Telegram defaults off and fixed HTTPS transport handles 429 without leaking tokens
+ok 27 - G3 Telegram defaults off and fixed HTTPS transport handles 429 without leaking tokens
+  ---
+  duration_ms: 6.452374
+  type: 'test'
+  ...
+# Subtest: G3 Telegram cooldown blocks whole queue and probes across Gateway restart
+ok 28 - G3 Telegram cooldown blocks whole queue and probes across Gateway restart
+  ---
+  duration_ms: 33.721876
+  type: 'test'
+  ...
+# Subtest: G3 WinCC adapter remains an unavailable read-only interface without any driver access
+ok 29 - G3 WinCC adapter remains an unavailable read-only interface without any driver access
+  ---
+  duration_ms: 4.746959
+  type: 'test'
+  ...
+# Subtest: Telegram acceptance without a reply holds the Gateway job across restart
+ok 30 - Telegram acceptance without a reply holds the Gateway job across restart
+  ---
+  duration_ms: 41.832421
+  type: 'test'
+  ...
+# (node:42323) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: G4 offline/read-only bridge reports unknown pumps and rejects all simulation controls
+ok 31 - G4 offline/read-only bridge reports unknown pumps and rejects all simulation controls
+  ---
+  duration_ms: 275.337317
+  type: 'test'
+  ...
+# Subtest: G4 existing API/UI actions operate actual separate services with enrollment and no snapshot spam
+ok 32 - G4 existing API/UI actions operate actual separate services with enrollment and no snapshot spam
+  ---
+  duration_ms: 5360.374106
+  type: 'test'
+  ...
+# {"verification":"TESTED ON ONE HOST","agentPids":[42422,42423,42424],"gatewayPid":42588,"centralPid":42425,"dashboardPid":42501,"received":52,"upstreamDelivered":33,"notificationSent":1}
+# Subtest: G4 reachable TCP with rejected authentication is not reported as a disconnected LAN
+ok 33 - G4 reachable TCP with rejected authentication is not reported as a disconnected LAN
+  ---
+  duration_ms: 73.783783
+  type: 'test'
+  ...
+# (node:42324) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: G5 interrupted HTTP and Telegram responses reject promptly instead of freezing retry loops
+ok 34 - G5 interrupted HTTP and Telegram responses reject promptly instead of freezing retry loops
+  ---
+  duration_ms: 153.22251
+  type: 'test'
+  ...
+# Subtest: G5 owner identity distinguishes a reused live PID from the same active service instance
+ok 35 - G5 owner identity distinguishes a reused live PID from the same active service instance
+  ---
+  duration_ms: 13.725442
+  type: 'test'
+  ...
+# Subtest: G5 read-only startup override applies without discarding data and old enrollment stays immutable
+ok 36 - G5 read-only startup override applies without discarding data and old enrollment stays immutable
+  ---
+  duration_ms: 16.799626
+  type: 'test'
+  ...
+# Subtest: G5 explicit LAN role CLI starts only the requested enrolled service over loopback
+ok 37 - G5 explicit LAN role CLI starts only the requested enrolled service over loopback
+  ---
+  duration_ms: 1446.347056
+  type: 'test'
+  ...
+# Subtest: G5 default 5s cadence, supervised recovery and reset archive survive full pipeline operation
+ok 38 - G5 default 5s cadence, supervised recovery and reset archive survive full pipeline operation
+  ---
+  duration_ms: 16493.926975
+  type: 'test'
+  ...
+# {"defaultSnapshotIntervalsMs":[5054,5025],"originalSourcePid":42497,"resetArchivedDatabase":true,"verification":"TESTED ON ONE HOST"}
+# Subtest: G5 shutdown during an active reset cannot resurrect owned service processes
+ok 39 - G5 shutdown during an active reset cannot resurrect owned service processes
+  ---
+  duration_ms: 2673.222247
+  type: 'test'
+  ...
+# (node:42444) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node-22 --trace-warnings ...` to show where the warning was created)
+# Subtest: read-only CSV source spools complete frames and cursor atomically, never modifies input
+ok 40 - read-only CSV source spools complete frames and cursor atomically, never modifies input
+  ---
+  duration_ms: 138.59362
+  type: 'test'
+  ...
+# Subtest: file-source quality and unconfirmed mapping preserve UNKNOWN, and all source mutation routes reject
+ok 41 - file-source quality and unconfirmed mapping preserve UNKNOWN, and all source mutation routes reject
+  ---
+  duration_ms: 101.447657
+  type: 'test'
+  ...
+# Subtest: source replacement and quota never advance a cursor past uncommitted observations
+ok 42 - source replacement and quota never advance a cursor past uncommitted observations
+  ---
+  duration_ms: 14.911201
+  type: 'test'
+  ...
+# Subtest: read-only runtime observations travel to real HTTP Gateway and Central with one transition effect
+ok 43 - read-only runtime observations travel to real HTTP Gateway and Central with one transition effect
+  ---
+  duration_ms: 84.559384
+  type: 'test'
+  ...
+# Subtest: source folder cannot be selected as AQUA writable storage, even for invalid configuration
+ok 44 - source folder cannot be selected as AQUA writable storage, even for invalid configuration
+  ---
+  duration_ms: 2.6589
+  type: 'test'
+  ...
+# Subtest: bad source quality breaks transition continuity instead of fabricating OFF and recovery ON
+ok 45 - bad source quality breaks transition continuity instead of fabricating OFF and recovery ON
+  ---
+  duration_ms: 22.248496
+  type: 'test'
+  ...
+# Subtest: CSV sender selects only an enrolled authenticated Gateway advertising its own ready egress
+ok 46 - CSV sender selects only an enrolled authenticated Gateway advertising its own ready egress
+  ---
+  duration_ms: 93.168192
+  type: 'test'
+  ...
+# Subtest: read-only profile provides simple local start/stop and saved-data download, with no pump API
+ok 47 - read-only profile provides simple local start/stop and saved-data download, with no pump API
+  ---
+  duration_ms: 18176.062778
+  type: 'test'
+  ...
+# {"cadenceMilliseconds":[5000,5000],"sourceReadOnly":true,"observationRecords":4,"oneHost":true}
+# Subtest: storage path aliases are rejected before enrollment can write inside read-only input
+ok 48 - storage path aliases are rejected before enrollment can write inside read-only input
+  ---
+  duration_ms: 3.062967
+  type: 'test'
+  ...
+# Subtest: an incomplete first line or header cannot be overtaken by the next daily file
+ok 49 - an incomplete first line or header cannot be overtaken by the next daily file
+  ---
+  duration_ms: 10.174992
+  type: 'test'
+  ...
+# Subtest: CSV startup and the preserved isometric detail never expose simulated defaults or GOOD metrics
+ok 50 - CSV startup and the preserved isometric detail never expose simulated defaults or GOOD metrics
+  ---
+  duration_ms: 20.328121
+  type: 'test'
+  ...
+# Subtest: enrolled Gateway failover retains per-source records and shared Central deduplicates reordered segments
+ok 51 - enrolled Gateway failover retains per-source records and shared Central deduplicates reordered segments
+  ---
+  duration_ms: 41.37162
+  type: 'test'
+  ...
+# Subtest: nested storage aliases cannot redirect writes into source files
+ok 52 - nested storage aliases cannot redirect writes into source files
+  ---
+  duration_ms: 1.50674
+  type: 'test'
+  ...
+# Subtest: enrollment rejects its own nested alias before creating keys or changing source permissions
+ok 53 - enrollment rejects its own nested alias before creating keys or changing source permissions
+  ---
+  duration_ms: 1.410969
+  type: 'test'
+  ...
+# Subtest: a hardlinked SQLite database cannot become writable AQUA storage
+ok 54 - a hardlinked SQLite database cannot become writable AQUA storage
+  ---
+  duration_ms: 2.793687
+  type: 'test'
+  ...
+# Subtest: simple download produces CSV rows from saved observations without exporting commands
+ok 55 - simple download produces CSV rows from saved observations without exporting commands
+  ---
+  duration_ms: 25.664018
+  type: 'test'
+  ...
+# Subtest: every export creates three durable local snapshots when gateway absent
+ok 56 - every export creates three durable local snapshots when gateway absent
+  ---
+  duration_ms: 13.185782
+  type: 'test'
+  ...
+# Subtest: joined gateway without internet retains queue, then ACK delivers on restoration
+ok 57 - joined gateway without internet retains queue, then ACK delivers on restoration
+  ---
+  duration_ms: 4.969869
+  type: 'test'
+  ...
+# Subtest: pump transition only notifies once; snapshots do not create notifications
+ok 58 - pump transition only notifies once; snapshots do not create notifications
+  ---
+  duration_ms: 3.076606
+  type: 'test'
+  ...
+# Subtest: restart restores queued snapshots
+ok 59 - restart restores queued snapshots
+  ---
+  duration_ms: 3.666785
+  type: 'test'
+  ...
+1..59
+# tests 59
+# suites 0
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 21608.360807
+
+AUDIT_EXIT_CODE=0

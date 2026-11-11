@@ -1,8 +1,9 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # AQUA COMMAND — รายงานสรุปผลการพัฒนาระบบ F1 Industrial Precision
 
-**โปรแกรม:** AQUA COMMAND — WinCC V8.1 SCADA & Task Manager (Linux Native GTK4)  
-**สาขาการพัฒนา (Feature Branch):** `feature/f1-industrial-precision`  
-**สถานะการทำงาน:** ดำเนินการเสร็จสมบูรณ์ 100% พร้อมทดสอบบนสภาพแวดล้อม GTK4 จริงและบันทึกภาพผลลัพธ์  
+**โปรแกรม:** AQUA COMMAND — WinCC V8.1 SCADA & Task Manager (Linux Native GTK4)
+**สาขาการพัฒนา (Feature Branch):** `feature/f1-industrial-precision`
+**สถานะการทำงาน:** ดำเนินการเสร็จสมบูรณ์ 100% พร้อมทดสอบบนสภาพแวดล้อม GTK4 จริงและบันทึกภาพผลลัพธ์
 
 ---
 
@@ -28,7 +29,7 @@ flowchart TD
     Shell[Global Shell: Top Header Section A + System Alarm Ribbon] --> F1Root[F1 Workspace: Gtk.ScrolledWindow]
     F1Root --> SectionB[Section B: F1 Page Heading 'ภาพรวมสถานีสูบน้ำ']
     F1Root --> SectionC[Section C: 4 KPI Summary Cards]
-    
+
     subgraph SectionC [4 KPI Summary Cards]
         KPI1["Registered Tags (457 Tags)"]
         KPI2["Tag Groups (10 กลุ่ม)"]
@@ -37,7 +38,7 @@ flowchart TD
     end
 
     F1Root --> Paned["Gtk.Paned: Master-Detail Split (~28% / ~72%)"]
-    
+
     subgraph LeftPane [Section D: Equipment Group Explorer 28%]
         LPHeader[Header: กลุ่มอุปกรณ์ 10 กลุ่ม]
         LPScroll[Gtk.ScrolledWindow]
@@ -52,7 +53,7 @@ flowchart TD
             EPCanvas[Cairo Vector Canvas: Technical Blueprint ลายเส้นวิศวกรรม]
             EPMetrics[Metrics Bar: Catalog Tags, DB Block, Live Stream, Quality]
         end
-        
+
         subgraph LowerPanel [Section G: Signal & Tag Inspector]
             IToolbar[Toolbar: ตัวสลับโหมด List / Properties + ช่องค้นหา]
             IStack[Gtk.Stack]
@@ -75,32 +76,32 @@ flowchart TD
 ภาพทั้งหมดถูกเรนเดอร์และบันทึกโดยตรงจาก GTK4 Native Render Engine บนสภาพแวดล้อมจริง:
 
 ````carousel
-![F1 Inverter Pumps 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_vsd.png)
+![F1 Inverter Pumps 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_vsd.png)
 <!-- slide -->
-![F1 Raw Water Pumps 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_raw_water.png)
+![F1 Raw Water Pumps 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_raw_water.png)
 <!-- slide -->
-![F1 Analog Transmitters 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_analog.png)
+![F1 Analog Transmitters 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_analog.png)
 <!-- slide -->
-![F1 Motorized Valves 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_valve.png)
+![F1 Motorized Valves 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_valve.png)
 <!-- slide -->
-![F1 Power Multimeters 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_dpm.png)
+![F1 Power Multimeters 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_dpm.png)
 <!-- slide -->
-![F1 Tag Properties Sheet 1366x768](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_properties.png)
+![F1 Tag Properties Sheet 1366x768]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_properties.png)
 <!-- slide -->
-![F1 Full HD 1920x1080](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1920x1080_full.png)
+![F1 Full HD 1920x1080]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1920x1080_full.png)
 <!-- slide -->
-![F1 Empty State](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_empty_state.png)
+![F1 Empty State]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_empty_state.png)
 ````
 
 ### รายละเอียดภาพหลัก:
-1. [f1_industrial_1366x768_vsd.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_vsd.png): กลุ่ม **High_VSD** (135 Tags) แสดงแบบร่างเวกเตอร์ปั๊มหอยโข่ง Inverter พร้อมตารางสัญญาณ Signal List
-2. [f1_industrial_1366x768_raw_water.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_raw_water.png): กลุ่ม **High1_PT1PT** (133 Tags) แสดงแบบร่างสถานีสูบน้ำดิบแม่น้ำปิง
-3. [f1_industrial_1366x768_analog.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_analog.png): กลุ่ม **High_Analog** (75 Tags) แสดงแบบร่างเครื่องส่งสัญญาณความดันและการไหล (Pressure & Flow Transmitters)
-4. [f1_industrial_1366x768_valve.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_valve.png): กลุ่ม **High_Valve** (68 Tags) แสดงแบบร่างวาล์วปีกผีเสื้อไฟฟ้า (Motorized Butterfly Valve)
-5. [f1_industrial_1366x768_dpm.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_dpm.png): กลุ่ม **High_DPM** (31 Tags) แสดงแบบร่างมิเตอร์วัดพลังงานไฟฟ้าดิจิทัล
-6. [f1_industrial_1366x768_properties.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_properties.png): หน้าตรวจสอบ **Tag Properties Sheet** แสดงคุณสมบัติทางวิศวกรรมครบถ้วนเมื่อคลิกเลือกสัญญาณ
-7. [f1_industrial_1920x1080_full.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1920x1080_full.png): การแสดงผลระดับ Full HD (1920×1080)
-8. [f1_industrial_empty_state.png](file:///home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_empty_state.png): สถานะ **Empty State** เมื่อยังไม่ได้โหลดคลัง Tag
+1. [f1_industrial_1366x768_vsd.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_vsd.png): กลุ่ม **High_VSD** (135 Tags) แสดงแบบร่างเวกเตอร์ปั๊มหอยโข่ง Inverter พร้อมตารางสัญญาณ Signal List
+2. [f1_industrial_1366x768_raw_water.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_raw_water.png): กลุ่ม **High1_PT1PT** (133 Tags) แสดงแบบร่างสถานีสูบน้ำดิบ[REDACTED_IDENTITY]
+3. [f1_industrial_1366x768_analog.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_analog.png): กลุ่ม **High_Analog** (75 Tags) แสดงแบบร่างเครื่องส่งสัญญาณความดันและการไหล (Pressure & Flow Transmitters)
+4. [f1_industrial_1366x768_valve.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_valve.png): กลุ่ม **High_Valve** (68 Tags) แสดงแบบร่างวาล์วปีกผีเสื้อไฟฟ้า (Motorized Butterfly Valve)
+5. [f1_industrial_1366x768_dpm.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_dpm.png): กลุ่ม **High_DPM** (31 Tags) แสดงแบบร่างมิเตอร์วัดพลังงานไฟฟ้าดิจิทัล
+6. [f1_industrial_1366x768_properties.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_properties.png): หน้าตรวจสอบ **Tag Properties Sheet** แสดงคุณสมบัติทางวิศวกรรมครบถ้วนเมื่อคลิกเลือกสัญญาณ
+7. [f1_industrial_1920x1080_full.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1920x1080_full.png): การแสดงผลระดับ Full HD (1920×1080)
+8. [f1_industrial_empty_state.png](file://[REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_empty_state.png): สถานะ **Empty State** เมื่อยังไม่ได้โหลดคลัง Tag
 
 ---
 

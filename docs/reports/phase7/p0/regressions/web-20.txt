@@ -1,0 +1,134 @@
+COMMAND node --test [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/delivery-unknown.test.mjs [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/durable-alerts.test.mjs [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/integration.test.mjs [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/queue-integrity.test.mjs [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/rules.test.mjs [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command/tests/ui-render.test.mjs
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p0-privacy/aqua-command
+TAP version 13
+# Subtest: lost reply is retained without an automatic duplicate, including after restart
+ok 1 - lost reply is retained without an automatic duplicate, including after restart
+  ---
+  duration_ms: 6837.112984
+  type: 'test'
+  ...
+# Subtest: SIGKILL after dispatch recovers a durable sending job as unknown
+ok 2 - SIGKILL after dispatch recovers a durable sending job as unknown
+  ---
+  duration_ms: 1743.810377
+  type: 'test'
+  ...
+# Subtest: explicit 429 rejection remains safely retryable
+ok 3 - explicit 429 rejection remains safely retryable
+  ---
+  duration_ms: 5122.078166
+  type: 'test'
+  ...
+# Subtest: legacy exhausted ambiguous jobs stay held even through Retry Failed
+ok 4 - legacy exhausted ambiguous jobs stay held even through Retry Failed
+  ---
+  duration_ms: 1643.532406
+  type: 'test'
+  ...
+# Subtest: DATA-04: a full outbox rejects telemetry without changing existing state
+ok 5 - DATA-04: a full outbox rejects telemetry without changing existing state
+  ---
+  duration_ms: 761.670489
+  type: 'test'
+  ...
+# Subtest: DATA-04: failed rename leaves old state intact and retry survives abrupt restart
+ok 6 - DATA-04: failed rename leaves old state intact and retry survives abrupt restart
+  ---
+  duration_ms: 864.890839
+  type: 'test'
+  ...
+# Subtest: DATA-04: an update triggering two rules cannot use just one free outbox slot
+ok 7 - DATA-04: an update triggering two rules cannot use just one free outbox slot
+  ---
+  duration_ms: 494.388232
+  type: 'test'
+  ...
+# Subtest: DATA-04: an unreadable snapshot blocks startup and is left untouched
+ok 8 - DATA-04: an unreadable snapshot blocks startup and is left untouched
+  ---
+  duration_ms: 736.231156
+  type: 'test'
+  ...
+# Subtest: fresh ingest, dedup, escalation, resolution, RBAC and export
+ok 9 - fresh ingest, dedup, escalation, resolution, RBAC and export
+  ---
+  duration_ms: 1113.570114
+  type: 'test'
+  ...
+# Subtest: queue state transition: simulated vs blocked_by_policy, zero false sent, and resume policy
+ok 10 - queue state transition: simulated vs blocked_by_policy, zero false sent, and resume policy
+  ---
+  duration_ms: 3045.561812
+  type: 'test'
+  ...
+# Subtest: queue retention: capacity limit trimming strictly preserves pending notifications
+ok 11 - queue retention: capacity limit trimming strictly preserves pending notifications
+  ---
+  duration_ms: 337.162685
+  type: 'test'
+  ...
+# Subtest: DATA-02: Alert-Queue referential integrity, >400 alerts, >500 jobs, payload accessibility and restart recovery
+ok 12 - DATA-02: Alert-Queue referential integrity, >400 alerts, >500 jobs, payload accessibility and restart recovery
+  ---
+  duration_ms: 791.954406
+  type: 'test'
+  ...
+# Subtest: DATA-02: Legacy alert schema migration, ACK evidence, and schema resilience
+ok 13 - DATA-02: Legacy alert schema migration, ACK evidence, and schema resilience
+  ---
+  duration_ms: 737.51485
+  type: 'test'
+  ...
+# Subtest: DATA-02: Boundary and backpressure on saturated capacity for external ingest and internal rules
+ok 14 - DATA-02: Boundary and backpressure on saturated capacity for external ingest and internal rules
+  ---
+  duration_ms: 791.670303
+  type: 'test'
+  ...
+# Subtest: DATA-02: Immutable job payload primary delivery and retry state retention
+ok 15 - DATA-02: Immutable job payload primary delivery and retry state retention
+  ---
+  duration_ms: 1631.591344
+  type: 'test'
+  ...
+# Subtest: low-pressure thresholds are strict and ordered
+ok 16 - low-pressure thresholds are strict and ordered
+  ---
+  duration_ms: 5.332857
+  type: 'test'
+  ...
+# Subtest: high-turbidity and offline rules
+ok 17 - high-turbidity and offline rules
+  ---
+  duration_ms: 4.156402
+  type: 'test'
+  ...
+# Subtest: evaluator returns only violated known metrics
+ok 18 - evaluator returns only violated known metrics
+  ---
+  duration_ms: 5.522497
+  type: 'test'
+  ...
+# Subtest: telegram messages include identifiable event and DEMO label
+ok 19 - telegram messages include identifiable event and DEMO label
+  ---
+  duration_ms: 284.383049
+  type: 'test'
+  ...
+# Subtest: all five dashboard views render with mock telemetry
+ok 20 - all five dashboard views render with mock telemetry
+  ---
+  duration_ms: 278.05241
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15869.540422
+
+AUDIT_EXIT_CODE=0

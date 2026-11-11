@@ -1,0 +1,443 @@
+{
+  "scope": "PLANNING ONLY; no existing GUI source/test changes",
+  "requirements": {
+    "AUTH": {
+      "requirement": "OPC UA actions require existing explicit organization/operator authorization; denied actions invoke no network client.",
+      "source": "aqua-command-desktop/desktop/f3_network.py: _execute_secure_action; f3_opcua.py; tests/test_opcua_readiness.py",
+      "acceptance": "Retain denied adapter call-count zero; allow a manually authorized read-only loopback action; no write capability."
+    },
+    "ISOLATION": {
+      "requirement": "DEMO and LIVE inventories, evidence and late callbacks cannot cross modes or write private LIVE config.",
+      "source": "aqua-command-desktop/desktop/f3_network.py: F3DeviceStore.set_demo; callback generation checks",
+      "acceptance": "Use actual current mode IDs; switch modes before completing callback; compare LIVE values/evidence and private config bytes."
+    },
+    "COMMUNICATION": {
+      "requirement": "Active F3 uses local read-only API; structured committed evidence controls flow and animation; selection/navigation starts no collector.",
+      "source": "aqua-command-desktop/desktop/app.py:build_f3_network; desktop/f3_api_view.py; tests/test_f3_api_view_phase3.py",
+      "acceptance": "Exercise active F3ApiView and API provenance, listener lifetime, explicit manual action, and no probe/collector on open/select/close."
+    },
+    "PROVENANCE": {
+      "requirement": "UNKNOWN is not offline; WAN/session/read/link states need structured evidence; pulses require committed events.",
+      "source": "aqua-command-desktop/desktop/f3_network.py: evidence parsing, edge render and event pulse; F3 API source contracts",
+      "acceptance": "Flags, unverified WAN and stale/missing evidence never create verified connectivity; committed receipts alone can animate."
+    },
+    "TAG_LOADING": {
+      "requirement": "Private Tag import and exact mapping load work without a repository catalog; empty first run remains usable.",
+      "source": "aqua-command-desktop/desktop/app.py: scan_wincc_tags and private mapping precedence; desktop/private_runtime.py; opcua_mapping.py",
+      "acceptance": "Inject a test-owned synthetic catalog for legacy GUI fixtures; separately check empty first run and private mapping persistence without site fixture dependence."
+    },
+    "NAVIGATION": {
+      "requirement": "F1/F2/F3/F6 navigation, close/reopen, owned details/settings and paged layout follow the accepted active-view contract.",
+      "source": "aqua-command-desktop/desktop/app.py; desktop/f3_api_view.py; tests/test_f3_api_view_phase3.py; desktop/tests/test_f3_production_layout.py",
+      "acceptance": "Retain access to every configured device across pages, unclipped active controls, owner close behavior and no orphan API/listener."
+    }
+  },
+  "rows": [
+    {
+      "id": "G01",
+      "test_name": "test_late_demo_callback_cannot_update_live_status (test_f3_continuation.TestF3Continuation.test_late_demo_callback_cannot_update_live_status)",
+      "failure_type": "ERROR",
+      "source_function": "f3_network.py set_demo / _execute_secure_action (793, 2676)",
+      "expected_actual": "DEMO callback จาก detector เดิมต้องถูกตัดเมื่อกลับ LIVE → call_args เป็น None ก่อนถึง assertion",
+      "root_cause_evidence": "Test ใช้ PC1 หลังเปลี่ยน inventory เป็น demo-source-* และ patch RealDetectionEngine ซึ่ง controller ไม่ dispatch แล้ว; E08 ยืนยัน DEMO adapter calls0 และ late receipt ถูกทิ้ง",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "ใช้ DEMO ID จาก store, จับงานที่ boundary ปัจจุบัน, สลับ mode ก่อนส่งผลกลับ แล้ว assert LIVE value/evidence ไม่เปลี่ยนและ config hash เดิม",
+      "approval_required": true,
+      "functional_requirements": [
+        "ISOLATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G02",
+      "test_name": "test_switching_to_live_clears_demo_observations (test_f3_continuation.TestF3Continuation.test_switching_to_live_clears_demo_observations)",
+      "failure_type": "ERROR",
+      "source_function": "f3_network.py F3DeviceStore.set_demo (793)",
+      "expected_actual": "PC1 ต้องอยู่ใน DEMO แล้วคืน LIVE ว่างจาก observation → KeyError PC1",
+      "root_cause_evidence": "set_demo แยก device identities โดยเจตนาและเก็บ _live_devices; E08 คืน LIVE IDs/alias ได้ครบและไม่เขียน DEMO ลง config",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "อ้าง synthetic ID ใน DEMO และ stable LIVE ID หลังคืนโหมด รักษา assertions การล้าง value/quality/evidence และ alias",
+      "approval_required": true,
+      "functional_requirements": [
+        "ISOLATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G03",
+      "test_name": "test_unverified_wan_has_no_online_badge_or_verified_flow (test_f3_continuation.TestF3Continuation.test_unverified_wan_has_no_online_badge_or_verified_flow)",
+      "failure_type": "ERROR",
+      "source_function": "f3_network.py F3LiveDiagramCanvas.on_draw (1530), f3_drawing.py draw_flow",
+      "expected_actual": "connection call index1 ต้องเป็น UNKNOWN → IndexError",
+      "root_cause_evidence": "on_draw delegate ไป draw_flow ซึ่งวาด logical lines ภายในฟังก์ชัน ไม่ใช้ _draw_connection_line; E08 จับ legacy helper ได้ 0 calls",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "ตรวจ semantic WAN state และไม่มี pulse เมื่อไม่มี evidence ที่ renderer ปัจจุบัน หลีกเลี่ยง index ของ draw-call ที่เลิกใช้",
+      "approval_required": true,
+      "functional_requirements": [
+        "PROVENANCE"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G04",
+      "test_name": "test_identity_08_demo_data_isolated_from_live (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_08_demo_data_isolated_from_live)",
+      "failure_type": "ERROR",
+      "source_function": "f3_network.py F3DeviceStore.set_demo (793), f3_evidence.py identity_label (256)",
+      "expected_actual": "dev-scada-01 ใน DEMO ต้องมี [DEMO] → KeyError",
+      "root_cause_evidence": "DEMO ใช้ demo-source-1..3 และ demo-collector แยกจาก LIVE; E08 ยืนยัน inventory และการคืน LIVE",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "เลือก DEMO device จาก is_demo/type และ assert ชื่อ/quality/provenance SYNTHETIC_DEMO รวมทั้งไม่มีค่าไหลเข้า LIVE",
+      "approval_required": true,
+      "functional_requirements": [
+        "ISOLATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G05",
+      "test_name": "test_default_stations_fit_a_shorter_operator_viewport (test_f3_usability.TestF3Usability.test_default_stations_fit_a_shorter_operator_viewport)",
+      "failure_type": "ERROR",
+      "source_function": "f3_network.py _update_diagram_layout (2360), f3_layout.py page_inventory (10)",
+      "expected_actual": "PC1–PC3 ต้องอยู่หน้าเดียวและไม่ล้น 407px → PC3 ไม่มีใน node_rects",
+      "root_cause_evidence": "canvas กว้างไม่ถึง 1100 ใช้ capacity2 พร้อม pagination; E08 เห็น PC1/2 หน้า 0 และ PC3 หน้า 1 พร้อมครอบคลุมครบ",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "ตรวจทุก page, next/previous และ selection anchor รวม source IDs ครบและ bounds ต่อ viewport แทนบังคับทุก node ในหน้าเดียว",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G06",
+      "test_name": "test_collector_does_not_draw_unverified_wan_as_link_up (test_f3_continuation.TestF3Continuation.test_collector_does_not_draw_unverified_wan_as_link_up)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py device_status_text (345), _draw_pc4_node",
+      "expected_actual": "ต้องไม่มี LINK UP และมี literal NOT VERIFIED → ได้ UNKNOWN/UNASSIGNED",
+      "root_cause_evidence": "UNKNOWN เป็นผลไม่มี observation ใน evidence contract ปัจจุบัน; assertion literal เก่าถูกเปลี่ยนแต่ยังไม่อนุญาตอนุมาน WAN จาก carrier; E09 ตรวจ role/age แยก",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "คง assertion ไม่มี link-up ปลอม ตรวจ UNKNOWN/UNVERIFIED semantics และ fixture local carrier ที่ไม่มี role assignment",
+      "approval_required": true,
+      "functional_requirements": [
+        "PROVENANCE"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G07",
+      "test_name": "test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='detect_opcua_session')",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py trigger_device_opcua_test (2630), _request_remote_action (2551), _execute_secure_action (2676)",
+      "expected_actual": "ยืนยันแล้ว legacy detect_opcua_session ต้องถูกเรียก 1 ครั้ง → 0",
+      "root_cause_evidence": "controller ใช้ SecureF3OpcUa.probe_sync; E08 พบ dialog1, adapter0 ก่อนยืนยัน และ adapter1 หลังยืนยัน พร้อม legacy0",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "patch adapter ที่ใช้จริงและ await GLib completion คง negative assertion ว่าไม่มี adapter/thread ก่อนยืนยัน รวม cancel/changed-target/disabled cases",
+      "approval_required": true,
+      "functional_requirements": [
+        "AUTH"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G08",
+      "test_name": "test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='read_opcua_single_tag')",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py trigger_device_read_once (2640), _request_remote_action (2551)",
+      "expected_actual": "read action ต้องเปิด dialog → 0 หลัง subtest แรก",
+      "root_cause_evidence": "subtest แรกเริ่ม worker จริงแต่ mock คนละ backend แล้วจบด้วย assertion ก่อน drain; _remote_busy ป้องกันงานที่สอง; E08 ทำซ้ำ coupling นี้ และ fresh read view เปิด dialog/adapter ตาม gate",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "แยก fresh view ต่อ action หรือ drain/cancel งานเดิม ใช้ read_sync boundary และ assert duplicate-click ถูก block รวมไม่เรียก read ก่อนยืนยัน",
+      "approval_required": true,
+      "functional_requirements": [
+        "AUTH"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G09",
+      "test_name": "test_verified_connections_render_and_animate (test_f3_continuation.TestF3Continuation.test_verified_connections_render_and_animate)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py _on_anim_tick (1501), f3_drawing.py draw_flow (20), f3_runtime.py RuntimeEvidence",
+      "expected_actual": "แค่ตั้ง opcua_state CONNECTED แล้ว tick ต้องทำให้ pixels เปลี่ยน → pixels เท่ากัน",
+      "root_cause_evidence": "ไม่มี committed event/pulse ใน runtime.active จึงควร idle; E09 มีคู่ทดสอบ assertEqual สำหรับ configured flags และ assertNotEqual หลัง SQLite commit",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "รักษา negative no-evidence/no-animation และ positive event-driven pixel change/expiry ด้วย synthetic transaction ห้ามทำ animation จาก flag อย่างเดียว",
+      "approval_required": true,
+      "functional_requirements": [
+        "PROVENANCE",
+        "COMMUNICATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G10",
+      "test_name": "test_closing_the_main_window_closes_its_popup (test_f3_details_window.TestF3DetailsWindow.test_closing_the_main_window_closes_its_popup)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py _build_main_layout (2249), toggle_inspector (2520)",
+      "expected_actual": "ปิด main ต้องปิด native popup → root เป็น main จึงไม่ถึง close assertion",
+      "root_cause_evidence": "implementation docked inspector ที่ main_split และ details_window=None; มี test_f3_final_data.test_device_inspector_is_docked_instead_of_an_owned_window ที่ผ่าน",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "ย้าย lifecycle/ownership assertions ไป actual F3 WebKit dialog และ owner.close พร้อมคง docked-library assertion ไม่สร้าง popup เก่าเพื่อให้ test ผ่าน",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION",
+        "COMMUNICATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G11",
+      "test_name": "test_remote_confirmation_uses_the_popup_without_starting_a_probe (test_f3_details_window.TestF3DetailsWindow.test_remote_confirmation_uses_the_popup_without_starting_a_probe)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py _build_main_layout (2311), _request_remote_action (2551)",
+      "expected_actual": "authorization parent ต้องเป็น popup และยังไม่ probe → ไม่ผ่าน separate-window prerequisite",
+      "root_cause_evidence": "native popup assumption ขัด docked contract; gate ใช้ root Gtk.Window; E08 gate ก่อน confirmation ไม่มี adapter/thread",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "พิสูจน์ root parent จริงและไม่มีงานก่อน confirm/cancel; แยก widget ownership จาก authorization behavior พร้อมครอบคลุม normal F3 entry point",
+      "approval_required": true,
+      "functional_requirements": [
+        "AUTH",
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G12",
+      "test_name": "test_reuses_closes_and_reopens_the_same_window (test_f3_details_window.TestF3DetailsWindow.test_reuses_closes_and_reopens_the_same_window)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py _build_main_layout (2311), toggle_inspector (2520)",
+      "expected_actual": "reuse/close/reopen Gtk popup เดิม → root เป็น main",
+      "root_cause_evidence": "docked inspector ถูกสร้างครั้งเดียว ไม่มี details Gtk.Window; คู่ docked assertion ใน E09 ยืนยัน contract ปัจจุบัน",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "ทดสอบ reuse selection/visibility ของ dock และ open-close-reopen ของ HTML dialog ใน active view รวม focus คืน",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G13",
+      "test_name": "test_selection_opens_a_floating_owned_window (test_f3_details_window.TestF3DetailsWindow.test_selection_opens_a_floating_owned_window)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py _build_main_layout (2311), select_device (2502)",
+      "expected_actual": "เริ่ม inspector ซ่อนและเลือกแล้วเปิด native popup → visible เริ่ม True",
+      "root_cause_evidence": "constructor set_visible(True), append เข้า main_split และซ่อนปุ่ม close โดยตรง; E08 ตรวจทุกฟิลด์",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "ยืนยัน current docked library contract และ active HTML dialog ซ่อนจนเลือก node; geometry และ ownership ต้องคงอยู่",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G14",
+      "test_name": "test_settings_are_owned_by_the_details_window (test_f3_details_window.TestF3DetailsWindow.test_settings_are_owned_by_the_details_window)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py DeviceDetailInspector._on_settings_clicked, _build_main_layout (2311)",
+      "expected_actual": "settings transient_for ต้องเป็น native detail popup → ไม่ถึง settings assertion",
+      "root_cause_evidence": "precondition แยกหน้าต่างไม่ตรง UI ปัจจุบัน; root ของ inspector เป็น main ไม่ใช่ popup",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "ตรวจ settings transient/destroy-with-parent ที่ actual root และใช้ current dialog lifecycle ห้ามลบ ownership coverage",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G15",
+      "test_name": "test_01_f3_rendering_bounds (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_01_f3_rendering_bounds)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py F3LiveDiagramCanvas.__init__ (1477), _update_diagram_layout (2360)",
+      "expected_actual": "content_height อย่างน้อย 450 → 340",
+      "root_cause_evidence": "ค่าเริ่ม 450 ถูก layout คำนวณใหม่ floor340 เพื่อ fit พื้นที่และ pagination; E08 height340, E09 geometry tests ผ่าน",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "assert rectangles ไม่ล้น, width/height ขั้นต่ำอ่านได้และครบทุก page ที่ 1024/1366/1920 แทน fixed legacy floor450",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G16",
+      "test_name": "test_03_status_led_updates (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_03_status_led_updates)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py F3DeviceCard.update_view (2032), f3_evidence.py evidence_state (58)",
+      "expected_actual": "bare reachability/CONNECTED flags ต้องทำ badge REACHABLE → UNKNOWN",
+      "root_cause_evidence": "ไม่มี evidence source/time/target จึง UNKNOWN; badge ปัจจุบันแสดง provenance REMOTE; E08 เพิ่ม synthetic structured evidence แล้วได้ REMOTE",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "ตรวจ configured-only UNKNOWN, fresh REMOTE พร้อม reachability, stale/target-changed กลับ unknown แยก UA session จาก TCP และ receipt",
+      "approval_required": true,
+      "functional_requirements": [
+        "PROVENANCE",
+        "COMMUNICATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G17",
+      "test_name": "test_compat_ip_table_update (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_ip_table_update)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py render_ip_summary_table (2905), F3DeviceStore.update_device (762)",
+      "expected_actual": "แก้ topology_data.gateway_bridge แล้ว table ต้องแสดง IP ใหม่ → ไม่พบ",
+      "root_cause_evidence": "table ใช้ store devices configured_ip/observed_ip แยกกัน ไม่อ่าน legacy topology_data; E08 ใช้ update_device แล้วได้ Config พร้อม ActualUNKNOWN",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "ใช้ public store API และตรวจ configured กับ observed แยก ไม่เปลี่ยน old topology-only field ให้กลายเป็น actual NIC observation",
+      "approval_required": true,
+      "functional_requirements": [
+        "COMMUNICATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G18",
+      "test_name": "test_identity_12_regression_f1_f2_f6_all_pass (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_12_regression_f1_f2_f6_all_pass)",
+      "failure_type": "FAIL",
+      "source_function": "test_f3_network_topology.py test_identity_12 (540), app.py __init__ (1305), scan_wincc_tags (614)",
+      "expected_actual": "app ต้องโหลด 457 Tags → 0 ใน temporary HOME",
+      "root_cause_evidence": "test ไม่ได้ inject catalog ก่อนเริ่ม app; functional source เลิก repo/private-workstation fallback; E08 missing=0, synthetic33-columnUTF16=457",
+      "classification": "ENVIRONMENT",
+      "severity": "P1",
+      "proposed_fix_and_tests": "ใช้ write_catalog และ patchDEFAULT_WINCC_EXPORT ตาม test_workspace_production:56 ก่อนสร้าง app เพิ่ม empty-profile case; คง F1/F2/F6 normal-entry assertions",
+      "approval_required": true,
+      "functional_requirements": [
+        "TAG_LOADING",
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G19",
+      "test_name": "test_list_explains_status_and_accounts_for_configured_devices (test_f3_usability.TestF3Usability.test_list_explains_status_and_accounts_for_configured_devices)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py device_status_text (345), F3DeviceCard.update_view (2032)",
+      "expected_actual": "ข้อความต้องยังไม่ได้ตรวจสอบ → เพิ่ม suffix UNKNOWN",
+      "root_cause_evidence": "expected literal ไม่ตรง explicit evidence wording; original test หยุดก่อน assertions ของ service buttons จึงยังต้องตรวจส่วนที่เหลือ",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "assert unknown semantics กับ quality/provenance และ negative service action ตาม capability/explicit port รักษา button policy assertions",
+      "approval_required": true,
+      "functional_requirements": [
+        "PROVENANCE",
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G20",
+      "test_name": "test_live_actions_describe_the_implemented_capability (test_f3_usability.TestF3Usability.test_live_actions_describe_the_implemented_capability)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py DeviceDetailInspector action controls (1830), f3_opcua.py readiness (46)",
+      "expected_actual": "ปุ่มทดสอบต้องมีคำว่าพอร์ต/live read unavailable → label Secure Session",
+      "root_cause_evidence": "manual secure-session/read adapter รองรับแล้ว; ปุ่มใช้ security/mapping readiness มิใช่ legacy TCP-only contract; original หยุดที่ label จึงไม่ถึง assertions ถัดไป",
+      "classification": "STALE_TEST",
+      "severity": "P1",
+      "proposed_fix_and_tests": "ตรวจ probe/read capabilities, missing PKI/mapping refusal, exact endpoint credentials และ freshDEMO selection ห้ามลด gate หรือ trust policy เพื่อผ่าน",
+      "approval_required": true,
+      "functional_requirements": [
+        "AUTH",
+        "COMMUNICATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    },
+    {
+      "id": "G21",
+      "test_name": "test_startup_gives_the_diagram_full_attention (test_f3_usability.TestF3Usability.test_startup_gives_the_diagram_full_attention)",
+      "failure_type": "FAIL",
+      "source_function": "f3_network.py _build_main_layout (2311)",
+      "expected_actual": "startup inspector ต้องซ่อน → True",
+      "root_cause_evidence": "set_visible(True) ของ docked inspector ขัด old floating-window assumption; E08/E09 ยืนยัน contract ที่ใช้อยู่",
+      "classification": "STALE_TEST",
+      "severity": "P2",
+      "proposed_fix_and_tests": "แยก docked library default กับ actual F3 HTMLdialog default และยืนยันรายละเอียดไม่บังผัง ตาม owner-approved UI contract",
+      "approval_required": true,
+      "functional_requirements": [
+        "NAVIGATION"
+      ],
+      "safety_assertions_preserved": true,
+      "source_change_status": "HOLD",
+      "test_reconciliation_status": "PLANNED_ONLY_REQUIRES_REVIEW",
+      "release_gate": "Original diagnostic remains open until replacement semantic checks are approved and executed; no skip, xfail, deletion or assertion weakening."
+    }
+  ]
+}

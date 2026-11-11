@@ -1,0 +1,8 @@
+libmutter-Message: 10:58:46.499: Running Mutter (using mutter 51.1) as a Wayland display server
+libmutter-Message: 10:58:46.589: Added device '/dev/dri/renderD128' (i915) using no mode setting.
+libmutter-Message: 10:58:46.590: Created gbm renderer for '/dev/dri/renderD128'
+libmutter-Message: 10:58:46.590: Boot VGA GPU /dev/dri/renderD128 selected as primary
+** Message: 10:58:46.592: Obtained a high priority EGL context
+libmutter-Message: 10:58:46.624: Added virtual monitor Meta-0
+libmutter-Message: 10:58:46.632: Using Wayland display name 'aqua-independent-audit'
+libmutter-Message: 10:58:51.048: Removed virtual monitor Meta-0

@@ -1,0 +1,1254 @@
+COMMAND /usr/bin/python3 -B -m unittest test_f3_continuation test_f3_details_window test_f3_usability test_f3_network_topology test_f3_active_reconciliation -v
+CWD [REDACTED_HOME]/Documents/Codex/2026-11-07/referenced-chatgpt-conversation-this-is-an/work/aqua-phase7-p1-tests/aqua-command-desktop/desktop/tests
+test_add_after_removal_preserves_remaining_device (test_f3_continuation.TestF3Continuation.test_add_after_removal_preserves_remaining_device) ... /usr/lib64/python3.15/site-packages/gi/overrides/Gtk.py:1801: DeprecationWarning: Gtk.CssProvider.load_from_data is deprecated
+  super().load_from_data(text, length)
+ok
+test_canvas_has_one_visible_parent (test_f3_continuation.TestF3Continuation.test_canvas_has_one_visible_parent) ... ok
+test_collector_does_not_draw_unverified_wan_as_link_up (test_f3_continuation.TestF3Continuation.test_collector_does_not_draw_unverified_wan_as_link_up) ... ok
+test_configuration_updates_cannot_replace_stable_identity (test_f3_continuation.TestF3Continuation.test_configuration_updates_cannot_replace_stable_identity) ... ok
+test_disabled_device_does_not_start_remote_actions (test_f3_continuation.TestF3Continuation.test_disabled_device_does_not_start_remote_actions) ... ok
+test_identity_save_preserves_existing_network_configuration (test_f3_continuation.TestF3Continuation.test_identity_save_preserves_existing_network_configuration) ... ok
+test_late_demo_callback_cannot_update_live_status (test_f3_continuation.TestF3Continuation.test_late_demo_callback_cannot_update_live_status) ... /usr/lib64/python3.15/site-packages/gi/events.py:803: DeprecationWarning: 'asyncio.AbstractEventLoopPolicy' is deprecated and slated for removal in Python 3.16
+  AbstractEventLoopPolicy = getattr(asyncio, "AbstractEventLoopPolicy", object)
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_layout_fits_1366_with_inspector_visible (test_f3_continuation.TestF3Continuation.test_layout_fits_1366_with_inspector_visible) ... ok
+test_legacy_and_stable_selection_highlight_the_same_card (test_f3_continuation.TestF3Continuation.test_legacy_and_stable_selection_highlight_the_same_card) ... ok
+test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_store_add_and_remove_update_cards_and_table (test_f3_continuation.TestF3Continuation.test_store_add_and_remove_update_cards_and_table) ... ok
+test_switching_to_live_clears_demo_observations (test_f3_continuation.TestF3Continuation.test_switching_to_live_clears_demo_observations) ... ok
+test_unverified_wan_has_no_online_badge_or_verified_flow (test_f3_continuation.TestF3Continuation.test_unverified_wan_has_no_online_badge_or_verified_flow) ... ok
+test_verified_connections_render_and_animate (test_f3_continuation.TestF3Continuation.test_verified_connections_render_and_animate) ... ok
+test_closing_the_main_window_closes_its_popup (test_f3_details_window.TestF3DetailsWindow.test_closing_the_main_window_closes_its_popup) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_opening_details_preserves_the_full_diagram_width (test_f3_details_window.TestF3DetailsWindow.test_opening_details_preserves_the_full_diagram_width) ... /usr/lib64/python3.15/ipaddress.py:1269: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7f8134b9cba0>
+  def __init__(self, address):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_remote_confirmation_uses_the_popup_without_starting_a_probe (test_f3_details_window.TestF3DetailsWindow.test_remote_confirmation_uses_the_popup_without_starting_a_probe) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_reuses_closes_and_reopens_the_same_window (test_f3_details_window.TestF3DetailsWindow.test_reuses_closes_and_reopens_the_same_window) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_selection_opens_a_floating_owned_window (test_f3_details_window.TestF3DetailsWindow.test_selection_opens_a_floating_owned_window) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_settings_are_owned_by_the_details_window (test_f3_details_window.TestF3DetailsWindow.test_settings_are_owned_by_the_details_window) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_default_stations_fit_a_shorter_operator_viewport (test_f3_usability.TestF3Usability.test_default_stations_fit_a_shorter_operator_viewport) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_device_list_has_a_full_height_view (test_f3_usability.TestF3Usability.test_device_list_has_a_full_height_view) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_device_outline_has_a_flat_bottom_and_rounded_corners (test_f3_usability.TestF3Usability.test_device_outline_has_a_flat_bottom_and_rounded_corners) ... ok
+test_list_explains_status_and_accounts_for_configured_devices (test_f3_usability.TestF3Usability.test_list_explains_status_and_accounts_for_configured_devices) ... ok
+test_live_actions_describe_the_implemented_capability (test_f3_usability.TestF3Usability.test_live_actions_describe_the_implemented_capability) ... ok
+test_selected_device_details_do_not_take_half_the_screen (test_f3_usability.TestF3Usability.test_selected_device_details_do_not_take_half_the_screen) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_startup_gives_the_diagram_full_attention (test_f3_usability.TestF3Usability.test_startup_gives_the_diagram_full_attention) ... ok
+test_station_nodes_and_addresses_are_readable (test_f3_usability.TestF3Usability.test_station_nodes_and_addresses_are_readable) ... ok
+test_unobserved_internet_does_not_claim_online_or_offline (test_f3_usability.TestF3Usability.test_unobserved_internet_does_not_claim_online_or_offline) ... ok
+test_01_f3_rendering_bounds (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_01_f3_rendering_bounds)
+1. Verify F3 initializes and renders within bounds at 1366x768, 1600x900, 1920x1080 without window overflow. ... ok
+test_02_diagram_click_selection (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_02_diagram_click_selection)
+2. Verify clicking a device node on the diagram updates selected device and inspector. ... ok
+test_03_status_led_updates (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_03_status_led_updates) ... ok
+test_04_animation_stops_when_unknown_stale (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_04_animation_stops_when_unknown_stale)
+4. Verify connection line animation halts when state is UNKNOWN, STALE, or ERROR. ... ok
+test_05_pc4_local_nic_detection (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_05_pc4_local_nic_detection)
+5. Verify PC4 local NIC detection reads directly from OS sysfs/procfs with zero network packets. ... ok
+test_06_synthetic_remote_detection (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_06_synthetic_remote_detection)
+6. Verify synthetic remote ICMP/TCP detection works in DEMO mode. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_07_opcua_endpoint_port_configurable (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_07_opcua_endpoint_port_configurable)
+7. Verify OPC UA endpoint URL and port are dynamically configurable and not hardcoded. ... ok
+test_08_opcua_loopback_connect_disconnect (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_08_opcua_loopback_connect_disconnect)
+8. Verify clean OPC UA loopback connect and disconnect state transitions. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_09_tcp_open_not_opcua_connected (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_09_tcp_open_not_opcua_connected)
+9. Verify strict separation: TCP port open does NOT imply OPC UA session connected. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_10_pki_trust_failure_status (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_10_pki_trust_failure_status)
+10. Verify PKI trust failure displays CERTIFICATE_UNTRUSTED status. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_11_read_once_datavalue (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_11_read_once_datavalue)
+11. Verify Read Once action returns DataValue with value, quality, and timestamp. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_12_add_remove_device_updates_ui (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_12_add_remove_device_updates_ui)
+12. Verify adding and removing a device dynamically updates cards and store. ... ok
+test_13_device_config_persistence (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_13_device_config_persistence)
+13. Verify device configuration persists atomically to JSON and reloads on restart. ... ok
+test_14_demo_data_isolation (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_14_demo_data_isolation)
+14. Verify DEMO mode uses synthetic loopback and does NOT touch live production IPs. ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_15_no_network_traffic_on_f3_open (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_15_no_network_traffic_on_f3_open)
+15. Verify zero outbound network packets / sockets on F3 tab open. ... ok
+test_16_no_unauthorized_scada_probe (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_16_no_unauthorized_scada_probe)
+16. Verify remote device probing in LIVE mode is gated by OT Safety Authorization Dialog. ... ok
+test_17_no_security_downgrade (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_17_no_security_downgrade)
+17. Verify that security settings cannot be auto-trusted or downgraded without authorization. ... ok
+test_18_gtk_thread_safety (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_18_gtk_thread_safety)
+18. Verify network detection runs on background thread and dispatches to GLib main thread. ... ok
+test_19_f1_f2_f6_regression (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_19_f1_f2_f6_regression)
+19. Verify F1, F2, F6 tabs and underlying models remain completely intact. ... ok
+test_20_polling_storage_invariants (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_20_polling_storage_invariants)
+20. Verify 5-second polling runtime and SQLite Outbox engine remain untouched. ... ok
+test_compat_device_details_dialog (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_device_details_dialog) ... ok
+test_compat_ip_table_update (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_ip_table_update) ... ok
+test_compat_pc4_details (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_pc4_details) ... ok
+test_compat_pc4_dual_nic_layout (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_pc4_dual_nic_layout) ... ok
+test_identity_01_local_hostname_from_os (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_01_local_hostname_from_os)
+1. Verify local machine reads actual OS hostname (fedora) and never username or PC4. ... ok
+test_identity_02_unknown_remote_hostname_shows_unknown (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_02_unknown_remote_hostname_shows_unknown)
+2. Verify remote SCADA workstation without verified asset record shows Hostname Unknown. ... ok
+test_identity_03_dns_ptr_not_auto_verified (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_03_dns_ptr_not_auto_verified)
+3. Verify DNS/PTR reverse lookup is classified as UNVERIFIED and not auto-promoted. ... ok
+test_identity_04_user_alias_not_actual_hostname (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_04_user_alias_not_actual_hostname)
+4. Verify user alias is tagged [User-defined] and does not mutate factual hostname. ... ok
+test_identity_05_device_id_stable_across_hostname_ip_changes (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_05_device_id_stable_across_hostname_ip_changes)
+5. Verify stable device_id remains immutable across alias, IP, and hostname changes. ... ok
+test_identity_06_tasks_and_opcua_mapping_intact (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_06_tasks_and_opcua_mapping_intact)
+6. Verify task engine and OPC UA node mappings stay intact after identity changes. ... ok
+test_identity_07_dynamic_devices_render_correctly (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_07_dynamic_devices_render_correctly)
+7. Verify adding dynamic devices renders correctly without hardcoded limits. ... ok
+test_identity_08_demo_data_isolated_from_live (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_08_demo_data_isolated_from_live) ... ok
+test_identity_09_no_fake_online_connected_status (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_09_no_fake_online_connected_status)
+9. Verify remote SCADA devices do not show fake online or connected status initially. ... ok
+test_identity_10_no_unauthorized_network_traffic (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_10_no_unauthorized_network_traffic)
+10. Verify opening F3 emits zero outbound network traffic and remote probes require authorization. ... ok
+test_identity_11_f3_gui_displays_names_and_status (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_11_f3_gui_displays_names_and_status)
+11. Verify GUI cards and table display factual hostname/IP and role, abolishing PC1-PC4. ... ok
+test_identity_12_regression_f1_f2_f6_all_pass (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_12_regression_f1_f2_f6_all_pass) ... 
+(process:68795): Gtk-WARNING **: 11:56:30.790: Use GtkSettings:gtk-interface-color-scheme instead
+Can't find a11y bus: GDBus.Error:org.freedesktop.DBus.Error.Spawn.ExecFailed: Failed to execute program org.a11y.Bus: Permission denied
+
+(process:68795): Gtk-WARNING **: 11:56:31.228: Use GtkSettings:gtk-interface-color-scheme instead
+ok
+test_active_dialog_is_initially_closed_reuses_selection_and_restores_focus (test_f3_active_reconciliation.ActiveF3ReconciliationTests.test_active_dialog_is_initially_closed_reuses_selection_and_restores_focus) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:32] "GET /api/f3/evidence HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:32] "GET /api/stream HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_configured_success_cannot_become_observed_page_state_or_start_remote_io (test_f3_active_reconciliation.ActiveF3ReconciliationTests.test_configured_success_cannot_become_observed_page_state_or_start_remote_io) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:32] "GET /api/f3/evidence HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:32] "GET /api/stream HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_map_unmap_remap_closes_listener_and_rejects_late_ready (test_f3_active_reconciliation.ActiveF3ReconciliationTests.test_map_unmap_remap_closes_listener_and_rejects_late_ready) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:33] "GET /api/f3/evidence HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:33] "GET /api/stream HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_normal_application_f3_navigation_and_owner_close_stop_listener (test_f3_active_reconciliation.ActiveF3ReconciliationTests.test_normal_application_f3_navigation_and_owner_close_stop_listener) ... 
+(process:68795): Gtk-WARNING **: 11:56:33.622: Use GtkSettings:gtk-interface-color-scheme instead
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+test_web_keyboard_navigation_and_settings_shortcut_reach_owner_only (test_f3_active_reconciliation.ActiveF3ReconciliationTests.test_web_keyboard_navigation_and_settings_shortcut_reach_owner_only) ... /usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:34] "GET /api/f3/evidence HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+127.0.0.1 - - [11/Nov/2026 11:56:34] "GET /api/stream HTTP/1.1" 200 -
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+/usr/lib64/python3.15/site-packages/gi/events.py:890: DeprecationWarning: 'asyncio.get_event_loop_policy' is deprecated and slated for removal in Python 3.16
+  if not isinstance(_get_event_loop_policy(), GLibEventLoopPolicy):
+ok
+
+----------------------------------------------------------------------
+Ran 70 tests in 11.899s
+
+OK
+
+AUDIT_EXIT_CODE=0

@@ -1,0 +1,14 @@
+{
+  "scope": "Current source snapshot plus sanitized P1 evidence; no history",
+  "source_files": 416,
+  "text_files_scanned": 452,
+  "strict_findings": [],
+  "private_catalog_names_compared": 457,
+  "new_private_fixture_files": 0,
+  "runtime_and_non_test_files_unchanged": 310,
+  "p0_source_archive_inputs_unchanged": 117,
+  "p0_source_archive_and_payload_scans": "PASS,117 and100 files; no new build",
+  "history": "NOT_CLEARED",
+  "rotation": "PENDING_OWNER_ACTION",
+  "public_distribution_merge_production": "NO-GO"
+}

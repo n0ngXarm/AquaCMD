@@ -125,7 +125,7 @@ class ConsoleView:
   m=copy.deepcopy(m)
   for d in m['devices']:d['reachability']='CACHED'
   for metric in m['metrics'].values():metric['cached']=True
-  m['ack_metric']['cached']=True;m['notification']['count_metric']['cached']=True;m['notification']['pending_metric']['cached']=True
+  m['ack_metric']['cached']=True;m['notification']['count_metric']['cached']=True;m['notification']['pending_metric']['cached']=True;m['notification']['unknown_metric']['cached']=True
   m['egress']['freshness']='CACHED';m['egress']['available']=False
   for r in m['signals']:r['freshness']='DISPLAY_CACHED';r['state']='UNKNOWN';r['reason']='พักการแสดงผล; RAW เป็นภาพที่เก็บไว้'
   return m
@@ -170,6 +170,10 @@ class ConsoleView:
    if gateway_role:
     self.pipeline_labels['ack'].set_text(val(m.get('archive_received'))+' durably received')
     self.delivery_table.update([('archive',['Gateway archive',val(m['metrics']['gateway']['value']),'CACHED' if m['metrics']['gateway']['cached'] else 'Reported','Retained locally; finite quota, no snapshot upstream']),('source',['Exporter pending','Not reported','No exporter control access','Gateway custody does not prove exporter received ACK']),('upstream',['Snapshot upstream','Not configured','—','Telegram is not a full snapshot archive']),('notify',['Notifications',val(m['notification']['count']),m['notification']['mode'],'Transition notification receipts only'])])
+  unknown=m['notification']['unknown_metric']
+  count=val(unknown['value']) if unknown['value'] is not None else 'ยังไม่มีรายงาน'
+  cached=' · ข้อมูลที่เก็บไว้' if unknown['cached'] and unknown['value'] is not None else ''
+  self.delivery_note.set_text(self.delivery_note.get_text()+'\nTelegram ไม่ทราบผลการส่ง: '+count+cached)
   self.owner.tag_widgets=self.signal_table.widgets
  def render_signals(self):
   m=self.last_model

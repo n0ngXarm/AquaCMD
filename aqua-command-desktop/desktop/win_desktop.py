@@ -57,24 +57,12 @@ TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
 TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
 OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 
-CANDIDATE_EXPORTS = [
-    Path.home() / 'Downloads' / 'Export all.txt',
-    Path(__file__).parent / 'Export all.txt',
-    Path(__file__).parent / 'data' / 'Export all.txt',
-    Path(__file__).parent.parent / 'Export all.txt',
-    Path(__file__).parent.parent / 'data' / 'Export all.txt',
-    Path('/home/nong_ing/Downloads/Export all.txt'),
-    Path('/home/nong_ing/Documents/Work_SHCOOL/project_water/aqua-command/fixtures/Export all.txt')
-]
-if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-    base_dir = Path(sys._MEIPASS)
-    CANDIDATE_EXPORTS.insert(0, base_dir / 'Export all.txt')
-    CANDIDATE_EXPORTS.insert(0, base_dir / 'desktop' / 'Export all.txt')
-DEFAULT_WINCC_EXPORT = Path.home() / 'Downloads' / 'Export all.txt'
-for p in CANDIDATE_EXPORTS:
-    if p.exists():
-        DEFAULT_WINCC_EXPORT = p
-        break
+try:
+    from .private_runtime import catalog_path, redact_text
+except ImportError:
+    from private_runtime import catalog_path, redact_text
+
+DEFAULT_WINCC_EXPORT = catalog_path(CONFIG_DIR)
 
 
 def load_initial_tags():
@@ -94,8 +82,10 @@ def load_initial_tags():
 
 def save_atomic_json(filepath, data):
     p = Path(filepath)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    temp_p = p.with_suffix('.tmp')
+    parent_dir = p.parent
+    parent_dir.mkdir(parents=True, exist_ok=True)
+    rand_id = os.urandom(8).hex()
+    temp_p = parent_dir / f".{p.name}.{rand_id}.tmp"
     try:
         with open(temp_p, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
@@ -117,15 +107,16 @@ def load_opcua_config():
     if OPCUA_CONFIG_FILE.exists():
         try:
             with open(OPCUA_CONFIG_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                data.pop('password', None)  # Safety: never retain password in memory or disk
+                return data
         except Exception:
             pass
     return {
-        'endpoint_url': 'opc.tcp://192.168.1.11:4862',
+        'endpoint_url': '',
         'security_policy': 'None',
         'auth_mode': 'Anonymous',
         'username': '',
-        'password': '',
         'status': 'disconnected'
     }
 
@@ -153,38 +144,38 @@ def load_tasks():
 DEFAULT_TOPOLOGY = {
     "scada_lan": {
         "zone_name": "เครือข่ายภายใน SCADA (Isolated OT LAN)",
-        "subtitle": "วงแลนอิสระของสถานีผลิตน้ำอุโมงค์ (192.168.1.0/24) | ปลอดภัย 100% ไม่เชื่อมต่อภายนอก",
+        "subtitle": "วงแลนอิสระของสถานีผลิตน้ำ (192.0.2.11/24) | ปลอดภัย 100% ไม่เชื่อมต่อภายนอก",
         "has_internet": False,
-        "subnet": "192.168.1.0/24",
+        "subnet": "192.0.2.11/24",
         "netmask": "255.255.255.0",
         "gateway": "ไม่มี (Isolated Air-Gapped)",
-        "switch": {"name": "LAN Switch", "ip": "192.168.1.254"},
+        "switch": {"name": "LAN Switch", "ip": "192.0.2.13"},
         "devices": [
-            {"id": "PC1", "name": "PC1 · SCADA", "ip": "192.168.1.11", "role": "สถานีสูบน้ำแรงต่ำ 1 (แม่น้ำปิง / ชลประทาน)"},
-            {"id": "PC2", "name": "PC2 · SCADA", "ip": "192.168.1.12", "role": "สถานีสูบน้ำแรงต่ำ 3 (สถานีผลิตน้ำอุโมงค์)"},
-            {"id": "PC3", "name": "PC3 · SCADA", "ip": "192.168.1.13", "role": "สถานีสูบส่งน้ำแรงสูง VSD (High_VSD #13-#17)"}
+            {"id": "PC1", "name": "PC1 · SCADA", "ip": "192.0.2.10", "role": "สถานีสูบน้ำแรงต่ำ 1 (PRIVATE_SITE / ชลประทาน)"},
+            {"id": "PC2", "name": "PC2 · SCADA", "ip": "192.0.2.14", "role": "สถานีสูบน้ำแรงต่ำ 3 (สถานีผลิตน้ำ)"},
+            {"id": "PC3", "name": "PC3 · SCADA", "ip": "192.0.2.15", "role": "สถานีสูบส่งน้ำแรงสูง VSD (High_VSD #13-#17)"}
         ]
     },
     "gateway_bridge": {
         "id": "PC4",
         "name": "PC4 · Gateway (AQUA COMMAND — เครื่องนี้)",
-        "nic_scada": {"name": "ขาใน SCADA LAN", "iface": "Ethernet", "ip": "192.168.1.14"},
-        "nic_wan": {"name": "ขานอก WAN (Internet)", "iface": "Wi-Fi", "ip": "192.168.100.177"}
+        "nic_scada": {"name": "ขาใน SCADA LAN", "iface": "Ethernet", "ip": "192.0.2.16"},
+        "nic_wan": {"name": "ขานอก WAN (Internet)", "iface": "Wi-Fi", "ip": "192.0.2.17"}
     },
     "external_wan": {
         "zone_name": "เครือข่ายเราเตอร์ภายนอก (Internet Gateway)",
         "has_internet": True,
         "router": {
             "name": "Router Internet",
-            "model": "TrueMove H 4G LTE Router",
-            "gateway_ip": "192.168.100.1",
-            "ssid": "Nong_Arm"
+            "model": "PRIVATE_SITE H 4G LTE Router",
+            "gateway_ip": "192.0.2.18",
+            "ssid": "PRIVATE_SITE"
         },
         "clients": [
-            {"ip": "192.168.100.177", "name": "PC4 · Gateway (AQUA COMMAND)", "is_this_pc": True},
-            {"ip": "192.168.100.135", "name": "Client เครื่องลูกข่าย 1"},
-            {"ip": "192.168.100.150", "name": "Client เครื่องลูกข่าย 2"},
-            {"ip": "192.168.100.178", "name": "Client เครื่องลูกข่าย 3"}
+            {"ip": "192.0.2.17", "name": "PC4 · Gateway (AQUA COMMAND)", "is_this_pc": True},
+            {"ip": "192.0.2.19", "name": "Client เครื่องลูกข่าย 1"},
+            {"ip": "192.0.2.20", "name": "Client เครื่องลูกข่าย 2"},
+            {"ip": "192.0.2.21", "name": "Client เครื่องลูกข่าย 3"}
         ]
     }
 }
@@ -347,7 +338,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>กปภ. เชียงใหม่ สถานีผลิตน้ำอุโมงค์ | AQUA COMMAND — WinCC V8.1 SCADA & Task Manager</title>
+<title>หน่วยงานตัวอย่าง สถานีผลิตน้ำ | AQUA COMMAND — WinCC V8.1 SCADA & Task Manager</title>
 <style>
 /* Modern Next-Gen Cyber-Industrial SCADA & HMI Theme */
 * {
@@ -730,13 +721,13 @@ input[type="text"]:focus, input[type="password"]:focus, select:focus {
 <!-- 1. WinCC Classic Top Bar -->
 <div class="wincc-topbar">
   <div class="wincc-title">
-    <span>💧 กปภ. เชียงใหม่</span>
-    <span>สถานีผลิตน้ำอุโมงค์ | AQUA COMMAND — WinCC V8.1 SCADA & Task Manager</span>
+    <span>💧 หน่วยงานตัวอย่าง</span>
+    <span>สถานีผลิตน้ำ | AQUA COMMAND — WinCC V8.1 SCADA & Task Manager</span>
   </div>
   <div style="display: flex; gap: 8px; align-items: center;">
     <span id="pill-scan" class="badge-nope">สแกนพบ: 0 Tags</span>
     <span id="pill-scada" class="badge-nope">🔒 SCADA: ❌ nope</span>
-    <span id="pill-wan" class="badge-sensor">🌐 4G: 192.168.100.177</span>
+    <span id="pill-wan" class="badge-sensor">🌐 4G: 192.0.2.17</span>
     <span class="badge-gateway">🟢 Internet Online</span>
     <span id="wincc-clock" class="wincc-clock">--:--:--</span>
   </div>
@@ -782,7 +773,7 @@ input[type="text"]:focus, input[type="password"]:focus, select:focus {
       </div>
 
       <div class="wincc-group">
-        <div class="group-title">💧 โรงสูบน้ำแรงต่ำ 1 (High1_PT1PT — สถานีสูบน้ำดิบแม่น้ำปิง) [รวม 133 Tags]</div>
+        <div class="group-title">💧 โรงสูบน้ำแรงต่ำ 1 (High1_PT1PT — สถานีสูบน้ำดิบPRIVATE_SITE) [รวม 133 Tags]</div>
         <div id="grid-pt1" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
       </div>
 
@@ -929,12 +920,12 @@ input[type="text"]:focus, input[type="password"]:focus, select:focus {
           </tr>
         </thead>
         <tbody id="tbody-ip-summary">
-          <tr><td><b>PC1 · SCADA</b></td><td>🔒 SCADA (ภายใน)</td><td>192.168.1.11</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สถานีสูบน้ำแรงต่ำ 1 (แม่น้ำปิง / ชลประทาน)</td></tr>
-          <tr><td><b>PC2 · SCADA</b></td><td>🔒 SCADA (ภายใน)</td><td>192.168.1.12</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สถานีสูบน้ำแรงต่ำ 3 (สถานีผลิตน้ำอุโมงค์)</td></tr>
-          <tr><td><b>PC3 · SCADA</b></td><td>🔒 SCADA (ภายใน)</td><td>192.168.1.13</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สถานีสูบส่งน้ำแรงสูง VSD (High_VSD #13-#17)</td></tr>
-          <tr><td><b>LAN Switch (8-Port)</b></td><td>🔒 SCADA (ภายใน)</td><td>192.168.1.254</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สวิตช์เครือข่ายภายใน OT LAN สำหรับควบคุมปั๊มน้ำ</td></tr>
-          <tr><td><b>Router TrueMove 4G</b></td><td>🌐 Router (ภายนอก)</td><td>192.168.100.1</td><td>255.255.255.0</td><td>192.168.100.1</td><td>4G LTE Gateway</td><td><span class="badge-gateway" style="padding: 1px 4px;">🟢 มี Internet</span></td><td><span class="badge-active" style="padding: 1px 4px;">5.1 ms</span></td><td>เราเตอร์หลักเชื่อมต่อเน็ตและส่งแจ้งเตือน Telegram</td></tr>
-          <tr><td><b>PC4 · Gateway (เครื่องนี้)</b></td><td>🌐 Router + 🔒 SCADA</td><td>192.168.100.177</td><td>255.255.255.0</td><td>192.168.100.1</td><td>ba:7a:37:fe:60:6a</td><td><span class="badge-gateway" style="padding: 1px 4px;">🟢 มี Internet</span></td><td><span class="badge-active" style="padding: 1px 4px;">0.1 ms</span></td><td>เครื่องประมวลผล AQUA COMMAND บริดจ์ 2 วงแลน</td></tr>
+          <tr><td><b>PC1 · SCADA</b></td><td>🔒 SCADA (ภายใน)</td><td>192.0.2.10</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สถานีสูบน้ำแรงต่ำ 1 (PRIVATE_SITE / ชลประทาน)</td></tr>
+          <tr><td><b>PC2 · SCADA</b></td><td>🔒 SCADA (ภายใน)</td><td>192.0.2.14</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สถานีสูบน้ำแรงต่ำ 3 (สถานีผลิตน้ำ)</td></tr>
+          <tr><td><b>PC3 · SCADA</b></td><td>🔒 SCADA (ภายใน)</td><td>192.0.2.15</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สถานีสูบส่งน้ำแรงสูง VSD (High_VSD #13-#17)</td></tr>
+          <tr><td><b>LAN Switch (8-Port)</b></td><td>🔒 SCADA (ภายใน)</td><td>192.0.2.13</td><td>255.255.255.0</td><td>ไม่มี (Air-Gapped)</td><td>nope</td><td><span class="badge-nope" style="padding: 1px 4px;">⚠️ ไม่มี Internet</span></td><td><span class="badge-nope" style="padding: 1px 4px;">❌ nope</span></td><td>สวิตช์เครือข่ายภายใน OT LAN สำหรับควบคุมปั๊มน้ำ</td></tr>
+          <tr><td><b>Router PRIVATE_SITE 4G</b></td><td>🌐 Router (ภายนอก)</td><td>192.0.2.18</td><td>255.255.255.0</td><td>192.0.2.18</td><td>4G LTE Gateway</td><td><span class="badge-gateway" style="padding: 1px 4px;">🟢 มี Internet</span></td><td><span class="badge-active" style="padding: 1px 4px;">5.1 ms</span></td><td>เราเตอร์หลักเชื่อมต่อเน็ตและส่งแจ้งเตือน Telegram</td></tr>
+          <tr><td><b>PC4 · Gateway (เครื่องนี้)</b></td><td>🌐 Router + 🔒 SCADA</td><td>192.0.2.17</td><td>255.255.255.0</td><td>192.0.2.18</td><td>UNKNOWN</td><td><span class="badge-gateway" style="padding: 1px 4px;">🟢 มี Internet</span></td><td><span class="badge-active" style="padding: 1px 4px;">0.1 ms</span></td><td>เครื่องประมวลผล AQUA COMMAND บริดจ์ 2 วงแลน</td></tr>
         </tbody>
       </table>
     </div>
@@ -1011,7 +1002,7 @@ input[type="text"]:focus, input[type="password"]:focus, select:focus {
       </p>
       <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
         <label class="card-header" style="white-space: nowrap;">WinCC OPC UA URL:</label>
-        <input type="text" id="opc-url" value="opc.tcp://192.168.1.11:4862" style="flex: 1; margin: 0;">
+        <input type="text" id="opc-url" value="" style="flex: 1; margin: 0;">
       </div>
       <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
         <span class="card-header">ความปลอดภัย & สิทธิ์:</span>
@@ -1131,7 +1122,7 @@ function initFormFields(data) {
   const chatEl = document.getElementById('tg-chat');
   if (chatEl && !chatEl.value) chatEl.value = savedChat;
 
-  const savedOpc = localStorage.getItem('aqua_opc_url') || (data.opcua_config && data.opcua_config.endpoint_url) || 'opc.tcp://192.168.1.11:4862';
+  const savedOpc = localStorage.getItem('aqua_opc_url') || (data.opcua_config && data.opcua_config.endpoint_url) || '';
   const opcEl = document.getElementById('opc-url');
   if (opcEl && !opcEl.value) opcEl.value = savedOpc;
 
@@ -1221,7 +1212,7 @@ async function refreshStatus() {
       document.getElementById('btn-f5-nav').textContent = 'F5  คลัง Tag ที่สแกนพบ (' + ALL_TAGS.length + ' Tags)';
       document.getElementById('tag-full-count').textContent = ALL_TAGS.length;
       document.getElementById('alarm-icon').textContent = '🟢 [NORMAL]';
-      document.getElementById('alarm-msg').textContent = 'ระบบสถานีผลิตน้ำอุโมงค์ทำงานปกติ — รับเฉพาะ Task ที่กำหนด | บันทึก & แจ้งเตือนเฉพาะจุดที่เลือก';
+      document.getElementById('alarm-msg').textContent = 'ระบบสถานีผลิตน้ำทำงานปกติ — รับเฉพาะ Task ที่กำหนด | บันทึก & แจ้งเตือนเฉพาะจุดที่เลือก';
     }
   } catch(e) {}
 }
@@ -1241,32 +1232,32 @@ function renderOverviewCards(tags) {
 
   const sampleItems = {
     'High_VSD': [
-      {id: 'CTM13PT', sub: 'CTM13PT.AUTO_C', addr: 'Internal (Binary Tag)'},
-      {id: 'CTM14PT', sub: 'CTM14PT.AUTO_C', addr: 'Internal (Binary Tag)'},
-      {id: 'CTM15PT', sub: 'CTM15PT.AUTO_C', addr: 'DB64,D305.3 (Binary Tag)'},
-      {id: 'CTM16PT', sub: 'CTM16PT.AUTO_C', addr: 'DB64,D165.3 (Binary Tag)'},
-      {id: 'CTM17PT', sub: 'CTM17PT.AUTO_C', addr: 'DB64,D25.3 (Binary Tag)'}
+      {id: 'CTM13PT', sub: 'LAB_TAG_304', addr: 'Internal (Binary Tag)'},
+      {id: 'CTM14PT', sub: 'LAB_TAG_308', addr: 'Internal (Binary Tag)'},
+      {id: 'CTM15PT', sub: 'LAB_TAG_312', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'CTM16PT', sub: 'LAB_TAG_316', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'CTM17PT', sub: 'LAB_TAG_320', addr: 'LAB_OFFSET (Binary Tag)'}
     ],
     'High1_PT1PT': [
-      {id: 'PT1PT', sub: 'PT1PT.ALARM_HH', addr: 'DB61,D168.3 (Binary Tag)'},
-      {id: 'PT1PT_Hr_End7', sub: 'PT1PT_Hr_End7', addr: 'DB73,DD1516 (Unsigned 32-bit)'},
-      {id: 'PT1PT_Hr_End8', sub: 'PT1PT_Hr_End8', addr: 'DB73,DD1562 (Unsigned 32-bit)'},
-      {id: 'PT1PT_Hr_End9', sub: 'PT1PT_Hr_End9', addr: 'DB73,DD1608 (Unsigned 32-bit)'},
-      {id: 'PT1PT_Hr_End10', sub: 'PT1PT_Hr_End10', addr: 'DB73,DD1654 (Unsigned 32-bit)'},
-      {id: 'PT1PT_Hr_End11', sub: 'PT1PT_Hr_End11', addr: 'DB73,DD1700 (Unsigned 32-bit)'}
+      {id: 'PT1PT', sub: 'LAB_TAG_334', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'LAB_TAG_400', sub: 'LAB_TAG_400', addr: 'LAB_OFFSET (Unsigned 32-bit)'},
+      {id: 'LAB_TAG_401', sub: 'LAB_TAG_401', addr: 'LAB_OFFSET (Unsigned 32-bit)'},
+      {id: 'LAB_TAG_402', sub: 'LAB_TAG_402', addr: 'LAB_OFFSET (Unsigned 32-bit)'},
+      {id: 'LAB_TAG_344', sub: 'LAB_TAG_344', addr: 'LAB_OFFSET (Unsigned 32-bit)'},
+      {id: 'LAB_TAG_345', sub: 'LAB_TAG_345', addr: 'LAB_OFFSET (Unsigned 32-bit)'}
     ],
     'High_Analog': [
-      {id: 'UF1MB', sub: 'UF1MB.ALARM_HH', addr: 'DB61,D304.3 (Binary Tag)'},
-      {id: 'UF2MB', sub: 'UF2MB.ALARM_HH', addr: 'DB61,D440.3 (Binary Tag)'},
-      {id: 'UF3MB', sub: 'UF3MB.ALARM_HH', addr: 'DB61,D576.3 (Binary Tag)'},
-      {id: 'UF4MB', sub: 'UF4MB.ALARM_HH', addr: 'DB61,D712.3 (Binary Tag)'},
-      {id: 'ULT1PT', sub: 'ULT1PT.ALARM_HH', addr: 'DB61,D32.3 (Binary Tag)'}
+      {id: 'UF1MB', sub: 'LAB_TAG_362', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'UF2MB', sub: 'LAB_TAG_365', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'UF3MB', sub: 'LAB_TAG_368', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'UF4MB', sub: 'LAB_TAG_371', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'ULT1PT', sub: 'LAB_TAG_291', addr: 'LAB_OFFSET (Binary Tag)'}
     ],
     'High_Valve': [
-      {id: 'BVEC1PT', sub: 'BVEC1PT.AUTO_C', addr: 'DB62,D108.3 (Binary Tag)'},
-      {id: 'BVEC2PT', sub: 'BVEC2PT.AUTO_C', addr: 'DB62,D112.3 (Binary Tag)'},
-      {id: 'BVEC3PT', sub: 'BVEC3PT.AUTO_C', addr: 'DB62,D116.3 (Binary Tag)'},
-      {id: 'BVEC4PT', sub: 'BVEC4PT.AUTO_C', addr: 'DB62,D120.3 (Binary Tag)'}
+      {id: 'BVEC1PT', sub: 'LAB_TAG_294', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'BVEC2PT', sub: 'LAB_TAG_299', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'BVEC3PT', sub: 'BVEC3PT.AUTO_C', addr: 'LAB_OFFSET (Binary Tag)'},
+      {id: 'BVEC4PT', sub: 'BVEC4PT.AUTO_C', addr: 'LAB_OFFSET (Binary Tag)'}
     ]
   };
 
@@ -1371,7 +1362,7 @@ function drawNetworkCanvas() {
   ctx.fillText('🔒 วงแลนภายใน SCADA (มีวงแลนของตนเอง — ไม่มีเน็ต)', 38, 42);
   ctx.fillStyle = '#a0afc0';
   ctx.font = '11px Segoe UI, Tahoma, sans-serif';
-  ctx.fillText('Subnet: 192.168.1.0/24  |  Air-Gapped ปลอดภัย 100% ไม่ต่ออินเทอร์เน็ต', 38, 62);
+  ctx.fillText('Subnet: 192.0.2.11/24  |  Air-Gapped ปลอดภัย 100% ไม่ต่ออินเทอร์เน็ต', 38, 62);
 
   // Zone 2: Internet Router (Right)
   roundRect(550, 16, w - 570, h - 32, 12, 'rgba(16, 185, 129, 0.4)', 'rgba(6, 78, 59, 0.4)');
@@ -1380,7 +1371,7 @@ function drawNetworkCanvas() {
   ctx.fillText('🌐 วงเราเตอร์ภายนอก (เราเตอร์ 4G LTE — มีเน็ต)', 570, 42);
   ctx.fillStyle = '#b0d5c0';
   ctx.font = '11px Segoe UI, Tahoma, sans-serif';
-  ctx.fillText('Router Gateway: 192.168.100.1  |  SSID: Nong_Arm (พร้อมส่งข้อมูล)', 570, 62);
+  ctx.fillText('Router Gateway: 192.0.2.18  |  SSID: PRIVATE_SITE (พร้อมส่งข้อมูล)', 570, 62);
 
   // Devices Zone 1
   function drawDev(title, sub1, sub2, x, y, dw, dh, isWarn) {
@@ -1395,9 +1386,9 @@ function drawNetworkCanvas() {
     ctx.fillText(sub2, x + 10, y + 52);
   }
 
-  drawDev('PC1 · SCADA', '⚠️ ไม่มี Internet', 'IP: 192.168.1.11 • สถานีสูบน้ำแรงต่ำ 1', 35, 85, 230, 64, true);
-  drawDev('PC2 · SCADA', '⚠️ ไม่มี Internet', 'IP: 192.168.1.12 • สถานีสูบน้ำแรงต่ำ 3', 35, 160, 230, 64, true);
-  drawDev('PC3 · SCADA', '⚠️ ไม่มี Internet', 'IP: 192.168.1.13 • สถานีสูบส่งน้ำแรงสูง', 35, 235, 230, 64, true);
+  drawDev('PC1 · SCADA', '⚠️ ไม่มี Internet', 'IP: 192.0.2.10 • สถานีสูบน้ำแรงต่ำ 1', 35, 85, 230, 64, true);
+  drawDev('PC2 · SCADA', '⚠️ ไม่มี Internet', 'IP: 192.0.2.14 • สถานีสูบน้ำแรงต่ำ 3', 35, 160, 230, 64, true);
+  drawDev('PC3 · SCADA', '⚠️ ไม่มี Internet', 'IP: 192.0.2.15 • สถานีสูบส่งน้ำแรงสูง', 35, 235, 230, 64, true);
 
   // LAN Switch
   roundRect(310, 150, 195, 95, 8, '#507090', '#263040');
@@ -1408,7 +1399,7 @@ function drawNetworkCanvas() {
   ctx.font = '10.5px Segoe UI, Tahoma, sans-serif';
   ctx.fillText('เครือข่ายภายใน: ไม่ใช่อินเทอร์เน็ต', 325, 198);
   ctx.fillStyle = '#aaa';
-  ctx.fillText('Switch 8-Port (192.168.1.254)', 325, 218);
+  ctx.fillText('Switch 8-Port (192.0.2.13)', 325, 218);
 
   // PC4 Gateway Node
   roundRect(190, 340, 360, 85, 8, '#00bb55', '#1a3024');
@@ -1420,7 +1411,7 @@ function drawNetworkCanvas() {
   ctx.fillText('🟢 มี Internet (บริดจ์ 2 วงแลน Dual-Homed)', 205, 385);
   ctx.fillStyle = '#ccc';
   ctx.font = '10px Segoe UI, Tahoma, sans-serif';
-  ctx.fillText('LAN ขาใน: 192.168.1.14 (nope) | WAN ขานอก: 192.168.100.177', 205, 405);
+  ctx.fillText('LAN ขาใน: 192.0.2.16 (nope) | WAN ขานอก: 192.0.2.17', 205, 405);
 
   // Router Zone 2
   roundRect(585, 85, 240, 80, 8, '#209050', '#1c3626');
@@ -1429,10 +1420,10 @@ function drawNetworkCanvas() {
   ctx.fillText('📶 Router Internet', 600, 110);
   ctx.fillStyle = '#00ff66';
   ctx.font = '11px Segoe UI, Tahoma, sans-serif';
-  ctx.fillText('🟢 มี Internet (TrueMove H 4G LTE)', 600, 130);
+  ctx.fillText('🟢 มี Internet (PRIVATE_SITE H 4G LTE)', 600, 130);
   ctx.fillStyle = '#ccc';
   ctx.font = '10px Segoe UI, Tahoma, sans-serif';
-  ctx.fillText('Gateway IP: 192.168.100.1 (5.1 ms)', 600, 150);
+  ctx.fillText('Gateway IP: 192.0.2.18 (5.1 ms)', 600, 150);
 
   // Clients Box
   roundRect(585, 185, 440, 140, 8, '#306050', '#1c2822');
@@ -1441,10 +1432,10 @@ function drawNetworkCanvas() {
   ctx.fillText('📋 รายการอุปกรณ์ในวงเราเตอร์ (ตรวจวัดสถานะจริง):', 600, 210);
   ctx.fillStyle = '#fff';
   ctx.font = '11px Segoe UI, Tahoma, sans-serif';
-  ctx.fillText('👉 [เครื่องนี้] 192.168.100.177 — PC4 Gateway | สถานะ: 🟢 ONLINE (0.1 ms)', 605, 235);
-  ctx.fillText('• 192.168.100.135 — Client เครื่องลูกข่าย 1 | สถานะ: 🟢 ONLINE (20.7 ms)', 605, 260);
-  ctx.fillText('• 192.168.100.150 — Client เครื่องลูกข่าย 2 | สถานะ: ❌ nope (100% loss)', 605, 285);
-  ctx.fillText('• 192.168.100.178 — Client เครื่องลูกข่าย 3 | สถานะ: ❌ nope (100% loss)', 605, 310);
+  ctx.fillText('👉 [เครื่องนี้] 192.0.2.17 — PC4 Gateway | สถานะ: 🟢 ONLINE (0.1 ms)', 605, 235);
+  ctx.fillText('• 192.0.2.19 — Client เครื่องลูกข่าย 1 | สถานะ: 🟢 ONLINE (20.7 ms)', 605, 260);
+  ctx.fillText('• 192.0.2.20 — Client เครื่องลูกข่าย 2 | สถานะ: ❌ nope (100% loss)', 605, 285);
+  ctx.fillText('• 192.0.2.21 — Client เครื่องลูกข่าย 3 | สถานะ: ❌ nope (100% loss)', 605, 310);
 
   // Connection Bus Lines
   ctx.strokeStyle = '#00ff88';
@@ -1605,7 +1596,7 @@ class AquaRequestHandler(BaseHTTPRequestHandler):
         data = json.loads(body.decode('utf-8')) if body else {}
 
         if self.path == '/api/opcua/test':
-            url = data.get('url', 'opc.tcp://192.168.1.11:4862')
+            url = data.get('url', '')
             STATE['opcua_config']['endpoint_url'] = url
             save_atomic_json(OPCUA_CONFIG_FILE, STATE['opcua_config'])
             # Test ping / probe
@@ -1646,7 +1637,7 @@ class AquaRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({'success': True, 'msg': 'บันทึกการตั้งค่า WinCC OPC UA สำเร็จ'}).encode('utf-8'))
 
         elif self.path == '/api/opcua/browse':
-            url = data.get('url', 'opc.tcp://192.168.1.11:4862')
+            url = data.get('url', '')
             # Mock / real tag loader
             tags = []
             if DEFAULT_WINCC_EXPORT.exists():

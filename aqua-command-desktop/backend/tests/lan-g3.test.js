@@ -53,3 +53,33 @@ test('G3 WinCC adapter remains an unavailable read-only interface without any dr
  assert.ok(fs.existsSync(path.resolve(import.meta.dirname,'../src/lan/adapters.js')),'Adapter boundary is missing');
  const {WinCCReadonlyAdapter}=await import('../src/lan/adapters.js');const source=new WinCCReadonlyAdapter();assert.equal(source.available,false);assert.throws(()=>source.read(),/authorization|approved|unavailable/i);
 });
+
+test('Telegram acceptance without a reply holds the Gateway job across restart', async t => {
+ const dir=temp(), secret=key(), agent=source(path.join(dir,'agent'),secret);
+ agent.sample();
+ agent.setPump('PUMP-03',true);
+ const config={role:'gateway',id:'PC-04',dataDir:path.join(dir,'gw'),
+  listen:{host:'127.0.0.1',port:0},keys:{'PC-01':secret},internetMode:'real'};
+ let sends=0, gw;
+ const telegram={mode:'telegram',configured:true,probe:async()=>true,send:async()=>{
+  sends++;
+  assert.equal(gw.status().notificationSending,1);
+  throw Error('LAB accepted message and interrupted reply');
+ }};
+ t.after(async()=>{if(gw)await gw.close();await agent.close();fs.rmSync(dir,{recursive:true,force:true})});
+ gw=services.createGateway(config,{telegram});
+ gw.store.ingest('PC-01',records(agent));
+ gw.setInternet(true);
+ await gw.deliver();
+ assert.equal(gw.status().notificationDeliveryUnknown,1);
+ assert.equal(gw.status().notificationSent,0);
+ gw.store.set('telegramNotBefore',0);
+ await gw.deliver();
+ assert.equal(sends,1);
+ await gw.close();
+ gw=services.createGateway(config,{telegram});
+ await gw.start();
+ await gw.deliver();
+ assert.equal(gw.status().notificationDeliveryUnknown,1);
+ assert.equal(sends,1);
+});

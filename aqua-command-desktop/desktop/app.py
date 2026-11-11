@@ -68,7 +68,7 @@ def format_duration(seconds):
 """
 AQUA COMMAND — WinCC V8.1 Industrial SCADA & Task Management Workstation
 Designed for Provincial Waterworks Authority, Chiang Mai (การประปาส่วนภูมิภาคสาขาเชียงใหม่)
-Umong Water Production Station (สถานีผลิตน้ำอุโมงค์)
+Umong Water Production Station (สถานีผลิตน้ำ)
 
 Features:
 1. Full WinCC V8.1 Tag Scanner (Discovers all 457 tags from Export all.txt / WinCC projects)
@@ -80,6 +80,7 @@ Features:
 """
 import os
 import sys
+import sqlite3
 import time
 import json
 import math
@@ -90,6 +91,9 @@ import subprocess
 import threading
 import concurrent.futures
 import asyncio
+import logging
+
+logger = logging.getLogger("AquaCommand")
 try:
     from asyncua import Client, Server, ua
     HAS_ASYNCUA = True
@@ -97,6 +101,7 @@ except ImportError:
     HAS_ASYNCUA = False
 
 try:
+    from .private_runtime import catalog_path, redact_text
     from .opcua_mapping import NodeIdMapper
     from .opcua_store import ObservableStateStore, Quality
     from .opcua_reader import ManualOpcUaReader
@@ -106,6 +111,7 @@ try:
     from .notification_worker import NotificationWorker
     from .opcua_polling_engine import OpcUaPollingEngine, PollingState
 except ImportError:
+    from private_runtime import catalog_path, redact_text
     from opcua_mapping import NodeIdMapper
     from opcua_store import ObservableStateStore, Quality
     from opcua_reader import ManualOpcUaReader
@@ -154,31 +160,226 @@ if IS_WINDOWS:
 else:
     CONFIG_DIR = Path.home() / '.config' / 'aqua-command'
 
-CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+if not IS_WINDOWS:
+    try:
+        if not CONFIG_DIR.exists():
+            CONFIG_DIR.mkdir(parents=True, mode=0o700, exist_ok=True)
+        os.chmod(CONFIG_DIR, 0o700)
+    except Exception as e:
+        logger.warning(f"Could not enforce 0700 mode on CONFIG_DIR {CONFIG_DIR}: {e}")
+else:
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+
 TASKS_CONFIG_FILE = CONFIG_DIR / 'wincc_tasks.json'
 TOPOLOGY_CONFIG_FILE = CONFIG_DIR / 'network_topology.json'
 TELEGRAM_CONFIG_FILE = CONFIG_DIR / 'telegram_config.json'
 OPCUA_CONFIG_FILE = CONFIG_DIR / 'opcua_config.json'
 
-def save_atomic_json(filepath, data):
-    """Crash-resistant atomic file save: writes to .tmp before replacing target."""
+class AtomicSaveError(OSError):
+    """Base error for atomic configuration save failures."""
+    def __init__(self, message: str, committed: bool = False):
+        super().__init__(message)
+        self.committed = committed
+
+class PreCommitSaveError(AtomicSaveError):
+    """Raised when save fails before atomic replace. Original configuration is untouched."""
+    def __init__(self, message: str):
+        super().__init__(message, committed=False)
+
+class PreCommitPermissionError(PreCommitSaveError, PermissionError):
+    """Raised when permission checks fail before commit. Original configuration is untouched."""
+    pass
+
+class PostCommitDurabilityError(AtomicSaveError):
+    """Raised when atomic replace succeeded but post-commit durability or mode sync failed.
+    The new configuration file is retained on disk (not destroyed/unlinked).
+    Automatic retry must NOT be attempted without manual reconciliation.
+    """
+    def __init__(self, message: str):
+        super().__init__(message, committed=True)
+
+def save_atomic_json(filepath, data, mode=None, raise_on_error=True):
+    """
+    Durable, secure atomic file save adhering to SEC-02:
+    - Pre-commit phase:
+      * Random temporary file in destination directory (same filesystem guarantee).
+      * Created exclusively with O_CREAT | O_EXCL | O_NOFOLLOW.
+      * Explicit permission enforcement (0600) on fd via fchmod/fstat before write.
+      * Directory ownership and symlink validation.
+      * Symlink target rejection to prevent symlink redirection attacks.
+      * Data durability: flush() + fsync() on temporary file descriptor prior to replace.
+      * Strict pre-replace permission verification on temp file: if mode does not match,
+        aborts pre-commit without modifying the original configuration.
+    - Commit phase:
+      * Atomic replacement (POSIX rename(2)), replacing target file only after data is durable.
+    - Post-commit phase:
+      * Directory metadata durability: fsync() on parent directory descriptor on POSIX.
+        If parent directory fsync fails, reports failure (never falsely claims durable success).
+      * Post-commit permission verification: verifies target file mode without destroying
+        configuration on post-commit verification failure.
+    - Fail-closed: Never swallows permission or security exceptions.
+    """
     p = Path(filepath)
-    temp_p = p.with_suffix('.tmp')
+    parent_dir = p.parent
+
+    # 1. Directory validation and preparation
+    if not IS_WINDOWS:
+        if not parent_dir.exists():
+            parent_dir.mkdir(parents=True, mode=0o700, exist_ok=True)
+            os.chmod(parent_dir, 0o700)
+
+        # Check directory ownership (must match current user UID)
+        dir_stat = parent_dir.stat()
+        if dir_stat.st_uid != os.getuid():
+            err = PreCommitPermissionError(
+                f"SEC-02: Directory {parent_dir} ownership mismatch: UID {dir_stat.st_uid} != current UID {os.getuid()}"
+            )
+            if raise_on_error:
+                raise err
+            logger.error(str(err))
+            return False
+
+        # Check symlink on parent directory
+        if parent_dir.is_symlink():
+            resolved = parent_dir.resolve()
+            if resolved.stat().st_uid != os.getuid():
+                err = PreCommitPermissionError(
+                    f"SEC-02: Directory symlink {parent_dir} points to unowned target {resolved}"
+                )
+                if raise_on_error:
+                    raise err
+                logger.error(str(err))
+                return False
+
+        # Reject overwrite if target file itself is a symlink
+        if p.is_symlink():
+            err = PreCommitPermissionError(
+                f"SEC-02: Target path {p} is a symlink; refusing to overwrite to prevent symlink attack."
+            )
+            if raise_on_error:
+                raise err
+            logger.error(str(err))
+            return False
+    else:
+        parent_dir.mkdir(parents=True, exist_ok=True)
+
+    # 2. Pre-commit: Randomized temporary file in the destination directory
+    rand_id = os.urandom(8).hex()
+    temp_p = parent_dir / f".{p.name}.{rand_id}.tmp"
+    fd = None
+    committed = False
+
     try:
-        p.parent.mkdir(parents=True, exist_ok=True)
-        with open(temp_p, 'w', encoding='utf-8') as f:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if not IS_WINDOWS and hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+
+        file_mode = mode if (mode is not None and not IS_WINDOWS) else 0o600
+        fd = os.open(temp_p, flags, file_mode)
+
+        if not IS_WINDOWS and mode is not None:
+            # Enforce exact permissions on file descriptor
+            os.fchmod(fd, mode)
+            st = os.fstat(fd)
+            actual_mode = st.st_mode & 0o777
+            if actual_mode != mode:
+                raise PreCommitPermissionError(
+                    f"SEC-02: fchmod mode mismatch on temp file {temp_p}: expected {oct(mode)}, got {oct(actual_mode)}"
+                )
+
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            fd = None  # fd transferred to file object
             json.dump(data, f, ensure_ascii=False, indent=2)
             f.flush()
             os.fsync(f.fileno())
+
+        # Pre-replace verification: check mode on disk BEFORE committing replacement
+        if not IS_WINDOWS and mode is not None:
+            pre_st = temp_p.stat()
+            pre_mode = pre_st.st_mode & 0o777
+            if pre_mode != mode:
+                raise PreCommitPermissionError(
+                    f"SEC-02: Pre-commit mode mismatch on {temp_p}: expected {oct(mode)}, got {oct(pre_mode)}"
+                )
+
+        # 3. Commit Point: Atomic replacement of target file
         temp_p.replace(p)
+        committed = True
+
+        # 4. Post-commit: Fsync parent directory on POSIX to commit directory entry metadata
+        if not IS_WINDOWS and hasattr(os, "O_DIRECTORY"):
+            dir_fd = None
+            try:
+                dir_fd = os.open(str(parent_dir), os.O_RDONLY | os.O_DIRECTORY)
+                os.fsync(dir_fd)
+            except OSError as sync_err:
+                err_msg = f"SEC-02: Post-commit directory fsync failed on {parent_dir}: {sync_err}"
+                logger.error(err_msg)
+                if raise_on_error:
+                    raise PostCommitDurabilityError(err_msg) from sync_err
+                return False
+            finally:
+                if dir_fd is not None:
+                    try:
+                        os.close(dir_fd)
+                    except Exception:
+                        pass
+
+        # 5. Post-commit: Permission verification (retains configuration if check fails)
+        if not IS_WINDOWS and mode is not None:
+            post_st = p.stat()
+            final_mode = post_st.st_mode & 0o777
+            if final_mode != mode:
+                os.chmod(p, mode)
+                final_mode = p.stat().st_mode & 0o777
+                if final_mode != mode:
+                    err_msg = (
+                        f"SEC-02: Post-commit mode verification failed on {p}: "
+                        f"expected {oct(mode)}, got {oct(final_mode)}. Configuration retained."
+                    )
+                    logger.error(err_msg)
+                    if raise_on_error:
+                        raise PostCommitDurabilityError(err_msg)
+                    return False
+
         return True
+
+    except AtomicSaveError as e:
+        phase = "post-commit" if e.committed else "pre-commit"
+        logger.error(f"SEC-02: Error atomic saving {filepath} [{phase}]: {e}")
+        if fd is not None:
+            try:
+                os.close(fd)
+            except Exception:
+                pass
+        if not e.committed:
+            try:
+                if temp_p.exists():
+                    temp_p.unlink()
+            except Exception:
+                pass
+        if raise_on_error:
+            raise
+        return False
     except Exception as e:
-        print(f"Error atomic saving {filepath}: {e}", file=sys.stderr)
-        try:
-            if temp_p.exists():
-                temp_p.unlink()
-        except Exception:
-            pass
+        phase = "post-commit" if committed else "pre-commit"
+        logger.error(f"SEC-02: Error atomic saving {filepath} [{phase}]: {e}")
+        if fd is not None:
+            try:
+                os.close(fd)
+            except Exception:
+                pass
+        if not committed:
+            try:
+                if temp_p.exists():
+                    temp_p.unlink()
+            except Exception:
+                pass
+        if raise_on_error:
+            if committed:
+                raise PostCommitDurabilityError(f"SEC-02: [{phase}] {e}") from e
+            else:
+                raise PreCommitSaveError(f"SEC-02: [{phase}] {e}") from e
         return False
 
 MAX_OPCUA_BROWSE_NODES = 500
@@ -195,7 +396,7 @@ def load_opcua_config():
         except Exception:
             pass
     return {
-        'endpoint_url': 'opc.tcp://192.168.1.11:4862',
+        'endpoint_url': '',
         'security_policy': 'None',
         'auth_mode': 'Anonymous',
         'username': '',
@@ -223,7 +424,11 @@ def validate_opcua_endpoint(url):
 def save_opcua_config(cfg):
     clean_cfg = dict(cfg)
     clean_cfg.pop('password', None)  # Safety: never save plaintext password to disk
-    return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg)
+    try:
+        return save_atomic_json(OPCUA_CONFIG_FILE, clean_cfg, mode=0o600)
+    except Exception as e:
+        logger.error(f"Error saving OPC UA config: {e}")
+        return False
 
 def load_telegram_config():
     if TELEGRAM_CONFIG_FILE.exists():
@@ -239,22 +444,26 @@ def load_telegram_config():
     }
 
 def save_telegram_config(cfg):
-    return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg)
+    try:
+        return save_atomic_json(TELEGRAM_CONFIG_FILE, cfg, mode=0o600)
+    except Exception as e:
+        logger.error(f"Error saving Telegram config: {e}")
+        return False
 
 DEFAULT_TOPOLOGY = {
     "scada_lan": {
         "zone_name": "เครือข่ายภายใน SCADA (Isolated OT LAN)",
-        "subtitle": "วงแลนภายในระบบ SCADA (192.168.1.0/24) | เครือข่าย OT แบบปิด",
+        "subtitle": "วงแลนภายในระบบ SCADA (192.0.2.0/24) | เครือข่าย OT แบบปิด",
         "has_internet": False,
-        "subnet": "192.168.1.0/24",
+        "subnet": "192.0.2.0/24",
         "netmask": "255.255.255.0",
         "gateway": "ไม่มี (Isolated Air-Gapped)",
         "switch": {
             "name": "LAN Switch",
             "sub1": "เครือข่ายภายใน",
             "sub2": "ไม่ใช่อินเทอร์เน็ต",
-            "desc": "OT Switch 8-Port (192.168.1.254)",
-            "ip": "192.168.1.254"
+            "desc": "OT Switch 8-Port (192.0.2.254)",
+            "ip": "192.0.2.254"
         },
         "devices": [
             {
@@ -262,8 +471,8 @@ DEFAULT_TOPOLOGY = {
                 "name": "PC1 · SCADA",
                 "internet_status": "ไม่มี Internet",
                 "has_internet": False,
-                "ip": "192.168.1.11",
-                "mac": "00:1E:67:D8:11:A1",
+                "ip": "192.0.2.11",
+                "mac": "",
                 "role": "SCADA โหนด 1 (พอร์ต 4840)",
                 "status": "CONFIGURED (Reachability UNKNOWN)",
                 "ping": "—"
@@ -273,8 +482,8 @@ DEFAULT_TOPOLOGY = {
                 "name": "PC2 · SCADA",
                 "internet_status": "ไม่มี Internet",
                 "has_internet": False,
-                "ip": "192.168.1.12",
-                "mac": "00:1E:67:D8:12:B2",
+                "ip": "192.0.2.12",
+                "mac": "",
                 "role": "SCADA โหนด 2 (พอร์ต 4840)",
                 "status": "CONFIGURED (Reachability UNKNOWN)",
                 "ping": "—"
@@ -284,8 +493,8 @@ DEFAULT_TOPOLOGY = {
                 "name": "PC3 · SCADA",
                 "internet_status": "ไม่มี Internet",
                 "has_internet": False,
-                "ip": "192.168.1.13",
-                "mac": "00:1E:67:D8:13:C3",
+                "ip": "192.0.2.13",
+                "mac": "",
                 "role": "SCADA โหนด 3 (พอร์ต 4840)",
                 "status": "CONFIGURED (Reachability UNKNOWN)",
                 "ping": "—"
@@ -300,64 +509,64 @@ DEFAULT_TOPOLOGY = {
         "badge": "Dual-Homed Node (เชื่อมต่อ 2 เครือข่ายแบบแยกอิสระ)",
         "nic_scada": {
             "name": "ขาใน SCADA LAN",
-            "iface": "enp0s31f6",
-            "ip": "192.168.1.14",
+            "iface": "",
+            "ip": "192.0.2.14",
             "netmask": "255.255.255.0",
             "target": "LAN Switch ภายใน"
         },
         "nic_wan": {
             "name": "ขานอก Router WAN",
-            "iface": "wlp2s0",
-            "ip": "192.168.100.177",
+            "iface": "",
+            "ip": "198.51.100.177",
             "netmask": "255.255.255.0",
-            "gateway": "192.168.100.1",
-            "target": "Router Internet (TrueMove H LTE)"
+            "gateway": "198.51.100.1",
+            "target": "Router Internet (Example LTE)"
         },
         "role": "รวบรวม Tag จาก LAN ภายใน ส่งแจ้งเตือนผ่าน Internet"
     },
     "internet_wan": {
         "zone_name": "เครือข่ายเราเตอร์ภายนอก (Internet Gateway WAN)",
-        "subtitle": "เราเตอร์ 4G LTE TrueMove H (192.168.100.1) | SSID: Nong_Arm | พร้อมส่งข้อมูลออกภายนอก",
+        "subtitle": "ตัวอย่างการตั้งค่าเครือข่ายขาออก",
         "has_internet": False,
         "router": {
             "name": "Router Internet",
-            "sub1": "TrueMove H 4G LTE Router",
-            "gateway_ip": "192.168.100.1",
-            "ssid": "Nong_Arm",
-            "operator": "TrueMove H LTE",
+            "sub1": "Example 4G LTE Router",
+            "gateway_ip": "198.51.100.1",
+            "ssid": "Example-WAN",
+            "operator": "Example LTE",
             "netmask": "255.255.255.0",
             "dhcp": "เปิดใช้งาน (DHCP Enabled)",
             "status": "CONFIGURED (Reachability UNKNOWN)",
-            "mac": "e8:49:43:21:33:5b"
+            "mac": ""
         },
         "clients": [
             {
-                "ip": "192.168.100.177",
-                "mac": "ba:7a:37:fe:60:6a",
+                "ip": "198.51.100.177",
+                "mac": "",
                 "name": "PC4 · Collector (เครื่องประมวลผล AQUA COMMAND นี้)",
                 "is_this_pc": True,
                 "status": "CONFIGURED (Host)",
                 "ping": "—"
             },
             {
-                "ip": "192.168.100.135",
-                "mac": "5e:86:55:78:8a:77",
+                "ip": "198.51.100.135",
+                "mac": "",
                 "name": "Client เครื่องลูกข่าย 1 (Unverified Client)",
                 "is_this_pc": False,
                 "status": "UNKNOWN (Unverified)",
                 "ping": "—"
             },
             {
-                "ip": "192.168.100.150",
-                "mac": "f4:d1:08:56:83:bc",
+                "ip": "198.51.100.150",
+                "mac": "",
                 "name": "Client เครื่องลูกข่าย 2 (Unverified Client)",
                 "is_this_pc": False,
                 "status": "UNKNOWN (Unverified)",
                 "ping": "—"
             },
             {
-                "ip": "192.168.100.178",
-                "mac": "50:2e:91:3f:77:30",
+                "ip": "198.51.100.178",
+                "mac": "",
                 "name": "Client เครื่องลูกข่าย 3 (Unverified Client)",
                 "is_this_pc": False,
                 "status": "UNKNOWN (Unverified)",
@@ -399,16 +608,7 @@ def draw_pango_text(cr, text, x, y, font_desc_str="Noto Sans Thai, Sans 10", col
     cr.move_to(x, y)
     PangoCairo.show_layout(cr, layout)
 
-DEFAULT_WINCC_EXPORT = Path.home() / 'Downloads' / 'Export all.txt'
-repo_export1 = Path(__file__).resolve().parent.parent / 'docs' / 'tags' / 'Export all.txt'
-repo_export2 = Path(__file__).resolve().parent.parent.parent / 'docs' / 'tags' / 'Export all.txt'
-if not DEFAULT_WINCC_EXPORT.exists():
-    if repo_export1.exists():
-        DEFAULT_WINCC_EXPORT = repo_export1
-    elif repo_export2.exists():
-        DEFAULT_WINCC_EXPORT = repo_export2
-    elif Path('/home/nong_ing/Downloads/Export all.txt').exists():
-        DEFAULT_WINCC_EXPORT = Path('/home/nong_ing/Downloads/Export all.txt')
+DEFAULT_WINCC_EXPORT = catalog_path(CONFIG_DIR)
 
 # ---------------------------------------------------------
 # WinCC Tag Scanner (Parses full Siemens WinCC Tag Export)
@@ -518,6 +718,8 @@ def scan_wincc_tags(file_path):
 def check_interface_carrier(iface):
     """Checks physical ethernet / wifi carrier state cross-platform."""
     if not IS_WINDOWS:
+        if not iface:
+            return False
         try:
             with open(f'/sys/class/net/{iface}/carrier', 'r') as f:
                 return f.read().strip() == '1'
@@ -777,7 +979,11 @@ def load_tasks():
     return list(DEFAULT_TASKS)
 
 def save_tasks(tasks):
-    return save_atomic_json(TASKS_CONFIG_FILE, tasks)
+    try:
+        return save_atomic_json(TASKS_CONFIG_FILE, tasks)
+    except Exception as e:
+        logger.error(f"Error saving tasks: {e}")
+        return False
 
 
 # ---------------------------------------------------------
@@ -1146,16 +1352,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         # Real Live Probed Status Cache
         self.live_status = {
             'scada_carrier': False,
-            'pings': {
-                '192.168.1.11': 'nope',
-                '192.168.1.12': 'nope',
-                '192.168.1.13': 'nope',
-                '192.168.1.254': 'nope',
-                '192.168.100.1': 'nope',
-                '192.168.100.135': 'nope',
-                '192.168.100.150': 'nope',
-                '192.168.100.178': 'nope',
-            }
+            'pings': {}
         }
         # Auto-Scanner Engine State (Default: Inactive/Standby until user starts it or scans)
         self.auto_scan_active = False
@@ -1555,15 +1752,15 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         # Form fields
         entries = {}
         fields = [
-            ("SCADA LAN Subnet:", "scada_subnet", scada.get('subnet', '192.168.1.0/24')),
-            ("PC1 IP (สูบน้ำแรงต่ำ 1):", "pc1_ip", scada_devs[0].get('ip') if len(scada_devs) > 0 else '192.168.1.11'),
-            ("PC2 IP (สูบน้ำแรงต่ำ 3):", "pc2_ip", scada_devs[1].get('ip') if len(scada_devs) > 1 else '192.168.1.12'),
-            ("PC3 IP (สูบน้ำแรงสูง VSD):", "pc3_ip", scada_devs[2].get('ip') if len(scada_devs) > 2 else '192.168.1.13'),
-            ("PC4 Gateway (ขาใน SCADA):", "gw_scada_ip", gw.get('nic_scada', {}).get('ip', '192.168.1.14')),
-            ("PC4 Gateway (ขานอก WAN):", "gw_wan_ip", gw.get('nic_wan', {}).get('ip', '192.168.100.177')),
-            ("Router 1 Gateway IP:", "rt_ip", rt.get('gateway_ip', '192.168.100.1')),
-            ("Router 1 WiFi SSID:", "rt_ssid", rt.get('ssid', 'Nong_Arm')),
-            ("เราเตอร์ตัวที่ 2 (ถ้ามี):", "rt2_ip", "192.168.200.1 (วงสำรอง)")
+            ("SCADA LAN Subnet:", "scada_subnet", scada.get('subnet', '192.0.2.0/24')),
+            ("PC1 IP (สูบน้ำแรงต่ำ 1):", "pc1_ip", scada_devs[0].get('ip') if len(scada_devs) > 0 else '192.0.2.11'),
+            ("PC2 IP (สูบน้ำแรงต่ำ 3):", "pc2_ip", scada_devs[1].get('ip') if len(scada_devs) > 1 else '192.0.2.12'),
+            ("PC3 IP (สูบน้ำแรงสูง VSD):", "pc3_ip", scada_devs[2].get('ip') if len(scada_devs) > 2 else '192.0.2.13'),
+            ("PC4 Gateway (ขาใน SCADA):", "gw_scada_ip", gw.get('nic_scada', {}).get('ip', '192.0.2.14')),
+            ("PC4 Gateway (ขานอก WAN):", "gw_wan_ip", gw.get('nic_wan', {}).get('ip', '198.51.100.177')),
+            ("Router 1 Gateway IP:", "rt_ip", rt.get('gateway_ip', '198.51.100.1')),
+            ("Router 1 WiFi SSID:", "rt_ssid", rt.get('ssid', 'Example-WAN')),
+            ("เราเตอร์ตัวที่ 2 (ถ้ามี):", "rt2_ip", "IP ของเราเตอร์วงสำรอง")
         ]
 
         for row, (lbl_txt, key, val) in enumerate(fields):
@@ -1631,8 +1828,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         t.start()
 
     def network_rescan_worker(self):
-        # 1. Real Carrier Check for SCADA LAN (enp0s31f6) — strictly read-only sysfs
-        scada_carrier = check_interface_carrier('enp0s31f6')
+        # 1. Real Carrier Check for SCADA LAN — strictly read-only sysfs
+        scada_carrier = check_interface_carrier(self.topology_data.get('gateway_bridge', {}).get('nic_scada', {}).get('iface'))
 
         # 2. Zero network pings (Safety: No automated probes on OT LAN)
         pings = {}
@@ -1678,7 +1875,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 self.pill_net.remove_css_class('badge-standby')
                 self.pill_net.remove_css_class('badge-no-net')
                 self.pill_net.add_css_class('badge-gateway')
-                self.alarm_text.set_text("สถานะจริง: วงเราเตอร์ 4G ONLINE | วง SCADA (enp0s31f6): nope (ไม่พบการต่อสาย)")
+                self.alarm_text.set_text("สถานะจริง: วงเราเตอร์ 4G ONLINE | วง SCADA: nope (ไม่พบการต่อสาย)")
             else:
                 self.pill_net.set_text("⚠️ Internet Offline")
                 self.pill_net.remove_css_class('badge-standby')
@@ -1851,7 +2048,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             pings = {}
 
             # 2. Check Carrier
-            scada_carrier = check_interface_carrier('enp0s31f6')
+            scada_carrier = check_interface_carrier(self.topology_data.get('gateway_bridge', {}).get('nic_scada', {}).get('iface'))
 
             # 3. Internet status (Preserves current known state, zero auto probes)
             has_net = self.internet_online
@@ -2255,6 +2452,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         telegram = add_section('telegram', 'Telegram')
         destination_column, test_column = add_columns(telegram)
         destination = add_card(destination_column, 'ปลายทางแจ้งเตือน', 'ระบุ Bot Token และ Chat ID ที่จะรับข้อความ')
+        self.telegram_unknown_status = status('ไม่ทราบผลการส่ง: ยังไม่มีรายงาน')
+        destination.append(self.telegram_unknown_status)
+        self.telegram_unknown_status.connect('map', lambda _: self.update_telegram_unknown_status())
         tg_fields = Gtk.Grid(column_spacing=16, row_spacing=8)
         destination.append(tg_fields)
         self.entry_tg_token = Gtk.Entry(placeholder_text='Token จาก BotFather')
@@ -2862,9 +3062,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                         resp_detail = f"HTTP Status {status}"
             except urllib.error.HTTPError as he:
                 err_body = he.read().decode('utf-8', errors='ignore')
-                resp_detail = f"Telegram Error ({he.code}): {err_body[:90]}"
+                resp_detail = f"Telegram Error ({he.code}): {redact_text(err_body, token, chat_id)[:90]}"
             except Exception as ex:
-                resp_detail = f"Network Error: {str(ex)[:90]}"
+                resp_detail = f"Network Error: {redact_text(ex, token, chat_id)[:90]}"
 
             GLib.idle_add(self.apply_telegram_test_result, success, resp_detail, msg)
 
@@ -2926,11 +3126,23 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             'สถานะอินเทอร์เน็ตจาก NetworkManager · GW คือเกตเวย์ IPv4 เริ่มต้นของเครื่อง')
         self.internet_badge.set_css_classes(['badge-active' if connectivity == 'FULL' else 'badge-standby'])
 
+    def update_telegram_unknown_status(self):
+        if not hasattr(self, 'durable_storage'):
+            return
+        try:
+            unknown = self.durable_storage.get_stats()['outbox_delivery_unknown']
+        except (OSError, sqlite3.Error):
+            self.telegram_unknown_status.set_text('ไม่ทราบผลการส่ง: อ่านคิวไม่ได้')
+            return
+        self.telegram_unknown_status.set_text(f'ไม่ทราบผลการส่ง: {unknown} รายการ')
+
     def update_real_data(self):
         """Fetches real host machine metrics and updates UI cleanly."""
         try:
             snapshot = getattr(getattr(self, 'f3_network_view', None), 'local_state', {})
             self.update_internet_badge(snapshot)
+            if self.telegram_unknown_status.get_mapped():
+                self.update_telegram_unknown_status()
             m = read_real_machine_data(snapshot)
             if hasattr(self, 'machine_labels') and 'hostname' in self.machine_labels:
                 self.machine_labels['hostname'].set_text(m['hostname'])
@@ -2950,7 +3162,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 self.machine_labels['uptime_str'].set_text(m['uptime_str'])
                 gw = self.topology_data.get('gateway_bridge', {})
                 nic_in = gw.get('nic_scada', {})
-                carrier = check_interface_carrier('enp0s31f6')
+                carrier = check_interface_carrier(self.topology_data.get('gateway_bridge', {}).get('nic_scada', {}).get('iface'))
                 self.update_local_nic_badge(carrier)
                 self.pill_wan_ip.set_text(f"WAN: {m['ip_lan']}")
             if hasattr(self, 'f3_network_view'):

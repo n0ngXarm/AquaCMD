@@ -1,0 +1,875 @@
+{
+  "p0_base": "ca1a96fe9323d1758dc59a00498c39fde4c67d94",
+  "p1_commit": "dcd36196c5be9efe53ae71d43508bd0f59801687",
+  "rows": [
+    {
+      "original_test_id": "test_late_demo_callback_cannot_update_live_status (test_f3_continuation.TestF3Continuation.test_late_demo_callback_cannot_update_live_status)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_late_demo_callback_cannot_update_live_status",
+        "line": 91,
+        "assertions": [
+          "self.assertNotEqual(self.view.store.devices['PC1']['opcua_state'], OpcUaState.CONNECTED)",
+          "self.assertEqual(self.view.store.get_summary_stats()['opc_connected'], 0)"
+        ],
+        "function_sha256": "4e3110b05647f278e0882659dad78dba4b88e74d32ee5dddf372f3ff30a899ea"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_late_demo_callback_cannot_update_live_status",
+        "line": 104,
+        "assertions": [
+          "self.assertNotEqual(device['opcua_state'], OpcUaState.CONNECTED)",
+          "self.assertEqual(device['session_state'], 'NOT_TESTED')",
+          "self.assertIsNone(device['last_read_value'])",
+          "self.assertFalse(f3.evidence.read_verified(device))",
+          "self.assertEqual(self.view.store.get_summary_stats()['opc_connected'], 0)",
+          "self.assertEqual(self.view.store.config_file.read_bytes(), before)",
+          "self.assertEqual(len(HeldThread.started), 1)",
+          "probe.assert_not_called()",
+          "read.assert_not_called()"
+        ],
+        "function_sha256": "43ad54fe9f7bde08036873fc7094ab2cf2aa344167f093cf4822916045aafbc1"
+      },
+      "root_cause_confirmed": "DEMO action used a LIVE alias and patched the retired detector, so no callback existed.",
+      "preserved_requirement": "Run held secure worker for the actual DEMO ID after returning LIVE; session/read/counters and config remain uncontaminated.",
+      "owning_source": "set_demo; _execute_secure_action",
+      "requirements": [
+        "ISOLATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_switching_to_live_clears_demo_observations (test_f3_continuation.TestF3Continuation.test_switching_to_live_clears_demo_observations)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_switching_to_live_clears_demo_observations",
+        "line": 76,
+        "assertions": [
+          "self.assertEqual(device['alias'], 'Operator alias')",
+          "self.assertEqual(device['reachability'], 'NOT_TESTED')",
+          "self.assertEqual(device['opcua_state'], OpcUaState.NOT_TESTED)",
+          "self.assertIsNone(device['last_read_value'])",
+          "self.assertEqual(self.view.store.get_summary_stats()['opc_connected'], 0)"
+        ],
+        "function_sha256": "6f61af807aa7405429a426873a12673afd440c25f7cd6486352a97d815004ce3"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_switching_to_live_clears_demo_observations",
+        "line": 80,
+        "assertions": [
+          "self.assertTrue(live_ids.isdisjoint(self.view.store.devices))",
+          "self.assertEqual(set(self.view.store.devices), live_ids)",
+          "self.assertEqual(device['alias'], 'Operator alias')",
+          "self.assertEqual(device['reachability'], 'NOT_TESTED')",
+          "self.assertEqual(device['opcua_state'], OpcUaState.NOT_TESTED)",
+          "self.assertIsNone(device['last_read_value'])",
+          "self.assertIsNone(device['last_read_quality'])",
+          "self.assertFalse(device['read_success'])",
+          "self.assertFalse(f3.evidence.read_verified(device))",
+          "self.assertEqual(self.view.store.get_summary_stats()['opc_connected'], 0)",
+          "self.assertEqual(self.view.store.config_file.read_bytes(), before)"
+        ],
+        "function_sha256": "e779a07b05615e85d069fa3871186ce4c95f5ffcec1637872a5910d2a03e9bc1"
+      },
+      "root_cause_confirmed": "DEMO inventory deliberately removes LIVE aliases.",
+      "preserved_requirement": "Disjoint inventories; LIVE alias preserved; values/quality/read evidence cleared; original profile bytes unchanged.",
+      "owning_source": "F3DeviceStore.set_demo",
+      "requirements": [
+        "ISOLATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_unverified_wan_has_no_online_badge_or_verified_flow (test_f3_continuation.TestF3Continuation.test_unverified_wan_has_no_online_badge_or_verified_flow)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_unverified_wan_has_no_online_badge_or_verified_flow",
+        "line": 129,
+        "assertions": [
+          "self.assertNotIn('Online', self.view.lbl_stat_wan.get_text())",
+          "self.assertEqual(draw.call_args_list[1].args[-1], ConnectionState.UNKNOWN)"
+        ],
+        "function_sha256": "617f0a3859042741413c78d6fb2f4a623fa2f6ad266b7ed50466279d6dd11300"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_unverified_wan_has_no_online_badge_or_verified_flow",
+        "line": 202,
+        "assertions": [
+          "self.assertEqual(self.view.store.get_summary_stats()['verified_remote_hosts'], 0)",
+          "self.assertIn('UNKNOWN', labels)",
+          "self.assertFalse(any(('ONLINE' in label.upper() or 'DELIVERED' in label for label in labels)))",
+          "self.assertEqual(self.view.runtime.active(), [])",
+          "self.assertFalse(any((f3.evidence.reachable(d) for d in self.view.store.devices.values() if d['type'] in ('router', 'service'))))"
+        ],
+        "function_sha256": "ceec7a4a7e71e984d2009624cd5e7a4fb484ada3cd2123cb6390cd45e4ecc182"
+      },
+      "root_cause_confirmed": "WAN label and _draw_connection_line no longer represent the dispatched renderer.",
+      "preserved_requirement": "Actual on_draw produces UNKNOWN, no ONLINE/DELIVERED, no verified WAN reachability or pulse; active WebKit page agrees.",
+      "owning_source": "f3_drawing.draw_flow",
+      "requirements": [
+        "PROVENANCE"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_identity_08_demo_data_isolated_from_live (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_08_demo_data_isolated_from_live)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_identity_08_demo_data_isolated_from_live",
+        "line": 501,
+        "assertions": [
+          "self.assertTrue(view.store.is_demo_mode)",
+          "self.assertIn('[DEMO]', disp_name)",
+          "self.assertEqual(status, 'DEMO')",
+          "self.assertFalse(view.store.is_demo_mode)"
+        ],
+        "function_sha256": "3b044d8de4f9db109db72800f104ec2675bc560e2ee104ade0514bba25b5ffe0"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_identity_08_demo_data_isolated_from_live",
+        "line": 518,
+        "assertions": [
+          "self.assertTrue(view.store.is_demo_mode)",
+          "self.assertTrue(live_ids.isdisjoint(view.store.devices))",
+          "self.assertFalse(view.store.is_demo_mode)",
+          "self.assertEqual(set(view.store.devices), live_ids)",
+          "self.assertEqual(view.store.config_file.read_bytes(), before)",
+          "self.assertIn('[DEMO]', disp_name)",
+          "self.assertEqual(status, 'DEMO')"
+        ],
+        "function_sha256": "ec16281c765d30cc4bd4d231ceed05e67cc681dc7339bf46cbedd8f4e9409aba"
+      },
+      "root_cause_confirmed": "LIVE stable ID is absent by design inside DEMO.",
+      "preserved_requirement": "Inspect actual DEMO inventory; every label is DEMO, all LIVE IDs return, profile bytes unchanged.",
+      "owning_source": "F3DeviceStore.set_demo",
+      "requirements": [
+        "ISOLATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_default_stations_fit_a_shorter_operator_viewport (test_f3_usability.TestF3Usability.test_default_stations_fit_a_shorter_operator_viewport)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_default_stations_fit_a_shorter_operator_viewport",
+        "line": 97,
+        "assertions": [
+          "self.assertLessEqual(y + height, scroll.get_height(), name)"
+        ],
+        "function_sha256": "ce8e26aece5e4a8f6f5210df4724c84fa063bc7d25b5f311680f24136b99f4fc"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_default_stations_fit_a_shorter_operator_viewport",
+        "line": 125,
+        "assertions": [],
+        "function_sha256": "861f8b49055d01718cfd71720ebe6366821a05108ac6d2f2a8fdec74db4df46b"
+      },
+      "root_cause_confirmed": "Canvas is directly in Gtk.Stack and pages sources; no ScrolledWindow ancestor exists.",
+      "preserved_requirement": "Draw every page at actual shorter allocated dimensions; every configured device is accounted for and every rectangle fits.",
+      "owning_source": "f3_layout.page_inventory; F3LiveDiagramCanvas.on_draw",
+      "requirements": [
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_collector_does_not_draw_unverified_wan_as_link_up (test_f3_continuation.TestF3Continuation.test_collector_does_not_draw_unverified_wan_as_link_up)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_collector_does_not_draw_unverified_wan_as_link_up",
+        "line": 153,
+        "assertions": [
+          "self.assertNotIn('✅ LINK UP', labels)",
+          "self.assertIn('NOT VERIFIED', labels)"
+        ],
+        "function_sha256": "42828cb5c3ec234d2776208013dc7e4b6f2c268adb7050ddb697aea8234561d3"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_collector_does_not_draw_unverified_wan_as_link_up",
+        "line": 245,
+        "assertions": [
+          "self.assertNotIn('✅ LINK UP', labels)",
+          "self.assertIn('Local IPv4 UNKNOWN', labels)",
+          "self.assertIn('NIC UNKNOWN · poller UNKNOWN', labels)",
+          "self.assertEqual(self.view.runtime.active(), [])"
+        ],
+        "function_sha256": "67a97fb19e12b01c17b13080e8849264beaca6f2596d8452757970e499a656fe"
+      },
+      "root_cause_confirmed": "Old _draw_pc4_node helper is not used by the flow renderer.",
+      "preserved_requirement": "Render actual flow with unverified LINK_UP flag: Local IPv4/NIC UNKNOWN, no LINK UP and no pulse.",
+      "owning_source": "f3_drawing.draw_flow",
+      "requirements": [
+        "PROVENANCE"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='detect_opcua_session')",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_remote_opcua_actions_require_existing_authorization_gate",
+        "line": 102,
+        "assertions": [
+          "dialog.assert_called_once()",
+          "engine.assert_not_called()",
+          "engine.assert_called_once()"
+        ],
+        "function_sha256": "0e81f23a691081e4aed63c4630e70d2581a8988dd834bb8e840c5d9b887ba736"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_remote_opcua_actions_require_existing_authorization_gate",
+        "line": 128,
+        "assertions": [
+          "dialog.assert_called_once()",
+          "adapter.assert_not_called()",
+          "self.assertEqual(HeldThread.started, [])",
+          "self.assertEqual(len(HeldThread.started), 1)",
+          "adapter.assert_not_called()",
+          "self.assertEqual(dialog.call_count, 1)",
+          "self.assertEqual(len(HeldThread.started), 1)",
+          "adapter.assert_called_once()",
+          "self.assertEqual(adapter.call_args.args[0]['endpoint_url'], view.store.devices['PC1']['endpoint_url'])",
+          "self.assertFalse(view._remote_busy)",
+          "self.assertFalse(f3.evidence.read_verified(view.store.devices['PC1']))",
+          "legacy_probe.assert_not_called()",
+          "legacy_read.assert_not_called()"
+        ],
+        "function_sha256": "e7ff79060c86f4f85e6ca74499e11033199ebd47b8c7e94ae072faf451b3dd0f"
+      },
+      "root_cause_confirmed": "Authorization now dispatches SecureF3OpcUa.probe_sync through a serialized worker, not RealDetectionEngine.detect_opcua_session.",
+      "preserved_requirement": "Fresh fixture: no adapter/worker before confirm; exactly one secure worker after confirm; duplicate blocked; correct endpoint and no old detector.",
+      "owning_source": "_request_remote_action; _execute_secure_action",
+      "requirements": [
+        "AUTH"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_remote_opcua_actions_require_existing_authorization_gate (test_f3_continuation.TestF3Continuation.test_remote_opcua_actions_require_existing_authorization_gate) (action='read_opcua_single_tag')",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_remote_opcua_actions_require_existing_authorization_gate",
+        "line": 102,
+        "assertions": [
+          "dialog.assert_called_once()",
+          "engine.assert_not_called()",
+          "engine.assert_called_once()"
+        ],
+        "function_sha256": "0e81f23a691081e4aed63c4630e70d2581a8988dd834bb8e840c5d9b887ba736"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_remote_opcua_actions_require_existing_authorization_gate",
+        "line": 128,
+        "assertions": [
+          "dialog.assert_called_once()",
+          "adapter.assert_not_called()",
+          "self.assertEqual(HeldThread.started, [])",
+          "self.assertEqual(len(HeldThread.started), 1)",
+          "adapter.assert_not_called()",
+          "self.assertEqual(dialog.call_count, 1)",
+          "self.assertEqual(len(HeldThread.started), 1)",
+          "adapter.assert_called_once()",
+          "self.assertEqual(adapter.call_args.args[0]['endpoint_url'], view.store.devices['PC1']['endpoint_url'])",
+          "self.assertFalse(view._remote_busy)",
+          "self.assertFalse(f3.evidence.read_verified(view.store.devices['PC1']))",
+          "legacy_probe.assert_not_called()",
+          "legacy_read.assert_not_called()"
+        ],
+        "function_sha256": "e7ff79060c86f4f85e6ca74499e11033199ebd47b8c7e94ae072faf451b3dd0f"
+      },
+      "root_cause_confirmed": "Prior subtest left a worker busy, hiding the next dialog; actual read boundary is read_sync.",
+      "preserved_requirement": "Fresh fixture per read action with the same deny/confirm/busy/endpoint assertions; late confirmation after disable/target/mode change invokes nothing.",
+      "owning_source": "_request_remote_action; _begin_remote",
+      "requirements": [
+        "AUTH"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_verified_connections_render_and_animate (test_f3_continuation.TestF3Continuation.test_verified_connections_render_and_animate)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_verified_connections_render_and_animate",
+        "line": 136,
+        "assertions": [
+          "self.assertNotEqual(first_frame, bytes(surface.get_data()))"
+        ],
+        "function_sha256": "bebef50b2aee0fcbcea7adb934940baf62f8e584d2e434f28be61e482c4b1e71"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+        "method": "test_verified_connections_render_and_animate",
+        "line": 215,
+        "assertions": [
+          "self.assertEqual(frame(100), frame(100.1))",
+          "self.assertEqual(self.view.runtime.active(now=100.1), [])",
+          "self.assertEqual([p['stage'] for p in self.view.runtime.active(now=100.3)], ['storage'])",
+          "self.assertNotEqual(frame(100.3), frame(100.7))",
+          "self.assertEqual(self.view.runtime.active(now=102), [])",
+          "self.assertEqual(frame(102), frame(102.2))"
+        ],
+        "function_sha256": "500d6c3f2604157da1e432fd53f8e871ee143db173a7c3e96b0119bf190e555b"
+      },
+      "root_cause_confirmed": "CONNECTED flag alone must not animate; no committed event existed.",
+      "preserved_requirement": "Stable frame/pulse count for flags only; real temporary SQLite insert+commit creates finite storage pulse; frame changes during it and stops after expiry.",
+      "owning_source": "RuntimeEvidence.accept/active; f3_drawing.draw_flow",
+      "requirements": [
+        "PROVENANCE",
+        "COMMUNICATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_closing_the_main_window_closes_its_popup (test_f3_details_window.TestF3DetailsWindow.test_closing_the_main_window_closes_its_popup)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_closing_the_main_window_closes_its_popup",
+        "line": 115,
+        "assertions": [
+          "self.assertFalse(popup.get_visible())"
+        ],
+        "function_sha256": "c1c3a33a46cb748c0f848e0b7e9f49f281fbc1331c9af68a1322c3cc2083e7cb"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_closing_the_main_window_closes_its_popup",
+        "line": 119,
+        "assertions": [
+          "self.assertIs(self.popup(), self.window)",
+          "self.assertFalse(self.view.inspector.get_mapped())",
+          "self.assertIsNone(self.view.details_window)"
+        ],
+        "function_sha256": "f08c573880186f5366c96b4354a11f2023a859530701dcde61880a2e04e9d9f1"
+      },
+      "root_cause_confirmed": "Separate native popup is obsolete for the docked library.",
+      "preserved_requirement": "Dock unmaps with owner destruction; actual F3 listener exits on F1 navigation and owner close; late-ready cannot revive it.",
+      "owning_source": "F3ApiView._unmapped/close; app.on_close_request",
+      "requirements": [
+        "NAVIGATION",
+        "COMMUNICATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_remote_confirmation_uses_the_popup_without_starting_a_probe (test_f3_details_window.TestF3DetailsWindow.test_remote_confirmation_uses_the_popup_without_starting_a_probe)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_remote_confirmation_uses_the_popup_without_starting_a_probe",
+        "line": 106,
+        "assertions": [
+          "self.assertIs(dialog.call_args.kwargs['parent_win'], popup)",
+          "probe.assert_not_called()"
+        ],
+        "function_sha256": "7549844f73e228af56685b860a848029997becf4599016706e891c240191ac5a"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_remote_confirmation_uses_the_popup_without_starting_a_probe",
+        "line": 110,
+        "assertions": [
+          "self.assertIs(dialog.call_args.kwargs['parent_win'], popup)",
+          "probe.assert_not_called()"
+        ],
+        "function_sha256": "7549844f73e228af56685b860a848029997becf4599016706e891c240191ac5a"
+      },
+      "root_cause_confirmed": "Confirmation owner is the actual root Gtk.Window rather than a nonexistent popup.",
+      "preserved_requirement": "Dialog transient root matches real owner; adapter not invoked before confirmation.",
+      "owning_source": "_request_remote_action",
+      "requirements": [
+        "AUTH",
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_reuses_closes_and_reopens_the_same_window (test_f3_details_window.TestF3DetailsWindow.test_reuses_closes_and_reopens_the_same_window)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_reuses_closes_and_reopens_the_same_window",
+        "line": 73,
+        "assertions": [
+          "self.assertIs(self.popup(), popup)",
+          "self.assertIn(address, popup.get_title())",
+          "self.assertFalse(popup.get_visible())",
+          "self.assertFalse(self.view.inspector.get_visible())",
+          "self.assertIs(self.popup(), popup)",
+          "self.assertTrue(popup.get_visible())"
+        ],
+        "function_sha256": "519fc77b73acc0e74f7cbb6329971ff4e6fcf8f0403e91a45c8952d585ba1f3b"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_reuses_closes_and_reopens_the_same_window",
+        "line": 76,
+        "assertions": [
+          "self.assertIs(self.view.inspector, inspector)",
+          "self.assertIs(self.popup(), self.window)",
+          "self.assertEqual(inspector.current_device_id, 'PC2')",
+          "self.assertIn(self.view.store.devices['PC2']['configured_ip'], inspector.lbl_disp_name.get_text())",
+          "self.assertFalse(inspector.get_visible())",
+          "self.assertIs(self.view.inspector, inspector)",
+          "self.assertTrue(inspector.get_mapped())"
+        ],
+        "function_sha256": "3ba1b8bd94b869e3654b7e93d48d69fa953767d1de1f2118a5889a20c1c913c8"
+      },
+      "root_cause_confirmed": "No separate native popup exists to reuse or close.",
+      "preserved_requirement": "Reuse same dock selection; hide/reopen same inspector; actual HTML dialog reuses object and restores focus on close.",
+      "owning_source": "toggle_inspector; F3 API view.js dialog",
+      "requirements": [
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_selection_opens_a_floating_owned_window (test_f3_details_window.TestF3DetailsWindow.test_selection_opens_a_floating_owned_window)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_selection_opens_a_floating_owned_window",
+        "line": 58,
+        "assertions": [
+          "self.assertFalse(self.view.inspector.get_visible())",
+          "self.assertTrue(popup.get_visible())",
+          "self.assertIs(popup.get_transient_for(), self.window)",
+          "self.assertFalse(popup.get_modal())"
+        ],
+        "function_sha256": "718840e6ac80e42c748b773cc665b437738e78ead69b3194c767b6c23e4519cd"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_selection_opens_a_floating_owned_window",
+        "line": 60,
+        "assertions": [
+          "self.assertTrue(self.view.inspector.get_visible())",
+          "self.assertIs(self.popup(), self.window)",
+          "self.assertTrue(self.view.inspector.get_mapped())",
+          "self.assertEqual(self.view.inspector.current_device_id, 'PC1')",
+          "self.assertFalse(self.window.get_modal())"
+        ],
+        "function_sha256": "16405120fc3511d2bb9816867a403ffd4576d6130efe7f43ef4005a13d728b3a"
+      },
+      "root_cause_confirmed": "Dock is intentionally visible initially; active F3 uses an initially closed HTML dialog.",
+      "preserved_requirement": "Native inspector belongs to main split/root, selected device maps; actual page dialog closed until node click and owned by its document.",
+      "owning_source": "_build_main_layout; view.js node click",
+      "requirements": [
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_settings_are_owned_by_the_details_window (test_f3_details_window.TestF3DetailsWindow.test_settings_are_owned_by_the_details_window)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_settings_are_owned_by_the_details_window",
+        "line": 89,
+        "assertions": [
+          "self.assertTrue(created[0].get_mapped())",
+          "self.assertIs(created[0].get_transient_for(), popup)",
+          "self.assertTrue(created[0].get_destroy_with_parent())"
+        ],
+        "function_sha256": "8bbe9d6f2d77592511d695140cea4f688976306287f62bc194c050e3b117689e"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+        "method": "test_settings_are_owned_by_the_details_window",
+        "line": 93,
+        "assertions": [
+          "self.assertTrue(created[0].get_mapped())",
+          "self.assertIs(created[0].get_transient_for(), popup)",
+          "self.assertTrue(created[0].get_destroy_with_parent())"
+        ],
+        "function_sha256": "8bbe9d6f2d77592511d695140cea4f688976306287f62bc194c050e3b117689e"
+      },
+      "root_cause_confirmed": "Settings are rooted at real owner, not old popup.",
+      "preserved_requirement": "Keep mapped/transient/destroy-with-parent native settings assertions; actual WebKit Ctrl+, routes F6 to owner.",
+      "owning_source": "DeviceDetailInspector._on_settings_clicked; F3ApiView._message",
+      "requirements": [
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_01_f3_rendering_bounds (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_01_f3_rendering_bounds)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_01_f3_rendering_bounds",
+        "line": 101,
+        "assertions": [
+          "self.assertGreaterEqual(view.canvas.get_content_height(), 450)",
+          "self.assertTrue(view.canvas.get_hexpand())",
+          "self.assertTrue(view.stack.get_vexpand())",
+          "self.assertIsNotNone(view.root_widget)",
+          "self.assertIsNotNone(view.main_split)",
+          "self.assertIsNotNone(view.inspector)",
+          "self.assertIn('sw_out_x', src_code)",
+          "self.assertIn('nic1_in_x', src_code)",
+          "self.assertIn('nic2_out_x', src_code)",
+          "self.assertIn('rt_in_x', src_code)"
+        ],
+        "function_sha256": "2d3f2d5de6942a3faeaedcfbdabefe24f851c432ade26e885cf984e13add6d90"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_01_f3_rendering_bounds",
+        "line": 102,
+        "assertions": [
+          "self.assertTrue(view.canvas.get_hexpand())",
+          "self.assertTrue(view.stack.get_vexpand())",
+          "self.assertIsNotNone(view.root_widget)",
+          "self.assertIsNotNone(view.main_split)",
+          "self.assertIsNotNone(view.inspector)",
+          "self.assertLess(geometry['lan'][0], geometry['collector'][0])",
+          "self.assertLess(geometry['collector'][0], geometry['storage'][0])",
+          "self.assertLess(geometry['storage'][0], geometry['outbox'][0])",
+          "self.assertLess(geometry['outbox'][0], geometry['delivery'][0])"
+        ],
+        "function_sha256": "02de2d9e9a31e9019d136ed8bb8986967312ba601b84b55d32aee4f3be6262df"
+      },
+      "root_cause_confirmed": "Viewport paging replaces fixed floor450 and retired port-layout variable names.",
+      "preserved_requirement": "At1024/1366/1920, every paged rectangle fits and all devices are reachable; actual stage ordering is source-to-collector-to-storage/outbox/relay.",
+      "owning_source": "f3_layout.flow_layout/page_inventory",
+      "requirements": [
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_03_status_led_updates (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_03_status_led_updates)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_03_status_led_updates",
+        "line": 128,
+        "assertions": [
+          "self.assertEqual(card.lbl_badge.get_text(), 'REACHABLE')",
+          "self.assertIn('OPC: CONNECT', card.pill_opc.get_text())"
+        ],
+        "function_sha256": "7f3c4597ad10610e64377bc545b7cc614a1b8f5ce7eb6363bc4083fbbd5688e3"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_03_status_led_updates",
+        "line": 133,
+        "assertions": [
+          "self.assertEqual(card.lbl_badge.get_text(), 'UNKNOWN')",
+          "self.assertFalse(evidence.session_connected(dev))",
+          "self.assertEqual(card.lbl_badge.get_text(), 'REMOTE')",
+          "self.assertTrue(evidence.reachable(dev))",
+          "self.assertFalse(evidence.session_connected(dev))",
+          "self.assertTrue(evidence.session_connected(dev))",
+          "self.assertIn('CONNECT', card.pill_opc.get_text())",
+          "self.assertEqual(card.lbl_badge.get_text(), 'STALE')",
+          "self.assertFalse(evidence.reachable(dev))",
+          "self.assertFalse(evidence.session_connected(dev))"
+        ],
+        "function_sha256": "2b17bd11f9f9420c78e7ddae7f578b9ed073d3cd1ec648d42908798059e43091"
+      },
+      "root_cause_confirmed": "Bare reachability/CONNECTED flags are deliberately UNKNOWN without source/time/target evidence.",
+      "preserved_requirement": "Require actual structured evidence for REMOTE and UA session separately; expiry/target change invalidates both; active page never promotes injected config state.",
+      "owning_source": "f3_evidence.evidence_state/session_connected",
+      "requirements": [
+        "PROVENANCE",
+        "COMMUNICATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_compat_ip_table_update (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_compat_ip_table_update)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_compat_ip_table_update",
+        "line": 398,
+        "assertions": [
+          "self.assertTrue(found_new_ip)"
+        ],
+        "function_sha256": "5253df6af5598ead91d825c28fe5bd85aadcd8d34fa0358e387d0361f4bcef67"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_compat_ip_table_update",
+        "line": 419,
+        "assertions": [
+          "self.assertIn('Config: 192.0.2.99 | Actual: UNKNOWN', labels)",
+          "self.assertIsNone(view.store.devices['dev-collector-01']['observed_ip'])"
+        ],
+        "function_sha256": "4bc00825497909ea599aae2f7048b5eedacea0f5d791b7fc3a28a5989a9883ea"
+      },
+      "root_cause_confirmed": "IP table reads F3DeviceStore configuration and observed NICs separately, not mutable legacy topology_data.",
+      "preserved_requirement": "Update through store API; assert Config address plus Actual UNKNOWN and observed_ip None.",
+      "owning_source": "F3DeviceStore.update_device; render_ip_summary_table",
+      "requirements": [
+        "COMMUNICATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_identity_12_regression_f1_f2_f6_all_pass (test_f3_network_topology.TestF3NetworkTopologyPhase9.test_identity_12_regression_f1_f2_f6_all_pass)",
+      "classification": "ENVIRONMENT",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_identity_12_regression_f1_f2_f6_all_pass",
+        "line": 540,
+        "assertions": [
+          "self.assertTrue(hasattr(win, 'build_overview_page'))",
+          "self.assertTrue(hasattr(win, 'build_task_manager_page'))",
+          "self.assertIsNotNone(win.f3_network_view)",
+          "self.assertEqual(len(win.scanned_tags), 457)"
+        ],
+        "function_sha256": "b45ba6c9717c1f5b506383d081bd13b6f2b75b78432fd61eeedace41afff7c57"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+        "method": "test_identity_12_regression_f1_f2_f6_all_pass",
+        "line": 564,
+        "assertions": [
+          "self.assertTrue(hasattr(win, 'build_overview_page'))",
+          "self.assertTrue(hasattr(win, 'build_task_manager_page'))",
+          "self.assertIsInstance(win.f3_network_view, F3ApiView)",
+          "self.assertEqual(len(win.scanned_tags), expected)",
+          "self.assertTrue(all((tag['name'].startswith('LAB.') for tag in win.scanned_tags)))",
+          "self.assertFalse(win.f3_network_view._active)",
+          "self.assertIsNone(win.f3_network_view._server)",
+          "self.assertEqual(win.stack.get_visible_child_name(), 'overview')",
+          "self.assertEqual(win.stack.get_visible_child_name(), page)",
+          "self.assertEqual(win.unified_workspace.current_workspace_mode, 'task_manager')",
+          "self.assertEqual(win.unified_workspace.current_workspace_mode, 'monitoring')"
+        ],
+        "function_sha256": "6637fda066d3aa2307502336c82c790da8501b1cff105f6e2fe579dca06f43ed"
+      },
+      "root_cause_confirmed": "Temporary HOME has no private catalog and repo fallback was removed.",
+      "preserved_requirement": "Generate457 generic LAB entries; inject before constructing real window; add missing-file zero-tag case; preserve F1/F2/F6 and idle listener checks.",
+      "owning_source": "app catalog load; unified_workspace.open_task_dialog",
+      "requirements": [
+        "TAG_LOADING",
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_list_explains_status_and_accounts_for_configured_devices (test_f3_usability.TestF3Usability.test_list_explains_status_and_accounts_for_configured_devices)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_list_explains_status_and_accounts_for_configured_devices",
+        "line": 106,
+        "assertions": [
+          "self.assertEqual(len(self.view.cards), len(self.view.store.devices))",
+          "self.assertEqual(self.view.cards['PC1'].lbl_summary.get_text(), 'ยังไม่ได้ตรวจสอบ')",
+          "self.assertFalse(self.view.cards['TELEGRAM'].btn_detect.get_sensitive())",
+          "self.assertFalse(self.view.inspector.btn_detect.get_sensitive())"
+        ],
+        "function_sha256": "3a4a8d21f58c01a35fb64f224ff32d975fda7ade88152eddc291aae30c9e9ab6"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_list_explains_status_and_accounts_for_configured_devices",
+        "line": 132,
+        "assertions": [
+          "self.assertEqual(len(self.view.cards), len(self.view.store.devices))",
+          "self.assertIn('ยังไม่ได้ตรวจสอบ', summary)",
+          "self.assertIn('UNKNOWN', summary)",
+          "self.assertNotIn('Offline', summary)",
+          "self.assertIsNone(self.view.store.devices['TELEGRAM']['port'])",
+          "self.assertFalse(self.view.cards['TELEGRAM'].btn_detect.get_sensitive())",
+          "self.assertTrue(self.view.inspector.btn_detect.get_sensitive())",
+          "self.assertFalse(self.view.cards['TELEGRAM'].btn_detect.get_sensitive())",
+          "self.assertFalse(self.view.inspector.btn_detect.get_sensitive())",
+          "dialog.assert_called_once()",
+          "adapter.assert_not_called()",
+          "dialog.assert_not_called()",
+          "adapter.assert_not_called()"
+        ],
+        "function_sha256": "66109d7ce7e45dd3e4b2563d8c568203cb9b39e44ad439f7663027c362c2ec04"
+      },
+      "root_cause_confirmed": "Unknown status adds explicit UNKNOWN. Later safety assertions still apply to default service with no numeric target/port.",
+      "preserved_requirement": "Retain disabled default service assertions; explicit loopback/443 enables only gated action; removing port disables card/inspector and dispatch; no offline claim.",
+      "owning_source": "device_status_text; f3_evidence.capabilities",
+      "requirements": [
+        "PROVENANCE",
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_live_actions_describe_the_implemented_capability (test_f3_usability.TestF3Usability.test_live_actions_describe_the_implemented_capability)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_live_actions_describe_the_implemented_capability",
+        "line": 79,
+        "assertions": [
+          "self.assertIn('พอร์ต', self.view.inspector.btn_test_opc.get_label())",
+          "self.assertFalse(self.view.inspector.btn_read_once.get_sensitive(), 'F3 live single-tag read is unavailable')",
+          "self.assertTrue(self.view.inspector.btn_read_once.get_sensitive())"
+        ],
+        "function_sha256": "e86e94cf791f4846a1bf54c2efe01d0988f4508827b17aaacee5a5fba24d9e44"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_live_actions_describe_the_implemented_capability",
+        "line": 85,
+        "assertions": [
+          "self.assertIn('Secure', inspector.btn_test_opc.get_label())",
+          "self.assertFalse(inspector.btn_read_once.get_sensitive())",
+          "self.assertIsNotNone(self.view.secure_opcua.readiness(self.view.store.devices['PC1'], self.view._opcua_options(self.view.store.devices['PC1']), require_mapping=True))",
+          "self.assertTrue(inspector.btn_test_opc.get_sensitive())",
+          "self.assertFalse(inspector.btn_read_once.get_sensitive())",
+          "self.assertTrue(inspector.btn_read_once.get_sensitive())",
+          "self.assertFalse(inspector.btn_test_opc.get_sensitive())",
+          "self.assertFalse(inspector.btn_read_once.get_sensitive())",
+          "self.assertTrue(inspector.btn_read_once.get_sensitive())"
+        ],
+        "function_sha256": "135e4e3fdfbe2cbe50191d71252e4deefdb209e4414caec0051be92fd1b559ae"
+      },
+      "root_cause_confirmed": "Secure session/read are implemented; TCP-only label and permanently-unavailable read are obsolete.",
+      "preserved_requirement": "Real readiness refuses missing PKI/mapping, allows explicit Basic256Sha256 and verified mapping, rejects None policy; DEMO selection is explicit.",
+      "owning_source": "SecureF3OpcUa.readiness; DeviceDetailInspector.inspect_device",
+      "requirements": [
+        "AUTH",
+        "COMMUNICATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    },
+    {
+      "original_test_id": "test_startup_gives_the_diagram_full_attention (test_f3_usability.TestF3Usability.test_startup_gives_the_diagram_full_attention)",
+      "classification": "STALE_TEST",
+      "original": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_startup_gives_the_diagram_full_attention",
+        "line": 48,
+        "assertions": [
+          "self.assertEqual(self.view.stack.get_visible_child_name(), 'topology')",
+          "self.assertFalse(self.view.inspector.get_visible(), 'Details should open after device selection')"
+        ],
+        "function_sha256": "82d4e1967144facf4ea0b5ad440ac0bd92cca5e22145ae2367b04ad11fb51217"
+      },
+      "new": {
+        "file": "aqua-command-desktop/desktop/tests/test_f3_usability.py",
+        "method": "test_startup_gives_the_diagram_full_attention",
+        "line": 49,
+        "assertions": [
+          "self.assertEqual(self.view.stack.get_visible_child_name(), 'topology')",
+          "self.assertIs(self.view.inspector.get_parent(), self.view.main_split)",
+          "self.assertTrue(self.view.inspector.get_visible())",
+          "self.assertIsNone(self.view.details_window)",
+          "self.assertLessEqual(minimum, 1366)"
+        ],
+        "function_sha256": "62a8f51ca635b51fb97acd441cc95a69bf13c0e089433dbf4cdbd0cd80f80281"
+      },
+      "root_cause_confirmed": "Docked library visibility differs from active WebKit dialog visibility.",
+      "preserved_requirement": "Preserve library parent/width checks and separately prove actual F3 dialog starts closed and opens only on node selection.",
+      "owning_source": "_build_main_layout; F3ApiView",
+      "requirements": [
+        "NAVIGATION"
+      ],
+      "actual_baseline": "regressions/gui-baseline.txt:16 failures+5errors",
+      "actual_final": "regressions/gui-final.txt:319pass,exit0",
+      "supplementary_active_tests": "test_f3_active_reconciliation.py:5 real GTK/WebKit tests",
+      "runtime_source_changed": false,
+      "safety_test_skipped_or_xfailed": false
+    }
+  ]
+}

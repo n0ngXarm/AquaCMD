@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "cwd": "work/aqua-phase7-p0-privacy",
+  "PYTHONPATH": "candidate source + existing pwa-python-deps",
+  "isolation": "unshare user/network, no external interface, temporary HOME",
+  "exit_code": 0
+}

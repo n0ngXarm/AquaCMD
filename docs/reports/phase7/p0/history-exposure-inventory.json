@@ -1,0 +1,174 @@
+{
+  "scope": "Local refs and their reachable ancestry; redacted inventory, no rewrite",
+  "baseline_commit": "e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+  "reachable_commits_before_local_p0_commit": 61,
+  "refs": [
+    "refs/heads/fix/phase-6-source-privacy e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+    "refs/heads/fix/phase7-p0-privacy e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+    "refs/remotes/origin/HEAD e5d6a931c0c16017736fa36bf43fe38878b62fd3",
+    "refs/remotes/origin/feat/phase-1b-rpm-packaging 0db6e72145ec4b2d1fef0329a285216ac6d49d12",
+    "refs/remotes/origin/fix/phase-1b-rpm-runtime-dependency c5eb38cc2378d9323c5b1873793f5a3862f721ce",
+    "refs/remotes/origin/fix/phase-2-data04-durable-alerts fc8d15342aaf1ec33daf73e2a00a559a4c414f2d",
+    "refs/remotes/origin/fix/phase-3-integration-readiness c3976b84ad67fd1c039d7ae19fb1a758e04daa70",
+    "refs/remotes/origin/fix/phase-4-operator-status 15e8a0ee6369b0af2b6efcce28cd88c0180c32d6",
+    "refs/remotes/origin/fix/phase-5-release-candidate 28a303c5f177e90b5406414136e6231c644dd5d5",
+    "refs/remotes/origin/fix/phase-6-source-privacy e5d6a931c0c16017736fa36bf43fe38878b62fd3"
+  ],
+  "inventory": [
+    {
+      "path": ".env.example",
+      "history_change_commits": [
+        "bdfa9000eed67479af3b5268aa6dee3e0c42217d",
+        "9164258261f3b7d4dc3807b58058b099b0ceebbd"
+      ],
+      "unique_blob_evaluations": [
+        {
+          "sha256": "c018ce1508dde08044ec0801797726e0004e5223d3d3e5fd89d4659cb332adb9",
+          "bytes": 2111,
+          "exposure_categories": {
+            "credential_format": 1,
+            "known_exposed_secret_value": 1
+          },
+          "example_reachable_commit": "e5d6a931c0c16017736fa36bf43fe38878b62fd3"
+        },
+        {
+          "sha256": "fe8781e083398e3100f266dfbaec563951eb946a4d2c2ead2cf7b7c2b09e0724",
+          "bytes": 2056,
+          "exposure_categories": {
+            "credential_format": 1,
+            "known_exposed_secret_value": 2
+          },
+          "example_reachable_commit": "74027e22426f021a975b7e0d3beaf591234612d8"
+        }
+      ],
+      "binary_contents": "NOT_APPLICABLE"
+    },
+    {
+      "path": "docs/tags/Export all.txt",
+      "history_change_commits": [
+        "99190c83fb0e81c48d376e6f82cf812e7a944278",
+        "44022368a1a7fa35cbabdfb49234b6ccdc1874c8"
+      ],
+      "unique_blob_evaluations": [
+        {
+          "sha256": "7f0e367390986ca429d24f35eb085ce562871684603646a7b2e64fa7125ac4e1",
+          "bytes": 116966,
+          "exposure_categories": {
+            "known_site_tag": 457
+          },
+          "example_reachable_commit": "28a303c5f177e90b5406414136e6231c644dd5d5"
+        }
+      ],
+      "binary_contents": "NOT_APPLICABLE"
+    },
+    {
+      "path": "docs/tags/pump-status-tags.txt",
+      "history_change_commits": [
+        "44022368a1a7fa35cbabdfb49234b6ccdc1874c8"
+      ],
+      "unique_blob_evaluations": [
+        {
+          "sha256": "376cc2ed8da0e55cf3c1d2923bb3b7726de23714da897719dfde5e062ef519e7",
+          "bytes": 70,
+          "exposure_categories": {
+            "known_site_tag": 5
+          },
+          "example_reachable_commit": "e5d6a931c0c16017736fa36bf43fe38878b62fd3"
+        }
+      ],
+      "binary_contents": "NOT_APPLICABLE"
+    },
+    {
+      "path": "aqua-command-desktop/desktop/win_desktop.py",
+      "history_change_commits": [
+        "99190c83fb0e81c48d376e6f82cf812e7a944278",
+        "87c4f8c3f96e78e901cd150775bfb00f8861fb63",
+        "c98e900babec010e8e82b16002d63bd7b8642a63",
+        "37654a3ca728160a6bc15a559dbafdbc2b7c918d"
+      ],
+      "unique_blob_evaluations": [
+        {
+          "sha256": "d2c4ae0cff17c8821c39b0f60b7946dc98cc9220f994c31ded33d327d353d1b1",
+          "bytes": 82887,
+          "exposure_categories": {
+            "site_or_user_literal": 8,
+            "mac_address": 1,
+            "private_ipv4": 40
+          },
+          "example_reachable_commit": "e5d6a931c0c16017736fa36bf43fe38878b62fd3"
+        },
+        {
+          "sha256": "4fe69ae57c4bd2b63bf8a834932c2310d226a1679d1004507a5baad6919fd0d0",
+          "bytes": 83073,
+          "exposure_categories": {
+            "known_site_tag": 23,
+            "site_or_user_literal": 14,
+            "mac_address": 1,
+            "private_ipv4": 40
+          },
+          "example_reachable_commit": "28a303c5f177e90b5406414136e6231c644dd5d5"
+        },
+        {
+          "sha256": "b2328ff72fcf2ee67fac1634d2502414f09df0ce834e5bd9dd52773a36c4a700",
+          "bytes": 83226,
+          "exposure_categories": {
+            "known_site_tag": 23,
+            "personal_home_path": 2,
+            "site_or_user_literal": 16,
+            "mac_address": 1,
+            "private_ipv4": 40
+          },
+          "example_reachable_commit": "b9fd783d9e63a53427cfacc730fafd0f0f09fccb"
+        },
+        {
+          "sha256": "39485730254e6e8a937bd81524050cc52d6f74c9173069c959e06b9decc36612",
+          "bytes": 83048,
+          "exposure_categories": {
+            "known_site_tag": 23,
+            "personal_home_path": 2,
+            "site_or_user_literal": 16,
+            "mac_address": 1,
+            "private_ipv4": 40
+          },
+          "example_reachable_commit": "d2de13e8217e5173e39e009affd87be4f0dee078"
+        }
+      ],
+      "binary_contents": "NOT_APPLICABLE"
+    },
+    {
+      "path": "releases",
+      "history_change_commits": [],
+      "unique_blob_evaluations": [],
+      "binary_contents": "NOT_VISUALLY_CLEARED"
+    },
+    {
+      "path": "docs/screenshots",
+      "history_change_commits": [
+        "69834ff1b8f207447a018b1513e96dae74a130cd",
+        "58b6e4812bfcb6a5b5585f00aa4491221bb77877",
+        "abaf082aac1ffaddaebde00765162b3746ea39e4",
+        "2d7cca323a5c2db9d2fcd88ae3102ea8da5689fb",
+        "557b97789308ca210dc65f2c82de0f5205357428",
+        "cb4dc36f2ce57a415ba2f345822f3cf721b9979a",
+        "4387c6cfa00f3e1fd8862e3300802ba990d5686a",
+        "44022368a1a7fa35cbabdfb49234b6ccdc1874c8"
+      ],
+      "unique_blob_evaluations": [],
+      "binary_contents": "NOT_VISUALLY_CLEARED"
+    },
+    {
+      "path": "docs/mockups",
+      "history_change_commits": [
+        "44022368a1a7fa35cbabdfb49234b6ccdc1874c8"
+      ],
+      "unique_blob_evaluations": [],
+      "binary_contents": "NOT_VISUALLY_CLEARED"
+    }
+  ],
+  "history_status": "NOT_CLEARED",
+  "token_rotation": "PENDING_OWNER_ACTION",
+  "public_main_last_audited": "d7508f85954a65f347806b3a4ff652614c620e15",
+  "public_main_limitation": "Earlier read-only triage found exposed data; this work does not alter or re-clear public main",
+  "all_original_commits_preserved": true,
+  "public_push": "HOLD"
+}

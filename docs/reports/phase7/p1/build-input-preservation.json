@@ -1,0 +1,493 @@
+{
+  "new_build": "NOT_CREATED; test-only scope",
+  "p0_build_inputs_unchanged": 117,
+  "all_match": true,
+  "modified_test_paths_excluded_from_build": [
+    "aqua-command-desktop/desktop/tests/f3_reconciliation_fixture.py",
+    "aqua-command-desktop/desktop/tests/test_f3_active_reconciliation.py",
+    "aqua-command-desktop/desktop/tests/test_f3_continuation.py",
+    "aqua-command-desktop/desktop/tests/test_f3_details_window.py",
+    "aqua-command-desktop/desktop/tests/test_f3_network_topology.py",
+    "aqua-command-desktop/desktop/tests/test_f3_usability.py"
+  ],
+  "p0_artifacts": [
+    {
+      "name": "aqua-command-desktop-0.9.0.tar.gz",
+      "sha256": "1644f0fb7d3553c5f8f9b470bec8d85195987318947ba9509404d5cacc587427"
+    },
+    {
+      "name": "aqua-command-desktop-0.9.0-4.fc45.noarch.rpm",
+      "sha256": "99b9339504edd489f843ad3307274951587ef2fff00c9c73c85a14a677f5da8c"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "LICENSE",
+      "sha256": "4f070508266be5d1054144a11420ac664f3033e0d14dcbe5fd216f97b74cfb51"
+    },
+    {
+      "path": "README.md",
+      "sha256": "684b8b70119090dd6616baa98562f73558579fe2eba071451c716022919de0be"
+    },
+    {
+      "path": "VERIFICATION.md",
+      "sha256": "8977c736b588447bb7370d5506c9beb2e69d3b5394a6c9d0a0de1a83e1d3b168"
+    },
+    {
+      "path": "backend/LICENSE",
+      "sha256": "4f070508266be5d1054144a11420ac664f3033e0d14dcbe5fd216f97b74cfb51"
+    },
+    {
+      "path": "backend/bin/aqua-demo.js",
+      "sha256": "b12d7f2cf435c5e0aeee1319ef69248515f821f5de22205d87de0d9cca4544aa"
+    },
+    {
+      "path": "backend/bin/aqua-lab.js",
+      "sha256": "6d6520b95887e33e346eb5b750b9822690603962a7838af6866c1411807984fa"
+    },
+    {
+      "path": "backend/bin/aqua-service.js",
+      "sha256": "8b8ec8af4506ec20d6f0fc694e4877f690509611c75e11070bc10f2707acd9a8"
+    },
+    {
+      "path": "backend/package-lock.json",
+      "sha256": "79b2f90c4de3e08921dcc406795d99ce90baf58549c89ea2a09ee7d11c98a34b"
+    },
+    {
+      "path": "backend/package.json",
+      "sha256": "0373c524a37d8d23bf7eb1a962841726404651e8c8a1690e0e0cc61034a30f8e"
+    },
+    {
+      "path": "backend/public/app.js",
+      "sha256": "e67807e2e1d9f4920169d984dad03a1b9dafa66006e796086d3597f3c60857c5"
+    },
+    {
+      "path": "backend/public/aqua-isometric-pump-scene.svg",
+      "sha256": "082d576067c3a064731c93e310210f87322e4a30a66cba19e6633ad0e37fee37"
+    },
+    {
+      "path": "backend/public/index.html",
+      "sha256": "2a56e4e7caaba1d87aa4fb7d7509bb4b286c93fc39d5f6c96420609bad3ff773"
+    },
+    {
+      "path": "backend/public/simple.css",
+      "sha256": "add4c36ce14e21bb641401c971055800b51f8cc03318a3f911e95dab12fb871d"
+    },
+    {
+      "path": "backend/public/simple.html",
+      "sha256": "b044bf12a7f7bebbbb8bcd4f097cd14ee0a168c490e4cb0c084dcca068d0c762"
+    },
+    {
+      "path": "backend/public/simple.js",
+      "sha256": "dfc550efa627f1b1dc91e5367137a3d7ed92af4d75e786cc03091c650e7a0657"
+    },
+    {
+      "path": "backend/public/styles.css",
+      "sha256": "bde950a044b0d5d43475733d84c6eef6b8cac20dba4572087efafb68c0c518d8"
+    },
+    {
+      "path": "backend/src/lan/adapters.js",
+      "sha256": "bae0681e3986164894eb11e23dfb7bee37866388b1151b46c890f8edddbc7f05"
+    },
+    {
+      "path": "backend/src/lan/config.js",
+      "sha256": "b2cad7c3cdc7ba75dfa20c4518e126f359ce3a4923f0255cce6a20b82a0d9879"
+    },
+    {
+      "path": "backend/src/lan/csv-fixture.js",
+      "sha256": "5a16baa40059564aa2a9f89fef5bf3ea0479933d2959e97c7a581ced76568385"
+    },
+    {
+      "path": "backend/src/lan/csv-source.js",
+      "sha256": "dbfbe37ae5ca16fcafdbf18c786b83c20cd95d094a099380c4394c8a5d612302"
+    },
+    {
+      "path": "backend/src/lan/dashboard.js",
+      "sha256": "ec44ae27808631a3a695c2415075af6b42d9376a464e8fac90e462b46f7a4930"
+    },
+    {
+      "path": "backend/src/lan/process-identity.js",
+      "sha256": "af669bba92ccb346feca212f16a825fab5656a917c3c6ca3d8f05f8aab5e1060"
+    },
+    {
+      "path": "backend/src/lan/protocol.js",
+      "sha256": "fe62ccc72647b0a265dfb65343046d52a7144dd3b07b82599a0d01f2c210bd48"
+    },
+    {
+      "path": "backend/src/lan/services.js",
+      "sha256": "b8d7802d945893bdf974311dc87d5a1eb220987fb4f8e18a2ad2d79582888bf3"
+    },
+    {
+      "path": "backend/src/lan/storage-boundary.js",
+      "sha256": "96ba5f49749585cc8fac7ee157106210ab1e922bfad7e44f8f088242347bb048"
+    },
+    {
+      "path": "backend/src/lan/store.js",
+      "sha256": "99495983ea30aacd0bf6002f537919e094e7d330d038bcb252846fbf28e724ed"
+    },
+    {
+      "path": "backend/src/lan/supervisor.js",
+      "sha256": "7cd046eeb6cfa81f5e3adae9d0862dde43ab52a74125a0131414547591d7459e"
+    },
+    {
+      "path": "backend/src/lan/telegram.js",
+      "sha256": "ce663b9e4c33120ba7d2d851750868baa336feeb2303301edfa642175a44a0cf"
+    },
+    {
+      "path": "backend/src/simulator.js",
+      "sha256": "8640dc176d6addcc2b6c43742f73e6aa60f2d102dfddcd0a8697d5d374018fb2"
+    },
+    {
+      "path": "collector/__init__.py",
+      "sha256": "b731df3923dddf48dad14c671153494ba48b5bee3f011df37d5d96bef44256f2"
+    },
+    {
+      "path": "config/opcua_tag_mapping.json",
+      "sha256": "fafc9a349164a6fc8542216114850428ec8bff86e12f605825226ba3b5ac3d36"
+    },
+    {
+      "path": "desktop/actual_editor.py",
+      "sha256": "a3c42a79329b9bc51148559c5890c13459faf0cc23a9412dd778b6f0a4de4eb4"
+    },
+    {
+      "path": "desktop/app.py",
+      "sha256": "3344972512746239603edca420857bddb7cdfe26ca73df7749d99cdfece3578e"
+    },
+    {
+      "path": "desktop/client.py",
+      "sha256": "79ed2ccdfdbab53672a13165c9f73f5822dd309a8c1e957ef7fd77151d962c72"
+    },
+    {
+      "path": "desktop/consent.py",
+      "sha256": "0df5d96c360ac15fbe7226cb69a486100644e9520aece6aa5101028d21fe23d3"
+    },
+    {
+      "path": "desktop/console.py",
+      "sha256": "2e8800032cbef6b79474744cbdbc298ed74ebc746e9f7aca1ed268c3303b0be8"
+    },
+    {
+      "path": "desktop/deployed-host.mjs",
+      "sha256": "dc14360b84a8e16730782a06e279df11df84ce2b18c02678ad0eebf96f2290d2"
+    },
+    {
+      "path": "desktop/f1_api/fonts_embedded.css",
+      "sha256": "15d31fb119367f34f5731121fab7cef5b8b224a54c2c5421ea8eced319be5b5b"
+    },
+    {
+      "path": "desktop/f1_api/formal-theme.css",
+      "sha256": "a59393a2eaee94457212a00c186698fb3447f38e753344804cb67004db602bcd"
+    },
+    {
+      "path": "desktop/f1_api/index.html",
+      "sha256": "113f9db9f674835b24f69397a2e06ed8e016b888908d917da6f119a21d423380"
+    },
+    {
+      "path": "desktop/f1_api/view.css",
+      "sha256": "92526633f925b48b7b9cc6e36d53e8976c9b4c4ea86164b6dba0c0d263d1a141"
+    },
+    {
+      "path": "desktop/f1_api/view.js",
+      "sha256": "737612a078868dbd78e753db9cf6c493aa18929030c9af7e12d3cec48871592b"
+    },
+    {
+      "path": "desktop/f1_api_view.py",
+      "sha256": "98d74127e0bb5ce7dbbe4715e37ce1fdc8de415c144c1227fc5554893fc30f91"
+    },
+    {
+      "path": "desktop/f1_overview.py",
+      "sha256": "0ac4c692618e7c03468e9292ad1471634392bc8189b3021e8592f50f165f864f"
+    },
+    {
+      "path": "desktop/f1_style.css",
+      "sha256": "4636eb5bd00ac46ffcb460ccd47ebbf7e55a4344a856a057b6919b30f8fedb0c"
+    },
+    {
+      "path": "desktop/f2_style.css",
+      "sha256": "40ced9811f7fa62eecd6ef14227863e85b4eec8bde3f03db36c483f64f5060fd"
+    },
+    {
+      "path": "desktop/f2_tasks.py",
+      "sha256": "049d82f5bbeae336063c2246ca1cd7a0e1eb016ebb9ecf41dd4b33b002c5c4d2"
+    },
+    {
+      "path": "desktop/f3_api/detect.mjs",
+      "sha256": "cc2118e9a46c0a5be3c58e44e96cee327f23bc8e97f463d6de61de235bd04cf2"
+    },
+    {
+      "path": "desktop/f3_api/fonts_embedded.css",
+      "sha256": "15d31fb119367f34f5731121fab7cef5b8b224a54c2c5421ea8eced319be5b5b"
+    },
+    {
+      "path": "desktop/f3_api/index.html",
+      "sha256": "c0664853dde88fdaa4bfc649d2493a9543a7ef3eed0e4ab18c7167fc9c0eeac5"
+    },
+    {
+      "path": "desktop/f3_api/view.css",
+      "sha256": "07df928f839b03e39d02ee8458fc49511464f2babe923e036c3ac5b7895595c2"
+    },
+    {
+      "path": "desktop/f3_api/view.js",
+      "sha256": "be8fe1ee6f9bbdd676a0798b4936779d64beb729d933e14295cc326c4b16f1b9"
+    },
+    {
+      "path": "desktop/f3_api_view.py",
+      "sha256": "5bf4dd7ebc14ab298a6303866244631f5eee53e8524250b09aef0adde263d168"
+    },
+    {
+      "path": "desktop/f3_drawing.py",
+      "sha256": "8ce48ebade2fc9e825700723ec00e7b1165522fda50ca022b7f329ddda05e8e5"
+    },
+    {
+      "path": "desktop/f3_evidence.py",
+      "sha256": "750e5d14240cb8aa0e2f508583057088abf1aabd67bcc520766bf215dfc9666c"
+    },
+    {
+      "path": "desktop/f3_handoff.py",
+      "sha256": "a382c2d96d85582dcfc411c4ab02d5836c93c2f2f5002871ffafaac7d24094fd"
+    },
+    {
+      "path": "desktop/f3_layout.py",
+      "sha256": "a99105d58d19e82b861891189ea23bccecf87799a79daea6a2715b98671cd5fd"
+    },
+    {
+      "path": "desktop/f3_local.py",
+      "sha256": "2fc275dc5f2b3f128fd13dbd82f62e420771b542ef723a8babaac8ecc7a65e15"
+    },
+    {
+      "path": "desktop/f3_network.py",
+      "sha256": "b2a34dc897f05bd8d64f2662bc7e1881658d2d60de3882c90ca5a53cd9ce2333"
+    },
+    {
+      "path": "desktop/f3_opcua.py",
+      "sha256": "ded9ceabf2cb69f0a98a8c9ecfca0f34ec5ac77e4b953ff123626646bf5ad686"
+    },
+    {
+      "path": "desktop/f3_projection.py",
+      "sha256": "13a8ed13678130002f29989c360b80cdf2a091c18bdd95a0c86d89d27fc51429"
+    },
+    {
+      "path": "desktop/f3_runtime.py",
+      "sha256": "f62a9dac628b058f49de5002a7e01fe094c20557ca0152514964301afe40aa6f"
+    },
+    {
+      "path": "desktop/help_manual.py",
+      "sha256": "6b253c6d2f19fa20d459f951cac3ae7950dfefebe6b43b5124e826e4d24826b4"
+    },
+    {
+      "path": "desktop/host.mjs",
+      "sha256": "78ca5d02052910d6328ee1fd149cc870566ecc3ee2d2d5eb99dcebaa830b071f"
+    },
+    {
+      "path": "desktop/model.py",
+      "sha256": "94ea567d5bd98a27972befa8ea64fb6cb970a264c39f9cd132eee5222029b1a5"
+    },
+    {
+      "path": "desktop/notification_worker.py",
+      "sha256": "30072d3377790a96313d346472e9fa425eb10778df9c9dec21b47b103e663942"
+    },
+    {
+      "path": "desktop/observability/__init__.py",
+      "sha256": "4e438b68c2c994663d8b857a34e654e3265c2326275cc17ddfde5407664baa54"
+    },
+    {
+      "path": "desktop/observability/adapter.py",
+      "sha256": "28e03fd4a28899d5996d706c863df4b4f7fa58458583947576a883705459c3b5"
+    },
+    {
+      "path": "desktop/observability/contract.py",
+      "sha256": "d608a059f8940c4aba7b31c1cc1eead8797b51d2d72bd3d76f6720ad16c7d094"
+    },
+    {
+      "path": "desktop/observability/history.py",
+      "sha256": "b88fc5e56cd6cd88f6384d7083d3a38f362d71518d4fb0cb7ec1ce9e22c60b5c"
+    },
+    {
+      "path": "desktop/observability/integration.py",
+      "sha256": "9142ddae2208b7ba3e546f475feef823e5cbb3087f434faeac2541d422fc32a5"
+    },
+    {
+      "path": "desktop/observability/metrics.py",
+      "sha256": "f89838723004da286cf3ab53048f18a7b62ecf7b0bdc3b2d5a46d800cd04a1f6"
+    },
+    {
+      "path": "desktop/observability/proxy.py",
+      "sha256": "79f0bb30bccbf4411777aea0f01178ff68eee72ee5be8a5e49c4f144cd608e70"
+    },
+    {
+      "path": "desktop/observability/service.py",
+      "sha256": "feff404521de080817d5ad277716754c58a42d0ca65da40463f2e179dcd82f58"
+    },
+    {
+      "path": "desktop/observability/transport.py",
+      "sha256": "9772bc5ccbb32de9323cfbc5cb5b28cec1c6f69be9b8b574e4e11f79fe6ceb9f"
+    },
+    {
+      "path": "desktop/observability/ui.py",
+      "sha256": "5dd70e51e2f8e4b078e17b7efb0dd472ad27c5c0050024638dad918d939c8aee"
+    },
+    {
+      "path": "desktop/opcua_mapping.py",
+      "sha256": "3b6c81f02e26432a2ac02e72f8718d022a3f78e26307666e78409f6d3fbb358f"
+    },
+    {
+      "path": "desktop/opcua_pki.py",
+      "sha256": "79533111e2350246f16e18ed6021b4a821c5113fac327ee8f6c8d8f1349d9b6c"
+    },
+    {
+      "path": "desktop/opcua_policy.py",
+      "sha256": "66ae1b5147e24904d15d152eb74af1b6ff13e45fbdd7ac0fc4b9af9e3cb3a429"
+    },
+    {
+      "path": "desktop/opcua_polling_engine.py",
+      "sha256": "076220c8afc1657f9673b2f534de67f35d889969b88bf1dc38f98056c2c97d47"
+    },
+    {
+      "path": "desktop/opcua_reader.py",
+      "sha256": "8aa472ebdecc9d201c691a0840ea19e6671ef7bb0f9a235d6634ed8361d98099"
+    },
+    {
+      "path": "desktop/opcua_storage.py",
+      "sha256": "757384005e9982439a5ccc2bd1ef3b1924641922ebceaa555df41400da161180"
+    },
+    {
+      "path": "desktop/opcua_store.py",
+      "sha256": "4a36e291e74e1715a0f8f5852fd9dcf5c03b2e553f428d71e35a81701afab9aa"
+    },
+    {
+      "path": "desktop/presentation.py",
+      "sha256": "573320e6912c95ea15c2fe4a926f03a78c3d41d4c86fb5368f458d6298472d34"
+    },
+    {
+      "path": "desktop/private_runtime.py",
+      "sha256": "2bff424b539f8a1d304e8ed1ce5317947c3cc6291a39a027d4c3c2148ce563fd"
+    },
+    {
+      "path": "desktop/production.py",
+      "sha256": "12df9c1f22385c0634a8af56aca6cb51c450684df0db557845790633de97165d"
+    },
+    {
+      "path": "desktop/style.css",
+      "sha256": "f1338a76b7a4cd03e51159a3ada52446df46c5213f1617dc955f98ddb712e0f6"
+    },
+    {
+      "path": "desktop/task_engine.py",
+      "sha256": "1b0b833fa11095fb72ed72642d95f6bbc15e1b484be9987b1c0b1a764622febd"
+    },
+    {
+      "path": "desktop/telemetry_settings.py",
+      "sha256": "7a10b2cbefdcaffb8b1fe4719be3dcc338691ca0ea3a8286e98541943e6db644"
+    },
+    {
+      "path": "desktop/win_desktop.py",
+      "sha256": "9bf165a1c62fd01a92940f23b99f00ebcbde6ace23ed139ff1704c1f11074c0b"
+    },
+    {
+      "path": "desktop/workspace.py",
+      "sha256": "3f919ea95aed02f10b3afcc34a1cb1fb0bcc3bbc1544b560586db9e9c0bc7ead"
+    },
+    {
+      "path": "desktop/workspace_style.css",
+      "sha256": "8cee94ef4c45abc4eb6dee1806f3de4b502c50501ff49b19b167816ba3b49da9"
+    },
+    {
+      "path": "docs/COMMISSIONING.md",
+      "sha256": "aaecf9854cc5e8919e00f2f848bfd8098d4cb6182fc5827f8d8db0d059038910"
+    },
+    {
+      "path": "docs/F1_README.md",
+      "sha256": "4ec3ccd22c09fa56a15883682a738f54bf31aab255e6a989708023d6e3e45585"
+    },
+    {
+      "path": "docs/F3_README.md",
+      "sha256": "84cd69753aec039e198abcac09b2166a8be0f77e6622f873d8cff16a1ff96cc4"
+    },
+    {
+      "path": "docs/OPCUA_READINESS.md",
+      "sha256": "8fabde9cbd35fb7c7ee0fecf0b9a02702bb1ad87a78573534dfd3c207622af1c"
+    },
+    {
+      "path": "docs/PROBE_PHASE1.md",
+      "sha256": "6b9f7a461e3684604341f6a17622612ef2971b9a40d63abff8f6823622dd2b3f"
+    },
+    {
+      "path": "docs/PROBE_PHASE2.md",
+      "sha256": "82c50c6804c2c7295393dbff63a574f5121562806f7f516988d3c167f606b54c"
+    },
+    {
+      "path": "docs/PROBE_PHASE3.md",
+      "sha256": "4ad056c7d9f7150dd2a98b06e1b30b06fe69490718eb3cba3fb945d16fd024c5"
+    },
+    {
+      "path": "docs/PROBE_PHASE3_1.md",
+      "sha256": "d25fc2dfc894cb5ac2c6dba44e00e666c8a816ff742fb6f2eb8503ce253e134f"
+    },
+    {
+      "path": "docs/PROBE_PHASE4.md",
+      "sha256": "4c878eeff3181edf482312074ddb7315c2a33c57c710faa09e75cca180286af1"
+    },
+    {
+      "path": "docs/REAL_USE_DESIGN.md",
+      "sha256": "fc80e3dc3f201ed2712fdde3e167d1e7c3663ec457acc94dd51bc65dacebfc4f"
+    },
+    {
+      "path": "docs/TELEMETRY_SOURCES.md",
+      "sha256": "1b521b133d9f0ff86aaf801f99b8fc0345de6534588e43fef23d42a0fce94962"
+    },
+    {
+      "path": "packaging/aqua-command",
+      "sha256": "ca1da074d3f8e746bc473b7294e140459e2a2f1ef2e330804e832adafb83a20e"
+    },
+    {
+      "path": "packaging/aqua-command-desktop.spec",
+      "sha256": "eb73443b22b9c3905a30d7cb4f1e2305ece5456eace1cdcdd669baa5b7f6a5f1"
+    },
+    {
+      "path": "packaging/build-rpm.sh",
+      "sha256": "4f06db14f26ec18648a0fa4323a9ff98ddd2241209c567392a1c0a9e58eec798"
+    },
+    {
+      "path": "packaging/build-windows.sh",
+      "sha256": "fe3524c81e6976c08e824953adb8f8baace03bce57ee09dc1138079b0f8dc1b9"
+    },
+    {
+      "path": "packaging/icons/org.aquacommand.Desktop.svg",
+      "sha256": "2f1d1706373f0f8b88d55e2784a77b95b087146e83b1342c1f710dd69187aa56"
+    },
+    {
+      "path": "packaging/org.aquacommand.Desktop.desktop",
+      "sha256": "3719de6f9a6675707dd2faa2299e2808cdfadb8f25e46c832b8901aae2583a0c"
+    },
+    {
+      "path": "packaging/privacy_preflight.py",
+      "sha256": "4417eb600d745834e5dad3ee2ccb074beec16d9827b7519dd05e6dedb0730c70"
+    },
+    {
+      "path": "src/__init__.py",
+      "sha256": "6c457f2bab44442fbee6d81cdab5fa209814bd1a5578ef17552d04a3be70c1b9"
+    },
+    {
+      "path": "src/collector/__init__.py",
+      "sha256": "0ef3863566101c2d7ef4aa8581fc67e8cf591b3eb34dbe32da70a9e8b04e329e"
+    },
+    {
+      "path": "src/collector/evidence_api.py",
+      "sha256": "ca658995247f933797ed89970c6d324c20655e122eac49f92c98a602524bf320"
+    },
+    {
+      "path": "src/collector/opcua_read.py",
+      "sha256": "a58a68d5da128ddad55876e223fe10e4d27dc062d4a429bfb7fb3712c14d5595"
+    },
+    {
+      "path": "src/collector/probe_once.py",
+      "sha256": "0db0b8b9617f3c844d9fb9615a1bdf66c261e84a01695115824361a006756189"
+    },
+    {
+      "path": "src/collector/run.py",
+      "sha256": "e39b13ba40506ba8ff305b963e562846971bbca2717a5fce846022cdd7dd1890"
+    },
+    {
+      "path": "src/collector/telemetry.py",
+      "sha256": "5c487ac26cdbe968996cdf5fc5d0b0af77c8b69c54d474e57543815b494ff969"
+    }
+  ]
+}

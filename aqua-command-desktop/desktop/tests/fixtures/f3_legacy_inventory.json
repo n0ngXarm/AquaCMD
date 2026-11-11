@@ -3,9 +3,9 @@
     {
       "device_id": "dev-scada-01",
       "type": "wincc",
-      "configured_ip": "192.168.1.11",
+      "configured_ip": "192.0.2.11",
       "port": 4862,
-      "endpoint_url": "opc.tcp://192.168.1.11:4862",
+      "endpoint_url": "opc.tcp://192.0.2.11:4862",
       "test_tag": "High_Analog.Tank01_Level",
       "network_zone": "SCADA_OT",
       "device_role": "Legacy fixture source 1",
@@ -14,9 +14,9 @@
     {
       "device_id": "dev-scada-02",
       "type": "wincc",
-      "configured_ip": "192.168.1.12",
+      "configured_ip": "192.0.2.12",
       "port": 4862,
-      "endpoint_url": "opc.tcp://192.168.1.12:4862",
+      "endpoint_url": "opc.tcp://192.0.2.12:4862",
       "test_tag": "High_Analog.Tank02_Level",
       "network_zone": "SCADA_OT",
       "device_role": "Legacy fixture source 2",
@@ -25,9 +25,9 @@
     {
       "device_id": "dev-scada-03",
       "type": "wincc",
-      "configured_ip": "192.168.1.13",
+      "configured_ip": "192.0.2.13",
       "port": 4862,
-      "endpoint_url": "opc.tcp://192.168.1.13:4862",
+      "endpoint_url": "opc.tcp://192.0.2.13:4862",
       "test_tag": "High_VSD.CTM13PT_Run",
       "network_zone": "SCADA_OT",
       "device_role": "Legacy fixture source 3",
@@ -36,7 +36,7 @@
     {
       "device_id": "dev-switch-01",
       "type": "switch",
-      "configured_ip": "192.168.1.254",
+      "configured_ip": "192.0.2.254",
       "port": 80,
       "network_zone": "SCADA_OT",
       "device_role": "Legacy fixture switch",
@@ -54,7 +54,7 @@
     {
       "device_id": "dev-router-01",
       "type": "router",
-      "configured_ip": "192.168.100.1",
+      "configured_ip": "198.51.100.1",
       "port": 80,
       "network_zone": "EXTERNAL_WAN",
       "device_role": "Legacy fixture router",

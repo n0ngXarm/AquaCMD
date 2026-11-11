@@ -1,7 +1,8 @@
+<!-- Phase 7 public copy: historical private values redacted. Original evidence remains privately preserved. This is not a rerun or acceptance upgrade. -->
 # รายงานการปรับปรุงคุณภาพ UI: AQUA COMMAND — F1 INDUSTRIAL PRECISION V1.1
 ## Professional Industrial Monitoring Workstation Refinement Pass
 
-**วันที่:** 1 พฤศจิกายน 2026  
+**วันที่:** 1 พฤศจิกายน 2026
 **เป้าหมาย:** ยกระดับหน้าจอ F1 จาก Engineering Prototype สู่ Industrial Monitoring Workstation ระดับมืออาชีพ โดยคงโครงสร้างหลัก Master–Detail ทั้งหมดไว้ ไม่ตัดทอนความสามารถ และแก้ปัญหาการเปิดโปรแกรมจาก Desktop Icon ไม่เห็นอัปเดต
 
 ---
@@ -9,19 +10,19 @@
 ## 1. การเปรียบเทียบภาพก่อนและหลังปรับปรุง (Before & After)
 
 ````carousel
-![ก่อนปรับปรุง (ภาพจริงที่ผู้ใช้ถ่ายจากหน้าจอ: Launcher เรียกโค้ดเก่า + สภาพกล่องข้อความเปล่าเดิม)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/.user_uploaded/uploaded_media_1793532055852.png)
+![ก่อนปรับปรุง (ภาพจริงที่ผู้ใช้ถ่ายจากหน้าจอ: Launcher เรียกโค้ดเก่า + สภาพกล่องข้อความเปล่าเดิม)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/.user_uploaded/uploaded_media_1793532055852.png)
 <!-- slide -->
-![หลังปรับปรุง V1.1 (1366x768: High_VSD ปั๊มน้ำแรงสูง อินเทอร์เฟซแบบ Navy Blueprint ระดับมืออาชีพ)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_vsd.png)
+![หลังปรับปรุง V1.1 (1366x768: High_VSD ปั๊มน้ำแรงสูง อินเทอร์เฟซแบบ Navy Blueprint ระดับมืออาชีพ)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_vsd.png)
 <!-- slide -->
-![หลังปรับปรุง V1.1 (1920x1080 Full HD: แสดงสัญญาณครบ 11+ บรรทัด สวยงาม คมชัด ไม่มีส่วนใดล้น)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1920x1080_full.png)
+![หลังปรับปรุง V1.1 (1920x1080 Full HD: แสดงสัญญาณครบ 11+ บรรทัด สวยงาม คมชัด ไม่มีส่วนใดล้น)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1920x1080_full.png)
 <!-- slide -->
-![หลังปรับปรุง V1.1 (1366x768: High_Valve วาล์วปีกผีเสื้อไฟฟ้า BVEC1-4 พร้อมพิมพ์เขียวทางเทคนิค)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_valve.png)
+![หลังปรับปรุง V1.1 (1366x768: High_Valve วาล์วปีกผีเสื้อไฟฟ้า BVEC1-4 พร้อมพิมพ์เขียวทางเทคนิค)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_valve.png)
 <!-- slide -->
-![หลังปรับปรุง V1.1 (1366x768: High_Analog เครื่องส่งสัญญาณแรงดันและอัตราการไหล 4-20mA)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_analog.png)
+![หลังปรับปรุง V1.1 (1366x768: High_Analog เครื่องส่งสัญญาณแรงดันและอัตราการไหล 4-20mA)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_analog.png)
 <!-- slide -->
-![หลังปรับปรุง V1.1 (1366x768: Properties Mode ตรวจสอบคุณสมบัติทางเทคนิคเฉพาะจุดของสัญญาณ)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_properties.png)
+![หลังปรับปรุง V1.1 (1366x768: Properties Mode ตรวจสอบคุณสมบัติทางเทคนิคเฉพาะจุดของสัญญาณ)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_1366x768_properties.png)
 <!-- slide -->
-![หลังปรับปรุง V1.1 (Empty State: เมื่อยังไม่มีคลัง Tag แสดงโครงสร้าง Station Explorer เรียบหรู)](/home/nong_ing/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_empty_state.png)
+![หลังปรับปรุง V1.1 (Empty State: เมื่อยังไม่มีคลัง Tag แสดงโครงสร้าง Station Explorer เรียบหรู)]([REDACTED_HOME]/.gemini/antigravity-cli/brain/b57326e2-8eaf-4e5e-9289-fae9ebec3137/f1_industrial_empty_state.png)
 ````
 
 ---
@@ -36,8 +37,8 @@
 - **Text Contrast:** สีข้อความหลัก `#EAF1F8` (100%), ข้อความรอง `#AFC0D2` (75%), ข้อความหน่วย/คำอธิบาย `#8FA6BC` (55%) ผ่านมาตรฐาน Contrast WCAG AAA สำหรับห้องปฏิบัติการ
 
 ### 2.2 Top Header (Section A) & ลบ IP Address ที่ละเอียดอ่อน
-- **ลบ IP ดิบและไอคอนไม่จำเป็น:** ตัดการแสดงผล IP Address ดิบ (`192.168.1.14`, `192.168.100.177`) ออกจากแถบด้านบน เพื่อความปลอดภัยระดับอุตสาหกรรม
-- **จัดกลุ่มข้อมูลใหม่:** แสดง App Branding `AQUA COMMAND`, ชื่อสถานี `WINCC V8.1 / INDUSTRIAL OPERATIONS · สถานีผลิตน้ำอุโมงค์`, สถานะคลัง Tag `Catalog: 457 Tags`, สถานะ SCADA `SCADA: Standby (Offline)`, โหมดความปลอดภัย `READ ONLY`, สถานะเน็ต `Internet: Online` และเวลานาฬิกา Monospace ชัดเจน
+- **ลบ IP ดิบและไอคอนไม่จำเป็น:** ตัดการแสดงผล IP Address ดิบ (`[REDACTED_PRIVATE_IP]`, `[REDACTED_PRIVATE_IP]`) ออกจากแถบด้านบน เพื่อความปลอดภัยระดับอุตสาหกรรม
+- **จัดกลุ่มข้อมูลใหม่:** แสดง App Branding `AQUA COMMAND`, ชื่อสถานี `WINCC V8.1 / INDUSTRIAL OPERATIONS · [REDACTED_IDENTITY]`, สถานะคลัง Tag `Catalog: 457 Tags`, สถานะ SCADA `SCADA: Standby (Offline)`, โหมดความปลอดภัย `READ ONLY`, สถานะเน็ต `Internet: Online` และเวลานาฬิกา Monospace ชัดเจน
 - **Zero Emojis:** ลบอิโมจิทั้งหมด (💧, 🔒, 🟢, ⚠️, ❌) ออกจาก Topbar และ Ribbon เปลี่ยนเป็นป้ายสถานะทางวิศวกรรมที่สะอาดตา
 
 ### 2.3 Equipment Explorer (Section D — ฝั่งซ้าย ~28%)
