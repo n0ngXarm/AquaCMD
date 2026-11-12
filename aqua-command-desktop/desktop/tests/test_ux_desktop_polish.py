@@ -208,6 +208,50 @@ class DesktopPolishTests(unittest.TestCase):
         self.assertEqual(self.window.polling_engine.get_telemetry()['poll_count'], 0)
 
 
+    def test_full_window_compact_f3_keeps_cards_inside_zones_above_legend(self):
+        import json
+        from collector.probe_once import EvidenceStore
+        window = self.window
+        window.set_default_size(1024, 600)
+        wait(lambda: (window.get_width(), window.get_height()) == (1024, 600))
+        config = self.directory / 'ux-targets.json'
+        config.write_text(json.dumps({'targets':[{'host':'127.0.0.2','port':4840}], 'ping_timeout_s':.1, 'tcp_timeout_s':.1}))
+        store = EvidenceStore(self.directory / 'ux-evidence.db')
+        store.connection.close()
+        view = window.f3_network_view
+        view.config_path = config
+        view.db_path = store.path
+        window.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
+        wait(lambda: bool(view.api_url))
+        wait(lambda: javascript(view.web, 'Boolean(window.F3 && document.querySelector("[data-n]"))'))
+        javascript(view.web, """(()=>{
+          window.F3.pause();
+          const now=new Date().toISOString();
+          const sample=(ok,detail='')=>({id:1,ok,ts:now,source:'sim',method:'ua_read',detail});
+          snapshot={simulated:true,stale_ms:60000,nodes:[
+            ...Array.from({length:4},(_,i)=>({id:'lab-'+i,label:'LAB Source '+i,kind:'scada',via:'lab-switch',last:{...sample(true),task_groups:i<2?[{name:'กลุ่มระดับน้ำ'},{name:'แจ้งเตือนระดับสูง'}]:[]}})),
+            {id:'lab-switch',label:'LAB Switch',kind:'switch',last:sample(false,'TIMEOUT')},
+            {id:'poll',label:'ตัวตั้งรอบอ่าน',kind:'internal',last:null},
+            {id:'opc',label:'ตัวอ่าน OPC UA',kind:'internal',last:sample(true)},
+            {id:'store',label:'ที่เก็บหลักฐาน (SQLite)',kind:'internal',last:sample(true)},
+            {id:'task',label:'ตัวจัดการ Task',kind:'internal',built:false},
+            {id:'outbox',label:'คิวข้อความออก (Outbox)',kind:'internal',built:false},
+            {id:'relay',label:'ตัวส่งต่อที่ได้รับอนุญาต',kind:'external',built:false},
+            {id:'tg',label:'Telegram',kind:'external',built:false}
+          ]};transport=true;render();return true;
+        })()""")
+        settle(.1)
+        geometry=javascript(view.web, """({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,
+          legendTop:document.getElementById('legend').getBoundingClientRect().top,
+          cards:[...document.querySelectorAll('.node')].map(node=>({id:node.id,bottom:node.getBoundingClientRect().bottom,zoneBottom:node.closest('.zone').getBoundingClientRect().bottom}))})""")
+        self.assertLessEqual(geometry['scrollWidth'], geometry['width'], geometry)
+        self.assertLessEqual(geometry['scrollHeight'], geometry['height'], geometry)
+        for card in geometry['cards']:
+            self.assertLessEqual(card['bottom'], card['zoneBottom'], geometry)
+            self.assertLessEqual(card['bottom'], geometry['legendTop'], geometry)
+        self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
+
+
 
 class PresentationStyleTests(unittest.TestCase):
     def test_css_has_no_secondary_text_below_ten_points(self):

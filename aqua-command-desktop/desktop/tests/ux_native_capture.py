@@ -114,7 +114,19 @@ def main():
                     settle(1.0)
                     file = f'{width}x{height}-{key}.png'
                     capture(window, args.out / file)
-                    records.append({'requested':[width,height], 'actual':[window.get_width(),window.get_height()], 'page':key, 'screenshot':file})
+                    actual = [window.get_width(), window.get_height()]
+                    assert actual == [width, height], ('Actual GTK allocation differs', actual, width, height)
+                    record = {'requested':[width,height], 'actual':actual, 'page':key, 'screenshot':file}
+                    if key == 'F3' and window.f3_network_view.api_url:
+                        geometry = javascript(window.f3_network_view.web, '''({
+                          width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,
+                          legendTop:document.getElementById('legend').getBoundingClientRect().top,
+                          cards:[...document.querySelectorAll('.node')].map(node=>({bottom:node.getBoundingClientRect().bottom,zoneBottom:node.closest('.zone').getBoundingClientRect().bottom}))
+                        })''')
+                        assert geometry['scrollWidth'] <= geometry['width'] and geometry['scrollHeight'] <= geometry['height'], geometry
+                        assert all(card['bottom'] <= min(card['zoneBottom'], geometry['legendTop']) for card in geometry['cards']), geometry
+                        record['f3_geometry'] = geometry
+                    records.append(record)
                     if key == 'F2':
                         javascript(web, "(window.F1.setMode('monitoring'), true)")
                 telemetry = window.polling_engine.get_telemetry()

@@ -548,3 +548,25 @@ to the opener node button. Both F1 and F3 WebViews declare @media (prefers-reduc
 disabling all transitions and animations while retaining functional static status. Statuses
 continue to pair distinct colors with text labels and unicode icons; no status relies on
 color alone.
+
+
+## Independent continuation after the seven UX commits
+
+Verified084f5e4 and the recorded329 GUI/116 contract passes against the actual
+isolated branch. The canonical installed checkout remains main445e1e6; no
+installation or source publication was performed. The Gemini artifacts are
+retained locally in artifacts/ux-gemini for comparison.
+
+A stronger full-window capture check found F3 cards crossing their zone/legend
+at1024x600 (actual WebView1024x417) and1360x768 (1360x585), despite the standalone
+F3 tests passing. A new regression reproduced the compact overlap. Adjusted
+only compact presentation spacing/descriptive subtitles, keeping text size,
+READ ONLY, real results/reasons and age. Full route text remains in tooltips.
+F1 group descriptions now keep their natural height inside the scroll panel.
+
+After correction all18 full-window screenshots passed actual-size and F3 card
+bounds assertions at1024x600/1360x768/1920x1080. The four-BLOCKED full-window
+regression and unchanged standalone F3 assertions passed all3 sizes. All
+captures used SIMULATED disposable profiles, poll_count0, notification stopped
+and unchanged evidence DB. Raw failures and corrected results remain in local
+artifacts; screenshots/raw logs are not committed.

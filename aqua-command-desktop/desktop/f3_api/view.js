@@ -140,7 +140,7 @@ function renderHostRoutes(network) {
       text += target;
     }
     field.textContent = text;
-    field.title = path?.device ? `เส้นทางจาก Fedora ผ่าน ${path.device} · ใช้ดู IP ต้นทางและปลายทาง` : '';
+    field.title = text + (path?.device ? ` · เส้นทางจาก Fedora ผ่าน ${path.device} · ใช้ดู IP ต้นทางและปลายทาง` : '');
   }
 }
 
