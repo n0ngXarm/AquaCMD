@@ -1582,7 +1582,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if page in self.nav_btns:
             self.nav_btns[page].set_active(True)
         if page != 'overview':
-            self.set_task_dialog_active(False)
+            self.set_task_dialog_active(False, restore_focus=False)
         if page == 'tags' and self.tags_page_dirty:
             self.render_tags_page_grid()
 
@@ -1603,13 +1603,22 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if getattr(self, 'hybrid_ui', None) and self.hybrid_ui.bridge:
             self.hybrid_ui.bridge.record_refresh(len(self.scanned_tags))
 
-    def set_task_dialog_active(self, active):
+    def set_task_dialog_active(self, active, *, restore_focus=True):
         """Reflect a visible Task dialog; never start a Task or change its data."""
+        previous = getattr(self, '_task_dialog_visible', False)
+        if active and not previous:
+            self._task_dialog_opener = self.get_focus()
+        self._task_dialog_visible = bool(active)
         button = getattr(self, 'nav_btns', {}).get('tasks')
         if button is not None:
             button.set_active(bool(active))
         if hasattr(self, 'unified_workspace'):
             self.unified_workspace.current_workspace_mode = 'task_manager' if active else 'monitoring'
+        if previous and not active:
+            opener = getattr(self, '_task_dialog_opener', None)
+            self._task_dialog_opener = None
+            if restore_focus and opener is not None and opener.get_mapped():
+                opener.grab_focus()
 
     def activate_workspace_mode(self, mode):
         self.stack.set_visible_child_name('overview')
@@ -1618,7 +1627,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 self.set_task_dialog_active(True)
                 self.unified_workspace.open_task_dialog()
             else:
-                self.set_task_dialog_active(False)
+                self.set_task_dialog_active(False, restore_focus=False)
                 self.unified_workspace.set_workspace_mode('monitoring')
 
     # ---------------------------------------------------------

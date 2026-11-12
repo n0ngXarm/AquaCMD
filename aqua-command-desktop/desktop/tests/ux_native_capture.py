@@ -91,6 +91,7 @@ def main():
     application = Gtk.Application(application_id='org.aqua.ux.capture', flags=Gio.ApplicationFlags.NON_UNIQUE)
     application.register(None)
     records = []
+    confirmation_screenshots = []
     with patch('app.DEFAULT_WINCC_EXPORT', catalog), patch('app.read_real_machine_data', return_value=metrics), \
             patch('f3_api_view.read_linux_snapshot', return_value={'state':'UNKNOWN','interfaces':{}}):
         for width, height in ((1024,600), (1360,768), (1920,1080)):
@@ -129,6 +130,33 @@ def main():
                     records.append(record)
                     if key == 'F2':
                         javascript(web, "(window.F1.setMode('monitoring'), true)")
+                if args.out.name == 'ux-after' and width == 1360:
+                    window.on_global_key_pressed(None, Gdk.KEY_F8, 0, 0)
+                    dialog = window._close_dialog
+                    wait(dialog.get_mapped)
+                    file = 'confirm-close-1360.png'
+                    capture(dialog, args.out / file)
+                    confirmation_screenshots.append(file)
+                    dialog.response(Gtk.ResponseType.CANCEL)
+                    view = window.f3_network_view
+                    path = view._telegram_demo_config
+                    previous = path.read_bytes() if path.exists() else None
+                    path.write_text(json.dumps({'enabled': True, 'bot_token':'123:synthetic-ui-only', 'chat_id':'synthetic-chat-123456'}))
+                    try:
+                        window.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
+                        wait(lambda: bool(view.api_url))
+                        with patch.object(view, '_open_demo') as start:
+                            view._confirm_demo()
+                            confirmation = view._demo_confirmation
+                            wait(confirmation.get_mapped)
+                            file = 'confirm-simulated-telegram-1360.png'
+                            capture(confirmation, args.out / file)
+                            confirmation_screenshots.append(file)
+                            confirmation.response(Gtk.ResponseType.CANCEL)
+                            start.assert_not_called()
+                    finally:
+                        if previous is None: path.unlink()
+                        else: path.write_bytes(previous)
                 telemetry = window.polling_engine.get_telemetry()
                 assert telemetry['state'] == 'STOPPED' and telemetry['poll_count'] == 0
                 assert not window.notification_worker.running
@@ -144,7 +172,7 @@ def main():
                 settle()
     application.quit()
     (args.out / 'native-layout.json').write_text(json.dumps(records, indent=2))
-    print(json.dumps({'screenshots':len(records), 'data':'SIMULATED test profile only', 'poll_count':0,
+    print(json.dumps({'screenshots':len(records), 'confirmation_screenshots':confirmation_screenshots, 'data':'SIMULATED test profile only', 'poll_count':0,
                       'notification_worker_running':False, 'evidence_db_unchanged':True, 'records':records}), flush=True)
 
 

@@ -251,6 +251,19 @@ class DesktopPolishTests(unittest.TestCase):
             self.assertLessEqual(card['bottom'], geometry['legendTop'], geometry)
         self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
 
+    def test_native_f2_keyboard_focus_enters_dialog_and_returns_to_nav_opener(self):
+        window = self.window
+        web = window.unified_workspace.f1_api.web
+        wait(lambda: javascript(web, 'Boolean(window.F1)'))
+        opener = window.nav_btns['tasks']
+        opener.grab_focus()
+        window.on_global_key_pressed(None, Gdk.KEY_F2, 0, 0)
+        wait(lambda: javascript(web, "document.getElementById('modalOverlay').open"))
+        settle(.1)
+        self.assertIs(window.get_focus(), web, 'F2 keyboard focus must enter its WebKit dialog')
+        javascript(web, "(document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})), true)")
+        wait(lambda: not window.nav_btns['tasks'].get_active())
+        self.assertIs(window.get_focus(), opener)
 
 
 class PresentationStyleTests(unittest.TestCase):

@@ -570,3 +570,37 @@ regression and unchanged standalone F3 assertions passed all3 sizes. All
 captures used SIMULATED disposable profiles, poll_count0, notification stopped
 and unchanged evidence DB. Raw failures and corrected results remain in local
 artifacts; screenshots/raw logs are not committed.
+
+## สรุป UX native GTK4 รอบสุดท้าย — 2026-11-12
+
+เพิ่ม regression ของ F2 ที่พิสูจน์ว่าโฟกัสค้างบนปุ่มนำทางแทนที่จะเข้า
+WebKit dialog ก่อนแก้ แล้วผ่านหลังให้ WebView รับโฟกัสและคืนกลับตัวเปิดจริง
+เมื่อปิด dialog การเปลี่ยนหน้าชัดเจนไม่ดึงโฟกัสกลับผิดหน้า ส่วน fallback
+Task/Inspector เก็บและคืนโฟกัสตัวเปิดจริงด้วย เป็นการแก้ presentation เท่านั้น
+
+ผลชุดสุดท้าย: desktop331 tests ผ่าน (รวม UX12 tests ซึ่งรันแยกผ่านด้วย),
+source contracts116 ผ่าน และ F3 handoff3/3 ขนาดผ่าน ทุกคำสั่ง exit0
+ภาพ F1–F6 ครบ18ภาพมีขนาดจริง1024x600/1360x768/1920x1080ตรงตามร้องขอ
+พร้อมภาพยืนยันปิดโปรแกรมและยืนยัน SIMULATED Telegram อีก2ภาพ โดยกดยกเลิก
+ทั้งสองหน้าต่าง ไม่มีการเริ่ม demo หรือส่งข้อความ คง poll_count0,
+notification worker หยุด และ evidence DB ไม่เปลี่ยน
+
+ข้อค้นพบที่มีอยู่ก่อนแล้ว: F1 Arrow/Enter/Space/Esc, reduced-motion ของ
+F1/F3 และ F3 Esc/คืนโฟกัส จึงไม่อ้างว่าเพิ่มทั้งหมดใหม่ ปุ่ม btn_top_f2
+ของ fallback ไม่ปรากฏซ้ำในเส้นทาง F1ApiView ที่ใช้งานอยู่
+
+ข้อจำกัด: legacy ui_test.py/layout_test.py ยังมี baseline ImportError
+ของ AquaWindow; ไม่ลด assertions หรือแก้ legacy scripts เพื่อให้ผ่าน
+รอบ323 tests เคยมี polling timing failureหนึ่งรายการ; narrow rerunเดิม
+และชุดสุดท้าย331 tests ผ่านโดยไม่แก้ polling logic/test ดังกล่าว
+ยังมี ResourceWarning ของ event loop และไม่มีการตรวจ screen reader จริง
+ไม่ทำ optional theme switch เพราะเกี่ยวข้องกับ private settings handling
+Windows/WinCC/PLC/LAN/Telegramจริง ยังไม่ได้ตรวจสอบ
+
+รายงานส่งมอบภาษาไทยอยู่ desktop/UX_POLISH_REPORT.md รายการคำสั่งเต็มและ
+raw output อยู่ artifacts/ux-before และ artifacts/ux-after ภายใน isolated
+checkout เท่านั้น ผล contrast12คู่สีผ่าน4.5:1ทั้งหมด (ต่ำสุด4.743:1)
+เป็นการวัดคู่สี CSS ไม่ใช่การรับรองทุกพิกเซลหรือทุกสถานะของแอป
+no_fake_check, privacy preflight และ diff whitespace checks ผ่าน
+ขอบเขตยังเป็น local branch ux/desktop-polish: ไม่มีติดตั้ง/push/merge
+โปรแกรมจากไอคอนเดิมยังใช้ canonical main445e1e6

@@ -683,9 +683,12 @@ class F1ApiView:
     def open_task_dialog(self, task_id=None):
         t_id = task_id or self.recent_task_id
         safe_id = json.dumps(t_id, ensure_ascii=False)
+        self.web.grab_focus()
         self.web.evaluate_javascript(f'window.F1?.openTaskDialog({safe_id})', -1, None, None, None, None, None)
 
     def set_workspace_mode(self, mode):
+        if mode == 'task_manager':
+            self.web.grab_focus()
         safe_mode = json.dumps(mode, ensure_ascii=False)
         self.web.evaluate_javascript(f'window.F1?.setMode({safe_mode})', -1, None, None, None, None, None)
 

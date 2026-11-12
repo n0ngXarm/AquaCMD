@@ -824,11 +824,17 @@ class AquaUnifiedWorkspaceView:
         self.inspector_action_error.set_visible(False)
         self.inspector_technical.set_expanded(False)
         self.render_inspector_tag(self.selected_inspector_tag)
+        if not self.inspector_dialog.get_visible():
+            self._inspector_opener = self.owner.get_focus() if isinstance(self.owner, Gtk.Window) else None
         self.inspector_dialog.present()
         self.btn_close_inspector.grab_focus()
 
     def _restore_tag_focus(self, popup, _):
         if not popup.get_visible() and self.selected_inspector_tag:
+            opener = getattr(self, '_inspector_opener', None)
+            if opener is not None and opener.get_mapped():
+                opener.grab_focus()
+                return
             row = self.catalog_rows.get(self.selected_inspector_tag.get('name'))
             if row is not None:
                 row.grab_focus()
@@ -852,6 +858,8 @@ class AquaUnifiedWorkspaceView:
         if not self.task_dialog.get_visible():
             self.load_current_task_to_ui()
         self.current_workspace_mode = 'task_manager'
+        if not self.task_dialog.get_visible():
+            self._task_opener = self.owner.get_focus() if isinstance(self.owner, Gtk.Window) else None
         self.task_dialog.present()
         self.task_selector_combo.grab_focus()
 
@@ -1730,7 +1738,8 @@ class AquaUnifiedWorkspaceView:
             self.current_workspace_mode = 'monitoring'
             if hasattr(self.owner, 'set_task_dialog_active'):
                 self.owner.set_task_dialog_active(False)
-            self.btn_top_f2.grab_focus()
+            opener = getattr(self, '_task_opener', None)
+            (opener if opener is not None and opener.get_mapped() else self.btn_top_f2).grab_focus()
         self._guard_task_changes(close)
         return True
 
