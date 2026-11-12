@@ -251,6 +251,56 @@ class DesktopPolishTests(unittest.TestCase):
             self.assertLessEqual(card['bottom'], geometry['legendTop'], geometry)
         self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
 
+    def test_reference_topology_keeps_historical_failures_inside_compact_native_window(self):
+        import json
+        from collector.probe_once import EvidenceStore
+        window = self.window
+        window.set_default_size(1024, 600)
+        wait(lambda: (window.get_width(), window.get_height()) == (1024, 600))
+        config = self.directory / 'reference-targets.json'
+        config.write_text(json.dumps({'targets':[{'host':'127.0.0.2','port':4840}], 'ping_timeout_s':.1, 'tcp_timeout_s':.1}))
+        store = EvidenceStore(self.directory / 'reference-evidence.db')
+        store.connection.close()
+        view = window.f3_network_view
+        view.config_path, view.db_path = config, store.path
+        window.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
+        wait(lambda: bool(view.api_url))
+        wait(lambda: javascript(view.web, 'Boolean(window.F3 && document.querySelector("[data-n]"))'))
+        javascript(view.web, """(()=>{
+          window.F3.pause();
+          const ts=new Date(Date.now()-8162*60000).toISOString();
+          const last=ok=>({id:1,ok,ts,source:'sim',method:'ua_read',detail:ok?'':'TIMEOUT'});
+          snapshot={simulated:true,stale_ms:60000,local_network:{paths:{
+            OT:{status:'ROUTE',source_ip:'192.0.2.177',target:'192.0.2.254',via:'198.51.100.1'},
+            WAN:{status:'ROUTE',source_ip:'192.0.2.177',target:'198.51.100.1',via:'198.51.100.1'}
+          }},nodes:[
+            ...Array.from({length:4},(_,i)=>({id:'lab-'+i,label:'192.0.2.'+(11+i),kind:'scada',via:'lab-switch',last:last(false)})),
+            {id:'lab-switch',label:'192.0.2.254',kind:'switch',last:last(false)},
+            {id:'poll',label:'ตัวตั้งรอบอ่าน',kind:'internal',last:null},
+            {id:'opc',label:'ตัวอ่าน OPC UA',kind:'internal',last:last(false)},
+            {id:'store',label:'ที่เก็บหลักฐาน (SQLite)',kind:'internal',last:last(true)},
+            {id:'task',label:'ตัวจัดการ Task',kind:'internal',built:false},
+            {id:'outbox',label:'คิวข้อความออก (Outbox)',kind:'internal',built:false},
+            {id:'lab-router',label:'198.51.100.1',kind:'router',last:last(false)},
+            {id:'relay',label:'ตัวส่งต่อที่ได้รับอนุญาต',kind:'external',built:false},
+            {id:'tg',label:'Telegram',kind:'external',built:false}
+          ]};transport=true;render();return true;
+        })()""")
+        settle(.1)
+        geometry=javascript(view.web, """({width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,
+          legendTop:document.getElementById('legend').getBoundingClientRect().top,
+          cards:[...document.querySelectorAll('.node')].map(node=>({id:node.id,bottom:node.getBoundingClientRect().bottom,zoneBottom:node.closest('.zone').getBoundingClientRect().bottom}))})""")
+        self.assertLessEqual(geometry['scrollHeight'], geometry['height'], geometry)
+        self.assertLessEqual(geometry['scrollWidth'], geometry['width'], geometry)
+        for card in geometry['cards']:
+            self.assertLessEqual(card['bottom'], min(card['zoneBottom'], geometry['legendTop']), geometry)
+        self.assertEqual(javascript(view.web, 'document.querySelectorAll("[data-state=FAIL]").length'), 7)
+        self.assertEqual(javascript(view.web, 'document.querySelectorAll("[data-state=BLOCKED]").length'), 0)
+        self.assertIn('8162', javascript(view.web, 'document.querySelector(".age").textContent'))
+        self.assertIn('ข้อมูลล่าสุดเมื่อ', javascript(view.web, 'document.querySelector(".age").title'))
+        self.assertIn('TIMEOUT', javascript(view.web, 'document.querySelector(".failure-reason").textContent'))
+        self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
+
     def test_native_f2_keyboard_focus_enters_dialog_and_returns_to_nav_opener(self):
         window = self.window
         web = window.unified_workspace.f1_api.web

@@ -2,6 +2,10 @@
 
 วันที่ 2026-11-12 · สาขา local `ux/desktop-polish` · ฐาน `445e1e6`
 
+อัปเดตหลังผู้ใช้ส่งภาพอ้างอิง: รักษาหน้าตาผังสามคอลัมน์เดิม และใช้ภาพ
+1920x1080 ที่มี topology ครบในการเทียบ ผลล่าสุด Desktop332 / contracts116 /
+UX13 tests ผ่าน พร้อม regression ของประวัติ FAIL เก่าที่จอเล็ก ดูรายละเอียดท้ายรายงาน
+
 งานปรับ GUI/presentation เสร็จใน isolated checkout และผ่านชุดตรวจด้านล่าง
 โปรแกรมที่ไอคอนเดิมเปิดยังเป็น canonical `main` ที่ `445e1e6`
 ไม่มีการติดตั้ง dependency/โปรแกรม, push, merge, deployment หรือแก้ OS/service/network
@@ -21,7 +25,8 @@
 | `5458cc0` | คำอธิบายหน้าว่าง/รอ, ปุ่มไป F5/F6 ผ่าน handler เดิม, อายุข้อมูลและเหตุผลจริง |
 | `084f5e4` | accessible labels, Tab เข้าถึงแถว F1 และ reduced-motion ครบขึ้น |
 | `0a72d8f` | แก้ F3 card ล้นในหน้าต่าง native จริงและความสูงกลุ่ม F1 พร้อม regression |
-| commit ที่แนบรายงานนี้ | โฟกัสเข้า F2 และคืนตัวเปิดจริง, ภาพ confirmation และรายงานผลสุดท้าย |
+| `54bead1` | โฟกัสเข้า F2 และคืนตัวเปิดจริง, ภาพ confirmation และรายงานส่งมอบแรก |
+| commit ที่แนบการแก้ภาพอ้างอิงนี้ | ย่ออายุข้อมูล F3, จัด banner จอเล็ก และ regression ประวัติ FAIL พร้อม Switch/Router |
 
 ทุก commit อยู่บนสาขา local เท่านั้น ไม่มีการแก้ประวัติเดิม
 
@@ -52,9 +57,9 @@
 
 | การตรวจ | ก่อนแก้ | ผลสุดท้าย |
 | --- | --- | --- |
-| Desktop unittest discovery | 319 tests ผ่าน | 331 tests ผ่าน, exit 0 |
+| Desktop unittest discovery | 319 tests ผ่าน | 332 tests ผ่าน, exit 0 |
 | Source contracts | 116 tests ผ่าน | 116 tests ผ่าน, exit 0 |
-| UX focused suite | tests ใหม่แสดงปัญหาก่อนแก้ตาม raw logs | 12 tests ผ่าน, exit 0; เป็นส่วนหนึ่งของ 331 tests |
+| UX focused suite | tests ใหม่แสดงปัญหาก่อนแก้ตาม raw logs | 13 tests ผ่าน, exit 0; เป็นส่วนหนึ่งของ 332 tests |
 | F3 standalone 1024x496 | ไม่ผ่าน: viewport สูง 457, scrollHeight 499 | ผ่าน, exit 0 |
 | F3 standalone 1360x616 / 1920x1009 | ผ่านทั้งสองขนาด | ผ่านทั้งสองขนาด, exit 0 |
 | Full native F1–F6 | 18ภาพ; ขอ 1024x600 แต่ได้จริง 1024x700 จาก min-height เดิม | 18ภาพ ขนาดจริงตรง 1024x600/1360x768/1920x1080 |
@@ -124,7 +129,7 @@ git diff --check 445e1e6
 git diff --exit-code 445e1e6 -- aqua-command backend config windows-reader aqua-command-desktop/backend aqua-command-desktop/collector aqua-command-desktop/config aqua-command-desktop/windows-reader
 ```
 
-ข้อความดิบส่วนท้ายจากชุดสุดท้าย (ไฟล์เต็มเก็บใน artifacts):
+ข้อความดิบส่วนท้ายจากชุดส่งมอบแรก (ผลหลังแก้ภาพอ้างอิงอยู่ท้ายรายงาน):
 
 ```text
 Ran 331 tests in 74.149s
@@ -205,3 +210,60 @@ GTK accessibility bus warning ทำให้ไม่อ้างว่าผ�
 ชุด desktop ยังมี ResourceWarning ของ unclosed event loop แม้ exit0
 legacy UI/layout scripts ที่ import class เก่ายังไม่ผ่านตั้งแต่ baseline
 ไม่มีผลรับรอง production/field acceptance จากงานนี้
+
+## ตรวจซ้ำตามภาพอ้างอิงของผู้ใช้
+
+ภาพส่งมอบแรกเลือกจอ1024และโปรไฟล์ที่มีเฉพาะ4ต้นทาง ไม่มี Switch/Router
+หรือหลักฐานสถานะ ภาพก่อน/หลังเดิมทั้งคู่จึงไม่เหมาะกับการเทียบภาพอ้างอิง
+ที่1920x1080และมีองค์ประกอบครบ ไม่ใช่หลักฐานว่าองค์ประกอบเหล่านี้ถูกลบจาก runtime
+
+สร้างภาพ native GTK ที่1920x1080/1360x768/1024x600จาก disposable profile
+ซึ่งมี4ต้นทาง, Switch, Router, ห้าขั้นตอนภายใน และ Relay/Telegram
+รวม13การ์ด/12เส้น ใช้ documentation addresses และ evidence source=sim
+ทั้งชุด มี SIMULATED ในชื่อหน้าต่างและ banner ไม่มีข้อมูลจริงจากภาพอ้างอิงลงใน source
+ตัวจับภาพเฉพาะงานอยู่ `artifacts/ux-reference/reference_capture.py` และไม่ commit
+
+การตรวจนี้พบปัญหาที่ชุดก่อนยังไม่ครอบคลุม: ประวัติ FAIL เก่า8162นาที
+พร้อมข้อความเหตุผล ทำให้จอ1024มี scrollHeight459 ทั้งที่ viewport417
+เพิ่ม regression แล้วตรวจ fail ก่อนแก้ (exit1) จากนั้นย่อข้อความอายุที่ซ้ำ
+เป็นเช่น `8162 นาทีที่แล้ว` และให้ tooltip คง `ข้อมูลล่าสุดเมื่อ ...`
+ลดเฉพาะ padding/line-height ของ banner จอเล็ก ไม่ลดขนาด font/controls
+คงผล FAIL เดิม เหตุผล TIMEOUT และไม่ตีประวัติ Switch ล้มเหลวเป็น BLOCKED ปัจจุบัน
+regression เดิมผ่านหลังแก้ (exit0) ไม่มีการผ่อน assertions
+
+ภาพสุดท้ายทั้ง3ขนาดมี13การ์ด/12เส้น ไม่มีการ์ดพ้น zone/legend หรือ scroll overflow
+poll_count0, notification worker หยุด, demo process ไม่มี และ evidence DB ไม่เปลี่ยน
+ภาพสำหรับเทียบหน้าตาหลักคือ `artifacts/ux-reference/1920x1080-F3.png`
+ไม่ใช้สีแดง/เขียวหรือเส้นจำลองนี้เป็นหลักฐานสถานะของเครื่องจริง
+
+ผลดิบชุดล่าสุด:
+
+```text
+Ran 332 tests in 75.107s
+
+OK
+EXIT_CODE=0
+
+Ran 116 tests in 20.649s
+
+OK
+EXIT_CODE=0
+
+Ran 13 tests in 11.989s
+
+OK
+EXIT_CODE=0
+```
+
+F3 handoff1024x496/1360x616/1920x1009 exit0ทั้งหมด
+คำสั่ง child เต็มพร้อม env ของ F3 อยู่ `artifacts/ux-reference/verification-commands.json`
+และ raw output อยู่ `*-raw.txt` ใน directory เดียวกัน คำสั่ง parent ใช้
+Python runtime เดิมกับ `artifacts/ux-reference/reference_capture.py --isolate`
+สำหรับจับภาพ และเพิ่ม `--suite` สำหรับชุดทดสอบ โดยสร้าง HOME ชั่วคราว
+และตรวจยืนยัน network namespace แยกก่อนเปิด loopback คำสั่งเต็ม/HEAD/hashes
+รอบนี้อยู่ `artifacts/ux-reference/final-receipt.json`
+
+ไฟล์แก้เพิ่มในรอบอ้างอิง: `desktop/f3_api/view.js`, `desktop/f3_api/view.css`,
+`desktop/tests/test_ux_desktop_polish.py`, `desktop/UX_POLISH_REPORT.md`
+และ `PROJECT_PROGRESS.md` ข้อจำกัด legacy scripts/ResourceWarning และ
+รายการยังไม่ได้ตรวจสอบข้างต้นยังเหมือนเดิม ไม่มีติดตั้ง/push/merge

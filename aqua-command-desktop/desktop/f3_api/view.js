@@ -175,8 +175,10 @@ function render() {
       const result = results.get(node.id);
       const state = ST[result.k];
       const label = result.historical || (result.k === 'FAIL' && result.clock) ? 'ผลตรวจเดิม: ไม่ตอบ' : state.t;
-      const age = result.clock ? ' · เวลาหลักฐานอยู่ในอนาคต' :
-        result.age == null ? '' : ` · ข้อมูลล่าสุดเมื่อ ${ageLabel(result.age)}ก่อน`;
+      const ageText = result.clock ? 'เวลาหลักฐานอยู่ในอนาคต' :
+        result.age == null ? '' : `${ageLabel(result.age)}ที่แล้ว`;
+      const age = ageText ? ` · ${ageText}` : '';
+      const ageTitle = result.clock ? ageText : ageText ? `ข้อมูลล่าสุดเมื่อ ${ageText}` : '';
       const id = escapeHTML(node.id);
       const reason = result.k === 'FAIL' && node.last ? failureReason(node.last.detail) : '';
       const groups = transport ? taskGroupLabel(node.last) : '';
@@ -185,7 +187,7 @@ function render() {
         aria-pressed="${dialog.open && selected === node.id}" aria-label="${escapeHTML(node.label || node.id)}: ${escapeHTML(label)}" title="${escapeHTML(node.last?.detail ?? 'ยังไม่มีหลักฐาน')}" style="--c:${statusColor(result.k)}">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[iconName(node)]}</svg>
         <strong>${escapeHTML(node.label)}</strong><small>${escapeHTML(subtitles[iconName(node)] ?? subtitles[node.kind])}</small>
-        <span class="st"><span class="status-icon" aria-hidden="true">${state.i}</span> ${label}<span class="age">${age}</span></span>
+        <span class="st"><span class="status-icon" aria-hidden="true">${state.i}</span> ${label}<span class="age" title="${escapeHTML(ageTitle)}">${age}</span></span>
         ${reason ? `<span class="failure-reason" title="${escapeHTML(node.last.detail)}">${escapeHTML(reason)}</span>` : ''}
         ${groups ? `<span class="task-groups" title="${escapeHTML(groups)}">${escapeHTML(groups)}</span>` : ''}</button>`;
     }).join('');

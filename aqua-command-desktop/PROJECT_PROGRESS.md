@@ -604,3 +604,24 @@ checkout เท่านั้น ผล contrast12คู่สีผ่าน4.
 no_fake_check, privacy preflight และ diff whitespace checks ผ่าน
 ขอบเขตยังเป็น local branch ux/desktop-polish: ไม่มีติดตั้ง/push/merge
 โปรแกรมจากไอคอนเดิมยังใช้ canonical main445e1e6
+
+## แก้ตามภาพอ้างอิงเดิมของผู้ใช้ — 2026-11-12
+
+ผู้ใช้ชี้ว่าภาพก่อนหน้าดูดีกว่า ให้ยึดหน้าตาผัง native สามคอลัมน์เดิม
+ภาพส่งมอบแรกเป็นจอ1024พร้อม test profile ที่ไม่มี Switch/Router/evidence
+จึงไม่เหมาะกับการตัดสินหน้าตา เทียบกับภาพผู้ใช้ที่1920x1080
+สร้างภาพ reference ครบ13การ์ด/12เส้นที่3ขนาดโดยใช้ documentation addresses
+และ evidence source=sim ใน HOME ชั่วคราว ไม่มีข้อมูลจริงจากภาพผู้ใช้ลง source
+
+พบ regression เพิ่มเมื่อมีประวัติ FAIL เก่าและเหตุผลเต็มที่1024x600:
+viewport417แต่ scrollHeight459 เพิ่ม test แคบแล้ว failก่อนแก้ (exit1)
+ย่อข้อความอายุซ้ำเป็นเช่น8162นาทีที่แล้ว พร้อม tooltip ข้อมูลล่าสุดเมื่อ...
+และลด padding/line-height ของ banner จอเล็ก โดยไม่ลด font/control floors
+regression เดิมผ่านหลังแก้ คง FAIL, TIMEOUT และแยกประวัติทางผ่านจาก BLOCKED ปัจจุบัน
+
+ผลล่าสุด Desktop332 tests ผ่าน, contracts116ผ่าน, UX13ผ่าน (รวมใน332),
+F3 handoff3/3ผ่าน ทุกคำสั่ง exit0 ภาพ reference3ขนาดไม่มี scroll/card overflow
+ยังคง poll_count0, notificationหยุด, ไม่มี demo process และ evidence DBไม่เปลี่ยน
+หลักฐานเพิ่มอยู่ artifacts/ux-reference/ รายละเอียดใน desktop/UX_POLISH_REPORT.md
+โปรแกรมที่ติดตั้งและ canonical mainไม่เปลี่ยน ไม่มี install/push/merge
+Windows/WinCC/PLC/LAN/Telegramจริงและ screen reader ยังไม่ได้ตรวจสอบ

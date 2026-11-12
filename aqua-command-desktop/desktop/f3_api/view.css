@@ -341,6 +341,7 @@ body[data-signal="error"] #f3-toast { border-color: var(--fail); }
 
 /* Compact GTK windows need room for five stages, their reasons and the legend. */
 @media (min-width: 701px) and (max-height: 650px) {
+  .banner { padding-block: 1px; line-height: 1.2; }
   #dia { padding: 3px; gap: 12px; }
   .zone { padding: 4px; }
   .zone.a > p, .zone.c > p { display: none; }
