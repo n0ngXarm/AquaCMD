@@ -97,6 +97,7 @@ def main():
         for width, height in ((1024,600), (1360,768), (1920,1080)):
             window = app.AquaWinCCWindow(application)
             window.set_title('AQUA COMMAND · SIMULATED TEST PROFILE')
+            window.alarm_icon.set_text('SIMULATED')
             window.set_default_size(width, height)
             window.present()
             wait(window.get_mapped)

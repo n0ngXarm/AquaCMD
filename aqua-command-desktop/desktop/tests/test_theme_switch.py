@@ -138,6 +138,34 @@ class ThemeSwitchTests(unittest.TestCase):
                 self.assertLessEqual(window.header_box.get_allocated_height(), 56)
                 self.assertIs(window.navigation.get_parent(), window.header_box)
 
+    def test_native_component_css_parses_in_both_themes(self):
+        from theme_tokens import compile_native_css
+        directory = Path(app.__file__).parent
+        sources = [app.CSS_DATA] + [(directory / name).read_bytes() for name in
+                                   ('style.css', 'f1_style.css', 'f2_style.css', 'workspace_style.css')]
+        for mode in ('light', 'dark'):
+            for source in sources:
+                errors = []
+                provider = Gtk.CssProvider()
+                provider.connect('parsing-error', lambda _, section, error: errors.append(str(error)))
+                provider.load_from_data(compile_native_css(mode, source))
+                self.assertEqual(errors, [], (mode, errors))
+
+    def test_standard_action_variants_have_the_same_height(self):
+        window = self.window
+        box = Gtk.Box(spacing=8, valign=Gtk.Align.START)
+        controls = []
+        for variant in ('primary', 'secondary', 'ghost', 'danger'):
+            button = Gtk.Button(label='ทดสอบ', valign=Gtk.Align.START)
+            button.add_css_class('button-' + variant)
+            box.append(button)
+            controls.append(button)
+        window.stack.add_named(box, 'component-test')
+        window.stack.set_visible_child_name('component-test')
+        settle(.1)
+        self.assertEqual([button.get_allocated_height() for button in controls], [34] * 4)
+        self.assertIs(window.get_titlebar(), window.chrome_handle)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -912,9 +912,9 @@ mark.search-match {
 
 /* Compact secondary text remains readable; rows keep room for keyboard controls. */
 .table-row, .assigned-tag-row, .modal-body, .in { font-size: 14px; }
-.btn, .btn-quick-task, .btn-inspect, .btn-close-modal, .in, input[type="search"], select { min-height: 36px; }
-.btn-inspect, .btn-close-modal, [data-remove-bound-task] { min-width: 36px; min-height: 36px; }
-.assigned-tag-row, .chk-row { min-height: 36px; }
+.btn, .btn-quick-task, .btn-inspect, .btn-close-modal, .in, input[type="search"], select { min-height: 34px; }
+.btn-inspect, .btn-close-modal, [data-remove-bound-task] { min-width: 36px; min-height: 34px; }
+.assigned-tag-row, .chk-row { min-height: 34px; }
 .btn:disabled { opacity: 1; }
 
 .table-row > div, .assigned-tag-row > div, .cell-status { font-size: 14px; }

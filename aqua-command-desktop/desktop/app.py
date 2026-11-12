@@ -136,10 +136,10 @@ from gi.repository import Gtk, Gdk, GLib, Pango, PangoCairo
 import cairo
 
 try:
-    from .theme_tokens import DEFAULT_THEME, THEMES, gtk_definitions
+    from .theme_tokens import THEMES, compile_native_css
     from .theme_prefs import load_theme, save_theme
 except ImportError:
-    from theme_tokens import DEFAULT_THEME, THEMES, gtk_definitions
+    from theme_tokens import THEMES, compile_native_css
     from theme_prefs import load_theme, save_theme
 
 USE_UNIFIED_WORKSPACE = True
@@ -1557,6 +1557,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         except Exception:
             pass  # Grafana integration failure cannot prevent native startup.
 
+        root_box.remove(topbar)
+        self.chrome_handle = Gtk.WindowHandle()
+        self.chrome_handle.add_css_class('titlebar')
+        self.chrome_handle.set_child(topbar)
+        self.set_titlebar(self.chrome_handle)
+
     def _nav_content(self, key, title, shortcut):
         content = Gtk.Box(spacing=5, halign=Gtk.Align.CENTER)
         caption = Gtk.Label(label=title)
@@ -1607,14 +1613,13 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if mode == self.theme_mode and self._theme_providers:
             self._sync_theme_controls()
             return True
-        prefix = gtk_definitions(mode).encode()
         directory = Path(__file__).resolve().parent
         styles = [(CSS_DATA, 0)] + [( (directory / name).read_bytes(), priority)
-                  for name, priority in [('f1_style.css', 10), ('f2_style.css', 12), ('workspace_style.css', 15)]]
+                  for name, priority in [('f1_style.css', 10), ('f2_style.css', 12), ('workspace_style.css', 15), ('style.css', 30)]]
         providers = []
         for data, priority in styles:
             provider = Gtk.CssProvider()
-            provider.load_from_data(prefix + data)
+            provider.load_from_data(compile_native_css(mode, data))
             providers.append((provider, priority))
         display = self.get_display()
         for provider, priority in providers:
@@ -1646,6 +1651,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.help_button = Gtk.Button(icon_name='help-browser-symbolic')
         self.help_button.add_css_class('fkey-btn')
         self.help_button.add_css_class('icon-button')
+        self.help_button.add_css_class('button-ghost')
         self.help_button.set_size_request(38, -1)
         self.help_button.set_tooltip_text('คู่มือการใช้งาน · F9')
         self.help_button.update_property([Gtk.AccessibleProperty.LABEL], ['คู่มือการใช้งาน'])
@@ -2428,6 +2434,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         def action(text, handler, primary=False):
             button = Gtk.Button(label=text)
             button.add_css_class('f6-primary' if primary else 'f6-action')
+            button.add_css_class('button-primary' if primary else 'button-secondary')
             button.connect('clicked', handler)
             return button
 

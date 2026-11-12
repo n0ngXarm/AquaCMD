@@ -310,8 +310,8 @@
           <div class="cell-status" style="${tagStatusStyle(tag)}">${tagStatusContent(tag, true)}</div>
           <div class="cell-task mono" title="${boundText}">${boundText}</div>
           <div class="cell-actions">
-            <button class="btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}" aria-label="${escapeHtml(quickTitle)} ${escapeHtml(tag.name)}">+ Task</button>
-            <button class="btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด" aria-label="ตรวจสอบรายละเอียด ${escapeHtml(tag.name)}">ดู</button>
+            <button class="btn btn-secondary btn-compact btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}" aria-label="${escapeHtml(quickTitle)} ${escapeHtml(tag.name)}">+ Task</button>
+            <button class="btn btn-ghost btn-compact btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด" aria-label="ตรวจสอบรายละเอียด ${escapeHtml(tag.name)}">ดู</button>
           </div>
         </div>
       `;
@@ -426,7 +426,7 @@
       <div class="modal-card">
         <div class="modal-header">
           <h3 class="mono" id="modalTitle">${escapeHtml(tag.name)}</h3>
-          <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
+          <button class="btn btn-ghost icon-button btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body">
           ${statusKey === 'NO' ? `<div class="waiting-guidance"><p>ยังไม่มีหลักฐานอ่าน Tag นี้ ตรวจการตั้งค่า OPC UA ใน F6 ก่อนเริ่มอ่านด้วยตนเอง</p><button type="button" id="btnWaitingF6" class="btn btn-primary">ตั้งค่า OPC UA · F6</button></div>` : ''}
@@ -565,7 +565,7 @@
       <div class="modal-card wide" data-task-id="${escapeHtml(currentTask.id)}">
         <div class="modal-header">
           <h3 id="modalTitle">งานเฝ้าระวัง</h3>
-          <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
+          <button class="btn btn-ghost icon-button btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body task-dialog-body">
           <!-- Left Column: Task Settings Form -->
@@ -891,7 +891,7 @@
       <div class="modal-card">
         <div class="modal-header">
           <h3 id="modalTitle">เพิ่ม ${selectedCount} Tag เข้าสู่ Task</h3>
-          <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
+          <button class="btn btn-ghost icon-button btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body">
           <p style="margin:0 0 12px 0;font-size:13.5px;color:var(--ink)">
