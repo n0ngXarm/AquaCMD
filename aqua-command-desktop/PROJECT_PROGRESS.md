@@ -625,3 +625,14 @@ F3 handoff3/3ผ่าน ทุกคำสั่ง exit0 ภาพ reference3
 หลักฐานเพิ่มอยู่ artifacts/ux-reference/ รายละเอียดใน desktop/UX_POLISH_REPORT.md
 โปรแกรมที่ติดตั้งและ canonical mainไม่เปลี่ยน ไม่มี install/push/merge
 Windows/WinCC/PLC/LAN/Telegramจริงและ screen reader ยังไม่ได้ตรวจสอบ
+
+## ผู้ใช้อนุญาตเผยแพร่ UX ไป main — 2026-11-12
+
+ผู้ใช้สั่ง push งานทั้งหมดไป main หลังตรวจภาพอ้างอิง อนุญาตเผยแพร่
+สิบ commits ของงาน UX พร้อมรายงาน/การทดสอบ ผ่าน GitHub AquaCMD main
+โดยใช้ fast-forward จากฐาน445e1e6 ไม่ force push และไม่เปลี่ยน ancestry เดิม
+ไม่นำ artifacts, ภาพที่มีข้อมูลจริง, raw logs, DB หรือ private config ขึ้น repository
+ผล runtime code ล่าสุดยังเป็น Desktop332 / contracts116 / UX13 และ F3 fit3/3ผ่าน
+privacy current tree และ no_fake_check ผ่าน ตรวจ snapshot ของ commits ที่จะเผยแพร่เพิ่ม
+การเผยแพร่ source ครั้งนี้ไม่รวมการติดตั้งหรือการเชื่อมต่อ WinCC/PLC/Telegramจริง
+หลักฐานผล push และ remote HEAD เก็บใน local artifacts/ux-publication/
