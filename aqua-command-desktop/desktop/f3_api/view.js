@@ -80,7 +80,7 @@ function updateSignal(nodes) {
     return;
   }
   if (fetchError || streamError) {
-    announceSignal('error', fetchError ? 'อ่านหลักฐานการสื่อสารไม่สำเร็จ' : 'การรับเหตุการณ์ขาดการเชื่อมต่อ');
+    announceSignal('error', fetchError ? 'อ่านหลักฐานการสื่อสารไม่สำเร็จ · ' + fetchError : 'การรับเหตุการณ์ขาดการเชื่อมต่อ · ยังไม่ได้รับรหัสสาเหตุ');
     return;
   }
   const failed = nodes.find(node => {
@@ -145,6 +145,14 @@ function renderHostRoutes(network) {
 }
 
 
+function failureReason(detail) {
+  const raw = String(detail ?? '');
+  const labels = {TIMEOUT: 'หมดเวลารอ', NO_ROUTE: 'ไม่มีเส้นทาง', REFUSED: 'ถูกปฏิเสธ',
+    CERT_ERROR: 'ใบรับรองผิดพลาด', DNS_ERROR: 'ค้นหาชื่อไม่ได้', NETWORK_ERROR: 'เครือข่ายขัดข้อง'};
+  const code = Object.keys(labels).find(key => raw.includes(key));
+  return code ? `${labels[code]} · ${code}` : raw;
+}
+
 function render() {
   if (!demo) renderHostRoutes(transport ? snapshot?.local_network : null);
   const nodes = snapshot?.nodes ?? [];
@@ -168,15 +176,17 @@ function render() {
       const state = ST[result.k];
       const label = result.historical || (result.k === 'FAIL' && result.clock) ? 'ผลตรวจเดิม: ไม่ตอบ' : state.t;
       const age = result.clock ? ' · เวลาหลักฐานอยู่ในอนาคต' :
-        result.age == null ? '' : ` · ${ageLabel(result.age)}`;
+        result.age == null ? '' : ` · ข้อมูลล่าสุดเมื่อ ${ageLabel(result.age)}ก่อน`;
       const id = escapeHTML(node.id);
+      const reason = result.k === 'FAIL' && node.last ? failureReason(node.last.detail) : '';
       const groups = transport ? taskGroupLabel(node.last) : '';
       return `<button type="button" class="node ${result.k === 'NOT_BUILT' ? 'nb' : ''}"
         id="n-${id}" data-n="${id}" data-state="${result.k}" aria-haspopup="dialog"
-        aria-pressed="${dialog.open && selected === node.id}" style="--c:${statusColor(result.k)}">
+        aria-pressed="${dialog.open && selected === node.id}" title="${escapeHTML(node.last?.detail ?? 'ยังไม่มีหลักฐาน')}" style="--c:${statusColor(result.k)}">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[iconName(node)]}</svg>
         <strong>${escapeHTML(node.label)}</strong><small>${escapeHTML(subtitles[iconName(node)] ?? subtitles[node.kind])}</small>
         <span class="st"><span class="status-icon" aria-hidden="true">${state.i}</span> ${label}<span class="age">${age}</span></span>
+        ${reason ? `<span class="failure-reason" title="${escapeHTML(node.last.detail)}">${escapeHTML(reason)}</span>` : ''}
         ${groups ? `<span class="task-groups" title="${escapeHTML(groups)}">${escapeHTML(groups)}</span>` : ''}</button>`;
     }).join('');
   }
@@ -188,6 +198,7 @@ function render() {
     degraded ? 'มีจุดตรวจไม่สำเร็จหรือมีทางผ่านที่ไม่ตอบ' :
     allKnown ? 'ทุกจุดที่สร้างแล้วตอบปกติ ด้วยหลักฐานภายใน 60 วินาที' :
     'ยังยืนยันไม่ได้ว่าระบบทำงานครบทุกจุด';
+  $('f3-next-action').hidden = !transport || nodes.some(node => node.kind === 'scada' && node.last);
   $('banner').textContent = (snapshot?.simulated ? 'SIMULATED · ' : '') + heading;
   $('banner').style.borderLeftColor = statusColor(degraded ? 'FAIL' : allKnown ? 'OK' : 'UNVERIFIED');
   updateSignal(nodes);
@@ -216,6 +227,7 @@ function renderDetail() {
     'เวลาที่บันทึก': last?.ts ?? '—',
     'วิธีตรวจ': last?.method ?? '—',
     'ผลครั้งล่าสุด': last?.detail ?? '—',
+    ...(last && !last.ok ? {'สาเหตุ': failureReason(last.detail)} : {}),
     ...(taskGroupNames(last) ? {
       [last.method === 'ua_read' ? 'Task ที่ผูกกับ Tag' : 'กลุ่ม Task ของหลักฐานนี้']: taskGroupNames(last),
     } : {}),
@@ -385,9 +397,9 @@ async function refresh() {
       if (node && elapsed >= 0 && elapsed <= next.stale_ms) onEvent(node, row);
     }
     if (!stream) openStream();
-  } catch {
+  } catch (error) {
     if (!active) return;
-    fetchError = true;
+    fetchError = error?.message || 'ไม่ได้รับรายละเอียดสาเหตุ';
     transport = false;
     pending.clear();
     clearMotion();
@@ -396,6 +408,10 @@ async function refresh() {
     busy = false;
   }
 }
+
+$('f3-next-action').addEventListener('click', () => {
+  window.webkit?.messageHandlers?.f3navigation?.postMessage(JSON.stringify({key: 'F6'}));
+});
 
 $('f3-demo').addEventListener('click', () => {
   window.webkit?.messageHandlers?.f3navigation?.postMessage(JSON.stringify({action: 'open-demo'}));

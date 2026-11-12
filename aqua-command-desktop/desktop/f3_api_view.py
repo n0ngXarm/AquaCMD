@@ -138,6 +138,11 @@ class F3ApiView:
         if self.metadata_error:
             self.error.set_text('อ่านป้ายกำกับอุปกรณ์ไม่ได้ · '+self.metadata_error)
         self.root_widget.append(self.error)
+        self.settings_action = Gtk.Button(label='ตั้งค่า OPC UA · F6', halign=Gtk.Align.START)
+        self.settings_action.set_tooltip_text('เปิดตั้งค่า OPC UA · F6')
+        self.settings_action.connect('clicked', lambda _: self.owner.on_global_key_pressed(None, Gdk.KEY_F6, 0, 0))
+        self.settings_action.set_visible(bool(self.metadata_error))
+        self.root_widget.append(self.settings_action)
         self.root_widget.connect('map', self._mapped)
         self.root_widget.connect('unmap', self._unmapped)
         # Keep the passive host snapshot independent of the evidence collector.
@@ -212,6 +217,7 @@ class F3ApiView:
             return GLib.SOURCE_REMOVE
         self.api_url = self._live_api_url
         self.error.set_visible(bool(self.metadata_error))
+        self.settings_action.set_visible(bool(self.metadata_error))
         self.web.set_visible(True)
         self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo, demo_status=self._demo_status()), self.api_url+'/f3/')
         return GLib.SOURCE_REMOVE
@@ -220,6 +226,7 @@ class F3ApiView:
         if not self.closed and self._active and generation == self._generation:
             self.error.set_text('ไม่ได้รับข้อมูลจาก backend · '+error)
             self.error.set_visible(True)
+            self.settings_action.set_visible(True)
         return GLib.SOURCE_REMOVE
 
     def _unmapped(self, *_):

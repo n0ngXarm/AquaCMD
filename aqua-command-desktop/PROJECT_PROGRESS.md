@@ -525,3 +525,14 @@ invalidates that approval. Missing/disabled/invalid Telegram settings disable
 the WebView button with a Thai reason pointing to F6. No sender/simulator,
 backend, credentials handling or delivery semantics changed. Tests intercept
 _open_demo, use synthetic test credentials only, and start no demo or send.
+
+
+Item6: empty F1 catalogs explain why no measurements are shown and offer one
+primary action to the existing F5 catalog handler; search-empty retains clear
+filters. Unobserved Tag details and F3 waiting/error states offer existing F6
+settings navigation without starting reads. F1/F3 values with existing source
+timestamps now show their age explicitly. Failure cards/details retain actual
+backend reasons and add Thai explanations for recognized codes; historical
+FAIL remains historical FAIL and STALE never replaces its underlying result.
+Transport errors preserve the actual available error text rather than invent
+TIMEOUT/NO_ROUTE. No schema, DB, mapping, telemetry or collector logic changed.

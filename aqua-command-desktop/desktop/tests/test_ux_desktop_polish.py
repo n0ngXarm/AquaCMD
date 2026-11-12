@@ -141,6 +141,21 @@ class DesktopPolishTests(unittest.TestCase):
             start.assert_called_once_with()
         self.assertIsNone(view._demo_process)
 
+    def test_empty_catalog_has_one_real_next_action_and_stale_readings_keep_age(self):
+        web = self.window.unified_workspace.f1_api.web
+        wait(lambda: javascript(web, 'Boolean(window.F1)'))
+        self.assertIn('ยังไม่มีคลัง Tag', javascript(web, "document.getElementById('tableBody').textContent"))
+        self.assertEqual(javascript(web, "document.querySelectorAll('#tableBody .btn-primary').length"), 1)
+        javascript(web, "(document.getElementById('btnResetFilters').click(), true)")
+        wait(lambda: self.window.stack.get_visible_child_name() == 'tags')
+        self.window.on_global_key_pressed(None, Gdk.KEY_F1, 0, 0)
+        javascript(web, """(window.F1.onStateUpdated({tags:[{name:'LAB.STALE',group:'LAB',type:'Float',status:'STALE',observed_value:12.5,observation_at:'2026-01-01T00:00:00Z',age_text:'2 นาทีที่แล้ว',tasks:[]}],tasks:[]}), true)""")
+        text = javascript(web, "document.querySelector('.cell-status').textContent")
+        self.assertIn('12.5', text)
+        self.assertIn('ข้อมูลล่าสุดเมื่อ', text)
+        self.assertIn('2 นาทีที่แล้ว', text)
+        self.assertEqual(self.window.polling_engine.get_telemetry()['poll_count'], 0)
+
 
 class PresentationStyleTests(unittest.TestCase):
     def test_css_has_no_secondary_text_below_ten_points(self):

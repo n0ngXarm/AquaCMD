@@ -918,3 +918,8 @@ mark.search-match {
 .btn:disabled { opacity: 1; }
 
 .table-row > div, .assigned-tag-row > div, .cell-status { font-size: 14px; }
+
+.observation-age { display: block; flex-basis: 100%; color: var(--mut); font-size: 13.5px; white-space: normal; }
+.cell-status { flex-wrap: wrap; }
+.waiting-guidance { padding: 10px; margin-bottom: 12px; border: 1px solid var(--line); background: var(--surface-2); }
+.waiting-guidance p { margin: 0 0 8px; }

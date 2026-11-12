@@ -2245,6 +2245,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         heading.append(hint)
         rescan = Gtk.Button(label='รีเฟรชคลัง Tag', valign=Gtk.Align.CENTER)
         rescan.add_css_class('fkey-btn')
+        rescan.set_tooltip_text('รีเฟรชคลัง Tag จากไฟล์ที่เลือก · F7')
         rescan.connect('clicked', lambda _: self.trigger_rescan())
         header.append(rescan)
         workspace = getattr(self, 'unified_workspace', None)
@@ -2282,7 +2283,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.tags_page_grid.attach(th, col, 0, 1, 1)
 
         if not self.scanned_tags:
-            empty_lbl = Gtk.Label(label="ยังไม่มี Tag ในคลัง · กดรีเฟรชคลัง เพื่ออ่านไฟล์ WinCC")
+            empty_lbl = Gtk.Label(label="ยังไม่มีคลัง Tag · ตรวจไฟล์คลังที่ได้รับอนุญาต แล้วกดรีเฟรชคลัง Tag · F7")
             empty_lbl.add_css_class('table-td')
             empty_lbl.set_xalign(0.0)
             self.tags_page_grid.attach(empty_lbl, 0, 1, len(headers), 1)

@@ -121,6 +121,15 @@
     return tag && Object.hasOwn(STATUS_DEFS, tag.status) ? tag.status : 'NO';
   }
 
+  function observationAge(tag) {
+    if (!tag.observation_at) return '';
+    const timestamp = Date.parse(tag.observation_at);
+    const time = Number.isFinite(timestamp) ? new Date(timestamp).toLocaleTimeString('th-TH', {
+      timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    }) : 'เวลาในหลักฐานไม่ถูกต้อง';
+    return `<small class="observation-age" title="${escapeHtml(tag.observation_at)}">ข้อมูลล่าสุดเมื่อ ${escapeHtml(time)}${tag.age_text ? ' · ' + escapeHtml(tag.age_text) : ''}</small>`;
+  }
+
   function tagStatusContent(tag, includeValue = false) {
     const status = getTagStatus(tag);
     const def = STATUS_DEFS[status];
@@ -129,7 +138,7 @@
     const shownValue = typeof value === 'boolean' ? (value ? 'TRUE' : 'FALSE') : value;
     return `<span>${def.icon}</span><span>${label}</span>` +
       (includeValue && status !== 'NO' && value != null
-        ? `<span class="mono"> · ${escapeHtml(shownValue)}</span>` : '');
+        ? `<span class="mono"> · ${escapeHtml(shownValue)}</span>` : '') + observationAge(tag);
   }
 
   function tagStatusStyle(tag) {
@@ -263,25 +272,20 @@
     document.getElementById('catalogCounter').textContent = `แสดง ${filtered.length} จาก ${state.tags.length} รายการ`;
 
     if (filtered.length === 0) {
+      const noCatalog = state.tags.length === 0;
       tableBodyEl.innerHTML = `
         <div class="empty-state" role="status">
-          <span>ไม่พบ Tag ตรงกับเงื่อนไขการค้นหา</span>
-          <button class="btn btn-secondary" id="btnResetFilters" style="margin-top:8px;font-size:13.5px">ล้างตัวกรองทั้งหมด</button>
-        </div>
-      `;
-      const resetBtn = document.getElementById('btnResetFilters');
-      if (resetBtn) {
-        resetBtn.onclick = () => {
-          state.selectedGroup = 'all';
-          state.statusFilter = 'ALL';
-          state.searchQuery = '';
-          state.activeRowIndex = -1;
-          state.lastCheckedIndex = -1;
-          const searchInput = document.getElementById('searchInput');
-          if (searchInput) searchInput.value = '';
-          render();
-        };
-      }
+          <span>${noCatalog ? 'ยังไม่มีคลัง Tag จึงยังแสดงค่าตรวจวัดไม่ได้ เปิดคลัง Tag แล้วรีเฟรชจากไฟล์ที่ได้รับอนุญาต' : 'ไม่พบ Tag ตรงกับเงื่อนไขการค้นหา'}</span>
+          <button class="btn ${noCatalog ? 'btn-primary' : 'btn-secondary'}" id="btnResetFilters" style="margin-top:8px">${noCatalog ? 'เปิดคลัง Tag · F5' : 'ล้างตัวกรองทั้งหมด'}</button>
+        </div>`;
+      document.getElementById('btnResetFilters').onclick = () => {
+        if (noCatalog) { sendBridge('key_event', {key: 'F5'}); return; }
+        state.selectedGroup = 'all'; state.statusFilter = 'ALL'; state.searchQuery = '';
+        state.activeRowIndex = -1; state.lastCheckedIndex = -1;
+        const search = document.getElementById('searchInput');
+        if (search) search.value = '';
+        render();
+      };
       if (restore) document.getElementById('tableViewport').focus({ preventScroll: true });
       return;
     }
@@ -425,6 +429,7 @@
           <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body">
+          ${statusKey === 'NO' ? `<div class="waiting-guidance"><p>ยังไม่มีหลักฐานอ่าน Tag นี้ ตรวจการตั้งค่า OPC UA ใน F6 ก่อนเริ่มอ่านด้วยตนเอง</p><button type="button" id="btnWaitingF6" class="btn btn-primary">ตั้งค่า OPC UA · F6</button></div>` : ''}
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
             <span class="sub">${escapeHtml(getGroupName(tag.group))} · ${escapeHtml(tag.type || 'Word')}</span>
             <div class="cell-status" id="inspectorStatus" style="${tagStatusStyle(tag)}">${tagStatusContent(tag)}</div>
@@ -450,7 +455,7 @@
             ${boundTasksHtml}
             <div class="form-row" style="margin-top:8px">
               <select id="modalTaskSelect" class="in" style="flex:1" aria-label="เลือก Task">${taskOptions}</select>
-              <button class="btn btn-primary" id="btnAssignToTask">เพิ่มเข้า Task นี้</button>
+              <button class="btn ${statusKey === 'NO' ? 'btn-secondary' : 'btn-primary'}" id="btnAssignToTask">เพิ่มเข้า Task นี้</button>
             </div>
           </div>
 
@@ -465,6 +470,8 @@
     document.getElementById('btnCloseModal').onclick = closeModal;
     document.getElementById('btnCloseModalBottom').onclick = closeModal;
 
+    const waitingF6 = document.getElementById('btnWaitingF6');
+    if (waitingF6) waitingF6.onclick = () => sendBridge('navigate_f6', {});
     const btnAssign = document.getElementById('btnAssignToTask');
     if (btnAssign) {
       btnAssign.onclick = () => {
