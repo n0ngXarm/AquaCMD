@@ -432,17 +432,17 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertIsNone(view.store.devices['dev-collector-01']['observed_ip'])
 
     def test_identity_01_local_hostname_from_os(self):
-        """1. Verify local machine reads actual OS hostname (fedora) and never username or PC4."""
+        """1. Verify local machine reads actual OS hostname and never username or PC4."""
         h = get_local_hostname()
         self.assertIsNotNone(h)
         self.assertNotEqual(h, "")
         self.assertNotEqual(h.lower(), "pc4")
         self.assertNotEqual(h.lower(), "local-user")
-        self.assertEqual(h, "fedora")
+        self.assertEqual(h, socket.gethostname().strip())
 
         view = F3NetworkTopologyView(self.mock_owner)
         col_dev = view.store.devices["dev-collector-01"]
-        self.assertEqual(col_dev["hostname"], "fedora")
+        self.assertEqual(col_dev["hostname"], socket.gethostname().strip())
         self.assertEqual(col_dev["identity_status"], IdentityStatus.VERIFIED)
         self.assertEqual(col_dev["identity_source"], IdentitySource.LOCAL_OS)
         self.assertIsNotNone(col_dev["identity_verified_at"])
@@ -554,7 +554,7 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         """11. Verify GUI cards and table display factual hostname/IP and role, abolishing PC1-PC4."""
         view = F3NetworkTopologyView(self.mock_owner)
         col_card = view.cards["dev-collector-01"]
-        self.assertEqual(col_card.lbl_name.get_text(), "fedora")
+        self.assertEqual(col_card.lbl_name.get_text(), socket.gethostname().strip())
         self.assertNotIn("PC4", col_card.lbl_name.get_text())
 
         scada1_card = view.cards["dev-scada-01"]
