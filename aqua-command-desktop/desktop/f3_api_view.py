@@ -30,6 +30,13 @@ except ImportError:
     from f3_network import F3DeviceStore
     from f3_projection import F3Projection
 
+try:
+    from .theme_tokens import DEFAULT_THEME
+    from .theme_web import install_web_theme
+except ImportError:
+    from theme_tokens import DEFAULT_THEME
+    from theme_web import install_web_theme
+
 ASSETS = Path(__file__).with_name('f3_api')
 FORMAL_THEME = ASSETS.parent / 'f1_api' / 'formal-theme.css'
 
@@ -87,6 +94,8 @@ def is_api_uri(uri, origin):
 class F3ApiView:
     def __init__(self, owner, db_path=None, config_path=None, *, allow_demo=True):
         self.owner = owner
+        self.theme_mode = getattr(owner, 'theme_mode', DEFAULT_THEME)
+        self._theme_script = None
         self._allow_demo = allow_demo
         self._demo_process = None
         self._demo_requested = False
@@ -148,6 +157,11 @@ class F3ApiView:
         # Keep the passive host snapshot independent of the evidence collector.
         self.refresh_local_state()
 
+    def set_theme(self, mode):
+        self.theme_mode = mode
+        if self.web is not None:
+            self._theme_script = install_web_theme(self.web, mode, self._theme_script)
+
     def _ensure_web(self):
         if self.web is not None:
             return
@@ -157,6 +171,7 @@ class F3ApiView:
         manager.register_script_message_handler('f3navigation', None)
         manager.connect('script-message-received::f3navigation', self._message)
         self.web = WebKit.WebView(network_session=session, user_content_manager=manager)
+        self.set_theme(self.theme_mode)
         self.web.set_hexpand(True)
         self.web.set_vexpand(True)
         settings = self.web.get_settings()

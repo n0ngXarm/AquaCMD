@@ -401,6 +401,7 @@ DARK = {'bg': '#11161c',
  'palette-153': 'rgba(56, 189, 248, 0.15)'}
 
 THEMES = {'light': LIGHT, 'dark': DARK}
+DEFAULT_THEME = 'light'
 
 
 def gtk_definitions(mode):

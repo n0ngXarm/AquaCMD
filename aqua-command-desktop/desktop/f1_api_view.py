@@ -37,6 +37,13 @@ except (ImportError, ValueError):
             DISCONNECTED = "DISCONNECTED"
 
 ROOT = Path(__file__).resolve().parents[1]
+try:
+    from .theme_tokens import DEFAULT_THEME
+    from .theme_web import install_web_theme
+except ImportError:
+    from theme_tokens import DEFAULT_THEME
+    from theme_web import install_web_theme
+
 ASSETS = Path(__file__).with_name('f1_api')
 UNOBSERVED = dict(status='NO', observed_value=None, quality='NOT_OBSERVED',
                   age_text='ยังไม่ได้สังเกต', observation_source='', observation_at='')
@@ -167,6 +174,8 @@ class F1ApiView:
 
     def __init__(self, owner):
         self.owner = owner
+        self.theme_mode = getattr(owner, 'theme_mode', DEFAULT_THEME)
+        self._theme_script = None
         self.closed = False
         self._undo_stack = []
         self.recent_task_id = 'TASK-01'
@@ -185,6 +194,7 @@ class F1ApiView:
         manager.connect('script-message-received::f1Presentation', self._on_presentation_message)
 
         self.web = WebKit.WebView(network_session=session, user_content_manager=manager)
+        self.set_theme(self.theme_mode)
         self.web.set_hexpand(True)
         self.web.set_vexpand(True)
 
@@ -208,6 +218,11 @@ class F1ApiView:
         # Load assembled HTML
         html_markup = build_html()
         self.web.load_html(html_markup, 'http://127.0.0.1/f1/')
+
+    def set_theme(self, mode):
+        self.theme_mode = mode
+        if self.web is not None:
+            self._theme_script = install_web_theme(self.web, mode, self._theme_script)
 
     def _on_presentation_message(self, _manager, value):
         """Synchronize the native F2 highlight with its existing WebKit dialog."""

@@ -136,9 +136,11 @@ from gi.repository import Gtk, Gdk, GLib, Pango, PangoCairo
 import cairo
 
 try:
-    from .theme_tokens import gtk_definitions
+    from .theme_tokens import DEFAULT_THEME, THEMES, gtk_definitions
+    from .theme_prefs import load_theme, save_theme
 except ImportError:
-    from theme_tokens import gtk_definitions
+    from theme_tokens import DEFAULT_THEME, THEMES, gtk_definitions
+    from theme_prefs import load_theme, save_theme
 
 USE_UNIFIED_WORKSPACE = True
 
@@ -1263,53 +1265,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.set_size_request(1024, 600)
         self.connect('close-request', self.on_close_request)
 
-        # Force GTK to prefer dark theme globally so unstyled states never fallback to Adwaita Light
-        settings = Gtk.Settings.get_default()
-        if settings:
-            settings.set_property("gtk-application-prefer-dark-theme", True)
-
-        # Load WinCC Base CSS
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(gtk_definitions("dark").encode() + CSS_DATA)
-        Gtk.StyleContext.add_provider_for_display(
-            Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
-
-        # Load F1 Industrial Precision CSS
-        f1_css_path = Path(__file__).resolve().parent / 'f1_style.css'
-        if f1_css_path.exists():
-            try:
-                f1_css_provider = Gtk.CssProvider()
-                f1_css_provider.load_from_data((gtk_definitions("dark") + f1_css_path.read_text()).encode())
-                Gtk.StyleContext.add_provider_for_display(
-                    Gdk.Display.get_default(), f1_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 10
-                )
-            except Exception as e:
-                print(f"[F1_CSS] Warning loading f1_style.css: {e}", file=sys.stderr)
-
-        # Load F2 Task Management CSS
-        f2_css_path = Path(__file__).resolve().parent / 'f2_style.css'
-        if f2_css_path.exists():
-            try:
-                f2_css_provider = Gtk.CssProvider()
-                f2_css_provider.load_from_data((gtk_definitions("dark") + f2_css_path.read_text()).encode())
-                Gtk.StyleContext.add_provider_for_display(
-                    Gdk.Display.get_default(), f2_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 12
-                )
-            except Exception as e:
-                print(f"[F2_CSS] Warning loading f2_style.css: {e}", file=sys.stderr)
-
-        # Load Unified Workspace CSS
-        ws_css_path = Path(__file__).resolve().parent / 'workspace_style.css'
-        if ws_css_path.exists():
-            try:
-                ws_css_provider = Gtk.CssProvider()
-                ws_css_provider.load_from_data((gtk_definitions("dark") + ws_css_path.read_text()).encode())
-                Gtk.StyleContext.add_provider_for_display(
-                    Gdk.Display.get_default(), ws_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 15
-                )
-            except Exception as e:
-                print(f"[WS_CSS] Warning loading workspace_style.css: {e}", file=sys.stderr)
+        self.config_dir = CONFIG_DIR
+        self.theme_mode = load_theme(self.config_dir)
+        self._theme_providers = []
+        self.set_theme(self.theme_mode, persist=False)
 
         # State - Fresh Default State (Preload verified catalog if file exists for instant readiness)
         self.config_dir = CONFIG_DIR
@@ -1393,6 +1352,15 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         title_label.set_xalign(0.0)
         title_label.set_ellipsize(Pango.EllipsizeMode.END)
         topbar.append(title_label)
+
+        self.theme_button = Gtk.ToggleButton(icon_name='weather-clear-night-symbolic')
+        self.theme_button.set_tooltip_text('สลับธีม (สว่าง/มืด)')
+        self.theme_button.update_property([Gtk.AccessibleProperty.LABEL], ['สลับธีม (สว่าง/มืด)'])
+        self.theme_button.add_css_class('theme-toggle')
+        self.theme_button.connect('toggled', lambda button: self.set_theme('dark' if button.get_active() else 'light')
+                                  if not getattr(self, '_syncing_theme_controls', False) else None)
+        topbar.append(self.theme_button)
+        self._sync_theme_controls()
 
         # Section A Status Cluster (Restrained visual weight hierarchy)
         if len(self.scanned_tags) == 0:
@@ -1558,6 +1526,59 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 self.render_tags_page_grid()
         except Exception:
             pass  # Grafana integration failure cannot prevent native startup.
+
+    def _sync_theme_controls(self):
+        self._syncing_theme_controls = True
+        try:
+            button = getattr(self, 'theme_button', None)
+            if button is not None:
+                button.set_active(self.theme_mode == 'dark')
+                button.set_icon_name('weather-clear-symbolic' if self.theme_mode == 'dark' else 'weather-clear-night-symbolic')
+                button.set_tooltip_text('สลับธีม (สว่าง/มืด)' + getattr(self, '_theme_save_error', ''))
+            for mode, button in getattr(self, 'theme_buttons', {}).items():
+                button.set_active(mode == self.theme_mode)
+        finally:
+            self._syncing_theme_controls = False
+
+    def set_theme(self, mode, *, persist=True):
+        if mode not in THEMES:
+            raise ValueError('Unsupported presentation theme')
+        if mode == self.theme_mode and self._theme_providers:
+            self._sync_theme_controls()
+            return True
+        prefix = gtk_definitions(mode).encode()
+        directory = Path(__file__).resolve().parent
+        styles = [(CSS_DATA, 0)] + [( (directory / name).read_bytes(), priority)
+                  for name, priority in [('f1_style.css', 10), ('f2_style.css', 12), ('workspace_style.css', 15)]]
+        providers = []
+        for data, priority in styles:
+            provider = Gtk.CssProvider()
+            provider.load_from_data(prefix + data)
+            providers.append((provider, priority))
+        display = self.get_display()
+        for provider, priority in providers:
+            Gtk.StyleContext.add_provider_for_display(display, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + priority)
+        for provider, _ in self._theme_providers:
+            Gtk.StyleContext.remove_provider_for_display(display, provider)
+        self._theme_providers = providers
+        self.theme_mode = mode
+        settings = Gtk.Settings.get_default()
+        if settings:
+            settings.set_property('gtk-application-prefer-dark-theme', mode == 'dark')
+        workspace = getattr(self, 'unified_workspace', None)
+        if workspace is not None and getattr(workspace, 'f1_api', None) is not None:
+            workspace.f1_api.set_theme(mode)
+        view = getattr(self, 'f3_network_view', None)
+        if view is not None:
+            view.set_theme(mode)
+        self._theme_save_error = ''
+        if persist:
+            try:
+                save_theme(self.config_dir, mode)
+            except OSError:
+                self._theme_save_error = ' · เปลี่ยนธีมแล้ว แต่บันทึกค่าที่เลือกไม่ได้'
+        self._sync_theme_controls()
+        return not self._theme_save_error
 
     def build_help_button(self):
         self.help_manual = None
@@ -2391,6 +2412,23 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.f6_sections.set_vhomogeneous(False)
         switcher = Gtk.StackSwitcher(stack=self.f6_sections)
         header.append(switcher)
+        appearance = Gtk.Box(spacing=12, halign=Gtk.Align.END)
+        appearance.add_css_class('appearance-row')
+        appearance.append(label('การแสดงผล', 'f6-field-label'))
+        self.theme_buttons = {}
+        group = None
+        for mode, caption in [('light', 'สว่าง'), ('dark', 'มืด')]:
+            button = Gtk.ToggleButton(label=caption)
+            button.add_css_class('theme-segment')
+            if group is not None:
+                button.set_group(group)
+            group = button
+            button.connect('toggled', lambda button, value=mode: self.set_theme(value)
+                           if button.get_active() and not getattr(self, '_syncing_theme_controls', False) else None)
+            appearance.append(button)
+            self.theme_buttons[mode] = button
+        self._sync_theme_controls()
+        page.append(appearance)
         page.append(self.f6_sections)
 
         opc = add_section('opcua', 'WinCC OPC UA')
@@ -3264,6 +3302,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.hybrid_ui.stop()
         if hasattr(self, 'f3_network_view'):
             self.f3_network_view.close()
+        for provider, _ in getattr(self, '_theme_providers', ()):
+            Gtk.StyleContext.remove_provider_for_display(self.get_display(), provider)
+        self._theme_providers = []
         return False
 
 
