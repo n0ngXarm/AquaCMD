@@ -595,6 +595,7 @@ class AquaUnifiedWorkspaceView:
         checkbox = Gtk.CheckButton(valign=Gtk.Align.CENTER)
         checkbox.set_size_request(-1, 36)
         checkbox.set_tooltip_text(f'เลือก {name} · Shift เพื่อเลือกช่วง')
+        checkbox.update_property([Gtk.AccessibleProperty.LABEL], [f'เลือก {name}'])
         gesture = Gtk.GestureClick.new()
         gesture.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
         gesture.connect('pressed', self._on_checkbox_pressed)
@@ -1302,6 +1303,7 @@ class AquaUnifiedWorkspaceView:
         assigned.append(table)
         self.chk_assigned_select_all = Gtk.CheckButton(valign=Gtk.Align.CENTER)
         self.chk_assigned_select_all.set_tooltip_text('เลือกทั้งหมด / ยกเลิกการเลือก')
+        self.chk_assigned_select_all.update_property([Gtk.AccessibleProperty.LABEL], ['เลือก Tag ทั้งหมดใน Task'])
         self.chk_assigned_select_all.connect('toggled', self._on_assigned_select_all_toggled)
         headings = [
             self.chk_assigned_select_all,
@@ -1459,6 +1461,7 @@ class AquaUnifiedWorkspaceView:
             checkbox = Gtk.CheckButton(valign=Gtk.Align.CENTER)
             checkbox.set_size_request(-1, 32)
             checkbox.set_tooltip_text(f'เลือก {name}')
+            checkbox.update_property([Gtk.AccessibleProperty.LABEL], [f'เลือก {name}'])
 
             def make_assigned_cb(tag_name):
                 def cb(btn):

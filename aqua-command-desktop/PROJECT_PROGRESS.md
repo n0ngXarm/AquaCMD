@@ -536,3 +536,15 @@ backend reasons and add Thai explanations for recognized codes; historical
 FAIL remains historical FAIL and STALE never replaces its underlying result.
 Transport errors preserve the actual available error text rather than invent
 TIMEOUT/NO_ROUTE. No schema, DB, mapping, telemetry or collector logic changed.
+
+
+Item7: verified full keyboard path and accessible labels across GTK4 and WebViews.
+Catalog rows in F1 now expose role="row" and tabindex="0", allowing keyboard Tab/Shift+Tab
+navigation and focus preservation in addition to ArrowUp/Down, Enter and Space.
+All icon-only buttons in F1/F3 WebViews now declare explicit Thai aria-label attributes
+(e.g. quick Task assignment, row inspection, bound Task removal, diagram nodes). GTK exit
+button and checkboxes declare Gtk.AccessibleProperty.LABEL. F3 dialog close returns focus
+to the opener node button. Both F1 and F3 WebViews declare @media (prefers-reduced-motion: reduce)
+disabling all transitions and animations while retaining functional static status. Statuses
+continue to pair distinct colors with text labels and unicode icons; no status relies on
+color alone.

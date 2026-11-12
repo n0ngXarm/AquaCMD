@@ -300,7 +300,7 @@
       const boundText = boundTasks.map(t => escapeHtml(t.id)).join(', ');
 
       return `
-        <div class="table-row ${isNavActive ? 'is-active-nav' : ''}" role="row" tabindex="-1" data-tag-name="${escapeHtml(tag.name)}" data-index="${idx}" aria-selected="${isChecked}">
+        <div class="table-row ${isNavActive ? 'is-active-nav' : ''}" role="row" tabindex="0" data-tag-name="${escapeHtml(tag.name)}" data-index="${idx}" aria-selected="${isChecked}">
           <div class="cell-checkbox">
             <input type="checkbox" data-checkbox-name="${escapeHtml(tag.name)}" data-checkbox-index="${idx}" ${isChecked ? 'checked' : ''} aria-label="เลือก ${escapeHtml(tag.name)}">
           </div>
@@ -310,8 +310,8 @@
           <div class="cell-status" style="${tagStatusStyle(tag)}">${tagStatusContent(tag, true)}</div>
           <div class="cell-task mono" title="${boundText}">${boundText}</div>
           <div class="cell-actions">
-            <button class="btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}">+ Task</button>
-            <button class="btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด">ดู</button>
+            <button class="btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}" aria-label="${escapeHtml(quickTitle)} ${escapeHtml(tag.name)}">+ Task</button>
+            <button class="btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด" aria-label="ตรวจสอบรายละเอียด ${escapeHtml(tag.name)}">ดู</button>
           </div>
         </div>
       `;
@@ -416,7 +416,7 @@
           ${boundTasks.map(bt => `
             <span class="badge" style="background:var(--surface-3);color:var(--ink);border:1px solid var(--line);padding:3px 8px;border-radius:4px;display:inline-flex;align-items:center;gap:6px;font-size:13.5px">
               <b>${escapeHtml(bt.id)}</b>: ${escapeHtml(bt.name || '')}
-              <button type="button" class="btn-ghost" data-remove-bound-task="${escapeHtml(bt.id)}" data-tag-name="${escapeHtml(tag.name)}" title="เอาออกจาก ${escapeHtml(bt.id)}" style="padding:0 2px;cursor:pointer;color:var(--fail)">✕</button>
+              <button type="button" class="btn-ghost" data-remove-bound-task="${escapeHtml(bt.id)}" data-tag-name="${escapeHtml(tag.name)}" title="เอาออกจาก ${escapeHtml(bt.id)}" aria-label="เอาออกจาก ${escapeHtml(bt.id)}" style="padding:0 2px;cursor:pointer;color:var(--fail)">✕</button>
             </span>
           `).join('')}
         </div>

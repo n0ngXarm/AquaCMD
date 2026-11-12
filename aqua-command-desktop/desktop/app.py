@@ -1510,6 +1510,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         exit_btn = Gtk.Button(label='ปิด · F8')
         exit_btn.set_tooltip_text('ปิดโปรแกรม · F8 · ต้องยืนยันก่อนหยุดการเฝ้าระวัง')
+        exit_btn.update_property([Gtk.AccessibleProperty.LABEL], ['ปิดโปรแกรม'])
         exit_btn.add_css_class('fkey-btn')
         exit_btn.add_css_class('exit-button')
         exit_btn.connect('clicked', lambda _: self.close())

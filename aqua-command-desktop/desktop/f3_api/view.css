@@ -328,3 +328,13 @@ body[data-signal="error"] #f3-toast { border-color: var(--fail); }
 .banner-row .banner { flex: 1; min-width: 0; }
 .banner-row .demo-button { flex-shrink: 0; margin-inline-start: 0; }
 .failure-reason { display: block; font-size: 13.5px; color: var(--fail); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .rip, #pt { display: none !important; }
+  #f3-demo-rail, #f3-toast { transition: none !important; }
+}

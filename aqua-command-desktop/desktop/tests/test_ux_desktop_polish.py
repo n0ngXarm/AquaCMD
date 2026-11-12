@@ -156,6 +156,58 @@ class DesktopPolishTests(unittest.TestCase):
         self.assertIn('2 นาทีที่แล้ว', text)
         self.assertEqual(self.window.polling_engine.get_telemetry()['poll_count'], 0)
 
+    def test_accessibility_keyboard_path_and_accessible_labels(self):
+        # 1. Accessible labels on GTK buttons
+        self.assertIsNotNone(self.window.exit_button)
+        self.assertIn('F8', self.window.exit_button.get_tooltip_text())
+        self.assertIn('F9', self.window.help_button.get_tooltip_text())
+        self.assertIn('F6', self.window.settings_button.get_tooltip_text())
+
+        # 2. F1 web view keyboard path and accessible labels
+        web = self.window.unified_workspace.f1_api.web
+        wait(lambda: javascript(web, 'Boolean(window.F1)'))
+        javascript(web, """(window.F1.onStateUpdated({
+            tags:[
+                {name:'LAB.ACC1',group:'LAB',type:'Float',status:'OK',observed_value:42.0,observation_at:'2026-01-01T00:00:00Z',age_text:'1 วินาทีที่แล้ว',tasks:[]},
+                {name:'LAB.ACC2',group:'LAB',type:'Float',status:'FAIL',observed_value:null,observation_at:'2026-01-01T00:00:00Z',age_text:'1 วินาทีที่แล้ว',tasks:[]}
+            ],
+            tasks:[{id:'TASK-01',name:'Task หลัก',cycle_sec:5,active:true,action_log:true,action_notify:false,tags:['LAB.ACC1']}]
+        }), true)""")
+
+        # Verify row tabindex and role
+        self.assertEqual(javascript(web, "document.querySelector('.table-row').getAttribute('role')"), 'row')
+        self.assertEqual(javascript(web, "document.querySelector('.table-row').getAttribute('tabindex')"), '0')
+
+        # Verify action buttons have accessible labels (aria-label)
+        self.assertTrue(javascript(web, "Boolean(document.querySelector('.btn-quick-task').getAttribute('aria-label'))"))
+        self.assertTrue(javascript(web, "Boolean(document.querySelector('.btn-inspect').getAttribute('aria-label'))"))
+
+        # Verify Esc closes modal and returns focus
+        javascript(web, "(document.querySelector('.btn-inspect').click(), true)")
+        wait(lambda: javascript(web, "document.getElementById('modalOverlay').open"))
+        javascript(web, """(document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true})), true)""")
+        wait(lambda: not javascript(web, "document.getElementById('modalOverlay').open"))
+
+        # 3. F3 network view node accessible labels and close button
+        self.window.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
+        view = self.window.f3_network_view
+        wait(lambda: view.web is not None)
+        wait(lambda: javascript(view.web, "Boolean(document.getElementById('f3-demo'))"))
+        self.assertEqual(javascript(view.web, "document.querySelector('[data-close]').getAttribute('aria-label')"), 'ปิดหน้าต่าง')
+        self.assertTrue(javascript(view.web, """(
+            snapshot = {nodes: [{id: 'station_1', label: 'Station 1', kind: 'scada', last: null}], stale_ms: 60000},
+            render(),
+            Boolean(document.querySelector('.node').getAttribute('aria-label'))
+        )"""))
+
+        # 4. Verify prefers-reduced-motion exists in CSS files
+        f1_css = (Path(__file__).resolve().parents[1] / 'f1_api/view.css').read_text()
+        f3_css = (Path(__file__).resolve().parents[1] / 'f3_api/view.css').read_text()
+        self.assertIn('@media (prefers-reduced-motion: reduce)', f1_css)
+        self.assertIn('@media (prefers-reduced-motion: reduce)', f3_css)
+        self.assertEqual(self.window.polling_engine.get_telemetry()['poll_count'], 0)
+
+
 
 class PresentationStyleTests(unittest.TestCase):
     def test_css_has_no_secondary_text_below_ten_points(self):

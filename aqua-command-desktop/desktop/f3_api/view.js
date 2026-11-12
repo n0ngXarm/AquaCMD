@@ -182,7 +182,7 @@ function render() {
       const groups = transport ? taskGroupLabel(node.last) : '';
       return `<button type="button" class="node ${result.k === 'NOT_BUILT' ? 'nb' : ''}"
         id="n-${id}" data-n="${id}" data-state="${result.k}" aria-haspopup="dialog"
-        aria-pressed="${dialog.open && selected === node.id}" title="${escapeHTML(node.last?.detail ?? 'ยังไม่มีหลักฐาน')}" style="--c:${statusColor(result.k)}">
+        aria-pressed="${dialog.open && selected === node.id}" aria-label="${escapeHTML(node.label || node.id)}: ${escapeHTML(label)}" title="${escapeHTML(node.last?.detail ?? 'ยังไม่มีหลักฐาน')}" style="--c:${statusColor(result.k)}">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICON[iconName(node)]}</svg>
         <strong>${escapeHTML(node.label)}</strong><small>${escapeHTML(subtitles[iconName(node)] ?? subtitles[node.kind])}</small>
         <span class="st"><span class="status-icon" aria-hidden="true">${state.i}</span> ${label}<span class="age">${age}</span></span>
