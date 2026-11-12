@@ -595,6 +595,8 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
                                 self.assertEqual(win.unified_workspace.current_workspace_mode, 'monitoring')
                     finally:
                         win.on_close_request()
+                        if getattr(win, '_close_dialog', None):
+                            win._close_dialog.response(Gtk.ResponseType.ACCEPT)
                         win.destroy()
                         application.quit()
 

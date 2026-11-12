@@ -457,3 +457,26 @@ and PWA/privacy39 passed in the isolated LAB. See docs/reports/phase7/PUBLICATIO
 and its reports for evidence and scope. Publication is not production deployment
 or public release acceptance; history/rotation/Windows/field/CI/signing gates
 remain unresolved. No operational action is authorized by this update.
+
+
+## Owner-authorized native GTK4 UX polish — local branch
+
+The owner corrected the target to the native application and supplied the GTK4
+UX task. The mistakenly prepared standalone web checkout, its six local commits
+and uncommitted changes were deleted; the original web source in the canonical
+checkout was never changed. Native work is isolated on ux/desktop-polish from
+445e1e6. GUI/presentation only; no installation, push, merge, backend change,
+new dependency, field probe or Telegram send is authorized/performed here.
+
+Baseline: desktop/tests319 and source contracts116 passed. The legacy ui_test.py
+and layout_test.py fail at import because AquaWindow no longer exists. Existing
+F3 handoff passed1360x616/1920x1009 and failed1024x496: actual WebView1024x457,
+scrollHeight499. Before screenshots cover F1–F6 at3 requested sizes with labelled
+SIMULATED disposable profiles; 1024x600 actually allocates1024x700 due to the
+existing minimum height. Raw results are in artifacts/ux-before (local only).
+
+Item1: confirmed F8 and window close lack a safeguard with two failing GTK tests.
+Added a cancel-default native close question; original cleanup runs only after
+acceptance. Exit is separated into the far-right navigation area. Existing
+lifecycle test assertions are retained and now explicitly accept the close
+question. New capture/run support uses disposable HOME and loopback namespace.

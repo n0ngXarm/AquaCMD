@@ -181,9 +181,13 @@ class ActiveF3ReconciliationTests(unittest.TestCase):
                 win.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
                 spin_until(lambda: win.f3_network_view._server is not None)
                 win.on_close_request()
+                if getattr(win, '_close_dialog', None):
+                    win._close_dialog.response(Gtk.ResponseType.ACCEPT)
                 spin_until(lambda: not win.f3_network_view._worker.is_alive())
                 self.assertTrue(win.f3_network_view.closed)
             finally:
                 win.on_close_request()
+                if getattr(win, '_close_dialog', None):
+                    win._close_dialog.response(Gtk.ResponseType.ACCEPT)
                 win.destroy()
                 application.quit()

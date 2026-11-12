@@ -1,0 +1,140 @@
+"""Capture the active GTK4 application using a disposable, labelled test profile only."""
+import argparse
+import json
+import os
+from pathlib import Path
+import sys
+import time
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path[:0] = [str(ROOT), str(ROOT / 'desktop'), str(Path(__file__).parent)]
+import gi
+gi.require_version('Gtk', '4.0')
+from gi.repository import Gdk, Gio, GLib, Gtk
+import app
+from collector.probe_once import EvidenceStore
+from wincc_catalog_fixture import write_catalog
+
+
+def wait(predicate, seconds=15):
+    context = GLib.MainContext.default()
+    deadline = time.monotonic() + seconds
+    while time.monotonic() < deadline:
+        for _ in range(80):
+            if not context.pending():
+                break
+            context.iteration(False)
+        if predicate():
+            return
+        time.sleep(.01)
+    raise AssertionError('GTK test capture timed out')
+
+
+def settle(seconds=.2):
+    end = time.monotonic() + seconds
+    wait(lambda: time.monotonic() >= end)
+
+
+def javascript(web, expression):
+    result = {}
+    def completed(view, task, *_):
+        try:
+            result['value'] = json.loads(view.evaluate_javascript_finish(task).to_string())
+        except Exception as error:
+            result['error'] = error
+    web.evaluate_javascript('JSON.stringify(' + expression + ')', -1, None, None, None, completed, None)
+    wait(lambda: bool(result))
+    if 'error' in result:
+        raise result['error']
+    return result['value']
+
+
+def capture(window, destination):
+    settle()
+    paintable = Gtk.WidgetPaintable.new(window)
+    def frame():
+        snapshot = Gtk.Snapshot()
+        paintable.snapshot(snapshot, window.get_width(), window.get_height())
+        node = snapshot.to_node()
+        if node is None:
+            return False
+        assert window.get_renderer().render_texture(node, None).save_to_png(str(destination))
+        return True
+    wait(frame)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--out', type=Path, required=True)
+    args = parser.parse_args()
+    if os.environ.get('AQUA_UX_TEST_PROFILE') != '1' or not str(Path.home()).startswith('/tmp/aqua-native-ux-'):
+        raise SystemExit('This harness requires an explicitly disposable test HOME')
+    args.out.mkdir(parents=True, exist_ok=True)
+    config = app.CONFIG_DIR
+    config.mkdir(parents=True, exist_ok=True)
+    targets = [{'host': f'127.0.0.{i}', 'port': 4840} for i in range(11, 15)]
+    (config / 'probe_targets.json').write_text(json.dumps({'targets': targets, 'ping_timeout_s': .1, 'tcp_timeout_s': .1}))
+    (config / 'network_topology.json').write_text(json.dumps({'devices': [
+        {'configured_ip': target['host'], 'type': 'wincc', 'alias': f'LAB Source {i}'}
+        for i, target in enumerate(targets, 1)]}))
+    db = Path.home() / '.local/share/aqua-command/probe/data.db'
+    store = EvidenceStore(db)
+    store.connection.close()
+    before = db.read_bytes()
+    catalog = write_catalog(Path.home() / 'lab-catalog.txt')
+    metrics = dict(hostname='SIMULATED LAB WORKSTATION', os_name='SIMULATED test profile', kernel='SIMULATED',
+                   arch='SIMULATED', cpu_model='SIMULATED', cpu_cores=1, cpu_load='SIMULATED',
+                   ram_total_gb=0, ram_used_gb=0, ram_avail_gb=0, ram_pct=0,
+                   disk_total_gb=0, disk_used_gb=0, disk_avail_gb=0, disk_pct=0,
+                   ip_lan='127.0.0.1 (SIMULATED)', uptime_str='SIMULATED')
+    application = Gtk.Application(application_id='org.aqua.ux.capture', flags=Gio.ApplicationFlags.NON_UNIQUE)
+    application.register(None)
+    records = []
+    with patch('app.DEFAULT_WINCC_EXPORT', catalog), patch('app.read_real_machine_data', return_value=metrics), \
+            patch('f3_api_view.read_linux_snapshot', return_value={'state':'UNKNOWN','interfaces':{}}):
+        for width, height in ((1024,600), (1360,768), (1920,1080)):
+            window = app.AquaWinCCWindow(application)
+            window.set_title('AQUA COMMAND · SIMULATED TEST PROFILE')
+            window.set_default_size(width, height)
+            window.present()
+            wait(window.get_mapped)
+            workspace = window.unified_workspace
+            web = workspace.f1_api.web
+            wait(lambda: javascript(web, "Boolean(window.F1 && document.querySelector('.table-row'))"))
+            try:
+                for key in ('F1', 'F2', 'F3', 'F4', 'F5', 'F6'):
+                    window.on_global_key_pressed(None, getattr(Gdk, 'KEY_' + key), 0, 0)
+                    if key == 'F2':
+                        wait(lambda: javascript(web, "document.getElementById('modalOverlay').open"))
+                    elif key == 'F3':
+                        wait(lambda: window.f3_network_view.api_url or window.f3_network_view.error.get_visible())
+                        if window.f3_network_view.api_url:
+                            wait(lambda: javascript(window.f3_network_view.web, "Boolean(document.querySelector('[data-n]'))"))
+                    settle(1.0)
+                    file = f'{width}x{height}-{key}.png'
+                    capture(window, args.out / file)
+                    records.append({'requested':[width,height], 'actual':[window.get_width(),window.get_height()], 'page':key, 'screenshot':file})
+                    if key == 'F2':
+                        javascript(web, "(window.F1.setMode('monitoring'), true)")
+                telemetry = window.polling_engine.get_telemetry()
+                assert telemetry['state'] == 'STOPPED' and telemetry['poll_count'] == 0
+                assert not window.notification_worker.running
+                assert db.read_bytes() == before
+            finally:
+                if getattr(window, '_close_dialog', None):
+                    window._close_dialog.response(Gtk.ResponseType.CANCEL)
+                # Explicit harness teardown is allowed only after its idle assertions.
+                window._close_confirmed = True
+                window.on_close_request()
+                workspace.f1_api.web.terminate_web_process()
+                window.destroy()
+                settle()
+    application.quit()
+    (args.out / 'native-layout.json').write_text(json.dumps(records, indent=2))
+    print(json.dumps({'screenshots':len(records), 'data':'SIMULATED test profile only', 'poll_count':0,
+                      'notification_worker_running':False, 'evidence_db_unchanged':True, 'records':records}), flush=True)
+
+
+if __name__ == '__main__':
+    main()

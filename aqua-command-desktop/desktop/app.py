@@ -1125,6 +1125,8 @@ label { color: @aqua_ink; }
     font-size: 9pt;
 }
 
+/* Closing is visually separate from settings and ordinary navigation. */
+.fkey-btn.exit-button { color: #f3b4ae; background: transparent; border-color: #8a4b46; margin-left: 8px; }
 /* Shared navigation and page actions. */
 .fkey-btn {
     background: @aqua_surface;
@@ -1502,8 +1504,11 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         exit_btn = Gtk.Button(label='ปิดโปรแกรม')
         exit_btn.add_css_class('fkey-btn')
+        exit_btn.add_css_class('exit-button')
         exit_btn.connect('clicked', lambda _: self.close())
-        alarm_box.append(exit_btn)
+        self.exit_button = exit_btn
+        navigation.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
+        navigation.append(exit_btn)
         alarm_box.append(self.settings_button)
 
         key_ctrl = Gtk.EventControllerKey()
@@ -3173,7 +3178,36 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
 
     def on_close_request(self, *args):
-        """Gracefully terminate background workers on window close."""
+        """Confirm the user close, then preserve the existing worker cleanup."""
+        if isinstance(self, Gtk.Window) and not getattr(self, '_close_confirmed', False):
+            if getattr(self, '_close_dialog', None) is not None:
+                self._close_dialog.present()
+                return True
+            opener = self.get_focus()
+            dialog = Gtk.MessageDialog(
+                transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.NONE,
+                text='ปิดโปรแกรมและหยุดการเฝ้าระวังหรือไม่?',
+            )
+            cancel = dialog.add_button('ยกเลิก', Gtk.ResponseType.CANCEL)
+            close = dialog.add_button('ปิดโปรแกรม', Gtk.ResponseType.ACCEPT)
+            close.add_css_class('destructive-action')
+            dialog.set_default_response(Gtk.ResponseType.CANCEL)
+            self._close_dialog = dialog
+
+            def response(widget, choice):
+                self._close_dialog = None
+                widget.destroy()
+                if choice == Gtk.ResponseType.ACCEPT:
+                    self._close_confirmed = True
+                    self.close()
+                elif opener is not None:
+                    opener.grab_focus()
+
+            dialog.connect('response', response)
+            dialog.present()
+            cancel.grab_focus()
+            return True
         self.running = False
         if hasattr(self, 'telemetry_settings'):
             self.telemetry_settings.stop(closing=True)
