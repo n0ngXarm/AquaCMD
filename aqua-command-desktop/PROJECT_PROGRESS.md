@@ -480,3 +480,11 @@ Added a cancel-default native close question; original cleanup runs only after
 acceptance. Exit is separated into the far-right navigation area. Existing
 lifecycle test assertions are retained and now explicitly accept the close
 question. New capture/run support uses disposable HOME and loopback namespace.
+
+
+Item2: nav buttons/tooltips expose F1–F6, close F8 and help F9; the F1 catalog
+refresh control exposes F7 and uses its existing catalog-only handler. Settings
+mentions Ctrl+,. Task navigation now has a toggle selected only while its Task
+dialog is open, synchronized through a presentation-only WebKit message. The
+fallback Task entry keeps the same Thai/F2 wording. No business action/schema,
+collector, worker or listener was added.

@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from gi.repository import Gdk, Gio, Gtk
 import app
-from ux_native_capture import wait, settle
+from ux_native_capture import wait, settle, javascript
 
 
 class DesktopPolishTests(unittest.TestCase):
@@ -69,6 +69,24 @@ class DesktopPolishTests(unittest.TestCase):
         self.assertFalse(window.get_visible())
         self.assertTrue(window.f3_network_view.closed)
 
+    def test_navigation_shortcuts_and_task_dialog_selected_state(self):
+        window = self.window
+        for page, key in [('overview','F1'),('tasks','F2'),('network','F3'),('machine','F4'),('tags','F5'),('alarms','F6')]:
+            self.assertIn(key, window.nav_btns[page].get_tooltip_text())
+        self.assertIn('Ctrl+,', window.settings_button.get_tooltip_text())
+        self.assertIn('F8', window.exit_button.get_tooltip_text())
+        self.assertIn('F9', window.help_button.get_tooltip_text())
+        web = window.unified_workspace.f1_api.web
+        wait(lambda: javascript(web, 'Boolean(window.F1)'))
+        window.on_global_key_pressed(None, Gdk.KEY_F2, 0, 0)
+        wait(lambda: window.nav_btns['tasks'].get_active())
+        wait(lambda: javascript(web, "document.getElementById('modalOverlay').open"))
+        javascript(web, "(window.F1.setMode('monitoring'), true)")
+        wait(lambda: not window.nav_btns['tasks'].get_active())
+        self.assertEqual(window.unified_workspace.current_workspace_mode, 'monitoring')
+        self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
+
 
 if __name__ == '__main__':
     unittest.main()
+

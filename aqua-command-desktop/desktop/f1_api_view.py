@@ -181,6 +181,8 @@ class F1ApiView:
         manager = WebKit.UserContentManager()
         manager.register_script_message_handler('f1Bridge', None)
         manager.connect('script-message-received::f1Bridge', self._on_bridge_message)
+        manager.register_script_message_handler('f1Presentation', None)
+        manager.connect('script-message-received::f1Presentation', self._on_presentation_message)
 
         self.web = WebKit.WebView(network_session=session, user_content_manager=manager)
         self.web.set_hexpand(True)
@@ -206,6 +208,20 @@ class F1ApiView:
         # Load assembled HTML
         html_markup = build_html()
         self.web.load_html(html_markup, 'http://127.0.0.1/f1/')
+
+    def _on_presentation_message(self, _manager, value):
+        """Synchronize the native F2 highlight with its existing WebKit dialog."""
+        if self.closed:
+            return
+        try:
+            message = json.loads(value.to_string())
+        except (ValueError, TypeError, AttributeError):
+            return
+        if not isinstance(message, dict) or set(message) != {'taskDialogOpen'} or type(message['taskDialogOpen']) is not bool:
+            return
+        update = getattr(self.owner, 'set_task_dialog_active', None)
+        if callable(update):
+            update(message['taskDialogOpen'])
 
     def _on_decide_policy(self, webview, decision, decision_type):
         if decision_type == WebKit.PolicyDecisionType.NAVIGATION_ACTION:

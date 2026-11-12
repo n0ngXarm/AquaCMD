@@ -1459,8 +1459,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.settings_button = Gtk.ToggleButton(icon_name='applications-system-symbolic')
         self.settings_button.add_css_class('fkey-btn')
         self.settings_button.set_size_request(42, -1)
-        self.settings_button.set_tooltip_text('ตั้งค่าการเชื่อมต่อ')
-        self.settings_button.update_property([Gtk.AccessibleProperty.LABEL], ['การตั้งค่า'])
+        self.settings_button.set_tooltip_text('ตั้งค่า · F6 หรือ Ctrl+,')
+        self.settings_button.update_property([Gtk.AccessibleProperty.LABEL], ['ตั้งค่า'])
 
         pages = (
             ('งานประจำ', (
@@ -1481,17 +1481,19 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             heading.add_css_class('nav-caption')
             navigation.append(heading)
             for key, text in entries:
+                shortcut = {'overview': 'F1', 'tasks': 'F2', 'network': 'F3', 'machine': 'F4', 'tags': 'F5'}[key]
                 if USE_UNIFIED_WORKSPACE and key == 'tasks':
-                    button = Gtk.Button(label=text)
-                    button.set_tooltip_text('เปิดงานเฝ้าระวัง')
+                    button = Gtk.ToggleButton(label=f'{text} · {shortcut}')
+                    self.nav_btns[key] = button
                     button.connect('clicked', lambda _: self.activate_workspace_mode('task_manager'))
                 else:
-                    button = Gtk.ToggleButton(label=text)
+                    button = Gtk.ToggleButton(label=f'{text} · {shortcut}')
                     button.set_group(group_button)
                     button.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
                     if USE_UNIFIED_WORKSPACE and key == 'overview':
                         button.connect('clicked', lambda _: self.activate_workspace_mode('monitoring'))
                     self.nav_btns[key] = button
+                button.set_tooltip_text(f'{text} · {shortcut}')
                 button.add_css_class('fkey-btn')
                 navigation.append(button)
 
@@ -1502,7 +1504,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.settings_button.connect('toggled', lambda btn: self.stack.set_visible_child_name('alarms') if btn.get_active() else None)
         self.stack.connect('notify::visible-child-name', self.on_page_changed)
 
-        exit_btn = Gtk.Button(label='ปิดโปรแกรม')
+        exit_btn = Gtk.Button(label='ปิด · F8')
+        exit_btn.set_tooltip_text('ปิดโปรแกรม · F8 · ต้องยืนยันก่อนหยุดการเฝ้าระวัง')
         exit_btn.add_css_class('fkey-btn')
         exit_btn.add_css_class('exit-button')
         exit_btn.connect('clicked', lambda _: self.close())
@@ -1542,10 +1545,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
     def build_help_button(self):
         self.help_manual = None
-        self.help_button = Gtk.Button(label='?')
+        self.help_button = Gtk.Button(label='? · F9')
         self.help_button.add_css_class('fkey-btn')
         self.help_button.set_size_request(38, -1)
-        self.help_button.set_tooltip_text('คู่มือการใช้งาน')
+        self.help_button.set_tooltip_text('คู่มือการใช้งาน · F9')
         self.help_button.update_property([Gtk.AccessibleProperty.LABEL], ['คู่มือการใช้งาน'])
         self.help_button.connect('clicked', self.show_help_manual)
         return self.help_button
@@ -1569,6 +1572,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         page = stack.get_visible_child_name()
         if page in self.nav_btns:
             self.nav_btns[page].set_active(True)
+        if page != 'overview':
+            self.set_task_dialog_active(False)
         if page == 'tags' and self.tags_page_dirty:
             self.render_tags_page_grid()
 
@@ -1589,12 +1594,22 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if getattr(self, 'hybrid_ui', None) and self.hybrid_ui.bridge:
             self.hybrid_ui.bridge.record_refresh(len(self.scanned_tags))
 
+    def set_task_dialog_active(self, active):
+        """Reflect a visible Task dialog; never start a Task or change its data."""
+        button = getattr(self, 'nav_btns', {}).get('tasks')
+        if button is not None:
+            button.set_active(bool(active))
+        if hasattr(self, 'unified_workspace'):
+            self.unified_workspace.current_workspace_mode = 'task_manager' if active else 'monitoring'
+
     def activate_workspace_mode(self, mode):
         self.stack.set_visible_child_name('overview')
         if hasattr(self, 'unified_workspace'):
             if mode == 'task_manager':
+                self.set_task_dialog_active(True)
                 self.unified_workspace.open_task_dialog()
             else:
+                self.set_task_dialog_active(False)
                 self.unified_workspace.set_workspace_mode('monitoring')
 
     # ---------------------------------------------------------

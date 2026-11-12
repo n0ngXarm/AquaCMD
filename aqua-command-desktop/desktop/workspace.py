@@ -249,6 +249,7 @@ class AquaUnifiedWorkspaceView:
         # Scan Toolbar Controls
         self.btn_scan_once = Gtk.Button(label="รีเฟรชคลัง Tag")
         self.btn_scan_once.add_css_class('f2-btn-scan-once')
+        self.btn_scan_once.set_tooltip_text('รีเฟรชคลัง Tag จากไฟล์ที่เลือก · F7')
         self.btn_scan_once.connect('clicked', lambda _: self.owner.trigger_rescan())
         self.top_box.append(self.btn_scan_once)
 
@@ -271,8 +272,9 @@ class AquaUnifiedWorkspaceView:
         spacer.set_hexpand(True)
         self.top_box.append(spacer)
 
-        self.btn_top_f2 = Gtk.Button(label='งานเฝ้าระวัง')
+        self.btn_top_f2 = Gtk.Button(label='งานเฝ้าระวัง · F2')
         self.btn_top_f2.add_css_class('workspace-mode-btn-active')
+        self.btn_top_f2.set_tooltip_text('งานเฝ้าระวัง · F2')
         self.btn_top_f2.connect('clicked', lambda _: self.open_task_dialog())
         self.top_box.append(self.btn_top_f2)
 
@@ -831,6 +833,8 @@ class AquaUnifiedWorkspaceView:
                 row.grab_focus()
 
     def open_task_dialog(self):
+        if hasattr(self.owner, 'set_task_dialog_active'):
+            self.owner.set_task_dialog_active(True)
         if getattr(self, 'f1_api', None) and not getattr(self.f1_api, 'closed', False):
             self.current_workspace_mode = 'task_manager'
             self.f1_api.open_task_dialog()
@@ -1721,6 +1725,8 @@ class AquaUnifiedWorkspaceView:
         def close():
             self.task_dialog.set_visible(False)
             self.current_workspace_mode = 'monitoring'
+            if hasattr(self.owner, 'set_task_dialog_active'):
+                self.owner.set_task_dialog_active(False)
             self.btn_top_f2.grab_focus()
         self._guard_task_changes(close)
         return True

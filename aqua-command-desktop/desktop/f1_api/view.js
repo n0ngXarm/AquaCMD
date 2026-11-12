@@ -331,7 +331,16 @@
     }
   }
 
+  let taskDialogVisible = false;
+  function reportTaskDialog() {
+    const visible = state.activeModal?.type === 'task_dialog';
+    if (taskDialogVisible === visible) return;
+    taskDialogVisible = visible;
+    window.webkit?.messageHandlers?.f1Presentation?.postMessage(JSON.stringify({taskDialogOpen: visible}));
+  }
+
   function renderModal() {
+    reportTaskDialog();
     const overlayEl = document.getElementById('modalOverlay');
     const contentEl = document.getElementById('modalContent');
     if (!overlayEl || !contentEl) return;
@@ -985,6 +994,7 @@
 
   // --- Event Bindings ---
   function setupEvents() {
+    document.getElementById('btnRefreshCatalog').addEventListener('click', () => sendBridge('key_event', {key: 'F7'}));
     document.getElementById('modalOverlay').addEventListener('cancel', event => {
       event.preventDefault();
       closeModal();
