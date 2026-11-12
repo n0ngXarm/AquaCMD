@@ -1340,11 +1340,14 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         # 1. WinCC Top Bar (Section A - Industrial Precision V1.1)
         topbar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         topbar.add_css_class('wincc-topbar')
+        topbar.add_css_class('app-header')
+        self.header_box = topbar
         root_box.append(topbar)
 
         logo_label = Gtk.Label(label="AQUA COMMAND")
         logo_label.add_css_class('wincc-logo')
         topbar.append(logo_label)
+        self.logo_label = logo_label
 
         title_label = Gtk.Label(label="WinCC V8.1")
         title_label.add_css_class('wincc-title')
@@ -1352,6 +1355,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         title_label.set_xalign(0.0)
         title_label.set_ellipsize(Pango.EllipsizeMode.END)
         topbar.append(title_label)
+        self.brand_detail = title_label
 
         self.theme_button = Gtk.ToggleButton(icon_name='weather-clear-night-symbolic')
         self.theme_button.set_tooltip_text('สลับธีม (สว่าง/มืด)')
@@ -1408,6 +1412,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.alarm_text.set_xalign(0.0)
         self.alarm_text.set_ellipsize(Pango.EllipsizeMode.END)
         self.alarm_text.set_selectable(True)
+        self.alarm_text.set_focusable(False)
+        self.alarm_text.connect('map', lambda label: label.select_region(0, 0))
         self.alarm_text.set_tooltip_text(self.alarm_text.get_text())
         self.alarm_text.connect('notify::label', lambda label, _: label.set_tooltip_text(label.get_text()))
         alarm_box.append(self.alarm_text)
@@ -1431,10 +1437,13 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         navigation = Gtk.Box(spacing=6)
         navigation.add_css_class('wincc-navigation')
-        root_box.insert_child_after(navigation, topbar)
+        navigation.add_css_class("nav-tabs")
+        self.navigation = navigation
+        self.footer = alarm_box
         root_box.append(alarm_box)
 
         self.nav_btns = {}
+        self.nav_captions = {}
         self.settings_button = Gtk.ToggleButton(icon_name='applications-system-symbolic')
         self.settings_button.add_css_class('fkey-btn')
         self.settings_button.set_size_request(42, -1)
@@ -1448,37 +1457,36 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 ('network', 'ผังการสื่อสาร'),
             )),
             ('เครื่องมือ', (
-                ('tags', 'คลัง Tag'),
                 ('machine', 'ข้อมูลเครื่อง'),
+                ('tags', 'คลัง Tag'),
             )),
         )
         group_button = self.settings_button
         for caption, entries in pages:
-            if self.nav_btns:
-                navigation.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
-            heading = Gtk.Label(label=caption)
-            heading.add_css_class('nav-caption')
-            navigation.append(heading)
             for key, text in entries:
                 shortcut = {'overview': 'F1', 'tasks': 'F2', 'network': 'F3', 'machine': 'F4', 'tags': 'F5'}[key]
                 if USE_UNIFIED_WORKSPACE and key == 'tasks':
-                    button = Gtk.ToggleButton(label=f'{text} · {shortcut}')
+                    button = Gtk.ToggleButton()
                     self.nav_btns[key] = button
                     button.connect('clicked', lambda _: self.activate_workspace_mode('task_manager'))
                 else:
-                    button = Gtk.ToggleButton(label=f'{text} · {shortcut}')
-                    button.set_group(group_button)
+                    button = Gtk.ToggleButton()
                     button.connect('toggled', lambda btn, k=key: self.stack.set_visible_child_name(k) if btn.get_active() else None)
                     if USE_UNIFIED_WORKSPACE and key == 'overview':
                         button.connect('clicked', lambda _: self.activate_workspace_mode('monitoring'))
                     self.nav_btns[key] = button
+                button.set_group(group_button)
+                button.set_child(self._nav_content(key, text, shortcut))
+                button.add_css_class('nav-tab')
                 button.set_tooltip_text(f'{text} · {shortcut}')
                 button.add_css_class('fkey-btn')
                 navigation.append(button)
 
-        navigation.append(Gtk.Box(hexpand=True))
-        navigation.append(self.build_help_button())
+        self.build_help_button()
 
+        self.settings_button.set_child(self._nav_content('alarms', 'ตั้งค่า', 'F6'))
+        self.settings_button.add_css_class('nav-tab')
+        navigation.append(self.settings_button)
         self.nav_btns['alarms'] = self.settings_button
         self.settings_button.connect('toggled', lambda btn: self.stack.set_visible_child_name('alarms') if btn.get_active() else None)
         self.stack.connect('notify::visible-child-name', self.on_page_changed)
@@ -1490,13 +1498,35 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         exit_btn.add_css_class('exit-button')
         exit_btn.connect('clicked', lambda _: self.close())
         self.exit_button = exit_btn
-        navigation.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
-        navigation.append(exit_btn)
+        self.exit_divider = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
         self.catalog_refresh_status = Gtk.Label(label='รีเฟรชอัตโนมัติ: ปิด', xalign=0)
         self.catalog_refresh_status.add_css_class('alarm-text')
         self.catalog_refresh_status.set_tooltip_text('รีเฟรชคลัง Tag จากไฟล์ตามรอบที่ตั้งไว้ ไม่ใช่การยืนยันผลอ่าน OPC UA')
         alarm_box.append(self.catalog_refresh_status)
-        alarm_box.append(self.settings_button)
+        # Non-interactive status cluster: icon and text, never button-like borders.
+        self.status_cluster = Gtk.Box(spacing=6)
+        self.status_cluster.add_css_class('status-cluster')
+        for icon_name, label in [('view-list-symbolic', self.pill_scan), ('changes-prevent-symbolic', self.pill_readonly),
+                                 ('network-transmit-receive-symbolic', self.internet_badge)]:
+            topbar.remove(label)
+            item = Gtk.Box(spacing=4)
+            item.add_css_class('status-item')
+            icon = Gtk.Image.new_from_icon_name(icon_name)
+            icon.set_pixel_size(12)
+            item.append(icon)
+            item.append(label)
+            self.status_cluster.append(item)
+            label.set_tooltip_text(label.get_text())
+        self.internet_badge.set_max_width_chars(16)
+        self.internet_badge.set_ellipsize(Pango.EllipsizeMode.END)
+        for child in (logo_label, title_label, self.theme_button):
+            topbar.remove(child)
+        for child in (logo_label, title_label, navigation, Gtk.Box(hexpand=True), self.status_cluster,
+                      self.theme_button, self.help_button, self.exit_divider, exit_btn):
+            topbar.append(child)
+        self.connect('notify::default-width', lambda *_: self._adapt_chrome(self.get_default_size()[0]))
+        self.connect('realize', lambda window: window.get_surface().connect('layout', lambda _, width, height: self._adapt_chrome(width)))
+        self._adapt_chrome(self.get_default_size()[0])
 
         key_ctrl = Gtk.EventControllerKey()
         key_ctrl.connect('key-pressed', self.on_global_key_pressed)
@@ -1526,6 +1556,37 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 self.render_tags_page_grid()
         except Exception:
             pass  # Grafana integration failure cannot prevent native startup.
+
+    def _nav_content(self, key, title, shortcut):
+        content = Gtk.Box(spacing=5, halign=Gtk.Align.CENTER)
+        caption = Gtk.Label(label=title)
+        caption.set_ellipsize(Pango.EllipsizeMode.END)
+        caption.add_css_class('nav-text')
+        hint = Gtk.Label(label=shortcut)
+        hint.add_css_class('nav-key')
+        content.append(caption)
+        content.append(hint)
+        self.nav_captions[key] = (caption, title)
+        return content
+
+    def _adapt_chrome(self, width):
+        layout = 0 if width < 1280 else 1 if width < 1600 else 2
+        if getattr(self, '_chrome_layout', None) == layout:
+            return
+        self._chrome_layout = layout
+        self.header_box.set_spacing(4 if layout == 0 else 8)
+        self.help_button.set_size_request(30 if layout == 0 else 34, -1)
+        if layout == 0:
+            self.header_box.add_css_class('compact')
+        else:
+            self.header_box.remove_css_class('compact')
+        self.logo_label.set_text('AQUA' if layout == 0 else 'AQUA COMMAND')
+        self.brand_detail.set_visible(layout == 2)
+        self.brand_detail.set_hexpand(False)
+        captions = {'overview':'ติดตาม', 'tasks':'งาน', 'network':'ผัง', 'machine':'เครื่อง', 'tags':'Tag', 'alarms':'ตั้งค่า'}
+        regular = {'overview':'ติดตามค่า', 'tasks':'งาน', 'network':'ผังสื่อสาร', 'machine':'ข้อมูลเครื่อง', 'tags':'คลัง Tag', 'alarms':'ตั้งค่า'}
+        for key, (label, full) in self.nav_captions.items():
+            label.set_text(captions[key] if layout == 0 else regular.get(key, full))
 
     def _sync_theme_controls(self):
         self._syncing_theme_controls = True
@@ -1582,8 +1643,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
     def build_help_button(self):
         self.help_manual = None
-        self.help_button = Gtk.Button(label='? · F9')
+        self.help_button = Gtk.Button(icon_name='help-browser-symbolic')
         self.help_button.add_css_class('fkey-btn')
+        self.help_button.add_css_class('icon-button')
         self.help_button.set_size_request(38, -1)
         self.help_button.set_tooltip_text('คู่มือการใช้งาน · F9')
         self.help_button.update_property([Gtk.AccessibleProperty.LABEL], ['คู่มือการใช้งาน'])
@@ -1643,6 +1705,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if hasattr(self, 'unified_workspace'):
             self.unified_workspace.current_workspace_mode = 'task_manager' if active else 'monitoring'
         if previous and not active:
+            if restore_focus:
+                page = self.stack.get_visible_child_name()
+                if page in self.nav_btns:
+                    self.nav_btns[page].set_active(True)
             opener = getattr(self, '_task_dialog_opener', None)
             self._task_dialog_opener = None
             if restore_focus and opener is not None and opener.get_mapped():
@@ -3207,7 +3273,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             label += f' · GW {gateway}'
         self.internet_badge.set_text(label)
         self.internet_badge.set_tooltip_text(
-            'สถานะอินเทอร์เน็ตจาก NetworkManager · GW คือเกตเวย์ IPv4 เริ่มต้นของเครื่อง')
+            label + '\nสถานะอินเทอร์เน็ตจาก NetworkManager · GW คือเกตเวย์ IPv4 เริ่มต้นของเครื่อง')
         self.internet_badge.set_css_classes(['badge-active' if connectivity == 'FULL' else 'badge-standby'])
 
     def update_telegram_unknown_status(self):

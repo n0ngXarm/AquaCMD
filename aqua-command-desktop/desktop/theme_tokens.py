@@ -201,7 +201,11 @@ LIGHT = {'bg': '#eef1f4',
  'palette-150': 'rgba(228,237,246,0.6)',
  'palette-151': 'rgba(207,214,221,0.15)',
  'palette-152': 'rgba(207,214,221,0.4)',
- 'palette-153': 'rgba(42,138,122,0.15)'}
+ 'palette-153': 'rgba(42,138,122,0.15)',
+ 'header-mut': '#c4d2e3',
+ 'header-ok': '#98e4bc',
+ 'header-fail': '#ffb5bd',
+ 'header-stale': '#f8d28d'}
 
 DARK = {'bg': '#11161c',
  'surface': '#1a212a',
@@ -398,7 +402,11 @@ DARK = {'bg': '#11161c',
  'palette-150': 'rgba(54, 69, 83, 0.6)',
  'palette-151': 'rgba(56, 184, 139, 0.15)',
  'palette-152': 'rgba(56, 184, 139, 0.4)',
- 'palette-153': 'rgba(56, 189, 248, 0.15)'}
+ 'palette-153': 'rgba(56, 189, 248, 0.15)',
+ 'header-mut': '#c4d2e3',
+ 'header-ok': '#98e4bc',
+ 'header-fail': '#ffb5bd',
+ 'header-stale': '#f8d28d'}
 
 THEMES = {'light': LIGHT, 'dark': DARK}
 DEFAULT_THEME = 'light'

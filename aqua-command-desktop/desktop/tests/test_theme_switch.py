@@ -103,6 +103,41 @@ class ThemeSwitchTests(unittest.TestCase):
         self.assertFalse(window.theme_button.get_active())
         self.assertTrue(window.theme_buttons['light'].get_active())
 
+    def test_footer_is_not_auto_selected_but_stays_copyable(self):
+        label = self.window.alarm_text
+        self.window.switch_to_tab('alarms')
+        settle(.1)
+        self.assertFalse(label.get_focusable())
+        self.assertFalse(label.get_selection_bounds()[0])
+        self.assertTrue(label.get_selectable())
+        label.select_region(0, -1)
+        self.assertTrue(label.get_selection_bounds()[0])
+        self.assertEqual(label.get_tooltip_text(), label.get_text())
+
+    def test_f2_is_the_only_selected_nav_and_restores_f1_on_close(self):
+        window = self.window
+        web = window.unified_workspace.f1_api.web
+        wait(lambda: javascript(web, 'Boolean(window.F1)'))
+        window.switch_to_tab('tasks')
+        wait(lambda: javascript(web, 'document.getElementById("modalOverlay").open'))
+        self.assertEqual([name for name, button in window.nav_btns.items() if button.get_active()], ['tasks'])
+        javascript(web, '(window.F1.setMode("monitoring"),true)')
+        wait(lambda: not window.nav_btns['tasks'].get_active())
+        self.assertEqual([name for name, button in window.nav_btns.items() if button.get_active()], ['overview'])
+        window.switch_to_tab('alarms')
+        self.assertEqual([name for name, button in window.nav_btns.items() if button.get_active()], ['alarms'])
+
+    def test_chrome_resizes_after_mapping_and_footer_stays_thin(self):
+        window = self.window
+        for mode in ('light', 'dark'):
+            window.set_theme(mode)
+            for width, height in ((1024, 600), (1360, 768), (1920, 1080)):
+                window.set_default_size(width, height)
+                wait(lambda: (window.get_width(), window.get_height()) == (width, height))
+                self.assertLessEqual(window.footer.get_allocated_height(), 32)
+                self.assertLessEqual(window.header_box.get_allocated_height(), 56)
+                self.assertIs(window.navigation.get_parent(), window.header_box)
+
 
 if __name__ == '__main__':
     unittest.main()
