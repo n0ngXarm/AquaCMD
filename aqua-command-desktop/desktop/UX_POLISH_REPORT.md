@@ -1,14 +1,19 @@
 # รายงานปรับ UX ของ AQUA COMMAND native GTK4
 
-วันที่ 2026-11-12 · สาขา local `ux/desktop-polish` · ฐาน `445e1e6`
+วันที่ 2026-11-12 · งาน UX เผยแพร่บน `main` ที่ `a3a2ef4` · ฐาน UX `445e1e6`
+
+เผยแพร่ครบ **11 commits**: 10 commits ของ UX และหนึ่ง commit บันทึกอนุญาต
+รอบแก้ Python compatibility อยู่สาขา local `fix/desktop-py-compat` และยังไม่ push
 
 อัปเดตหลังผู้ใช้ส่งภาพอ้างอิง: รักษาหน้าตาผังสามคอลัมน์เดิม และใช้ภาพ
-1920x1080 ที่มี topology ครบในการเทียบ ผลล่าสุด Desktop332 / contracts116 /
+1920x1080 ที่มี topology ครบในการเทียบ ผลตรวจงาน UX เดิม Desktop332 / contracts116 /
 UX13 tests ผ่าน พร้อม regression ของประวัติ FAIL เก่าที่จอเล็ก ดูรายละเอียดท้ายรายงาน
 
 งานปรับ GUI/presentation เสร็จใน isolated checkout และผ่านชุดตรวจด้านล่าง
-โปรแกรมที่ไอคอนเดิมเปิดยังเป็น canonical `main` ที่ `445e1e6`
-ไม่มีการติดตั้ง dependency/โปรแกรม, push, merge, deployment หรือแก้ OS/service/network
+ผู้ใช้อนุญาตเผยแพร่ source ไป GitHub `main` ที่ `a3a2ef4` แล้วเมื่อ 2026-11-12
+ตามบันทึกใน PROJECT_PROGRESS.md การเผยแพร่ source ไม่ใช่การติดตั้งโปรแกรม
+สถานะโปรแกรมที่ไอคอนเปิดยังไม่ได้ตรวจสอบในรอบ compatibility นี้
+ไม่มีการติดตั้งโปรแกรม, deployment หรือแก้ OS/service/network ในงาน UX
 ไม่แก้ backend, collector, schema, DB code, config, private runtime profile หรือ Windows reader
 การตรวจ GUI ใช้ disposable test profile ที่ระบุ SIMULATED และ network namespace
 ที่มี loopback เท่านั้น ไม่มีการอ่าน PLC/WinCC หรือส่ง Telegram จริง
@@ -26,9 +31,10 @@ UX13 tests ผ่าน พร้อม regression ของประวัต�
 | `084f5e4` | accessible labels, Tab เข้าถึงแถว F1 และ reduced-motion ครบขึ้น |
 | `0a72d8f` | แก้ F3 card ล้นในหน้าต่าง native จริงและความสูงกลุ่ม F1 พร้อม regression |
 | `54bead1` | โฟกัสเข้า F2 และคืนตัวเปิดจริง, ภาพ confirmation และรายงานส่งมอบแรก |
-| commit ที่แนบการแก้ภาพอ้างอิงนี้ | ย่ออายุข้อมูล F3, จัด banner จอเล็ก และ regression ประวัติ FAIL พร้อม Switch/Router |
+| `9889a8d` | ย่ออายุข้อมูล F3, จัด banner จอเล็ก และ regression ประวัติ FAIL พร้อม Switch/Router |
+| `a3a2ef4` | บันทึกอนุญาตเผยแพร่ UX ไป main |
 
-ทุก commit อยู่บนสาขา local เท่านั้น ไม่มีการแก้ประวัติเดิม
+11 commits ข้างต้นเผยแพร่บน `main` แล้ว ไม่มี force push หรือแก้ประวัติเดิม
 
 ## ผลตามรายการที่ขอ
 
@@ -266,4 +272,44 @@ Python runtime เดิมกับ `artifacts/ux-reference/reference_capture.p
 ไฟล์แก้เพิ่มในรอบอ้างอิง: `desktop/f3_api/view.js`, `desktop/f3_api/view.css`,
 `desktop/tests/test_ux_desktop_polish.py`, `desktop/UX_POLISH_REPORT.md`
 และ `PROJECT_PROGRESS.md` ข้อจำกัด legacy scripts/ResourceWarning และ
-รายการยังไม่ได้ตรวจสอบข้างต้นยังเหมือนเดิม ไม่มีติดตั้ง/push/merge
+รายการยังไม่ได้ตรวจสอบข้างต้นยังเหมือนเดิม งาน UX เผยแพร่ไป main แล้ว
+การเผยแพร่ไม่ได้ติดตั้งหรือยืนยันการรับรองหน้างาน
+
+
+## แก้ Python compatibility และความเป็นอิสระจาก hostname — 2026-11-12
+
+งานรอบนี้อยู่สาขา local `fix/desktop-py-compat` จาก `main` ที่ `a3a2ef4`
+ไม่ push/merge หรือติดตั้งโปรแกรม มีสาม commits แยกตามรายการแก้:
+`fe0ffd9` แก้ import/เพิ่ม regression, `f888a86` แก้ hostname assertions,
+และ commit ปรับเอกสารรอบนี้ การเผยแพร่ UX เดิม 11 commits ยังคงเป็นข้อมูลข้างต้น
+
+Verified on Python 3.12 + GTK4/WebKit 6.0 on a headless display: 13 UX tests pass;
+full discovery 332 tests had 2 hostname-dependent failures (fixed in `f888a86`);
+`Optional` import gap fixed in `fe0ffd9`.
+
+baseline 332 tests นี้ใช้ source จาก `a3a2ef4` พร้อมเฉพาะ import ที่แก้แล้ว
+เพื่อแยกปัญหา hostname ออกจาก startup crash หลังแก้ทั้งหมด full discovery
+ผ่าน335 tests (332เดิม + regression AST ใหม่3) ที่ hostname ทดสอบซึ่งไม่ใช่ fedora
+regression ไม่ต้องใช้ GTK ผ่าน3/3ทั้ง Python3.12และ3.14 และสำเนาไฟล์ที่เอา
+Optional import ออกทำให้ regression ล้มเหลวจริง ไม่ผ่อน assertions เดิม
+ก่อนแก้ import app จริงบน3.12ล้มด้วย NameError หลังแก้ import สำเร็จพร้อม asyncua
+
+pyflakes ตรวจ desktop/*.py ทั้ง38ไฟล์ พบ Optionalหนึ่งจุดและ serializationสองจุด
+ใน app.py จึงเติม import จาก dependency เดิมตามขอบเขตการแก้ undefined names
+หลังแก้เหลือ undefined names0 ส่วน67 warningsอื่นคงเดิม ไม่แก้ unused imports/locals
+literal local-user ยังคงเป็น negative assertion เพื่อป้องกันการใช้ username
+ส่วน test_f3_local.py มีข้อกำหนดให้มี non-loopback interface จึงเตรียม interface
+ทดสอบใน namespace โดยไม่เปลี่ยน test หรือ interface ของเครื่องหลัก
+
+การตรวจGUIใช้ Python3.12.3/GTK4.14/WebKit API6.0 ใน container ชั่วคราวผ่าน xvfb-run
+network ปิด ไม่มี IP/route ที่เชื่อมออกสำหรับ interface ทดสอบ ใช้ HOME/XDGชั่วคราว
+Python3.14ตรวจเฉพาะ AST regression; GUIบน3.14ยังไม่ได้ตรวจสอบ
+ยังมี ResourceWarning ของ unclosed event loop และ Gtk.Dialog deprecation warnings
+ข้อมูลนี้ไม่ใช่การตรวจรับ Windows/WinCC/PLC/LAN/Telegramจริง
+
+ตรวจ source contracts เพิ่มบน Python3.12 จำนวน116 tests พบ2 failuresซ้ำทั้ง baseline
+และหลังแก้ในสภาพแวดล้อมเดียวกัน: readiness loopback (GetEndpoints เป็น SKIPPED)
+และ MQTT fresh snapshot (collector exit1) ยังไม่ยืนยันสาเหตุและไม่แก้ backend นอกขอบเขต
+รอบแรกที่ container ยังไม่มี psutil/non-loopback interface มีข้อผิดพลาด setupเพิ่ม
+เก็บ raw output เดิมไว้ แล้วเติมเฉพาะสภาพแวดล้อมโดยไม่แก้ tests ก่อนรันชุดหลักผ่าน
+คำสั่งเต็ม ผลดิบ และรายการ67 warnings เก็บเป็นหลักฐาน local แยกจาก public source
