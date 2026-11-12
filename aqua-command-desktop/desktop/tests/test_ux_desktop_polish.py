@@ -86,6 +86,19 @@ class DesktopPolishTests(unittest.TestCase):
         self.assertEqual(window.unified_workspace.current_workspace_mode, 'monitoring')
         self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
 
+    def test_status_ribbon_keeps_full_selectable_text_and_reports_refresh_state(self):
+        window = self.window
+        message = 'ตรวจความพร้อมไม่ผ่าน: CERT_ERROR · ' + 'เหตุผลจากระบบ ' * 30
+        window.alarm_text.set_text(message)
+        self.assertEqual(window.alarm_text.get_tooltip_text(), message)
+        self.assertTrue(window.alarm_text.get_selectable())
+        window.auto_scan_active = False
+        window.auto_scan_interval = 30
+        window.update_catalog_refresh_status()
+        self.assertIn('ปิด', window.catalog_refresh_status.get_text())
+        self.assertIn('30', window.catalog_refresh_status.get_text())
+        self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
+
 
 class PresentationStyleTests(unittest.TestCase):
     def test_css_has_no_secondary_text_below_ten_points(self):

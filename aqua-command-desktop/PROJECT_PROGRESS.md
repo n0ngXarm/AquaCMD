@@ -506,3 +506,12 @@ or polling implementation. Source contracts116 and F3 fit3/3 passed. Preserve
 both raw results in artifacts/ux-after; rerun the complete suite at final state.
 Dark remains the default; the optional theme switch is skipped because private
 settings handling is outside the authorized presentation scope.
+
+
+Item4: unified visible catalog refresh controls/status in Thai, removed decorative
+button emoji and duplicated Save/Cancel English, and retained enums, structured
+logs and actual error details. The status ribbon is selectable/copyable and its
+tooltip always contains the full message. A compact ribbon status displays the
+existing automatic catalog-refresh on/off and interval; it changes no timing,
+worker, read or network behavior. Legacy Windows-only/unloaded views are not
+claimed verified by this GTK presentation work.

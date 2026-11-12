@@ -1432,6 +1432,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.alarm_text.set_hexpand(True)
         self.alarm_text.set_xalign(0.0)
         self.alarm_text.set_ellipsize(Pango.EllipsizeMode.END)
+        self.alarm_text.set_selectable(True)
+        self.alarm_text.set_tooltip_text(self.alarm_text.get_text())
+        self.alarm_text.connect('notify::label', lambda label, _: label.set_tooltip_text(label.get_text()))
         alarm_box.append(self.alarm_text)
 
         # 3. Stack Pages
@@ -1513,6 +1516,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.exit_button = exit_btn
         navigation.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
         navigation.append(exit_btn)
+        self.catalog_refresh_status = Gtk.Label(label='รีเฟรชอัตโนมัติ: ปิด', xalign=0)
+        self.catalog_refresh_status.add_css_class('alarm-text')
+        self.catalog_refresh_status.set_tooltip_text('รีเฟรชคลัง Tag จากไฟล์ตามรอบที่ตั้งไว้ ไม่ใช่การยืนยันผลอ่าน OPC UA')
+        alarm_box.append(self.catalog_refresh_status)
         alarm_box.append(self.settings_button)
 
         key_ctrl = Gtk.EventControllerKey()
@@ -1583,7 +1590,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.pill_scan.set_text(f"คลัง {len(self.scanned_tags)} Tag")
         self.pill_scan.remove_css_class('badge-nope')
         self.pill_scan.add_css_class('badge-active')
-        self.alarm_icon.set_text("[SCANNED]")
+        self.alarm_icon.set_text("คลัง Tag")
         self.alarm_text.set_text(f"รีเฟรชคลัง WinCC แล้ว {len(self.scanned_tags)} Tag")
         self.render_dynamic_overview()
         if hasattr(self, 'render_tags_grid'):
@@ -1828,12 +1835,12 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.alarm_text.set_text("บันทึกการปรับแต่ง IP และโครงสร้างเราเตอร์เรียบร้อยแล้ว")
             dlg.close()
 
-        save_btn = Gtk.Button(label="💾 บันทึกและปรับปรุงผัง (Save & Apply)")
+        save_btn = Gtk.Button(label="บันทึกและปรับปรุงผัง")
         save_btn.add_css_class('action-btn')
         save_btn.connect('clicked', save_and_close)
         btn_box.append(save_btn)
 
-        cancel_btn = Gtk.Button(label="ยกเลิก (Cancel)")
+        cancel_btn = Gtk.Button(label="ยกเลิก")
         cancel_btn.add_css_class('action-btn')
         cancel_btn.connect('clicked', lambda _: dlg.close())
         btn_box.append(cancel_btn)
@@ -2010,7 +2017,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         """Runs every 1 second via GLib. Manages countdown, intervals, and duration without blocking GUI."""
         if not self.auto_scan_active:
             if hasattr(self, 'auto_scan_badge'):
-                self.auto_scan_badge.set_text("⏹️ Auto Scan: ปิดอยู่ (กดเพื่อเปิด)")
+                self.auto_scan_badge.set_text("รีเฟรชอัตโนมัติ: ปิด")
                 self.auto_scan_badge.remove_css_class('badge-active')
                 self.auto_scan_badge.add_css_class('badge-standby')
             return True
@@ -2022,10 +2029,10 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if self.auto_scan_duration > 0 and elapsed >= self.auto_scan_duration:
             self.auto_scan_active = False
             if hasattr(self, 'btn_auto_scan'):
-                self.btn_auto_scan.set_label("▶️ เริ่ม Auto Scan")
+                self.btn_auto_scan.set_label("เริ่มรีเฟรชอัตโนมัติ")
                 self.btn_auto_scan.remove_css_class('btn-autoscan-stop')
                 self.btn_auto_scan.add_css_class('btn-autoscan-start')
-                self.auto_scan_badge.set_text("⏹️ Auto Scan: ครบกำหนดเวลาแล้ว")
+                self.auto_scan_badge.set_text("รีเฟรชอัตโนมัติ: ครบกำหนด")
                 self.auto_scan_remaining_lbl.set_text("⏳ เวลาที่เหลือ: ครบกำหนด (หยุดอัตโนมัติ)")
             self.alarm_text.set_text(f"สแกนอัตโนมัติครบ 1 ชม. เรียบร้อยแล้ว (สแกนสำเร็จทั้งหมด {self.auto_scan_cycles} รอบ)")
             return True
@@ -2044,7 +2051,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         rem_text = format_duration(rem_sec) if self.auto_scan_duration > 0 else "รันต่อเนื่อง"
 
         if hasattr(self, 'auto_scan_badge'):
-            self.auto_scan_badge.set_text(f"🟢 AUTO SCAN: ทำงาน (ทุกๆ {self.auto_scan_interval}วิ)")
+            self.auto_scan_badge.set_text(f"รีเฟรชอัตโนมัติ: เปิด · ทุก {self.auto_scan_interval} วินาที")
             self.auto_scan_badge.remove_css_class('badge-standby')
             self.auto_scan_badge.add_css_class('badge-active')
             self.auto_scan_countdown_lbl.set_text(f"⏱️ สแกนรอบถัดไป: {self.auto_scan_countdown}s")
@@ -2177,19 +2184,19 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.auto_scan_start_time = time.time()
             self.auto_scan_cycles = 0
             self.auto_scan_countdown = self.auto_scan_interval
-            self.btn_auto_scan.set_label("หยุด Auto Scan")
+            self.btn_auto_scan.set_label("หยุดรีเฟรชอัตโนมัติ")
             self.btn_auto_scan.remove_css_class('f2-btn-auto-start')
             self.btn_auto_scan.remove_css_class('btn-autoscan-start')
             self.btn_auto_scan.add_css_class('f2-btn-auto-stop')
             self.trigger_single_scan(silent=True)
             dur_str = "1 ชั่วโมง" if self.auto_scan_duration == 3600 else f"{self.auto_scan_duration}s"
-            self.alarm_text.set_text(f"เริ่ม Auto Scan: สแกนทุกๆ {self.auto_scan_interval}วิ (กำหนดระยะเวลารวม {dur_str})")
+            self.alarm_text.set_text(f"เริ่มรีเฟรชอัตโนมัติ: รีเฟรชทุก {self.auto_scan_interval}วิ (กำหนดระยะเวลารวม {dur_str})")
         else:
-            self.btn_auto_scan.set_label("เริ่ม Auto Scan")
+            self.btn_auto_scan.set_label("เริ่มรีเฟรชอัตโนมัติ")
             self.btn_auto_scan.remove_css_class('f2-btn-auto-stop')
             self.btn_auto_scan.remove_css_class('btn-autoscan-stop')
             self.btn_auto_scan.add_css_class('f2-btn-auto-start')
-            self.alarm_text.set_text(f"สั่งหยุด Auto Scan แล้ว (สแกนสำเร็จไปทั้งหมด {self.auto_scan_cycles} รอบ)")
+            self.alarm_text.set_text(f"สั่งหยุดรีเฟรชอัตโนมัติ แล้ว (สแกนสำเร็จไปทั้งหมด {self.auto_scan_cycles} รอบ)")
 
         if hasattr(self, 'f2_tasks_view'):
             self.f2_tasks_view.load_current_task_to_ui()
@@ -2236,7 +2243,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         hint = Gtk.Label(label='รายชื่อจากไฟล์ WinCC · เปิดหน้าติดตามค่าเพื่อดูผลอ่านหรือเพิ่ม Tag เข้า Task', xalign=0)
         hint.add_css_class('page-hint')
         heading.append(hint)
-        rescan = Gtk.Button(label='รีเฟรชคลัง', valign=Gtk.Align.CENTER)
+        rescan = Gtk.Button(label='รีเฟรชคลัง Tag', valign=Gtk.Align.CENTER)
         rescan.add_css_class('fkey-btn')
         rescan.connect('clicked', lambda _: self.trigger_rescan())
         header.append(rescan)
@@ -2294,7 +2301,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                     td.add_css_class('alternate')
                 self.tags_page_grid.attach(td, col, row, 1, 1)
             if show_trends:
-                trend = Gtk.Button(label="Trend")
+                trend = Gtk.Button(label="แนวโน้ม")
                 trend.set_tooltip_text("เปิดประวัติ Tag ใน Grafana แบบอ่านอย่างเดียว")
                 trend.connect('clicked', lambda _, name=t['name']: hybrid.open('tags', tag=name))
                 self.tags_page_grid.attach(trend, 5, row, 1, 1)
@@ -2650,7 +2657,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             self.lbl_mon_telemetry.set_text(f"❌ ไม่สามารถเริ่มได้: {msg}")
             self.lbl_mon_telemetry.remove_css_class('badge-active')
             self.lbl_mon_telemetry.add_css_class('badge-nope')
-            self.alarm_text.set_text(f"❌ Preflight Failed: {msg}")
+            self.alarm_text.set_text(f"ตรวจความพร้อมไม่ผ่าน: {msg}")
 
     def on_pause_monitoring_clicked(self, _=None):
         if self.polling_engine.telemetry.state == PollingState.RUNNING:
@@ -3157,9 +3164,15 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             return
         self.telegram_unknown_status.set_text(f'ไม่ทราบผลการส่ง: {unknown} รายการ')
 
+    def update_catalog_refresh_status(self):
+        active = 'เปิด' if self.auto_scan_active else 'ปิด'
+        self.catalog_refresh_status.set_text(
+            f'รีเฟรชอัตโนมัติ: {active} · ทุก {self.auto_scan_interval} วินาที')
+
     def update_real_data(self):
         """Fetches real host machine metrics and updates UI cleanly."""
         try:
+            self.update_catalog_refresh_status()
             snapshot = getattr(getattr(self, 'f3_network_view', None), 'local_state', {})
             self.update_internet_badge(snapshot)
             if self.telegram_unknown_status.get_mapped():

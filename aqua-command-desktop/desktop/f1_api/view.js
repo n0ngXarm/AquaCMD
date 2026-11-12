@@ -307,7 +307,7 @@
           <div class="cell-task mono" title="${boundText}">${boundText}</div>
           <div class="cell-actions">
             <button class="btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}">+ Task</button>
-            <button class="btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด">🔍</button>
+            <button class="btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด">ดู</button>
           </div>
         </div>
       `;
@@ -577,7 +577,7 @@
             </div>
 
             <div class="form-group">
-              <label for="selectTaskCycle">รอบตรวจวัด (Cycle)</label>
+              <label for="selectTaskCycle">รอบตรวจวัด</label>
               <select id="selectTaskCycle" class="in">
                 <option value="1" ${currentTask.cycle_sec === 1 ? 'selected' : ''}>1 วินาที (High Priority)</option>
                 <option value="5" ${currentTask.cycle_sec === 5 ? 'selected' : ''}>5 วินาที (มาตรฐาน WinCC V8.1)</option>

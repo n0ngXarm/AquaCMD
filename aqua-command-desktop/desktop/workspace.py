@@ -70,10 +70,10 @@ GROUP_METADATA = {
 
 # Task Cycle Options
 CYCLE_OPTIONS = [
-    (1, "1 วินาที (High Priority)"),
+    (1, "1 วินาที (ตรวจถี่)"),
     (5, "5 วินาที (มาตรฐาน WinCC V8.1)"),
-    (10, "10 วินาที (General Monitoring)"),
-    (30, "30 วินาที (Slow Sampling)"),
+    (10, "10 วินาที (เฝ้าระวังทั่วไป)"),
+    (30, "30 วินาที (ตรวจห่าง)"),
     (60, "60 วินาที")
 ]
 
@@ -445,7 +445,7 @@ class AquaUnifiedWorkspaceView:
         self.lbl_filter_banner.add_css_class('f2-filter-label')
         self.filter_banner_box.append(self.lbl_filter_banner)
 
-        btn_clear_f = Gtk.Button(label="แสดงทุกกลุ่ม (All)")
+        btn_clear_f = Gtk.Button(label="แสดงทุกกลุ่ม")
         btn_clear_f.add_css_class('f2-btn-clear-filter')
         btn_clear_f.connect('clicked', lambda _: self.on_select_group("All"))
         self.filter_banner_box.append(btn_clear_f)
