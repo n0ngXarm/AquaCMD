@@ -92,10 +92,12 @@ import threading
 import concurrent.futures
 import asyncio
 import logging
+from typing import Optional
 
 logger = logging.getLogger("AquaCommand")
 try:
     from asyncua import Client, Server, ua
+    from cryptography.hazmat.primitives import serialization
     HAS_ASYNCUA = True
 except ImportError:
     HAS_ASYNCUA = False
