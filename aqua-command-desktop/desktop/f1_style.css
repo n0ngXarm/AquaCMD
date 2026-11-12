@@ -1,29 +1,29 @@
 /* ==========================================================================
    AQUA COMMAND — F1 Industrial Spectrum V2 Theme Refinement
    Design System Tokens:
-     Canvas / Deep Background: #0B1017
-     Main Panel:                #1B2532
-     Secondary Panel / Inset:   #222D3A
-     Elevated Surface:          #25313D
-     Border:                    #364553
-     Primary Text:              #F2F6FA
-     Neutral Gray / Inactive:   #8998AA
-     Interactive Blue:          #3489E8 (Selected row, Active tab, Active nav)
-     Verified Green:            #27B785 (Catalog verified, Confirmed success)
-     Caution Yellow:            #EAC54F (Warning with evidence, Missing config)
-     Action Orange:             #F28D35 (Refresh / Scan action, Attention)
-     Critical Red:              #E35B64 (Verified error, Destructive / Exit)
+     Canvas / Deep Background: @palette_008
+     Main Panel:                @palette_031
+     Secondary Panel / Inset:   @palette_040
+     Elevated Surface:          @palette_046
+     Border:                    @palette_067
+     Primary Text:              @palette_123
+     Neutral Gray / Inactive:   @palette_093
+     Interactive Blue:          @palette_065 (Selected row, Active tab, Active nav)
+     Verified Green:            @palette_053 (Catalog verified, Confirmed success)
+     Caution Yellow:            @palette_117 (Warning with evidence, Missing config)
+     Action Orange:             @palette_122 (Refresh / Scan action, Attention)
+     Critical Red:              @palette_112 (Verified error, Destructive / Exit)
    ========================================================================== */
 
 window {
-    background-color: #0B1017;
-    color: #F2F6FA;
+    background-color: @palette_008;
+    color: @palette_123;
     font-family: 'Noto Sans Thai', 'Inter', -apple-system, sans-serif;
     font-size: 13.5px;
 }
 
 label {
-    color: #F2F6FA;
+    color: @palette_123;
 }
 
 /* --------------------------------------------------------------------------
@@ -31,63 +31,63 @@ label {
    -------------------------------------------------------------------------- */
 /* Header Status Badges (Restrained visual weight hierarchy) */
 .badge-active {
-    background-color: rgba(39, 183, 133, 0.15);
-    color: #6dd6ac;
+    background-color: @palette_144;
+    color: @palette_088;
     font-weight: 700;
     font-size: 13.5px;
     padding: 3px 10px;
-    border: 1px solid rgba(39, 183, 133, 0.45);
+    border: 1px solid @palette_145;
     border-radius: 4px;
 }
 
 .badge-standby {
-    background-color: #222D3A;
-    color: #8998AA;
+    background-color: @palette_040;
+    color: @palette_093;
     font-weight: 600;
     font-size: 13.5px;
     padding: 3px 10px;
-    border: 1px solid #364553;
+    border: 1px solid @palette_067;
     border-radius: 4px;
 }
 
 .badge-sensor {
-    background-color: #222D3A;
-    color: #8998AA;
+    background-color: @palette_040;
+    color: @palette_093;
     font-weight: 600;
     font-size: 13.5px;
     padding: 3px 10px;
-    border: 1px solid #364553;
+    border: 1px solid @palette_067;
     border-radius: 4px;
 }
 
 .badge-readonly {
-    background-color: rgba(52, 137, 232, 0.12);
-    color: #8998AA;
+    background-color: @palette_146;
+    color: @palette_093;
     font-weight: 700;
     font-size: 13.5px;
     padding: 3px 10px;
-    border: 1px solid #364553;
+    border: 1px solid @palette_067;
     border-radius: 4px;
     letter-spacing: 0.5px;
 }
 
 .badge-gateway {
-    background-color: #222D3A;
-    color: #8998AA;
+    background-color: @palette_040;
+    color: @palette_093;
     font-weight: 600;
     font-size: 13.5px;
     padding: 3px 10px;
-    border: 1px solid #364553;
+    border: 1px solid @palette_067;
     border-radius: 4px;
 }
 
 .badge-nope {
-    background-color: rgba(227, 91, 100, 0.15);
-    color: #E35B64;
+    background-color: @palette_134;
+    color: @palette_112;
     font-weight: 700;
     font-size: 13.5px;
     padding: 3px 10px;
-    border: 1px solid rgba(227, 91, 100, 0.45);
+    border: 1px solid @palette_135;
     border-radius: 4px;
 }
 
@@ -101,20 +101,20 @@ label {
 .f1-page-title {
     font-size: 20px;
     font-weight: 700;
-    color: #F2F6FA;
+    color: @palette_123;
     letter-spacing: -0.2px;
 }
 
 .f1-page-subtitle {
     font-size: 13.5px;
     font-weight: 500;
-    color: #8998AA;
+    color: @palette_093;
 }
 
 .f1-action-btn {
-    background: #1B2532;
-    color: #8998AA;
-    border: 1px solid #364553;
+    background: @palette_031;
+    color: @palette_093;
+    border: 1px solid @palette_067;
     border-radius: 5px;
     font-weight: 600;
     font-size: 13.5px;
@@ -122,40 +122,40 @@ label {
 }
 
 .f1-action-btn:hover {
-    background: #25313D;
-    border-color: #3489E8;
-    color: #F2F6FA;
+    background: @palette_046;
+    border-color: @palette_065;
+    color: @palette_123;
 }
 
 /* Action Orange Quick Refresh Button */
 .f1-btn-refresh {
-    background: rgba(242, 141, 53, 0.12);
-    color: #F28D35;
-    border: 1px solid rgba(242, 141, 53, 0.45);
+    background: @palette_138;
+    color: @palette_122;
+    border: 1px solid @palette_141;
     font-weight: 700;
 }
 
 .f1-btn-refresh:hover {
-    background: rgba(242, 141, 53, 0.25);
-    border-color: #F28D35;
-    color: #FFFFFF;
+    background: @palette_140;
+    border-color: @palette_122;
+    color: @palette_128;
 }
 
 /* --------------------------------------------------------------------------
    Section C: Summary KPI Cards (Elevated Surface)
    -------------------------------------------------------------------------- */
 .f1-kpi-card {
-    background: #25313D;
-    border: 1px solid #364553;
+    background: @palette_046;
+    border: 1px solid @palette_067;
     border-radius: 6px;
     padding: 9px 14px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px @palette_129;
 }
 
 .f1-kpi-title {
     font-size: 13.5px;
     font-weight: 600;
-    color: #8998AA;
+    color: @palette_093;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -164,43 +164,43 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 20px;
     font-weight: 700;
-    color: #F2F6FA;
+    color: @palette_123;
     line-height: 1.15;
     margin: 2px 0;
 }
 
 .f1-kpi-desc {
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
 }
 
 /* --------------------------------------------------------------------------
    Surface Panels (Master & Detail)
    -------------------------------------------------------------------------- */
 .f1-surface-panel {
-    background: #1B2532;
-    border: 1px solid #364553;
+    background: @palette_031;
+    border: 1px solid @palette_067;
     border-radius: 6px;
     padding: 8px 12px;
 }
 
 .f1-group-header-card {
-    background: #1B2532;
-    border: 1px solid #364553;
+    background: @palette_031;
+    border: 1px solid @palette_067;
     border-radius: 6px;
     padding: 8px 14px;
 }
 
 .f1-panel-header {
     padding-bottom: 6px;
-    border-bottom: 1px solid #364553;
+    border-bottom: 1px solid @palette_067;
     margin-bottom: 4px;
 }
 
 .f1-panel-title {
     font-size: 15px;
     font-weight: 700;
-    color: #F2F6FA;
+    color: @palette_123;
 }
 
 /* Semantic Badges */
@@ -208,9 +208,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 600;
-    background: #222D3A;
-    color: #8998AA;
-    border: 1px solid #364553;
+    background: @palette_040;
+    color: @palette_093;
+    border: 1px solid @palette_067;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -219,9 +219,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: rgba(52, 137, 232, 0.15);
-    color: #6fa8dc;
-    border: 1px solid rgba(52, 137, 232, 0.45);
+    background: @palette_147;
+    color: @link;
+    border: 1px solid @palette_149;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -230,9 +230,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: rgba(39, 183, 133, 0.15);
-    color: #6dd6ac;
-    border: 1px solid rgba(39, 183, 133, 0.45);
+    background: @palette_144;
+    color: @palette_088;
+    border: 1px solid @palette_145;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -241,9 +241,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: rgba(234, 197, 79, 0.15);
-    color: #EAC54F;
-    border: 1px solid rgba(234, 197, 79, 0.45);
+    background: @palette_136;
+    color: @palette_117;
+    border: 1px solid @palette_137;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -252,9 +252,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: rgba(227, 91, 100, 0.15);
-    color: #E35B64;
-    border: 1px solid rgba(227, 91, 100, 0.45);
+    background: @palette_134;
+    color: @palette_112;
+    border: 1px solid @palette_135;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -263,9 +263,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: rgba(242, 141, 53, 0.15);
-    color: #F28D35;
-    border: 1px solid rgba(242, 141, 53, 0.45);
+    background: @palette_139;
+    color: @palette_122;
+    border: 1px solid @palette_141;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -278,8 +278,8 @@ label {
 }
 
 .f1-group-row {
-    background: #222D3A;
-    border: 1px solid #364553;
+    background: @palette_040;
+    border: 1px solid @palette_067;
     border-radius: 4px;
     margin: 2px 4px;
     padding: 0;
@@ -287,16 +287,16 @@ label {
 }
 
 .f1-group-row:selected {
-    background: #253549;
-    border-left: 4px solid #3489E8;
-    border-top: 1px solid #3489E8;
-    border-bottom: 1px solid #3489E8;
-    border-right: 1px solid #3489E8;
+    background: @palette_047;
+    border-left: 4px solid @palette_065;
+    border-top: 1px solid @palette_065;
+    border-bottom: 1px solid @palette_065;
+    border-right: 1px solid @palette_065;
 }
 
 .f1-group-row:hover:not(:selected) {
-    background: #25313D;
-    border-color: rgba(52, 137, 232, 0.4);
+    background: @palette_046;
+    border-color: @palette_148;
 }
 
 .f1-group-row-box {
@@ -305,32 +305,32 @@ label {
 }
 
 .f1-group-icon {
-    color: #6fa8dc;
+    color: @link;
 }
 
 .f1-group-row-code {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    color: #F2F6FA;
+    color: @palette_123;
 }
 
 .f1-group-row:selected .f1-group-row-code {
-    color: #FFFFFF;
+    color: @palette_128;
 }
 
 .f1-group-row-desc {
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
 }
 
 .f1-count-pill {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: #1B2532;
-    color: #6fa8dc;
-    border: 1px solid rgba(52, 137, 232, 0.4);
+    background: @palette_031;
+    color: @link;
+    border: 1px solid @palette_148;
     border-radius: 4px;
     padding: 2px 8px;
 }
@@ -342,9 +342,9 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    background: #222D3A;
-    color: #6fa8dc;
-    border: 1px solid rgba(52, 137, 232, 0.45);
+    background: @palette_040;
+    color: @link;
+    border: 1px solid @palette_149;
     border-radius: 4px;
     padding: 3px 10px;
 }
@@ -352,27 +352,27 @@ label {
 .f1-group-title-en {
     font-size: 15px;
     font-weight: 700;
-    color: #F2F6FA;
+    color: @palette_123;
 }
 
 .f1-group-desc-th {
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
 }
 
 /* --------------------------------------------------------------------------
    Section G: Signal Table & Inspector
    -------------------------------------------------------------------------- */
 .f1-mode-switcher {
-    background: #222D3A;
-    border: 1px solid #364553;
+    background: @palette_040;
+    border: 1px solid @palette_067;
     border-radius: 5px;
     padding: 2px;
 }
 
 .f1-mode-btn {
     background: transparent;
-    color: #8998AA;
+    color: @palette_093;
     border: none;
     padding: 4px 12px;
     font-size: 13.5px;
@@ -381,16 +381,16 @@ label {
 }
 
 .f1-mode-btn:checked {
-    background: #253549;
-    color: #F2F6FA;
+    background: @palette_047;
+    color: @palette_123;
     font-weight: 700;
-    border: 1px solid #3489E8;
+    border: 1px solid @palette_065;
 }
 
 .f1-search-entry {
-    background: #222D3A;
-    border: 1px solid #364553;
-    color: #F2F6FA;
+    background: @palette_040;
+    border: 1px solid @palette_067;
+    color: @palette_123;
     font-size: 13.5px;
     border-radius: 4px;
     padding: 4px 8px;
@@ -398,59 +398,59 @@ label {
 }
 
 .f1-search-entry:focus {
-    border-color: #3489E8;
-    background: #25313D;
+    border-color: @palette_065;
+    background: @palette_046;
 }
 
 .f1-search-entry.f1-search-active {
-    border-color: #F28D35;
-    background: #25313D;
+    border-color: @palette_122;
+    background: @palette_046;
 }
 
 .f1-table-th {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 700;
-    color: #8998AA;
+    color: @palette_093;
     padding: 8px 12px;
-    border-bottom: 2px solid #364553;
-    background: #222D3A;
+    border-bottom: 2px solid @palette_067;
+    background: @palette_040;
     text-transform: uppercase;
     letter-spacing: 0.4px;
 }
 
 .f1-table-row {
-    border-bottom: 1px solid rgba(54, 69, 83, 0.6);
+    border-bottom: 1px solid @palette_150;
     min-height: 38px;
     transition: background-color 80ms ease;
 }
 
 .f1-table-row:hover, .f1-table-row-hover {
-    background-color: #222E3D;
+    background-color: @palette_041;
 }
 
 .f1-table-row-selected {
-    background-color: #253549;
-    border-bottom: 1px solid #3489E8;
+    background-color: @palette_047;
+    border-bottom: 1px solid @palette_065;
 }
 
 .f1-table-cell {
     font-size: 13.5px;
-    color: #F2F6FA;
+    color: @palette_123;
     padding: 8px 12px;
 }
 
 .f1-table-cell-mono {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
-    color: #F2F6FA;
+    color: @palette_123;
     padding: 8px 12px;
 }
 
 .f1-table-cell-muted {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
     padding: 8px 12px;
 }
 
@@ -465,41 +465,41 @@ label {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
     font-weight: 600;
-    color: #6fa8dc;
+    color: @link;
 }
 
 .f1-tag-link-btn:hover {
-    color: #F2F6FA;
+    color: @palette_123;
     text-decoration: underline;
 }
 
 .f1-caption-subtle {
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
 }
 
 .f1-caption-mono {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
 }
 
 .f1-table-empty {
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
     padding: 24px;
 }
 
 .f1-card-inner {
-    background: #222D3A;
-    border: 1px solid #364553;
+    background: @palette_040;
+    border: 1px solid @palette_067;
     border-radius: 6px;
     padding: 14px;
 }
 
 .f1-metric-title {
     font-size: 13.5px;
-    color: #8998AA;
+    color: @palette_093;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.4px;
@@ -508,9 +508,9 @@ label {
 .f1-prop-value-mono {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
     font-size: 13.5px;
-    color: #F2F6FA;
-    background: #25313D;
+    color: @palette_123;
+    background: @palette_046;
     padding: 6px 10px;
     border-radius: 4px;
-    border: 1px solid #364553;
+    border: 1px solid @palette_067;
 }

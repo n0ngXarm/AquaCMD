@@ -5,6 +5,8 @@ import re
 import sys
 
 DESKTOP = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(DESKTOP))
+from theme_tokens import DARK
 
 
 def contrast(foreground, background):
@@ -22,12 +24,12 @@ def declaration(text, selector, key):
     for selectors, body in re.findall(r'([^{}]+)\{([^{}]*)\}',text):
         if selector not in [item.strip() for item in selectors.split(',')]:
             continue
-        values = re.findall(r'(?<![-\w])'+re.escape(key)+r'\s*:\s*(#[0-9a-fA-F]{6})',body)
+        values = re.findall(r'(?<![-\w])'+re.escape(key)+r'\s*:\s*(#[0-9a-fA-F]{6}|@[\w_]+)',body)
         if values:
             result = values[-1]
     if result is None:
         raise AssertionError(f'Missing CSS {selector} {key}')
-    return result
+    return DARK[result[1:].replace('_', '-')] if result.startswith('@') else result
 
 
 def measurements():

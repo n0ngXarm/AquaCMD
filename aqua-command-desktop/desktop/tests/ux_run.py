@@ -21,8 +21,9 @@ def main():
     parser.add_argument('--focused', action='store_true')
     parser.add_argument('--test', action='append', default=[])
     parser.add_argument('--fit', action='store_true')
+    parser.add_argument('--output', type=Path, help='Keep evidence for this run separate from earlier work')
     args = parser.parse_args()
-    output = ROOT / 'artifacts' / ('ux-' + args.stage)
+    output = (args.output or ROOT / 'artifacts' / ('ux-' + args.stage)).resolve()
     output.mkdir(parents=True, exist_ok=True)
     subprocess.run(['ip','link','set','lo','up'], check=True)
     records = []

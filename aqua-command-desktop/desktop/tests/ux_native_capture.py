@@ -118,6 +118,14 @@ def main():
                     actual = [window.get_width(), window.get_height()]
                     assert actual == [width, height], ('Actual GTK allocation differs', actual, width, height)
                     record = {'requested':[width,height], 'actual':actual, 'page':key, 'screenshot':file}
+                    record['native'] = {'active_nav':[name for name, button in window.nav_btns.items() if button.get_active()],
+                                        'footer_height':window.alarm_text.get_parent().get_height(),
+                                        'footer_selection':list(window.alarm_text.get_selection_bounds())}
+                    if key == 'F1':
+                        record['f1_geometry'] = javascript(web, '''(()=>{const box=document.getElementById('tableViewport').getBoundingClientRect();return {
+                          viewport:{top:box.top,bottom:box.bottom,height:box.height},
+                          visible_rows:[...document.querySelectorAll('.table-row')].filter(row=>{const b=row.getBoundingClientRect();return b.top>=box.top&&b.bottom<=box.bottom}).length,
+                          web_height:innerHeight};})()''')
                     if key == 'F3' and window.f3_network_view.api_url:
                         geometry = javascript(window.f3_network_view.web, '''({
                           width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,

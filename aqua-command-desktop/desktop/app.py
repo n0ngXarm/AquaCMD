@@ -135,6 +135,11 @@ gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Gdk, GLib, Pango, PangoCairo
 import cairo
 
+try:
+    from .theme_tokens import gtk_definitions
+except ImportError:
+    from theme_tokens import gtk_definitions
+
 USE_UNIFIED_WORKSPACE = True
 
 try:
@@ -992,16 +997,16 @@ def save_tasks(tasks):
 # [PURGED MOCK DATA: REAL_STATIONS_DATA completely deleted]
 
 CSS_DATA = b"""
-@define-color aqua_bg #11161c;
-@define-color aqua_surface #1a212a;
-@define-color aqua_panel #151b22;
-@define-color aqua_raised #222b36;
-@define-color aqua_selected #1f2c3a;
-@define-color aqua_line #2f3a46;
-@define-color aqua_border #66737f;
-@define-color aqua_ink #e3e8ee;
-@define-color aqua_muted #9aa6b2;
-@define-color aqua_accent #6fa8dc;
+@define-color aqua_bg @bg;
+@define-color aqua_surface @surface;
+@define-color aqua_panel @surface_2;
+@define-color aqua_raised @surface_3;
+@define-color aqua_selected @selected;
+@define-color aqua_line @line;
+@define-color aqua_border @line_strong;
+@define-color aqua_ink @ink;
+@define-color aqua_muted @mut;
+@define-color aqua_accent @link;
 
 window {
     background: @aqua_bg;
@@ -1054,81 +1059,81 @@ label { color: @aqua_ink; }
 
 /* Modern Equipment Cards */
 .scada-card {
-    background: linear-gradient(180deg, #182234 0%, #0f172a 100%);
-    border: 1px solid #1e293b;
+    background: linear-gradient(180deg, @palette_025 0%, @palette_012 100%);
+    border: 1px solid @palette_036;
     border-radius: 8px;
     padding: 10px 14px;
     margin: 4px;
     min-width: 220px;
 }
 .scada-card:hover {
-    border-color: #38bdf8;
-    background: #1e293b;
+    border-color: @palette_070;
+    background: @palette_036;
 }
 .card-header {
     font-weight: 700;
     font-size: 11pt;
-    color: #f1f5f9;
+    color: @palette_121;
 }
 
 /* Modern Status Indicators & Badges */
 .badge-running {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: #34d399;
+    background-color: @palette_132;
+    color: @palette_066;
     font-weight: 700;
     padding: 3px 10px;
-    border: 1px solid #10b981;
+    border: 1px solid @palette_013;
     border-radius: 20px;
     font-size: 10pt;
 }
 .badge-standby {
-    background-color: rgba(148, 163, 184, 0.15);
-    color: #94a3b8;
+    background-color: @palette_131;
+    color: @palette_096;
     font-weight: 600;
     padding: 3px 10px;
-    border: 1px solid #475569;
+    border: 1px solid @palette_079;
     border-radius: 20px;
     font-size: 10pt;
 }
 .badge-sensor {
-    background-color: rgba(56, 189, 248, 0.15);
-    color: #38bdf8;
+    background-color: @palette_153;
+    color: @palette_070;
     font-weight: 600;
     padding: 3px 10px;
-    border: 1px solid #0284c7;
+    border: 1px solid @palette_001;
     border-radius: 20px;
     font-size: 10pt;
 }
 .badge-active, .badge-has-net {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: #6ee7b7;
+    background-color: @palette_132;
+    color: @palette_089;
     font-weight: 700;
     padding: 3px 10px;
-    border: 1px solid #059669;
+    border: 1px solid @palette_003;
     border-radius: 20px;
     font-size: 10pt;
 }
 .badge-stopped, .badge-inactive, .badge-nope, .badge-nope-card, .badge-no-net {
-    background-color: rgba(244, 63, 94, 0.18);
-    color: #fda4af;
+    background-color: @palette_142;
+    color: @palette_126;
     font-weight: 700;
     padding: 3px 10px;
-    border: 1px solid rgba(244, 63, 94, 0.4);
+    border: 1px solid @palette_143;
     border-radius: 20px;
     font-size: 10pt;
 }
 .badge-gateway {
-    background-color: rgba(168, 85, 247, 0.18);
-    color: #c084fc;
+    background-color: @palette_133;
+    color: @palette_104;
     font-weight: 700;
     padding: 3px 10px;
-    border: 1px solid #7c3aed;
+    border: 1px solid @palette_091;
     border-radius: 20px;
     font-size: 10pt;
 }
 
 /* Closing is visually separate from settings and ordinary navigation. */
-.fkey-btn.exit-button { color: #f3b4ae; background: transparent; border-color: #8a4b46; margin-left: 8px; }
+.fkey-btn.exit-button { color: @palette_124; background: transparent; border-color: @palette_094; margin-left: 8px; }
 /* Shared navigation and page actions. */
 .fkey-btn {
     background: @aqua_surface;
@@ -1167,45 +1172,45 @@ label { color: @aqua_ink; }
 
 /* Modern Action Buttons */
 .action-btn {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: #f8fafc;
-    border: 1px solid #334155;
+    background: linear-gradient(135deg, @palette_036 0%, @palette_012 100%);
+    color: @palette_125;
+    border: 1px solid @palette_062;
     border-radius: 8px;
     font-weight: 600;
     padding: 6px 14px;
     font-size: 10pt;
 }
 .action-btn:hover {
-    background: #334155;
-    border-color: #38bdf8;
+    background: @palette_062;
+    border-color: @palette_070;
 }
 .action-btn:active {
-    background: #0f172a;
+    background: @palette_012;
 }
 
 .btn-autoscan-start {
-    background: linear-gradient(135deg, #075642 0%, #09644d 100%);
-    color: #ffffff;
-    border: 1px solid #047857;
+    background: linear-gradient(135deg, @palette_004 0%, @palette_007 100%);
+    color: @palette_128;
+    border: 1px solid @palette_002;
     border-radius: 8px;
     font-weight: 700;
     padding: 6px 16px;
     font-size: 10pt;
 }
 .btn-autoscan-start:hover {
-    background: #075642;
+    background: @palette_004;
 }
 .btn-autoscan-stop {
-    background: linear-gradient(135deg, #912525 0%, #a02a2a 100%);
-    color: #ffffff;
-    border: 1px solid #b91c1c;
+    background: linear-gradient(135deg, @palette_095 0%, @palette_098 100%);
+    color: @palette_128;
+    border: 1px solid @palette_102;
     border-radius: 8px;
     font-weight: 700;
     padding: 6px 16px;
     font-size: 10pt;
 }
 .btn-autoscan-stop:hover {
-    background: #dc2626;
+    background: @palette_111;
 }
 
 /* Catalog and event table. */
@@ -1229,24 +1234,24 @@ label { color: @aqua_ink; }
 
 /* Modern Input Fields & Controls */
 entry, textview {
-    background-color: #0f172a;
-    color: #f8fafc;
-    border: 1px solid #334155;
+    background-color: @palette_012;
+    color: @palette_125;
+    border: 1px solid @palette_062;
     border-radius: 8px;
     padding: 6px 12px;
 }
 entry:focus {
-    border-color: #38bdf8;
+    border-color: @palette_070;
 }
 checkbutton {
-    color: #cbd5e1;
+    color: @palette_107;
 }
 progressbar trough {
-    background-color: #1e293b;
+    background-color: @palette_036;
     border-radius: 4px;
 }
 progressbar progress {
-    background: linear-gradient(90deg, #0284c7 0%, #10b981 100%);
+    background: linear-gradient(90deg, @palette_001 0%, @palette_013 100%);
     border-radius: 4px;
 }
 """
@@ -1265,7 +1270,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
         # Load WinCC Base CSS
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(CSS_DATA)
+        css_provider.load_from_data(gtk_definitions("dark").encode() + CSS_DATA)
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
@@ -1275,7 +1280,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if f1_css_path.exists():
             try:
                 f1_css_provider = Gtk.CssProvider()
-                f1_css_provider.load_from_path(str(f1_css_path))
+                f1_css_provider.load_from_data((gtk_definitions("dark") + f1_css_path.read_text()).encode())
                 Gtk.StyleContext.add_provider_for_display(
                     Gdk.Display.get_default(), f1_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 10
                 )
@@ -1287,7 +1292,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if f2_css_path.exists():
             try:
                 f2_css_provider = Gtk.CssProvider()
-                f2_css_provider.load_from_path(str(f2_css_path))
+                f2_css_provider.load_from_data((gtk_definitions("dark") + f2_css_path.read_text()).encode())
                 Gtk.StyleContext.add_provider_for_display(
                     Gdk.Display.get_default(), f2_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 12
                 )
@@ -1299,7 +1304,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         if ws_css_path.exists():
             try:
                 ws_css_provider = Gtk.CssProvider()
-                ws_css_provider.load_from_path(str(ws_css_path))
+                ws_css_provider.load_from_data((gtk_definitions("dark") + ws_css_path.read_text()).encode())
                 Gtk.StyleContext.add_provider_for_display(
                     Gdk.Display.get_default(), ws_css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 15
                 )

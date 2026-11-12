@@ -7,120 +7,120 @@
    1. COLOR PALETTE DESIGN TOKENS
    -------------------------------------------------------------------------- */
 /*
-   Base Background:   #0B1017 (Canvas)
-   Main Panels:       #1B2532 (Industrial Charcoal Blue)
-   Subpanels / Cards: #1E2835 (Medium Structural Surface)
-   Inset Surfaces:    #141C24 (Deep Dark Inset)
-   Borders:           #364553 (Structural Divider)
-   Subtle Borders:    #25313D (Card Divider)
-   Text Primary:      #F2F6FA (Pure White)
-   Text Technical:    #8998AA (Technical Gray)
-   Accent Action:     #3489E8 (Industrial Spectrum Blue)
-   Verified Success:  #27B785 (Vivid Emerald Green)
-   Warning / Incompl: #EAC54F (Industrial Amber Yellow)
-   Attention:         #F28D35 (Warm Signal Orange)
-   Error / Danger:    #E35B64 (Alert Red)
+   Base Background:   @palette_008 (Canvas)
+   Main Panels:       @palette_031 (Industrial Charcoal Blue)
+   Subpanels / Cards: @palette_035 (Medium Structural Surface)
+   Inset Surfaces:    @palette_016 (Deep Dark Inset)
+   Borders:           @palette_067 (Structural Divider)
+   Subtle Borders:    @palette_046 (Card Divider)
+   Text Primary:      @palette_123 (Pure White)
+   Text Technical:    @palette_093 (Technical Gray)
+   Accent Action:     @palette_065 (Industrial Spectrum Blue)
+   Verified Success:  @palette_053 (Vivid Emerald Green)
+   Warning / Incompl: @palette_117 (Industrial Amber Yellow)
+   Attention:         @palette_122 (Warm Signal Orange)
+   Error / Danger:    @palette_112 (Alert Red)
 */
 
 /* --------------------------------------------------------------------------
    2. TOP SCAN TOOLBAR
    -------------------------------------------------------------------------- */
 .f2-scan-bar {
-    background-color: #1B2532;
-    border: 1px solid #364553;
+    background-color: @palette_031;
+    border: 1px solid @palette_067;
     border-radius: 6px;
     padding: 5px 10px;
 }
 
 .f2-btn-scan-once {
-    background: #222D3A;
-    border: 1px solid #364553;
+    background: @palette_040;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: 600;
     padding: 3px 8px;
 }
 .f2-btn-scan-once:hover {
-    background: #25313D;
-    border-color: #3489E8;
+    background: @palette_046;
+    border-color: @palette_065;
 }
 
 .f2-btn-auto-start {
-    background: #143829;
-    border: 1px solid #27B785;
+    background: @palette_022;
+    border: 1px solid @palette_053;
     border-radius: 4px;
-    color: #6dd6ac;
+    color: @palette_088;
     font-size: 10pt;
     font-weight: bold;
     padding: 3px 10px;
 }
 .f2-btn-auto-start:hover {
-    background: #1b4d38;
+    background: @palette_032;
 }
 
 .f2-btn-auto-stop {
-    background: #3f191d;
-    border: 1px solid #E35B64;
+    background: @palette_075;
+    border: 1px solid @palette_112;
     border-radius: 4px;
-    color: #E35B64;
+    color: @palette_112;
     font-size: 10pt;
     font-weight: bold;
     padding: 3px 10px;
 }
 .f2-btn-auto-stop:hover {
-    background: #542227;
+    background: @palette_082;
 }
 
 .f2-scan-sep {
-    background-color: #364553;
+    background-color: @palette_067;
     min-width: 1px;
     margin: 2px 4px;
 }
 
 .f2-scan-label {
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: 600;
 }
 
 .f2-scan-status-idle {
-    background: #1E2835;
-    border: 1px solid #364553;
+    background: @palette_035;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: 600;
     padding: 2px 6px;
 }
 
 .f2-scan-status-running {
-    background: #143829;
-    border: 1px solid #27B785;
+    background: @palette_022;
+    border: 1px solid @palette_053;
     border-radius: 4px;
-    color: #6dd6ac;
+    color: @palette_088;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 6px;
 }
 
 .f2-scan-countdown {
-    color: #6fa8dc;
+    color: @link;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
     font-size: 10pt;
     font-weight: bold;
 }
 
 .f2-scan-meta {
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
 }
 
 .f2-badge-catalog {
-    background: #25313D;
-    border: 1px solid #364553;
+    background: @palette_046;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: 600;
     padding: 2px 6px;
@@ -130,28 +130,28 @@
    3. MAIN TWO PANELS & GTK PANED
    -------------------------------------------------------------------------- */
 paned > separator {
-    background: #364553;
+    background: @palette_067;
     min-width: 4px;
     border: none;
 }
 paned > separator:hover {
-    background: #0b4f8a;
+    background: @palette_010;
 }
 
 .f2-panel {
-    background-color: #1B2532;
-    border: 1px solid #364553;
+    background-color: @palette_031;
+    border: 1px solid @palette_067;
     border-radius: 6px;
     padding: 8px;
 }
 
 .f2-panel-header {
-    border-bottom: 1px solid #25313D;
+    border-bottom: 1px solid @palette_046;
     padding-bottom: 6px;
 }
 
 .f2-panel-title {
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10.5pt;
     font-weight: bold;
 }
@@ -160,14 +160,14 @@ paned > separator:hover {
    4. LEFT PANEL: TAG LIBRARY
    -------------------------------------------------------------------------- */
 .f2-group-container {
-    background-color: #141C24;
-    border: 1px solid #25313D;
+    background-color: @palette_016;
+    border: 1px solid @palette_046;
     border-radius: 6px;
     padding: 6px;
 }
 
 .f2-subpanel-title {
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: bold;
     padding-bottom: 4px;
@@ -178,143 +178,143 @@ paned > separator:hover {
 }
 
 .f2-group-item {
-    background-color: #1B2532;
-    border: 1px solid #25313D;
+    background-color: @palette_031;
+    border: 1px solid @palette_046;
     border-radius: 4px;
     padding: 5px 7px;
 }
 .f2-group-item:hover {
-    background-color: #222D3A;
-    border-color: #3489E8;
+    background-color: @palette_040;
+    border-color: @palette_065;
 }
 
 .f2-group-item-selected {
-    background-color: #182F4D;
-    border: 1.5px solid #3489E8;
+    background-color: @palette_026;
+    border: 1.5px solid @palette_065;
 }
 
 .f2-group-title {
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: 600;
 }
 
 .f2-group-count-badge {
-    background-color: #25313D;
+    background-color: @palette_046;
     border-radius: 3px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: bold;
     padding: 1px 4px;
 }
 
 .f2-table-container {
-    background-color: #141C24;
-    border: 1px solid #25313D;
+    background-color: @palette_016;
+    border: 1px solid @palette_046;
     border-radius: 6px;
     padding: 6px;
 }
 
 .f2-search-input {
-    background: #1B2532;
-    border: 1px solid #364553;
+    background: @palette_031;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     padding: 3px 6px;
 }
 
 .f2-filter-banner {
-    background: #142232;
-    border: 1px solid #1E3D59;
+    background: @palette_017;
+    border: 1px solid @palette_038;
     border-radius: 4px;
     padding: 3px 8px;
     margin-bottom: 2px;
 }
 
 .f2-filter-label {
-    color: #6fa8dc;
+    color: @link;
     font-size: 10pt;
     font-weight: 600;
 }
 
 .f2-btn-clear-filter {
-    background: #1E2835;
-    border: 1px solid #364553;
+    background: @palette_035;
+    border: 1px solid @palette_067;
     border-radius: 3px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     padding: 2px 6px;
 }
 .f2-btn-clear-filter:hover {
-    background: #25313D;
-    color: #F2F6FA;
-    border-color: #3489E8;
+    background: @palette_046;
+    color: @palette_123;
+    border-color: @palette_065;
 }
 
 .f2-btn-neutral-sm {
-    background: #222D3A;
-    border: 1px solid #364553;
+    background: @palette_040;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: 600;
     padding: 3px 8px;
 }
 .f2-btn-neutral-sm:hover {
-    background: #25313D;
-    border-color: #3489E8;
+    background: @palette_046;
+    border-color: @palette_065;
 }
 
 .f2-lib-bottom-bar {
-    border-top: 1px solid #25313D;
+    border-top: 1px solid @palette_046;
     padding-top: 6px;
 }
 
 .f2-btn-add-to-task {
-    background: #0b4f8a;
+    background: @palette_010;
     border: none;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: bold;
     padding: 5px 12px;
 }
 .f2-btn-add-to-task:hover {
-    background: #2374cf;
+    background: @palette_044;
 }
 .f2-btn-add-to-task:disabled {
-    background: #25313D;
-    color: #8998AA;
+    background: @palette_046;
+    color: @palette_093;
 }
 
 .f2-table-hdr {
-    background-color: #1B2532;
-    border-bottom: 1px solid #364553;
-    color: #8998AA;
+    background-color: @palette_031;
+    border-bottom: 1px solid @palette_067;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: bold;
     padding: 4px 6px;
 }
 
 .f2-table-row {
-    border-bottom: 1px solid #1A232E;
+    border-bottom: 1px solid @palette_029;
     padding: 4px 6px;
 }
 
 .f2-table-cell-mono {
-    color: #F2F6FA;
+    color: @palette_123;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
     font-size: 10pt;
 }
 
 .f2-table-cell-muted {
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
 }
 
 .f2-table-empty {
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     padding: 12px;
 }
@@ -331,53 +331,53 @@ paned > separator:hover {
 }
 
 .f2-card {
-    background-color: #1E2835;
-    border: 1px solid #2A3847;
+    background-color: @palette_035;
+    border: 1px solid @palette_056;
     border-radius: 6px;
     padding: 6px 10px;
 }
 
 .f2-card-title {
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: bold;
 }
 
 .f2-form-label {
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: 600;
 }
 
 .f2-form-entry {
-    background: #141C24;
-    border: 1px solid #364553;
+    background: @palette_016;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     padding: 4px 8px;
 }
 .f2-form-entry:focus {
-    border-color: #3489E8;
+    border-color: @palette_065;
 }
 
 .f2-btn-create-task {
-    background: #0b4f8a;
+    background: @palette_010;
     border: none;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: bold;
     padding: 4px 8px;
 }
 .f2-btn-create-task:hover {
-    background: #2374cf;
+    background: @palette_044;
 }
 
 .f2-card-id-badge {
-    background-color: #0B1017;
+    background-color: @palette_008;
     border-radius: 3px;
-    color: #6fa8dc;
+    color: @link;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
     font-size: 10pt;
     font-weight: bold;
@@ -385,12 +385,12 @@ paned > separator:hover {
 }
 
 .f2-form-subtext {
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
 }
 
 .f2-form-subtext-alert {
-    color: #EAC54F;
+    color: @palette_117;
     font-size: 10pt;
     font-style: italic;
 }
@@ -400,7 +400,7 @@ paned > separator:hover {
 }
 
 .f2-check-lg {
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: 600;
 }
@@ -408,166 +408,166 @@ paned > separator:hover {
 .f2-btn-link {
     background: transparent;
     border: none;
-    color: #6fa8dc;
+    color: @link;
     font-size: 10pt;
     padding: 1px 3px;
 }
 .f2-btn-link:hover {
-    color: #5aa1f0;
+    color: @palette_083;
 }
 
 .f2-btn-remove {
-    background: #3a1c20;
-    border: 1px solid #E35B64;
+    background: @palette_072;
+    border: 1px solid @palette_112;
     border-radius: 3px;
-    color: #E35B64;
+    color: @palette_112;
     font-size: 10pt;
     padding: 1px 6px;
 }
 .f2-btn-remove:hover {
-    background: #E35B64;
-    color: #FFFFFF;
+    background: @palette_112;
+    color: @palette_128;
 }
 
 .f2-table-empty-box-sm {
-    background: #141C24;
-    border: 1px dashed #2A3847;
+    background: @palette_016;
+    border: 1px dashed @palette_056;
     border-radius: 4px;
     padding: 12px 10px;
 }
 
 .f2-table-empty-box-compact {
-    background: #141C24;
-    border: 1px dashed #2A3847;
+    background: @palette_016;
+    border: 1px dashed @palette_056;
     border-radius: 4px;
     padding: 6px 10px;
 }
 
 .f2-btn-neutral {
-    background: #222D3A;
-    border: 1px solid #364553;
+    background: @palette_040;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: bold;
     padding: 5px 12px;
 }
 
 .f2-btn-save-task-pending {
-    background: #0b4f8a;
+    background: @palette_010;
     border: none;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     font-weight: bold;
     padding: 6px 16px;
 }
 .f2-btn-save-task-pending:hover {
-    background: #093f6f;
+    background: @palette_006;
 }
 
 .f2-card-save {
-    background-color: #1E2835;
-    border: 1px solid #2A3847;
+    background-color: @palette_035;
+    border: 1px solid @palette_056;
     border-radius: 6px;
     padding: 8px 12px;
 }
 
 .f2-btn-save-task {
-    background: #27B785;
+    background: @palette_053;
     border: none;
     border-radius: 4px;
-    color: #0B1017;
+    color: @palette_008;
     font-size: 10pt;
     font-weight: bold;
     padding: 6px 16px;
 }
 .f2-btn-save-task:hover {
-    background: #2ecfa0;
+    background: @palette_058;
 }
 .f2-btn-save-task:disabled {
-    background: #25313D;
-    color: #8998AA;
+    background: @palette_046;
+    color: @palette_093;
 }
 
 /* --------------------------------------------------------------------------
    6. STATUS BADGES & PILLS
    -------------------------------------------------------------------------- */
 .f2-badge-blue {
-    background: #142a42;
-    border: 1px solid #3489E8;
+    background: @palette_019;
+    border: 1px solid @palette_065;
     border-radius: 10px;
-    color: #6fa8dc;
+    color: @link;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
 
 .f2-pill-configured {
-    background: #142a42;
-    border: 1px solid #3489E8;
+    background: @palette_019;
+    border: 1px solid @palette_065;
     border-radius: 10px;
-    color: #6fa8dc;
+    color: @link;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
 
 .f2-pill-incomplete {
-    background: #383017;
-    border: 1px solid #EAC54F;
+    background: @palette_068;
+    border: 1px solid @palette_117;
     border-radius: 10px;
-    color: #EAC54F;
+    color: @palette_117;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
 
 .f2-pill-enabled {
-    background: #143527;
-    border: 1px solid #27B785;
+    background: @palette_021;
+    border: 1px solid @palette_053;
     border-radius: 10px;
-    color: #6dd6ac;
+    color: @palette_088;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
 
 .f2-pill-disabled {
-    background: #25313D;
-    border: 1px solid #364553;
+    background: @palette_046;
+    border: 1px solid @palette_067;
     border-radius: 10px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
 
 .f2-pill-running {
-    background: #165339;
-    border: 1px solid #27B785;
+    background: @palette_024;
+    border: 1px solid @palette_053;
     border-radius: 10px;
-    color: #6dd6ac;
+    color: @palette_088;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
 
 .f2-pill-not-observed {
-    background: #1E2733;
-    border: 1px solid #364553;
+    background: @palette_034;
+    border: 1px solid @palette_067;
     border-radius: 10px;
-    color: #8998AA;
+    color: @palette_093;
     font-size: 10pt;
     font-weight: 600;
     padding: 2px 7px;
 }
 
 .f2-pill-error {
-    background: #3c191e;
-    border: 1px solid #E35B64;
+    background: @palette_074;
+    border: 1px solid @palette_112;
     border-radius: 10px;
-    color: #E35B64;
+    color: @palette_112;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
@@ -579,45 +579,45 @@ paned > separator:hover {
 dropdown,
 dropdown > button.toggle,
 dropdown > button {
-    background: #141C24;
-    background-color: #141C24;
+    background: @palette_016;
+    background-color: @palette_016;
     background-image: none;
-    border: 1px solid #364553;
+    border: 1px solid @palette_067;
     border-radius: 4px;
     box-shadow: none;
-    color: #F2F6FA;
+    color: @palette_123;
     font-size: 10pt;
     padding: 3px 6px;
 }
 dropdown:hover,
 dropdown > button.toggle:hover,
 dropdown > button:hover {
-    background: #1E2835;
-    border-color: #3489E8;
+    background: @palette_035;
+    border-color: @palette_065;
 }
 dropdown label,
 dropdown > button label {
-    color: #F2F6FA;
+    color: @palette_123;
 }
 
 popover,
 popover contents {
-    background: #1B2532;
-    background-color: #1B2532;
-    border: 1px solid #364553;
+    background: @palette_031;
+    background-color: @palette_031;
+    border: 1px solid @palette_067;
     border-radius: 4px;
-    color: #F2F6FA;
+    color: @palette_123;
     padding: 4px;
 }
 
 popover listview,
 popover listview row {
-    background: #1B2532;
-    color: #F2F6FA;
+    background: @palette_031;
+    color: @palette_123;
     padding: 4px 6px;
 }
 popover listview row:selected,
 popover listview row:hover {
-    background: #0b4f8a;
-    color: #FFFFFF;
+    background: @palette_010;
+    color: @palette_128;
 }
