@@ -515,3 +515,13 @@ tooltip always contains the full message. A compact ribbon status displays the
 existing automatic catalog-refresh on/off and interval; it changes no timing,
 worker, read or network behavior. Legacy Windows-only/unloaded views are not
 claimed verified by this GTK presentation work.
+
+
+Item5: verified the existing F3 demo starts tools/sim/f3_demo.py with the F6
+Telegram configuration and can send one real message. The UI now requires a
+cancel-default native question explaining the SIMULATED message contents and
+one-message delivery to a masked configured chat. A changed configuration
+invalidates that approval. Missing/disabled/invalid Telegram settings disable
+the WebView button with a Thai reason pointing to F6. No sender/simulator,
+backend, credentials handling or delivery semantics changed. Tests intercept
+_open_demo, use synthetic test credentials only, and start no demo or send.

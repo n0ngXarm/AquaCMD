@@ -321,3 +321,5 @@ body[data-signal="error"] #f3-toast { border-color: var(--fail); }
 @media (min-width: 1100px) and (min-height: 580px) {
   .node strong { font-size: clamp(15px, 2.1vh, 19px); }
 }
+
+.demo-button:disabled { color: var(--mut); border-style: dashed; cursor: not-allowed; background: var(--surface-2); }

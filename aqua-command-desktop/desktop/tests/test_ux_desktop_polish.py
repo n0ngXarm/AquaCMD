@@ -99,6 +99,48 @@ class DesktopPolishTests(unittest.TestCase):
         self.assertIn('30', window.catalog_refresh_status.get_text())
         self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
 
+    def test_f3_demo_is_disabled_with_a_reason_when_telegram_is_not_configured(self):
+        window = self.window
+        window.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
+        view = window.f3_network_view
+        wait(lambda: view.web is not None)
+        wait(lambda: javascript(view.web, "Boolean(document.getElementById('f3-demo'))"))
+        self.assertTrue(javascript(view.web, "document.getElementById('f3-demo').disabled"))
+        self.assertIn('F6', javascript(view.web, "document.getElementById('f3-demo').title"))
+        self.assertIsNone(view._demo_process)
+
+    def test_f3_real_delivery_confirmation_masks_destination_and_cancel_starts_nothing(self):
+        import json
+        view = self.window.f3_network_view
+        config = {'enabled':True, 'bot_token':'123:synthetic-ui-only', 'chat_id':'synthetic-chat-123456'}
+        view._telegram_demo_config.write_text(json.dumps(config))
+        self.window.on_global_key_pressed(None, Gdk.KEY_F3, 0, 0)
+        wait(lambda: view.web is not None)
+        wait(lambda: javascript(view.web, "Boolean(document.getElementById('f3-demo'))"))
+        with patch.object(view, '_open_demo') as start:
+            javascript(view.web, "(document.getElementById('f3-demo').click(), true)")
+            wait(lambda: getattr(view, '_demo_confirmation', None) is not None)
+            dialog = view._demo_confirmation
+            text = dialog.get_property('secondary-text')
+            self.assertIn('SIMULATED', text)
+            self.assertIn('***3456', text)
+            self.assertNotIn(config['chat_id'], text)
+            self.assertNotIn(config['bot_token'], text)
+            self.assertEqual(dialog.get_default_widget(), dialog.get_widget_for_response(Gtk.ResponseType.CANCEL))
+            dialog.response(Gtk.ResponseType.CANCEL)
+            start.assert_not_called()
+            javascript(view.web, "(document.getElementById('f3-demo').click(), true)")
+            wait(lambda: view._demo_confirmation is not None)
+            view._demo_confirmation.response(Gtk.ResponseType.ACCEPT)
+            start.assert_called_once_with()
+            javascript(view.web, "(document.getElementById('f3-demo').click(), true)")
+            wait(lambda: view._demo_confirmation is not None)
+            config['chat_id'] = 'synthetic-changed-765432'
+            view._telegram_demo_config.write_text(json.dumps(config))
+            view._demo_confirmation.response(Gtk.ResponseType.ACCEPT)
+            start.assert_called_once_with()
+        self.assertIsNone(view._demo_process)
+
 
 class PresentationStyleTests(unittest.TestCase):
     def test_css_has_no_secondary_text_below_ten_points(self):

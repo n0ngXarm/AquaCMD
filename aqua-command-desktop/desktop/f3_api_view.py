@@ -2,6 +2,7 @@
 from html import escape
 import ipaddress
 import json
+import re
 import signal
 import sys
 import threading
@@ -56,9 +57,14 @@ def load_metadata(path):
     return result
 
 
-def build_html(metadata, *, allow_demo=True, demo=False, demo_error=""):
+def build_html(metadata, *, allow_demo=True, demo=False, demo_error="", demo_status=None):
     page = (ASSETS/'index.html').read_text()
-    page = page.replace('__F3_DEMO_ATTR__', '' if allow_demo else 'hidden')
+    status = demo_status or {'configured': False, 'reason': 'ตั้งค่า Telegram ใน F6 ก่อนจำลองส่งข้อความ'}
+    reason = status.get('reason', '')
+    attributes = 'hidden' if not allow_demo else '' if demo or status['configured'] else 'disabled aria-disabled="true"'
+    attributes += ' title="' + escape(reason or 'เริ่มจำลองและส่งข้อความ SIMULATED 1 ข้อความ · ต้องยืนยันก่อน', quote=True) + '"'
+    page = page.replace('__F3_DEMO_ATTR__', attributes)
+    page = page.replace('__F3_DEMO_LABEL__', 'จำลองและส่ง Telegram' if demo or status['configured'] else 'Telegram ยังไม่พร้อม · ตั้งค่า F6')
     page = page.replace('__F3_DEMO_MODE__', '1' if demo else '0')
     page = page.replace('__F3_DEMO_ERROR__', escape(demo_error, quote=True))
     fonts = (ASSETS/'fonts_embedded.css').read_text() if (ASSETS/'fonts_embedded.css').exists() else ''
@@ -84,6 +90,7 @@ class F3ApiView:
         self._allow_demo = allow_demo
         self._demo_process = None
         self._demo_requested = False
+        self._demo_confirmation = None
         self._live_api_url = ""
         config_dir = Path(getattr(owner, 'config_dir', None) or Path.home()/'.config/aqua-command')
         self._telegram_demo_config = config_dir / 'telegram_config.json'
@@ -163,7 +170,7 @@ class F3ApiView:
         if self.closed or self._active:
             return
         self._ensure_web()
-        self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo), None)
+        self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo, demo_status=self._demo_status()), None)
         self._active = True
         self._generation += 1
         generation = self._generation
@@ -206,7 +213,7 @@ class F3ApiView:
         self.api_url = self._live_api_url
         self.error.set_visible(bool(self.metadata_error))
         self.web.set_visible(True)
-        self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo), self.api_url+'/f3/')
+        self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo, demo_status=self._demo_status()), self.api_url+'/f3/')
         return GLib.SOURCE_REMOVE
 
     def _startup_failed(self, error, generation):
@@ -216,6 +223,9 @@ class F3ApiView:
         return GLib.SOURCE_REMOVE
 
     def _unmapped(self, *_):
+        self._active = False
+        if self._demo_confirmation is not None:
+            self._demo_confirmation.response(Gtk.ResponseType.CANCEL)
         if self.details_window is not None:
             self.details_window.set_visible(False)
         self._active = False
@@ -248,7 +258,10 @@ class F3ApiView:
         except (ValueError, TypeError, AttributeError):
             return
         if message.get('action') == 'open-demo':
-            self._open_demo()
+            if self._demo_requested:
+                self._open_demo()
+            else:
+                self._confirm_demo()
             return
         if key in ('F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9') and not self.closed:
             self.owner.on_global_key_pressed(None, getattr(Gdk, 'KEY_'+key), 0, 0)
@@ -259,7 +272,79 @@ class F3ApiView:
         self.api_url = f'http://127.0.0.1:{port}' if port else self._live_api_url
         base = self.api_url + '/f3/' if self.api_url else None
         self.web.load_html(build_html(self.metadata, allow_demo=self._allow_demo,
-                                      demo=port is not None, demo_error=demo_error), base)
+                                      demo=port is not None, demo_error=demo_error, demo_status=self._demo_status()), base)
+
+    def _demo_status(self):
+        """Return only readiness, a masked destination and a reason to the presentation."""
+        try:
+            config = json.loads(self._telegram_demo_config.read_text())
+        except (OSError, ValueError):
+            config = {}
+        reason = ''
+        if not isinstance(config, dict) or config.get('enabled') is not True:
+            reason = 'เปิดใช้งาน Telegram ใน F6 ก่อนจำลองส่งข้อความ'
+        elif not isinstance(config.get('bot_token'), str) or not re.fullmatch(r'[0-9]+:[A-Za-z0-9_-]+', config['bot_token'].strip()):
+            reason = 'ตั้งค่า Bot Token ใน F6 ก่อนจำลองส่งข้อความ'
+        elif not isinstance(config.get('chat_id'), str) or not config['chat_id'].strip():
+            reason = 'ตั้งค่า Chat ID ใน F6 ก่อนจำลองส่งข้อความ'
+        chat = config.get('chat_id', '') if isinstance(config, dict) else ''
+        chat = chat.strip() if isinstance(chat, str) else ''
+        return {'configured': not reason, 'reason': reason,
+                'destination': '***' + chat[-4:] if len(chat) > 8 else '***'}
+
+    def _confirm_demo(self):
+        if self.closed or not self._active or not self._allow_demo:
+            return
+        status = self._demo_status()
+        if not status['configured']:
+            self._show_f3(demo_error=status['reason'])
+            return
+        if self._demo_confirmation is not None:
+            self._demo_confirmation.present()
+            return
+        try:
+            approved_config = self._telegram_demo_config.read_bytes()
+        except OSError:
+            self._show_f3(demo_error='อ่านการตั้งค่า Telegram ใน F6 ไม่ได้ · ยังไม่ได้เริ่มจำลอง')
+            return
+        parent = self.owner if isinstance(self.owner, Gtk.Window) else self.root_widget.get_root()
+        if not isinstance(parent, Gtk.Window):
+            return
+        dialog = Gtk.MessageDialog(
+            transient_for=parent, modal=True, message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.NONE, text='จำลองและส่ง Telegram จริงหรือไม่?',
+            secondary_text=(
+                'จะเริ่ม OPC UA จำลองบน localhost และส่งข้อความทดสอบ 1 ข้อความไปยังแชต '
+                + status['destination'] + ' ที่บันทึกไว้ใน F6\n\n'
+                'ข้อความขึ้นต้น [AQUA COMMAND · SIMULATED] และ “ข้อความทดสอบจากหน้า F3” '
+                'ตามด้วยระดับน้ำจำลองและกลุ่ม Task พร้อมเกณฑ์ที่เข้าเงื่อนไข '
+                'เมื่ออ่านข้อมูลจำลองสำเร็จ ทั้งหมดเป็น SIMULATED ไม่ใช่ค่าจาก WinCC หน้างาน'),
+        )
+        cancel = dialog.add_button('ยกเลิก', Gtk.ResponseType.CANCEL)
+        accept = dialog.add_button('เริ่มจำลองและส่ง', Gtk.ResponseType.ACCEPT)
+        accept.add_css_class('destructive-action')
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        self._demo_confirmation = dialog
+
+        def response(widget, choice):
+            self._demo_confirmation = None
+            widget.destroy()
+            if choice == Gtk.ResponseType.ACCEPT:
+                try:
+                    unchanged = self._telegram_demo_config.read_bytes() == approved_config
+                except OSError:
+                    unchanged = False
+                if unchanged:
+                    self._open_demo()
+                else:
+                    self._show_f3(demo_error='การตั้งค่า Telegram เปลี่ยนไป · กรุณาตรวจ F6 และยืนยันใหม่')
+            elif self.web is not None and self._active and not self.closed:
+                self.web.grab_focus()
+                self.web.evaluate_javascript("document.getElementById('f3-demo')?.focus()", -1, None, None, None, None, None)
+
+        dialog.connect('response', response)
+        dialog.present()
+        cancel.grab_focus()
 
     def _open_demo(self):
         if self.closed or not self._active or not self._allow_demo:
