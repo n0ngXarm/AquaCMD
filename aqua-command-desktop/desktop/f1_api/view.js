@@ -266,7 +266,7 @@
       tableBodyEl.innerHTML = `
         <div class="empty-state" role="status">
           <span>ไม่พบ Tag ตรงกับเงื่อนไขการค้นหา</span>
-          <button class="btn btn-secondary" id="btnResetFilters" style="margin-top:8px;font-size:12px">ล้างตัวกรองทั้งหมด</button>
+          <button class="btn btn-secondary" id="btnResetFilters" style="margin-top:8px;font-size:13.5px">ล้างตัวกรองทั้งหมด</button>
         </div>
       `;
       const resetBtn = document.getElementById('btnResetFilters');
@@ -399,18 +399,18 @@
         <details style="margin-top:14px">
           <summary style="cursor:pointer;color:var(--link);font-weight:500">ข้อมูล Raw Metadata จาก WinCC Export (${Object.keys(tag.raw_metadata).length / 2 | 0} ช่อง)</summary>
           <div style="max-height:160px;overflow-y:auto;border:1px solid var(--line);border-radius:var(--radius);margin-top:6px">
-            <table style="width:100%;font-size:12px;border-collapse:collapse">${rows}</table>
+            <table style="width:100%;font-size:13.5px;border-collapse:collapse">${rows}</table>
           </div>
         </details>
       `;
     }
 
     const boundTasksHtml = boundTasks.length === 0
-      ? `<div style="color:var(--mut);font-size:12.5px;margin-bottom:8px">Tag นี้ยังไม่ได้ผูกกับ Task ใด</div>`
+      ? `<div style="color:var(--mut);font-size:13.5px;margin-bottom:8px">Tag นี้ยังไม่ได้ผูกกับ Task ใด</div>`
       : `
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
           ${boundTasks.map(bt => `
-            <span class="badge" style="background:var(--surface-3);color:var(--ink);border:1px solid var(--line);padding:3px 8px;border-radius:4px;display:inline-flex;align-items:center;gap:6px;font-size:12px">
+            <span class="badge" style="background:var(--surface-3);color:var(--ink);border:1px solid var(--line);padding:3px 8px;border-radius:4px;display:inline-flex;align-items:center;gap:6px;font-size:13.5px">
               <b>${escapeHtml(bt.id)}</b>: ${escapeHtml(bt.name || '')}
               <button type="button" class="btn-ghost" data-remove-bound-task="${escapeHtml(bt.id)}" data-tag-name="${escapeHtml(tag.name)}" title="เอาออกจาก ${escapeHtml(bt.id)}" style="padding:0 2px;cursor:pointer;color:var(--fail)">✕</button>
             </span>
@@ -446,7 +446,7 @@
           </dl>
 
           <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line)">
-            <h4 style="margin:0 0 8px 0;font-size:13px;font-weight:600">การผูกกับ WinCC Task (${boundTasks.length} Task)</h4>
+            <h4 style="margin:0 0 8px 0;font-size:13.5px;font-weight:600">การผูกกับ WinCC Task (${boundTasks.length} Task)</h4>
             ${boundTasksHtml}
             <div class="form-row" style="margin-top:8px">
               <select id="modalTaskSelect" class="in" style="flex:1" aria-label="เลือก Task">${taskOptions}</select>
@@ -549,7 +549,7 @@
             </td>
             <td class="mono cell-assigned-name">${escapeHtml(tn)}</td>
             <td class="cell-assigned-group" style="color:var(--mut)">${escapeHtml(getGroupName(tObj.group))}</td>
-            <td class="mono cell-assigned-type" style="color:var(--mut);font-size:12px">${escapeHtml(tObj.type || 'Word')}</td>
+            <td class="mono cell-assigned-type" style="color:var(--mut);font-size:13.5px">${escapeHtml(tObj.type || 'Word')}</td>
           </tr>
         `;
       }).join('');
@@ -589,7 +589,7 @@
             </div>
 
             <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:10px;margin-top:12px">
-              <div style="font-weight:600;font-size:12.5px;color:var(--mut);margin-bottom:6px">เมื่อ Task ทำงาน</div>
+              <div style="font-weight:600;font-size:13.5px;color:var(--mut);margin-bottom:6px">เมื่อ Task ทำงาน</div>
               <label class="form-check" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:4px 0">
                 <input type="checkbox" id="chkActionLog" ${currentTask.action_log ? 'checked' : ''}>
                 <span>บันทึกประวัติในเครื่อง (Local CSV & SQLite)</span>
@@ -601,7 +601,7 @@
                   <input type="checkbox" id="chkActionNotify" ${currentTask.action_notify ? 'checked' : ''}>
                   <span>แจ้งเตือนผ่าน Telegram</span>
                 </label>
-                <button type="button" class="btn btn-ghost" id="btnF6Link" style="padding:2px 8px;font-size:12px;color:var(--accent);cursor:pointer;border:1px solid var(--line);border-radius:4px" title="เปิดการตั้งค่าเพื่อกรอก Bot Token และ Chat ID ในแท็บ Telegram">เปิดการตั้งค่า →</button>
+                <button type="button" class="btn btn-ghost" id="btnF6Link" style="padding:2px 8px;font-size:13.5px;color:var(--accent);cursor:pointer;border:1px solid var(--line);border-radius:4px" title="เปิดการตั้งค่าเพื่อกรอก Bot Token และ Chat ID ในแท็บ Telegram">เปิดการตั้งค่า →</button>
               </div>
 
               <label class="form-check" style="cursor:pointer;display:flex;align-items:center;gap:8px;margin-top:6px;border-top:1px solid var(--line);padding-top:8px">
@@ -615,10 +615,10 @@
           <!-- Right Column: Assigned Tags Table -->
           <div style="display:flex;flex-direction:column;min-height:0">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-              <span style="font-weight:600;font-size:13px">Tag ใน Task (${assignedTags.length} รายการ)</span>
+              <span style="font-weight:600;font-size:13.5px">Tag ใน Task (${assignedTags.length} รายการ)</span>
               <div style="display:flex;gap:6px">
-                <button class="btn btn-secondary" id="btnRemoveSelectedAssigned" style="font-size:12px;padding:3px 8px">เอาที่เลือกออก</button>
-                <button class="btn btn-secondary" id="btnClearAllAssigned" style="font-size:12px;padding:3px 8px">ล้างทั้งหมด</button>
+                <button class="btn btn-secondary" id="btnRemoveSelectedAssigned" style="font-size:13.5px;padding:3px 8px">เอาที่เลือกออก</button>
+                <button class="btn btn-secondary" id="btnClearAllAssigned" style="font-size:13.5px;padding:3px 8px">ล้างทั้งหมด</button>
               </div>
             </div>
 
@@ -887,7 +887,7 @@
           <button class="btn-close-modal" id="btnCloseModal" aria-label="ปิด">✕</button>
         </div>
         <div class="modal-body">
-          <p style="margin:0 0 12px 0;font-size:13px;color:var(--ink)">
+          <p style="margin:0 0 12px 0;font-size:13.5px;color:var(--ink)">
             เลือก Task ปลายทางที่ต้องการผูกสัญญาณจำนวน <b>${selectedCount}</b> รายการที่เลือกไว้:
           </p>
           <div class="form-group">

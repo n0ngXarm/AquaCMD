@@ -87,6 +87,24 @@ class DesktopPolishTests(unittest.TestCase):
         self.assertEqual(window.polling_engine.get_telemetry()['poll_count'], 0)
 
 
+class PresentationStyleTests(unittest.TestCase):
+    def test_css_has_no_secondary_text_below_ten_points(self):
+        import re
+        root = Path(__file__).resolve().parents[1]
+        files = [root/name for name in ('style.css','f1_style.css','f2_style.css','workspace_style.css')]
+        files += [root/area/name for area in ('f1_api','f3_api') for name in ('view.css',)]
+        violations=[]
+        for file in files:
+            for match in re.finditer(r'font-size:\s*([0-9.]+)(pt|px)', file.read_text()):
+                points=float(match[1]) * (0.75 if match[2]=='px' else 1)
+                if points < 10: violations.append((file.name,match[0]))
+        self.assertEqual(violations, [])
+
+    def test_contrast_samples_meet_normal_text_target(self):
+        from ux_contrast import contrast, measurements
+        self.assertEqual(contrast('#ffffff','#000000'), 21)
+        self.assertTrue(all(row['passes_4_5'] for row in measurements()))
+
+
 if __name__ == '__main__':
     unittest.main()
-

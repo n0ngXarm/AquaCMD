@@ -488,3 +488,21 @@ mentions Ctrl+,. Task navigation now has a toggle selected only while its Task
 dialog is open, synchronized through a presentation-only WebKit message. The
 fallback Task entry keeps the same Thai/F2 wording. No business action/schema,
 collector, worker or listener was added.
+
+
+Item3: raised CSS secondary text to >=10pt and table/body text to >=10.5pt,
+controls to >=36px, and the native minimum window to1024x600. The F3 diagram
+uses its actual available height; short views retain statuses/age and move
+secondary descriptions to the existing details dialog. The same F3 handoff
+assertions now pass all3 sizes, including the pre-existing1024x496 overflow
+(actual1024x457). Font lint and5 focused GTK/contrast tests pass. Measured12
+palette pairs now all >=4.5:1; disabled Task3.499→7.978, running status3.518→5.091,
+catalog badge4.091→5.773 and WebKit faint3.526→6.991. These are measured CSS pairs,
+not a claim that every possible composited screen pixel was audited.
+
+The first broad323-test run had one polling timing failure at a fixed0.4s wait;
+the identical narrow test then passed in isolation without changing its test
+or polling implementation. Source contracts116 and F3 fit3/3 passed. Preserve
+both raw results in artifacts/ux-after; rerun the complete suite at final state.
+Dark remains the default; the optional theme switch is skipped because private
+settings handling is outside the authorized presentation scope.

@@ -48,7 +48,7 @@
 
 .workspace-subtitle {
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 /* Mode Switcher Buttons (F1 Monitoring vs F2 Task Manager) */
@@ -58,7 +58,7 @@
     border: 1px solid #4B91D4;
     border-radius: 4px;
     padding: 4px 12px;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 700;
 }
 .workspace-mode-btn-active:focus,
@@ -73,7 +73,7 @@
     border: 1px solid #334252;
     border-radius: 4px;
     padding: 4px 12px;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 .workspace-mode-btn-inactive:hover {
     color: #F0F4F8;
@@ -93,7 +93,7 @@
     border: 1px solid #E79B50;
     border-radius: 4px;
     padding: 4px 12px;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 700;
 }
 .f2-btn-scan-once:hover {
@@ -112,7 +112,7 @@
 .f2-btn-scan-once:disabled {
     background-color: #151F2A;
     border-color: #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 .f2-btn-auto-start {
@@ -121,7 +121,7 @@
     border: 1px solid #334252;
     border-radius: 4px;
     padding: 4px 12px;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 .f2-btn-auto-start:hover {
@@ -139,7 +139,7 @@
 .f2-btn-auto-start:disabled {
     background-color: #151F2A;
     border-color: #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 .f2-btn-auto-stop {
@@ -148,7 +148,7 @@
     border: 1px solid #E79B50;
     border-radius: 4px;
     padding: 4px 12px;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 700;
 }
 .f2-btn-auto-stop:hover {
@@ -167,12 +167,12 @@
 .f2-btn-auto-stop:disabled {
     background-color: #151F2A;
     border-color: #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 .f2-scan-label {
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
@@ -182,7 +182,7 @@
     border: 1px solid #334252;
     border-radius: 4px;
     padding: 2px 8px;
-    font-size: 8pt;
+    font-size: 10pt;
 }
 
 /* --------------------------------------------------------------------------
@@ -205,7 +205,7 @@
 
 .f1-panel-title {
     color: #F0F4F8;
-    font-size: 9.5pt;
+    font-size: 10pt;
     font-weight: 700;
 }
 
@@ -262,7 +262,7 @@
     background-color: #1A242F;
     background-image: none;
     border: 1px solid #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
     box-shadow: none;
 }
 .workspace-col-panel button:disabled label,
@@ -270,7 +270,7 @@
 .workspace-top-ribbon button:disabled label,
 .f2-section-card button:disabled label,
 .f2-action-card button:disabled label {
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 /* --------------------------------------------------------------------------
@@ -310,12 +310,12 @@
 }
 .f2-group-desc {
     color: #c3cfdd;
-    font-size: 12px;
+    font-size: 13.5px;
 }
 .f2-group-count {
     background-color: #1D2834;
     color: #c3cfdd;
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 600;
     padding: 2px 6px;
     border-radius: 8px;
@@ -344,7 +344,7 @@
 }
 .f2-catalog-subtitle {
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 /* Search Entry Dark Overrides */
@@ -355,7 +355,7 @@ searchentry.workspace-search {
     border: 1px solid #334252;
     border-radius: 4px;
     padding: 5px 10px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 entry.workspace-search:focus,
 searchentry.workspace-search:focus {
@@ -377,7 +377,7 @@ searchentry.workspace-search image {
 }
 .f2-filter-label {
     color: #4B91D4;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 .f2-btn-clear-filter {
@@ -385,7 +385,7 @@ searchentry.workspace-search image {
     color: #A8B5C3;
     border: 1px solid #334252;
     border-radius: 3px;
-    font-size: 8pt;
+    font-size: 10pt;
     padding: 2px 8px;
 }
 .f2-btn-clear-filter:hover {
@@ -400,7 +400,7 @@ searchentry.workspace-search image {
 .f2-btn-clear-filter:disabled {
     background-color: #151F2A;
     border-color: #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 /* Table Header Row */
@@ -414,7 +414,7 @@ searchentry.workspace-search image {
 }
 .f2-col-header {
     color: #d0dbe7;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
 }
 
@@ -469,7 +469,7 @@ list.f2-table-list,
 /* Disabled Row */
 .f2-table-list row:disabled {
     background-color: #111820;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 /* Checkbox inside Table Row and Context Panel (Blue Semantic) */
@@ -499,7 +499,7 @@ list.f2-table-list,
 .workspace-col-panel checkbutton label,
 .f2-section-card checkbutton label {
     color: #F0F4F8;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 /* Row Cell Elements */
@@ -511,13 +511,13 @@ list.f2-table-list,
 .f2-tag-group-label,
 .tag-cell-secondary {
     color: #c3cfdd;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 /* Neutral Data Type Badge */
 .f2-tag-type-badge {
     background-color: #1D2834;
     color: #c3cfdd;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
     border: 1px solid #334252;
     border-radius: 3px;
@@ -527,7 +527,7 @@ list.f2-table-list,
 .f2-tag-quality-idle {
     background-color: #1D2834;
     color: #8899AA;
-    font-size: 7.5pt;
+    font-size: 10pt;
     border: 1px solid #334252;
     border-radius: 3px;
     padding: 1px 6px;
@@ -568,7 +568,7 @@ list.f2-table-list,
 }
 .tag-flow-hint {
     color: #d0dbe7;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 
 .f2-btn-clear-selection {
@@ -576,7 +576,7 @@ list.f2-table-list,
     border: 1px solid #334252;
     border-radius: 4px;
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
     padding: 5px 10px;
 }
 .f2-btn-clear-selection:hover {
@@ -595,10 +595,10 @@ list.f2-table-list,
 .f2-btn-clear-selection:disabled {
     background-color: #151F2A;
     border: 1px solid #2A3847;
-    color: #556575;
+    color: #A8B5C3;
 }
 .f2-btn-clear-selection:disabled label {
-    color: #556575;
+    color: #A8B5C3;
 }
 
 /* --------------------------------------------------------------------------
@@ -616,7 +616,7 @@ list.f2-table-list,
     border: none;
     border-radius: 3px;
     padding: 3px 8px;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 .f1-mode-btn:hover {
@@ -641,18 +641,18 @@ list.f2-table-list,
 }
 .workspace-inspector-key {
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 .workspace-inspector-val {
     color: #F0F4F8;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 .f1-group-code-pill {
     background-color: #26313D;
     color: #F0F4F8;
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     border: 1px solid #334252;
     border-radius: 4px;
@@ -662,7 +662,7 @@ list.f2-table-list,
 .f1-badge-accent {
     background-color: #1D2834;
     color: #A8B5C3;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     border: 1px solid #334252;
     border-radius: 4px;
@@ -672,7 +672,7 @@ list.f2-table-list,
 .f1-badge-neutral {
     background-color: #1D2834;
     color: #8899AA;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     border: 1px solid #334252;
     border-radius: 4px;
@@ -682,7 +682,7 @@ list.f2-table-list,
 .f1-badge-verified {
     background-color: rgba(56, 184, 139, 0.15);
     color: #38B88B;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: bold;
     border: 1px solid rgba(56, 184, 139, 0.4);
     border-radius: 4px;
@@ -691,7 +691,7 @@ list.f2-table-list,
 
 .f1-group-desc-th {
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 .workspace-empty-inspector {
@@ -702,12 +702,12 @@ list.f2-table-list,
 }
 .workspace-empty-title {
     color: #A8B5C3;
-    font-size: 9.5pt;
+    font-size: 10pt;
     font-weight: 700;
 }
 .workspace-empty-sub {
     color: #8899AA;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 .f2-btn-collapse {
@@ -715,7 +715,7 @@ list.f2-table-list,
     border: 1px solid #334252;
     border-radius: 4px;
     color: #A8B5C3;
-    font-size: 8pt;
+    font-size: 10pt;
     padding: 2px 8px;
 }
 .f2-btn-collapse:hover {
@@ -730,7 +730,7 @@ list.f2-table-list,
 .f2-btn-collapse:disabled {
     background-color: #151F2A;
     border-color: #2A3847;
-    color: #556575;
+    color: #A8B5C3;
 }
 
 /* Quick Actions in F1 Inspector */
@@ -742,7 +742,7 @@ list.f2-table-list,
 }
 .f2-action-card-title {
     color: #F0F4F8;
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: 700;
 }
 
@@ -759,21 +759,21 @@ list.f2-table-list,
 /* Section Title - Clean White */
 .f2-section-title {
     color: #F0F4F8;
-    font-size: 9.5pt;
+    font-size: 10pt;
     font-weight: 700;
     letter-spacing: 0.3px;
 }
 
 .f2-form-label {
     color: #A8B5C3;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
 .f2-task-id-pill {
     background-color: #151F2A;
     color: #F0F4F8;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: bold;
     border: 1px solid #334252;
     border-radius: 4px;
@@ -785,7 +785,7 @@ list.f2-table-list,
     border: 1px solid #334252;
     border-radius: 4px;
     color: #F0F4F8;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     padding: 4px 10px;
 }
@@ -804,7 +804,7 @@ list.f2-table-list,
 .f2-btn-new-task:disabled {
     background-color: #151F2A;
     border-color: #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 /* Form DropDown & Popover Controls (Dark Theme & Explicit States) */
@@ -841,7 +841,7 @@ dropdown button:focus-visible {
 dropdown button:disabled {
     background-color: #151F2A;
     border: 1px solid #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 /* Dropdown popover list & view */
@@ -895,7 +895,7 @@ popover modelbutton:selected {
 .f2-task-status-ready {
     background-color: rgba(56, 184, 139, 0.15);
     color: #38B88B;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     border: 1px solid rgba(56, 184, 139, 0.4);
     border-radius: 4px;
@@ -904,12 +904,12 @@ popover modelbutton:selected {
 
 .f2-action-subtitle {
     color: #F0F4F8;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 .f2-action-hint {
     color: #A8B5C3;
-    font-size: 8pt;
+    font-size: 10pt;
 }
 
 /* Assigned Tags List */
@@ -953,7 +953,7 @@ button.f2-action-hint-btn {
     border: 1px solid #334252;
     border-radius: 4px;
     padding: 2px 8px;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 500;
 }
 button.f2-action-hint-btn:hover {
@@ -983,7 +983,7 @@ button.f2-action-hint-btn:active {
     color: #8899AA;
     border: 1px solid #334252;
     border-radius: 3px;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 1px 6px;
 }
@@ -998,7 +998,7 @@ button.f2-action-hint-btn:active {
 .f2-btn-remove-tag:disabled {
     background-color: transparent;
     border-color: #2A3847;
-    color: #556575;
+    color: #A8B5C3;
 }
 
 /* Sticky Save Task Bar */
@@ -1012,12 +1012,12 @@ button.f2-action-hint-btn:active {
 /* Save Feedback Status */
 .f2-save-status-clean {
     color: #38B88B;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 .f2-save-status-dirty {
     color: #E3C363;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
@@ -1027,7 +1027,7 @@ button.f2-action-hint-btn:active {
     border: 1px solid #4B91D4;
     border-radius: 4px;
     color: #FFFFFF;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 5px 14px;
 }
@@ -1048,7 +1048,7 @@ button.f2-action-hint-btn:active {
 .f2-btn-save-task:disabled {
     background-color: #1A242F;
     border: 1px solid #2A3847;
-    color: #64748B;
+    color: #A8B5C3;
 }
 
 /* Paned Dividers */
@@ -1068,7 +1068,7 @@ paned > separator {
 .tag-overview .f2-catalog-subtitle,
 .tag-overview .f2-scan-label {
     color: #c3cfdd;
-    font-size: 12px;
+    font-size: 13.5px;
 }
 .tag-overview .workspace-top-ribbon {
     border-radius: 8px;
@@ -1107,7 +1107,7 @@ paned > separator {
     background: transparent;
     border: none;
     padding: 0;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .tag-overview .tag-state.badge-standby,
 .tag-overview .tag-state.badge-sensor {
@@ -1119,7 +1119,7 @@ paned > separator {
     border: 1px solid #6bacf4;
     border-radius: 6px;
     color: #ffffff;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     padding: 5px 12px;
 }
@@ -1164,21 +1164,21 @@ paned > separator {
 }
 .tag-overview-popup .workspace-inspector-key {
     color: #bdcad8;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .tag-overview-popup .workspace-inspector-val {
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .tag-overview-popup .tag-dialog-reading {
     font-size: 17px;
     font-weight: 700;
 }
 .tag-overview-popup .tag-dialog-quality {
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .tag-overview-popup .tag-technical-disclosure {
     color: #a9d4ff;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
 }
 .tag-overview-popup .tag-dialog-footer {
@@ -1198,7 +1198,7 @@ paned > separator {
 .f6-settings {
     font-family: 'Noto Sans', 'Noto Sans Thai', sans-serif;
     font-variant-numeric: tabular-nums;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .f6-header {
     background: @aqua_surface;
@@ -1220,7 +1220,7 @@ paned > separator {
     border: 1px solid @aqua_border;
     min-height: 32px;
     padding: 4px 12px;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
 }
 .f6-header stackswitcher button:checked {
@@ -1263,7 +1263,7 @@ paned > separator {
 .f6-help,
 .f6-field-label {
     color: @aqua_muted;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .f6-field-label {
     font-weight: 600;
@@ -1274,7 +1274,7 @@ paned > separator {
 }
 .f6-disclosure {
     color: @aqua_accent;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
 }
 .f6-certificate {
@@ -1288,3 +1288,15 @@ paned > separator {
     background: @aqua_raised;
     border-bottom-color: @aqua_line;
 }
+
+/* Presentation floor for operators; page bodies may scroll, the F3 diagram fits. */
+window { font-size: 11pt; }
+button, dropdown, entry, searchentry, checkbutton { min-height: 36px; }
+button.fkey-btn { min-height: 36px; padding: 0 7px; font-size: 10pt; }
+.f6-settings entry, .f6-settings dropdown button,
+.f6-header stackswitcher button, .f6-settings button.f6-action, .f6-settings button.f6-primary { min-height: 36px; padding-top: 0; padding-bottom: 0; }
+.f1-table-cell, .f1-table-cell-mono, .f1-table-cell-muted,
+.f2-col-cell, .f2-form-label, .table-td, entry { font-size: 11pt; }
+button:disabled, button:disabled label, dropdown:disabled label, entry:disabled { color: #A8B5C3; opacity: 1; }
+
+listbox row label, .table-td { font-size: 10.5pt; }

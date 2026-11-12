@@ -4,18 +4,18 @@ headerbar { background: #0e1b2a; border-bottom: 1px solid #2b4257; padding: 6px 
 .dialog-body { padding: 24px; }
 .sidebar { padding: 18px 12px; background: #0e1b2a; border-right: 1px solid #2b4257; }
 .brand { font-size: 13.5pt; font-weight: 800; letter-spacing: 1px; }
-.readonly { color: #43c6a0; background: #142e30; border: 1px solid #34665d; padding: 5px 10px; border-radius: 6px; font-size: 9pt; font-weight: 700; }
+.readonly { color: #43c6a0; background: #142e30; border: 1px solid #34665d; padding: 5px 10px; border-radius: 6px; font-size: 10pt; font-weight: 700; }
 .page-title { font-size: 18pt; font-weight: 700; }
 .side-title { font-size: 12pt; font-weight: 700; margin-bottom: 16px; }
-.eyebrow { color: #40c7db; font-size: 8.25pt; font-weight: 700; }
-.caption, .micro { color: #a5b8c8; font-size: 9pt; }
-.micro { font-size: 8.25pt; }
+.eyebrow { color: #40c7db; font-size: 10pt; font-weight: 700; }
+.caption, .micro { color: #a5b8c8; font-size: 10pt; }
+.micro { font-size: 10pt; }
 .muted { color: #a5b8c8; font-size: 10.5pt; }
-.display-status { color: #a5b8c8; font-size: 9pt; }
-.mode, .notice { background: #302a1f; color: #e7b35d; padding: 7px 10px; border: 1px solid #635237; border-radius: 6px; font-size: 9pt; }
+.display-status { color: #a5b8c8; font-size: 10pt; }
+.mode, .notice { background: #302a1f; color: #e7b35d; padding: 7px 10px; border: 1px solid #635237; border-radius: 6px; font-size: 10pt; }
 .console-panel { background: #122234; border: 1px solid #2b4257; padding: 12px; border-radius: 8px; }
 .panel-title { font-size: 11.25pt; font-weight: 700; }
-.detail-copy { font-size: 9.75pt; color: #a5b8c8; }
+.detail-copy { font-size: 10pt; color: #a5b8c8; }
 .review-details { background: #122234; padding: 16px; border: 1px solid #2b4257; border-radius: 8px; font-size: 11.25pt; }
 button { background: #192d42; color: #eef5fa; border: 1px solid #39566e; border-radius: 6px; padding: 7px 10px; box-shadow: none; }
 button:hover { background: #244258; }
@@ -26,16 +26,16 @@ button.primary:disabled { background: #28445a; color: #a5b8c8; border-color: #39
 button.danger { color: #ffd0d4; background: #48272f; border-color: #7a4651; }
 button.nav { background: transparent; border-color: transparent; padding: 10px 8px; }
 button.nav:checked { color: #40c7db; background: #192d42; border-color: #2b4257; }
-button.table-link { background: transparent; border-color: transparent; padding: 7px 0; font-size: 9.75pt; }
+button.table-link { background: transparent; border-color: transparent; padding: 7px 0; font-size: 10pt; }
 button.table-link:hover { color: #40c7db; }
 .metric { background: #122234; border: 1px solid #2b4257; border-radius: 8px; padding: 9px 12px; }
 .metric-value { color: #eef5fa; font-size: 20.25pt; font-weight: 700; }
 .pipeline-stage { background: #192d42; border: 1px solid #2b4257; padding: 9px; border-radius: 6px; }
-.stage-value { font-size: 9pt; color: #eef5fa; }
-.table-head { color: #a5b8c8; font-size: 9pt; font-weight: 700; padding: 8px 0; border-bottom: 1px solid #2b4257; }
-.table-cell { color: #eef5fa; padding: 8px 0; font-size: 9.75pt; border-bottom: 1px solid #22384b; }
+.stage-value { font-size: 10pt; color: #eef5fa; }
+.table-head { color: #a5b8c8; font-size: 10pt; font-weight: 700; padding: 8px 0; border-bottom: 1px solid #2b4257; }
+.table-cell { color: #eef5fa; padding: 8px 0; font-size: 10pt; border-bottom: 1px solid #22384b; }
 .empty-state { color: #a5b8c8; padding: 24px 8px; font-size: 10.5pt; }
-.mono { font-family: "DejaVu Sans Mono", monospace; font-size: 9.75pt; }
+.mono { font-family: "DejaVu Sans Mono", monospace; font-size: 10pt; }
 stack, scrolledwindow { background: transparent; }
 .error { color: #ec7481; }
 entry { background: #122234; color: #eef5fa; border: 1px solid #39566e; }

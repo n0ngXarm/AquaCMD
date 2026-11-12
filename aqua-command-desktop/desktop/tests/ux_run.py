@@ -19,6 +19,8 @@ def main():
     parser.add_argument('--capture', action='store_true')
     parser.add_argument('--checks', action='store_true')
     parser.add_argument('--focused', action='store_true')
+    parser.add_argument('--test', action='append', default=[])
+    parser.add_argument('--fit', action='store_true')
     args = parser.parse_args()
     output = ROOT / 'artifacts' / ('ux-' + args.stage)
     output.mkdir(parents=True, exist_ok=True)
@@ -58,9 +60,12 @@ def main():
                 run('native-capture', [sys.executable,'-B','desktop/tests/ux_native_capture.py','--out',str(output)],120)
             if args.focused:
                 run('ux-focused', [sys.executable,'-B','-m','unittest','test_ux_desktop_polish','-v'],90)
+            for name in args.test:
+                run('focused-'+name.split('.')[-1], [sys.executable,'-B','-m','unittest',name,'-v'])
             if args.checks:
                 run('desktop-tests', [sys.executable,'-B','-m','unittest','discover','-s','desktop/tests','-v'])
                 run('source-contracts', [sys.executable,'-B','-m','unittest','discover','-s','tests','-v'])
+            if args.checks or args.fit:
                 for size in ('1024x496','1360x616','1920x1009'):
                     env['F3_TEST_SIZE'] = size
                     run('f3-handoff-'+size, [sys.executable,'-B','tests/f3_handoff_native.py'],120)

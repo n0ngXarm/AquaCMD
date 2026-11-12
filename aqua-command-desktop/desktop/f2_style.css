@@ -37,7 +37,7 @@
     border: 1px solid #364553;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
     padding: 3px 8px;
 }
@@ -50,8 +50,8 @@
     background: #143829;
     border: 1px solid #27B785;
     border-radius: 4px;
-    color: #27B785;
-    font-size: 8.5pt;
+    color: #6dd6ac;
+    font-size: 10pt;
     font-weight: bold;
     padding: 3px 10px;
 }
@@ -64,7 +64,7 @@
     border: 1px solid #E35B64;
     border-radius: 4px;
     color: #E35B64;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 3px 10px;
 }
@@ -80,7 +80,7 @@
 
 .f2-scan-label {
     color: #8998AA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
@@ -89,7 +89,7 @@
     border: 1px solid #364553;
     border-radius: 4px;
     color: #8998AA;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     padding: 2px 6px;
 }
@@ -98,22 +98,22 @@
     background: #143829;
     border: 1px solid #27B785;
     border-radius: 4px;
-    color: #27B785;
-    font-size: 8pt;
+    color: #6dd6ac;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 6px;
 }
 
 .f2-scan-countdown {
-    color: #3489E8;
+    color: #6fa8dc;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: bold;
 }
 
 .f2-scan-meta {
     color: #8998AA;
-    font-size: 8pt;
+    font-size: 10pt;
 }
 
 .f2-badge-catalog {
@@ -121,7 +121,7 @@
     border: 1px solid #364553;
     border-radius: 4px;
     color: #8998AA;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     padding: 2px 6px;
 }
@@ -135,7 +135,7 @@ paned > separator {
     border: none;
 }
 paned > separator:hover {
-    background: #3489E8;
+    background: #0b4f8a;
 }
 
 .f2-panel {
@@ -168,7 +168,7 @@ paned > separator:hover {
 
 .f2-subpanel-title {
     color: #8998AA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding-bottom: 4px;
 }
@@ -195,7 +195,7 @@ paned > separator:hover {
 
 .f2-group-title {
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
@@ -203,7 +203,7 @@ paned > separator:hover {
     background-color: #25313D;
     border-radius: 3px;
     color: #8998AA;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 1px 4px;
 }
@@ -220,7 +220,7 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     padding: 3px 6px;
 }
 
@@ -233,8 +233,8 @@ paned > separator:hover {
 }
 
 .f2-filter-label {
-    color: #3489E8;
-    font-size: 8pt;
+    color: #6fa8dc;
+    font-size: 10pt;
     font-weight: 600;
 }
 
@@ -243,7 +243,7 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 3px;
     color: #8998AA;
-    font-size: 7.5pt;
+    font-size: 10pt;
     padding: 2px 6px;
 }
 .f2-btn-clear-filter:hover {
@@ -257,7 +257,7 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: 600;
     padding: 3px 8px;
 }
@@ -272,11 +272,11 @@ paned > separator:hover {
 }
 
 .f2-btn-add-to-task {
-    background: #3489E8;
+    background: #0b4f8a;
     border: none;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 5px 12px;
 }
@@ -292,7 +292,7 @@ paned > separator:hover {
     background-color: #1B2532;
     border-bottom: 1px solid #364553;
     color: #8998AA;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 4px 6px;
 }
@@ -305,17 +305,17 @@ paned > separator:hover {
 .f2-table-cell-mono {
     color: #F2F6FA;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 8.5pt;
+    font-size: 10pt;
 }
 
 .f2-table-cell-muted {
     color: #8998AA;
-    font-size: 8pt;
+    font-size: 10pt;
 }
 
 .f2-table-empty {
     color: #8998AA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     padding: 12px;
 }
 
@@ -339,13 +339,13 @@ paned > separator:hover {
 
 .f2-card-title {
     color: #F2F6FA;
-    font-size: 9.5pt;
+    font-size: 10pt;
     font-weight: bold;
 }
 
 .f2-form-label {
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
@@ -354,7 +354,7 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     padding: 4px 8px;
 }
 .f2-form-entry:focus {
@@ -362,11 +362,11 @@ paned > separator:hover {
 }
 
 .f2-btn-create-task {
-    background: #3489E8;
+    background: #0b4f8a;
     border: none;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 4px 8px;
 }
@@ -377,21 +377,21 @@ paned > separator:hover {
 .f2-card-id-badge {
     background-color: #0B1017;
     border-radius: 3px;
-    color: #3489E8;
+    color: #6fa8dc;
     font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace;
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 6px;
 }
 
 .f2-form-subtext {
     color: #8998AA;
-    font-size: 7.5pt;
+    font-size: 10pt;
 }
 
 .f2-form-subtext-alert {
     color: #EAC54F;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-style: italic;
 }
 
@@ -401,15 +401,15 @@ paned > separator:hover {
 
 .f2-check-lg {
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: 600;
 }
 
 .f2-btn-link {
     background: transparent;
     border: none;
-    color: #3489E8;
-    font-size: 8pt;
+    color: #6fa8dc;
+    font-size: 10pt;
     padding: 1px 3px;
 }
 .f2-btn-link:hover {
@@ -421,7 +421,7 @@ paned > separator:hover {
     border: 1px solid #E35B64;
     border-radius: 3px;
     color: #E35B64;
-    font-size: 7.5pt;
+    font-size: 10pt;
     padding: 1px 6px;
 }
 .f2-btn-remove:hover {
@@ -448,22 +448,22 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 4px;
     color: #8998AA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 5px 12px;
 }
 
 .f2-btn-save-task-pending {
-    background: #3489E8;
+    background: #0b4f8a;
     border: none;
     border-radius: 4px;
     color: #F2F6FA;
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 6px 16px;
 }
 .f2-btn-save-task-pending:hover {
-    background: #4a9cf5;
+    background: #093f6f;
 }
 
 .f2-card-save {
@@ -478,7 +478,7 @@ paned > separator:hover {
     border: none;
     border-radius: 4px;
     color: #0B1017;
-    font-size: 9pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 6px 16px;
 }
@@ -497,8 +497,8 @@ paned > separator:hover {
     background: #142a42;
     border: 1px solid #3489E8;
     border-radius: 10px;
-    color: #3489E8;
-    font-size: 7.5pt;
+    color: #6fa8dc;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -507,8 +507,8 @@ paned > separator:hover {
     background: #142a42;
     border: 1px solid #3489E8;
     border-radius: 10px;
-    color: #3489E8;
-    font-size: 7.5pt;
+    color: #6fa8dc;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -518,7 +518,7 @@ paned > separator:hover {
     border: 1px solid #EAC54F;
     border-radius: 10px;
     color: #EAC54F;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -527,8 +527,8 @@ paned > separator:hover {
     background: #143527;
     border: 1px solid #27B785;
     border-radius: 10px;
-    color: #27B785;
-    font-size: 7.5pt;
+    color: #6dd6ac;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -538,7 +538,7 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 10px;
     color: #8998AA;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -547,8 +547,8 @@ paned > separator:hover {
     background: #165339;
     border: 1px solid #27B785;
     border-radius: 10px;
-    color: #27B785;
-    font-size: 7.5pt;
+    color: #6dd6ac;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -558,7 +558,7 @@ paned > separator:hover {
     border: 1px solid #364553;
     border-radius: 10px;
     color: #8998AA;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-weight: 600;
     padding: 2px 7px;
 }
@@ -568,7 +568,7 @@ paned > separator:hover {
     border: 1px solid #E35B64;
     border-radius: 10px;
     color: #E35B64;
-    font-size: 7.5pt;
+    font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;
 }
@@ -586,7 +586,7 @@ dropdown > button {
     border-radius: 4px;
     box-shadow: none;
     color: #F2F6FA;
-    font-size: 8.5pt;
+    font-size: 10pt;
     padding: 3px 6px;
 }
 dropdown:hover,
@@ -618,6 +618,6 @@ popover listview row {
 }
 popover listview row:selected,
 popover listview row:hover {
-    background: #3489E8;
+    background: #0b4f8a;
     color: #FFFFFF;
 }

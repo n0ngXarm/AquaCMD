@@ -1023,12 +1023,12 @@ label { color: @aqua_ink; }
     letter-spacing: 1px;
 }
 .wincc-title, .alarm-text, .nav-caption, .page-hint { color: @aqua_muted; }
-.wincc-title, .alarm-text, .nav-caption { font-size: 12px; }
+.wincc-title, .alarm-text, .nav-caption { font-size: 13.5px; }
 .nav-caption { padding: 0 3px; }
 .wincc-clock {
     color: @aqua_muted;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 13.5px;
 }
 
 .wincc-group {
@@ -1077,7 +1077,7 @@ label { color: @aqua_ink; }
     padding: 3px 10px;
     border: 1px solid #10b981;
     border-radius: 20px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 .badge-standby {
     background-color: rgba(148, 163, 184, 0.15);
@@ -1086,7 +1086,7 @@ label { color: @aqua_ink; }
     padding: 3px 10px;
     border: 1px solid #475569;
     border-radius: 20px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 .badge-sensor {
     background-color: rgba(56, 189, 248, 0.15);
@@ -1095,7 +1095,7 @@ label { color: @aqua_ink; }
     padding: 3px 10px;
     border: 1px solid #0284c7;
     border-radius: 20px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 .badge-active, .badge-has-net {
     background-color: rgba(16, 185, 129, 0.2);
@@ -1104,7 +1104,7 @@ label { color: @aqua_ink; }
     padding: 3px 10px;
     border: 1px solid #059669;
     border-radius: 20px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 .badge-stopped, .badge-inactive, .badge-nope, .badge-nope-card, .badge-no-net {
     background-color: rgba(244, 63, 94, 0.18);
@@ -1113,7 +1113,7 @@ label { color: @aqua_ink; }
     padding: 3px 10px;
     border: 1px solid rgba(244, 63, 94, 0.4);
     border-radius: 20px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 .badge-gateway {
     background-color: rgba(168, 85, 247, 0.18);
@@ -1122,7 +1122,7 @@ label { color: @aqua_ink; }
     padding: 3px 10px;
     border: 1px solid #7c3aed;
     border-radius: 20px;
-    font-size: 9pt;
+    font-size: 10pt;
 }
 
 /* Closing is visually separate from settings and ordinary navigation. */
@@ -1134,7 +1134,7 @@ label { color: @aqua_ink; }
     border: 1px solid @aqua_line;
     border-radius: 4px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 13.5px;
     min-height: 27px;
     padding: 3px 9px;
 }
@@ -1171,7 +1171,7 @@ label { color: @aqua_ink; }
     border-radius: 8px;
     font-weight: 600;
     padding: 6px 14px;
-    font-size: 9.5pt;
+    font-size: 10pt;
 }
 .action-btn:hover {
     background: #334155;
@@ -1182,25 +1182,25 @@ label { color: @aqua_ink; }
 }
 
 .btn-autoscan-start {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    background: linear-gradient(135deg, #075642 0%, #09644d 100%);
     color: #ffffff;
     border: 1px solid #047857;
     border-radius: 8px;
     font-weight: 700;
     padding: 6px 16px;
-    font-size: 9.5pt;
+    font-size: 10pt;
 }
 .btn-autoscan-start:hover {
-    background: #059669;
+    background: #075642;
 }
 .btn-autoscan-stop {
-    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    background: linear-gradient(135deg, #912525 0%, #a02a2a 100%);
     color: #ffffff;
     border: 1px solid #b91c1c;
     border-radius: 8px;
     font-weight: 700;
     padding: 6px 16px;
-    font-size: 9.5pt;
+    font-size: 10pt;
 }
 .btn-autoscan-stop:hover {
     background: #dc2626;
@@ -1215,7 +1215,7 @@ label { color: @aqua_ink; }
 .table-th, .table-td {
     padding: 7px 10px;
     border-bottom: 1px solid @aqua_line;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 .table-th {
     background: @aqua_raised;
@@ -1253,7 +1253,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         super().__init__(application=app, title="AQUA COMMAND")
         self.set_default_size(1360, 820)
-        self.set_size_request(1024, 700)
+        self.set_size_request(1024, 600)
         self.connect('close-request', self.on_close_request)
 
         # Force GTK to prefer dark theme globally so unstyled states never fallback to Adwaita Light
@@ -1437,6 +1437,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         # 3. Stack Pages
         self.stack = Gtk.Stack()
         self.stack.set_hhomogeneous(False)
+        self.stack.set_vhomogeneous(False)
         self.stack.set_vexpand(True)
         self.stack.set_hexpand(True)
         self.stack.set_transition_type(Gtk.StackTransitionType.NONE)

@@ -19,7 +19,7 @@ window {
     background-color: #0B1017;
     color: #F2F6FA;
     font-family: 'Noto Sans Thai', 'Inter', -apple-system, sans-serif;
-    font-size: 13px;
+    font-size: 13.5px;
 }
 
 label {
@@ -32,9 +32,9 @@ label {
 /* Header Status Badges (Restrained visual weight hierarchy) */
 .badge-active {
     background-color: rgba(39, 183, 133, 0.15);
-    color: #27B785;
+    color: #6dd6ac;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 3px 10px;
     border: 1px solid rgba(39, 183, 133, 0.45);
     border-radius: 4px;
@@ -44,7 +44,7 @@ label {
     background-color: #222D3A;
     color: #8998AA;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 3px 10px;
     border: 1px solid #364553;
     border-radius: 4px;
@@ -54,7 +54,7 @@ label {
     background-color: #222D3A;
     color: #8998AA;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 3px 10px;
     border: 1px solid #364553;
     border-radius: 4px;
@@ -64,7 +64,7 @@ label {
     background-color: rgba(52, 137, 232, 0.12);
     color: #8998AA;
     font-weight: 700;
-    font-size: 11.5px;
+    font-size: 13.5px;
     padding: 3px 10px;
     border: 1px solid #364553;
     border-radius: 4px;
@@ -75,7 +75,7 @@ label {
     background-color: #222D3A;
     color: #8998AA;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 3px 10px;
     border: 1px solid #364553;
     border-radius: 4px;
@@ -85,7 +85,7 @@ label {
     background-color: rgba(227, 91, 100, 0.15);
     color: #E35B64;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 3px 10px;
     border: 1px solid rgba(227, 91, 100, 0.45);
     border-radius: 4px;
@@ -106,7 +106,7 @@ label {
 }
 
 .f1-page-subtitle {
-    font-size: 12.5px;
+    font-size: 13.5px;
     font-weight: 500;
     color: #8998AA;
 }
@@ -117,7 +117,7 @@ label {
     border: 1px solid #364553;
     border-radius: 5px;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13.5px;
     padding: 5px 12px;
 }
 
@@ -153,7 +153,7 @@ label {
 }
 
 .f1-kpi-title {
-    font-size: 11.5px;
+    font-size: 13.5px;
     font-weight: 600;
     color: #8998AA;
     text-transform: uppercase;
@@ -170,7 +170,7 @@ label {
 }
 
 .f1-kpi-desc {
-    font-size: 12px;
+    font-size: 13.5px;
     color: #8998AA;
 }
 
@@ -206,7 +206,7 @@ label {
 /* Semantic Badges */
 .f1-badge-neutral {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 600;
     background: #222D3A;
     color: #8998AA;
@@ -217,10 +217,10 @@ label {
 
 .f1-badge-accent {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
     background: rgba(52, 137, 232, 0.15);
-    color: #3489E8;
+    color: #6fa8dc;
     border: 1px solid rgba(52, 137, 232, 0.45);
     border-radius: 4px;
     padding: 2px 8px;
@@ -228,10 +228,10 @@ label {
 
 .f1-badge-verified {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
     background: rgba(39, 183, 133, 0.15);
-    color: #27B785;
+    color: #6dd6ac;
     border: 1px solid rgba(39, 183, 133, 0.45);
     border-radius: 4px;
     padding: 2px 8px;
@@ -239,7 +239,7 @@ label {
 
 .f1-badge-warning {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
     background: rgba(234, 197, 79, 0.15);
     color: #EAC54F;
@@ -250,7 +250,7 @@ label {
 
 .f1-badge-error {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
     background: rgba(227, 91, 100, 0.15);
     color: #E35B64;
@@ -261,7 +261,7 @@ label {
 
 .f1-badge-attention {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11px;
+    font-size: 13.5px;
     font-weight: 700;
     background: rgba(242, 141, 53, 0.15);
     color: #F28D35;
@@ -305,7 +305,7 @@ label {
 }
 
 .f1-group-icon {
-    color: #3489E8;
+    color: #6fa8dc;
 }
 
 .f1-group-row-code {
@@ -320,16 +320,16 @@ label {
 }
 
 .f1-group-row-desc {
-    font-size: 12px;
+    font-size: 13.5px;
     color: #8998AA;
 }
 
 .f1-count-pill {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11.5px;
+    font-size: 13.5px;
     font-weight: 700;
     background: #1B2532;
-    color: #3489E8;
+    color: #6fa8dc;
     border: 1px solid rgba(52, 137, 232, 0.4);
     border-radius: 4px;
     padding: 2px 8px;
@@ -340,10 +340,10 @@ label {
    -------------------------------------------------------------------------- */
 .f1-group-code-pill {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     background: #222D3A;
-    color: #3489E8;
+    color: #6fa8dc;
     border: 1px solid rgba(52, 137, 232, 0.45);
     border-radius: 4px;
     padding: 3px 10px;
@@ -356,7 +356,7 @@ label {
 }
 
 .f1-group-desc-th {
-    font-size: 12.5px;
+    font-size: 13.5px;
     color: #8998AA;
 }
 
@@ -375,7 +375,7 @@ label {
     color: #8998AA;
     border: none;
     padding: 4px 12px;
-    font-size: 12px;
+    font-size: 13.5px;
     font-weight: 600;
     border-radius: 4px;
 }
@@ -391,7 +391,7 @@ label {
     background: #222D3A;
     border: 1px solid #364553;
     color: #F2F6FA;
-    font-size: 12.5px;
+    font-size: 13.5px;
     border-radius: 4px;
     padding: 4px 8px;
     min-height: 30px;
@@ -409,7 +409,7 @@ label {
 
 .f1-table-th {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 11.5px;
+    font-size: 13.5px;
     font-weight: 700;
     color: #8998AA;
     padding: 8px 12px;
@@ -435,21 +435,21 @@ label {
 }
 
 .f1-table-cell {
-    font-size: 13px;
+    font-size: 13.5px;
     color: #F2F6FA;
     padding: 8px 12px;
 }
 
 .f1-table-cell-mono {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 12.5px;
+    font-size: 13.5px;
     color: #F2F6FA;
     padding: 8px 12px;
 }
 
 .f1-table-cell-muted {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 12px;
+    font-size: 13.5px;
     color: #8998AA;
     padding: 8px 12px;
 }
@@ -463,9 +463,9 @@ label {
     border: none;
     padding: 0;
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 600;
-    color: #3489E8;
+    color: #6fa8dc;
 }
 
 .f1-tag-link-btn:hover {
@@ -474,18 +474,18 @@ label {
 }
 
 .f1-caption-subtle {
-    font-size: 12px;
+    font-size: 13.5px;
     color: #8998AA;
 }
 
 .f1-caption-mono {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 12px;
+    font-size: 13.5px;
     color: #8998AA;
 }
 
 .f1-table-empty {
-    font-size: 13px;
+    font-size: 13.5px;
     color: #8998AA;
     padding: 24px;
 }
@@ -498,7 +498,7 @@ label {
 }
 
 .f1-metric-title {
-    font-size: 11.5px;
+    font-size: 13.5px;
     color: #8998AA;
     font-weight: 600;
     text-transform: uppercase;
@@ -507,7 +507,7 @@ label {
 
 .f1-prop-value-mono {
     font-family: 'JetBrains Mono', 'Liberation Mono', monospace;
-    font-size: 13px;
+    font-size: 13.5px;
     color: #F2F6FA;
     background: #25313D;
     padding: 6px 10px;
