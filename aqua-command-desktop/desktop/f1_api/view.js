@@ -545,7 +545,7 @@
 
     const assignedTags = currentTask.tags || [];
     const assignedTagsRows = assignedTags.length === 0
-      ? `<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:18px">ยังไม่มี Tag ใน Task นี้</td></tr>`
+      ? `<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:18px">ยังไม่มี Tag ใน Task นี้<br><button class="btn btn-secondary" id="btnChooseTaskTags" style="margin-top:8px">กลับไปเลือก Tag ใน F1</button></td></tr>`
       : assignedTags.map((tn, idx) => {
         const tObj = state.tags.find(x => x.name === tn) || { type: 'Word', group: 'Default' };
         return `
@@ -568,7 +568,7 @@
         </div>
         <div class="modal-body task-dialog-body">
           <!-- Left Column: Task Settings Form -->
-          <div>
+          <div class="task-settings-card">
             <div class="form-group">
               <label for="taskPickerSelect">เลือก Task ที่ต้องการจัดการ</label>
               <div class="form-row">
@@ -619,7 +619,7 @@
           </div>
 
           <!-- Right Column: Assigned Tags Table -->
-          <div style="display:flex;flex-direction:column;min-height:0">
+          <div class="task-tags-card" style="display:flex;flex-direction:column;min-height:0">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
               <span style="font-weight:600;font-size:13.5px">Tag ใน Task (${assignedTags.length} รายการ)</span>
               <div style="display:flex;gap:6px">
@@ -655,6 +655,8 @@
     document.getElementById('btnCloseModal').onclick = closeModal;
     document.getElementById('btnCloseModalBottom').onclick = closeModal;
 
+    const chooseTags = document.getElementById('btnChooseTaskTags');
+    if (chooseTags) chooseTags.onclick = closeModal;
     const taskPicker = document.getElementById('taskPickerSelect');
     if (taskPicker) {
       taskPicker.onchange = () => {

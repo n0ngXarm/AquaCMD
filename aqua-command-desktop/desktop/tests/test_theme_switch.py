@@ -137,6 +137,11 @@ class ThemeSwitchTests(unittest.TestCase):
                 self.assertLessEqual(window.footer.get_allocated_height(), 32)
                 self.assertLessEqual(window.header_box.get_allocated_height(), 56)
                 self.assertIs(window.navigation.get_parent(), window.header_box)
+                window.switch_to_tab('alarms')
+                settle(.1)
+                self.assertLessEqual(window.f6_bodies[0].get_width(), 1000)
+                self.assertGreater(window.f6_bodies[0].get_width(), 600)
+                window.switch_to_tab('overview')
 
     def test_native_component_css_parses_in_both_themes(self):
         from theme_tokens import compile_native_css

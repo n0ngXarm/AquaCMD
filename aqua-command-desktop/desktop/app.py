@@ -1576,6 +1576,8 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         return content
 
     def _adapt_chrome(self, width):
+        for body in getattr(self, 'f6_bodies', []):
+            body.set_size_request(min(1000, max(600, width - 48)), -1)
         layout = 0 if width < 1280 else 1 if width < 1600 else 2
         if getattr(self, '_chrome_layout', None) == layout:
             return
@@ -2429,7 +2431,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
             return widget
 
         def status(text):
-            return label(text, 'badge-standby')
+            widget = label(text, 'badge-standby')
+            widget.add_css_class('f6-status-row')
+            return widget
 
         def action(text, handler, primary=False):
             button = Gtk.Button(label=text)
@@ -2446,7 +2450,9 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         def add_section(key, title):
             scroll = Gtk.ScrolledWindow()
             scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-            body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+            body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=16, halign=Gtk.Align.CENTER, valign=Gtk.Align.START)
+            self.f6_bodies.append(body)
+            body.set_size_request(min(1000, max(600, self.get_default_size()[0] - 48)), -1)
             body.add_css_class('f6-body')
             scroll.set_child(body)
             self.f6_sections.add_titled(scroll, key, title)
@@ -2470,6 +2476,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 card.append(label(description, 'f6-help'))
             return card
 
+        self.f6_bodies = []
         page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         page.add_css_class('f6-settings')
 
@@ -2484,6 +2491,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.f6_sections.set_hhomogeneous(False)
         self.f6_sections.set_vhomogeneous(False)
         switcher = Gtk.StackSwitcher(stack=self.f6_sections)
+        switcher.add_css_class('settings-tabs')
         header.append(switcher)
         appearance = Gtk.Box(spacing=12, halign=Gtk.Align.END)
         appearance.add_css_class('appearance-row')
