@@ -926,3 +926,22 @@ mark.search-match {
 
 /* Group descriptions must keep their natural height when the panel scrolls. */
 .group-btn, .group-item { flex-shrink: 0; }
+
+/* Dense catalog: quiet absence of evidence, explicit results and nearby actions. */
+.app-container { padding:8px 10px; gap:8px; }
+.top-header { padding:4px 12px; min-height:44px; max-height:56px; border-radius:var(--radius-md); }
+.catalog-tools { padding:4px 10px; }
+.groups-panel, .catalog-panel { border-radius:var(--radius-md); }
+.table-viewport { --catalog-columns:28px minmax(110px,1.5fr) minmax(94px,1fr) 86px minmax(134px,1.1fr) 96px; }
+.table-header { min-height:32px; }
+.table-row { min-height:38px; border-left-width:0; }
+.table-row[aria-selected="true"] { box-shadow:inset 3px 0 var(--accent); }
+.cell-checkbox { width:28px; height:36px; }
+.cell-type { background:transparent; border:0; padding:0; font-size:13px; }
+.cell-status[data-status="NO"] { background:transparent; border:0; padding:0; color:var(--mut); gap:4px; }
+.cell-status[data-status="NO"] > span:first-child { font-size:0; }
+.cell-status[data-status="NO"] > span:first-child::before { content:"•"; font-size:14px; }
+.cell-actions .btn-compact { min-height:30px; height:30px; padding:0 6px; }
+.cell-actions .btn-inspect { min-width:30px; }
+.task-count { font:400 12px/1.5 system-ui,sans-serif; color:var(--mut); }
+@media (max-width:1100px) { .header-title .sub { display:none; } .workspace-grid { grid-template-columns:176px minmax(0,1fr); } }

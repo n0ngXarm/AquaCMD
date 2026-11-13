@@ -151,6 +151,28 @@ class ThemeSwitchTests(unittest.TestCase):
                 provider.load_from_data(compile_native_css(mode, source))
                 self.assertEqual(errors, [], (mode, errors))
 
+    def test_compact_catalog_shows_nine_rows_and_quiet_unknown_with_full_type(self):
+        from wincc_catalog_fixture import write_catalog
+        window = self.window
+        window.scanned_tags = app.scan_wincc_tags(write_catalog(self.directory / 'catalog.txt'))
+        window.render_dynamic_overview()
+        window.set_default_size(1024, 600)
+        web = window.unified_workspace.f1_api.web
+        wait(lambda: javascript(web, 'document.querySelectorAll(".table-row").length') == 457)
+        settle(.2)
+        geometry = javascript(web, '''(()=>{const box=document.getElementById('tableViewport').getBoundingClientRect();
+          const row=document.querySelector('.table-row'), type=row.querySelector('.cell-type'), status=row.querySelector('.cell-status');
+          return {rows:[...document.querySelectorAll('.table-row')].filter(r=>{const b=r.getBoundingClientRect();return b.top>=box.top&&b.bottom<=box.bottom}).length,
+            rowHeight:row.getBoundingClientRect().height, typeFits:type.scrollWidth<=type.clientWidth,
+            typeTitle:type.title, statusBorder:getComputedStyle(status).borderTopWidth,
+            scroll:document.documentElement.scrollWidth, width:innerWidth};})()''')
+        self.assertGreaterEqual(geometry['rows'], 9, geometry)
+        self.assertTrue(36 <= geometry['rowHeight'] <= 40, geometry)
+        self.assertTrue(geometry['typeFits'], geometry)
+        self.assertEqual(geometry['typeTitle'], 'Binary Tag')
+        self.assertEqual(geometry['statusBorder'], '0px')
+        self.assertLessEqual(geometry['scroll'], geometry['width'])
+
     def test_standard_action_variants_have_the_same_height(self):
         window = self.window
         box = Gtk.Box(spacing=8, valign=Gtk.Align.START)

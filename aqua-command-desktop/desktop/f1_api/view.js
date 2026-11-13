@@ -304,11 +304,10 @@
           <div class="cell-checkbox">
             <input type="checkbox" data-checkbox-name="${escapeHtml(tag.name)}" data-checkbox-index="${idx}" ${isChecked ? 'checked' : ''} aria-label="เลือก ${escapeHtml(tag.name)}">
           </div>
-          <div class="cell-tag-name mono">${highlightMatch(tag.name, query)}</div>
-          <div class="cell-group">${escapeHtml(getGroupName(tag.group))}</div>
-          <div class="cell-type mono">${escapeHtml(tag.type || 'Word')}</div>
-          <div class="cell-status" style="${tagStatusStyle(tag)}">${tagStatusContent(tag, true)}</div>
-          <div class="cell-task mono" title="${boundText}">${boundText}</div>
+          <div class="cell-tag-name mono" title="${escapeHtml(tag.name)}">${highlightMatch(tag.name, query)}${boundTasks.length ? `<small class="task-count" title="${boundText}"> · ${boundTasks.length} Task</small>` : ''}</div>
+          <div class="cell-group" title="${escapeHtml(getGroupName(tag.group))}">${escapeHtml(getGroupName(tag.group))}</div>
+          <div class="cell-type mono" title="${escapeHtml(tag.type || 'Word')}">${escapeHtml(tag.type || 'Word')}</div>
+          <div class="cell-status" data-status="${getTagStatus(tag)}" style="${tagStatusStyle(tag)}">${tagStatusContent(tag, true)}</div>
           <div class="cell-actions">
             <button class="btn btn-secondary btn-compact btn-quick-task" data-quick-tag="${escapeHtml(tag.name)}" title="${escapeHtml(quickTitle)}" aria-label="${escapeHtml(quickTitle)} ${escapeHtml(tag.name)}">+ Task</button>
             <button class="btn btn-ghost btn-compact btn-inspect" data-inspect-tag="${escapeHtml(tag.name)}" title="ตรวจสอบรายละเอียด" aria-label="ตรวจสอบรายละเอียด ${escapeHtml(tag.name)}">ดู</button>
@@ -1261,6 +1260,7 @@
           if (!update) continue;
           const cell = row.querySelector('.cell-status');
           cell.setAttribute('style', tagStatusStyle(update));
+          cell.dataset.status = getTagStatus(update);
           cell.innerHTML = tagStatusContent(update, true);
         }
       }
