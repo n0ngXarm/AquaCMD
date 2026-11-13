@@ -250,6 +250,71 @@ class ThemeSwitchTests(unittest.TestCase):
         settle(.05)
         self.assertTrue(window.theme_buttons['light'].get_mapped())
 
+    def test_theme_switch_twenty_cycles_while_active_maintains_responsiveness_and_invariants(self):
+        import json
+        import os
+        import time
+        from unittest.mock import patch
+        from collector.probe_once import EvidenceStore
+
+        window = self.window
+        f1 = window.unified_workspace.f1_api.web
+        wait(lambda: javascript(f1, 'Boolean(window.F1)'))
+
+        # Prepare F3
+        config = self.directory / 'probe-targets-20x.json'
+        config.write_text(json.dumps({'targets': [{'host': '127.0.0.2', 'port': 4840}], 'ping_timeout_s': 0.1, 'tcp_timeout_s': 0.1}))
+        store = EvidenceStore(self.directory / 'theme-evidence-20x.db')
+        store.connection.close()
+        window.f3_network_view.config_path = config
+        window.f3_network_view.db_path = store.path
+        window.switch_to_tab('network')
+        f3 = window.f3_network_view
+        wait(lambda: bool(f3.api_url))
+        wait(lambda: javascript(f3.web, 'Boolean(window.F3)'))
+
+        # Start simulated notification worker
+        window.notification_worker.start()
+        self.addCleanup(window.notification_worker.stop)
+        worker_thread = window.notification_worker.thread
+        self.assertIsNotNone(worker_thread)
+        self.assertTrue(worker_thread.is_alive())
+        self.assertTrue(window.notification_worker.running)
+
+        prefs_path = self.directory / 'ui_prefs.json'
+
+        # Guard against network/Telegram calls or worker restarts
+        with patch.object(window.notification_worker._opener, 'open') as mock_open, \
+             patch.object(window.polling_engine, 'stop_monitoring') as mock_poll_stop, \
+             patch.object(window.notification_worker, 'stop', wraps=window.notification_worker.stop) as mock_worker_stop:
+
+            for i in range(20):
+                target_mode = 'dark' if (i % 2 == 0) else 'light'
+                t0 = time.monotonic()
+                ok = window.set_theme(target_mode)
+                settle(0.01)
+                elapsed = time.monotonic() - t0
+
+                self.assertTrue(ok)
+                self.assertLess(elapsed, 0.250, f"Theme switch {i+1} to {target_mode} took {elapsed:.4f}s (>= 250ms)")
+                self.assertEqual(window.theme_mode, target_mode)
+
+                # Verify ui_prefs.json valid mode 0600 and content
+                self.assertTrue(prefs_path.exists())
+                st_mode = os.stat(prefs_path).st_mode & 0o777
+                self.assertEqual(st_mode, 0o600, f"ui_prefs.json mode is {oct(st_mode)}, expected 0600")
+                saved_prefs = json.loads(prefs_path.read_text(encoding='utf-8'))
+                self.assertEqual(saved_prefs, {'theme': target_mode})
+
+            mock_open.assert_not_called()
+            mock_poll_stop.assert_not_called()
+            mock_worker_stop.assert_not_called()
+
+        # Worker still running and same thread
+        self.assertTrue(window.notification_worker.running)
+        self.assertIs(window.notification_worker.thread, worker_thread)
+        self.assertTrue(worker_thread.is_alive())
+
 
 if __name__ == '__main__':
     unittest.main()
