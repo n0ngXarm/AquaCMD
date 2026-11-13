@@ -1304,5 +1304,3 @@ listbox row label, .table-td { font-size: 10.5pt; }
 /* The header theme control fits the existing chrome before its layout pass. */
 .wincc-topbar { padding-top: 0; padding-bottom: 0; }
 button.theme-toggle { min-width: 34px; min-height: 34px; padding: 0; border: none; background: transparent; color: @ink; }
-
-

@@ -94,11 +94,12 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         self.assertTrue(self.win.on_global_key_pressed(None, Gdk.KEY_F2, 0, 0))
         drain_events()
         self.assertEqual(self.win.stack.get_visible_child_name(), 'overview')
-        self.assertTrue(self.win.nav_btns['overview'].get_active())
+        self.assertEqual([name for name, button in self.win.nav_btns.items() if button.get_active()], ['tasks'])
         self.assertTrue(self.ws.task_dialog.get_visible())
         self.assertEqual(self.ws.task_dialog.get_title(), 'งานเฝ้าระวัง')
         self.ws.task_dialog.close()
         drain_events()
+        self.assertEqual([name for name, button in self.win.nav_btns.items() if button.get_active()], ['overview'])
 
     def test_03_task_fields_and_tags_round_trip(self):
         ws = self.ws
@@ -346,7 +347,9 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         self.addCleanup(win.switch_to_tab, 'overview')
         settings = win.settings_button
         self.assertIs(settings.get_parent().get_last_child(), settings)
-        self.assertEqual(settings.get_icon_name(), 'applications-system-symbolic')
+        self.assertIs(settings.get_parent(), win.navigation)
+        self.assertIn('F6', settings.get_tooltip_text())
+        self.assertIsNotNone(settings.get_child())
         self.assertTrue(settings.get_focusable())
         settings.emit('clicked')
         self.assertEqual(win.stack.get_visible_child_name(), 'alarms')
@@ -422,7 +425,7 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
         capture(win, 'f6-history.png')
 
 
-    def test_11_f6_uses_available_width(self):
+    def test_11_f6_centers_natural_height_content_within_available_width(self):
         win = self.win
         self.addCleanup(win.switch_to_tab, 'overview')
         win.on_global_key_pressed(None, Gdk.KEY_F6, 0, 0)
@@ -450,9 +453,11 @@ class TestWorkspaceProductionIntegration(unittest.TestCase):
 
                 viewport = sections.get_visible_child().get_child()
                 workspace = viewport.get_child()
-                self.assertGreaterEqual(settled_bounds(workspace).get_height(), sections.get_height() - 24)
-                body = settled_bounds(workspace.get_first_child())
-                self.assertGreaterEqual(body.get_width(), sections.get_width() - 48)
+                body = settled_bounds(workspace)
+                self.assertGreater(body.get_height(), 0)
+                self.assertLessEqual(body.get_width(), 1000)
+                self.assertGreaterEqual(body.get_width(), min(900, sections.get_width() - 100))
+                self.assertAlmostEqual(body.get_x(), sections.get_width() - body.get_x() - body.get_width(), delta=2)
                 self.assertGreaterEqual(body.get_x(), 0)
                 self.assertLessEqual(body.get_x() + body.get_width(), sections.get_width())
                 if name == 'opcua':

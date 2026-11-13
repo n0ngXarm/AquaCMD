@@ -544,10 +544,10 @@ paned > separator:hover {
 }
 
 .f2-pill-running {
-    background: @palette_024;
-    border: 1px solid @palette_053;
+    background: @ok_tint;
+    border: 1px solid @ok;
     border-radius: 10px;
-    color: @palette_088;
+    color: @ok;
     font-size: 10pt;
     font-weight: bold;
     padding: 2px 7px;

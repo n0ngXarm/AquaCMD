@@ -6,7 +6,7 @@ import sys
 
 DESKTOP = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(DESKTOP))
-from theme_tokens import DARK
+from theme_tokens import DARK, THEMES
 
 
 def contrast(foreground, background):
@@ -18,7 +18,7 @@ def contrast(foreground, background):
     return (b+.05)/(a+.05)
 
 
-def declaration(text, selector, key):
+def declaration(text, selector, key, tokens=None):
     text = re.sub(r'/\*.*?\*/', '', text, flags=re.S)
     result = None
     for selectors, body in re.findall(r'([^{}]+)\{([^{}]*)\}',text):
@@ -29,35 +29,56 @@ def declaration(text, selector, key):
             result = values[-1]
     if result is None:
         raise AssertionError(f'Missing CSS {selector} {key}')
-    return DARK[result[1:].replace('_', '-')] if result.startswith('@') else result
+    return (tokens or DARK)[result[1:].replace('_', '-')] if result.startswith('@') else result
 
 
 def measurements():
-    workspace = (DESKTOP/'workspace_style.css').read_text()
-    f2 = (DESKTOP/'f2_style.css').read_text()
-    f1 = (DESKTOP/'f1_style.css').read_text()
-    theme = (DESKTOP/'f1_api/formal-theme.css').read_text()
-    dark = re.search(r':root\[data-theme="dark"\]\{([^}]+)',theme)[1]
-    tokens = dict(re.findall(r'--([\w-]+):(#[0-9a-fA-F]{6})',dark))
-    pairs = []
-    for name, css, selector, background in [
-        ('GTK disabled Task action',workspace,'.f2-btn-new-task:disabled',None),
-        ('GTK standby label',f1,'.badge-standby',None),
-        ('GTK running status',f2,'.f2-pill-running',None),
-        ('GTK catalog badge',f2,'.f2-badge-blue',None),
-    ]:
-        fg = declaration(css,selector,'color')
-        try: bg = declaration(css,selector,'background-color')
-        except AssertionError: bg = declaration(css,selector,'background')
-        pairs.append((name,fg,bg))
-    for ink in ('ink','mut','faint','unv','ok','fail','stale','nb'):
-        background = {'unv':'unv-tint','ok':'ok-tint','fail':'fail-tint','stale':'stale-tint','nb':'nb-tint'}.get(ink,'surface-2' if ink=='faint' else 'surface')
-        pairs.append(('WebKit '+ink,tokens[ink],tokens[background]))
-    return [{'sample':name,'foreground':fg,'background':bg,'contrast':round(contrast(fg,bg),3),'passes_4_5':contrast(fg,bg)>=4.5}
-            for name,fg,bg in pairs]
+    rows = []
+    for mode, tokens in THEMES.items():
+        pairs = []
+        for name, file, selector in [
+            ('GTK disabled Task action', 'workspace_style.css', '.f2-btn-new-task:disabled'),
+            ('GTK standby label', 'f1_style.css', '.badge-standby'),
+            ('GTK running status', 'f2_style.css', '.f2-pill-running'),
+            ('GTK catalog badge', 'f2_style.css', '.f2-badge-blue'),
+        ]:
+            css = (DESKTOP / file).read_text()
+            fg = declaration(css, selector, 'color', tokens)
+            try: bg = declaration(css, selector, 'background-color', tokens)
+            except AssertionError: bg = declaration(css, selector, 'background', tokens)
+            pairs.append((name, fg, bg))
+        for ink in ('ink', 'mut', 'faint', 'unv', 'ok', 'fail', 'stale', 'blocked', 'nb'):
+            bg = ink+'-tint' if ink+'-tint' in tokens else 'surface-2' if ink=='faint' else 'surface'
+            pairs.append((ink, tokens[ink], tokens[bg]))
+        for name, fg, bg in [
+            ('Primary', 'on-accent', 'accent'), ('Primary hover', 'on-accent', 'accent-hover'),
+            ('Secondary', 'ink', 'surface'), ('Secondary hover', 'ink', 'surface-3'),
+            ('Secondary pressed', 'ink', 'selected'), ('Ghost hover', 'link', 'accent-tint'),
+            ('Danger', 'danger-ink', 'danger-bg'), ('Danger hover', 'fail', 'fail-tint'),
+            ('Disabled', 'mut', 'surface-2'), ('Header', 'header-ink', 'header-bg'),
+            ('Header secondary', 'header-mut', 'header-bg'), ('F6 status', 'mut', 'surface'),
+        ]:
+            pairs.append((name, tokens[fg], tokens[bg]))
+        for name, fg, bg in pairs:
+            value = contrast(fg, bg)
+            rows.append(dict(theme=mode, sample=name, foreground=fg, background=bg,
+                             contrast=round(value,3), passes_4_5=value>=4.5))
+    return rows
+
+
+def ui_measurements():
+    rows = []
+    for mode, tokens in THEMES.items():
+        for name, fg in [('Control border', 'line-strong'), ('Focus', 'accent'), ('Grid', 'grid'),
+                         *[(key, key) for key in ('g1','g2','g3','g4','g5','ok','fail','stale','blocked','unv','nb')]]:
+            for bg in ('bg', 'surface', 'surface-2'):
+                value = contrast(tokens[fg], tokens[bg])
+                rows.append(dict(theme=mode, sample=name+' on '+bg, foreground=tokens[fg], background=tokens[bg],
+                                 contrast=round(value,3), passes_3=value>=3))
+    return rows
 
 
 if __name__ == '__main__':
-    report = measurements()
-    print(json.dumps(report,indent=2))
-    raise SystemExit(int(any(not row['passes_4_5'] for row in report)))
+    text, ui = measurements(), ui_measurements()
+    print(json.dumps({'text':text,'ui':ui}, indent=2))
+    raise SystemExit(int(any(not row['passes_4_5'] for row in text) or any(not row['passes_3'] for row in ui)))

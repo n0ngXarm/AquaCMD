@@ -359,3 +359,6 @@ body[data-signal="error"] #f3-toast { border-color: var(--fail); }
 .node:focus-visible, .demo-button:focus-visible, .x:focus-visible { outline:var(--focus); outline-offset:2px; }
 .read-only { border:0; background:var(--accent-tint); color:var(--link); }
 .demo-button { border-radius:var(--radius-sm); }
+
+/* Keep Thai multi-line labels readable at the compact sizes too. */
+.node, .banner, .legend { line-height:1.5; }

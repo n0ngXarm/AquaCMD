@@ -29,6 +29,12 @@ class ThemeTokenTests(unittest.TestCase):
             actual = dict((key, value.strip()) for key, value in re.findall(r'--([\w-]+):([^;]+)', body))
             self.assertEqual(actual, expected)
 
+    def test_control_borders_and_graph_lines_meet_ui_contrast_in_both_themes(self):
+        from ux_contrast import ui_measurements
+        rows = ui_measurements()
+        self.assertEqual({row['theme'] for row in rows}, {'light', 'dark'})
+        self.assertEqual([row for row in rows if not row['passes_3']], [])
+
     def test_native_styles_contain_no_literal_colours(self):
         for source in native_sources():
             self.assertNotRegex(source, r'#[0-9a-fA-F]{3,8}\b|rgba?\(')

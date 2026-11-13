@@ -67,17 +67,22 @@ def capture(window, destination):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--theme', choices=('light', 'dark'), default='light')
     args = parser.parse_args()
     if os.environ.get('AQUA_UX_TEST_PROFILE') != '1' or not str(Path.home()).startswith('/tmp/aqua-native-ux-'):
         raise SystemExit('This harness requires an explicitly disposable test HOME')
     args.out.mkdir(parents=True, exist_ok=True)
     config = app.CONFIG_DIR
     config.mkdir(parents=True, exist_ok=True)
+    from theme_prefs import save_theme
+    save_theme(config, args.theme)
     targets = [{'host': f'127.0.0.{i}', 'port': 4840} for i in range(11, 15)]
     (config / 'probe_targets.json').write_text(json.dumps({'targets': targets, 'ping_timeout_s': .1, 'tcp_timeout_s': .1}))
     (config / 'network_topology.json').write_text(json.dumps({'devices': [
         {'configured_ip': target['host'], 'type': 'wincc', 'alias': f'LAB Source {i}'}
-        for i, target in enumerate(targets, 1)]}))
+        for i, target in enumerate(targets, 1)] + [
+        {'configured_ip':'192.0.2.254','type':'switch','alias':'SIMULATED LAB Switch'},
+        {'configured_ip':'198.51.100.1','type':'router','alias':'SIMULATED LAB Router'}]}))
     db = Path.home() / '.local/share/aqua-command/probe/data.db'
     store = EvidenceStore(db)
     store.connection.close()
@@ -118,15 +123,25 @@ def main():
                     capture(window, args.out / file)
                     actual = [window.get_width(), window.get_height()]
                     assert actual == [width, height], ('Actual GTK allocation differs', actual, width, height)
-                    record = {'requested':[width,height], 'actual':actual, 'page':key, 'screenshot':file}
+                    record = {'requested':[width,height], 'actual':actual, 'page':key, 'screenshot':file, 'theme':args.theme}
                     record['native'] = {'active_nav':[name for name, button in window.nav_btns.items() if button.get_active()],
                                         'footer_height':window.alarm_text.get_parent().get_height(),
+                                        'header_height':window.header_box.get_height(),
                                         'footer_selection':list(window.alarm_text.get_selection_bounds())}
                     if key == 'F1':
                         record['f1_geometry'] = javascript(web, '''(()=>{const box=document.getElementById('tableViewport').getBoundingClientRect();return {
                           viewport:{top:box.top,bottom:box.bottom,height:box.height},
                           visible_rows:[...document.querySelectorAll('.table-row')].filter(row=>{const b=row.getBoundingClientRect();return b.top>=box.top&&b.bottom<=box.bottom}).length,
                           web_height:innerHeight};})()''')
+                    if key == 'F1':
+                        assert record['f1_geometry']['visible_rows'] >= 9, record
+                    if key == 'F6':
+                        record['f6_body_width'] = window.f6_bodies[0].get_width()
+                        assert record['f6_body_width'] <= 1000, record
+                    assert record['native']['header_height'] <= 56, record
+                    assert record['native']['footer_height'] <= 32, record
+                    assert not record['native']['footer_selection'][0], record
+                    assert len(record['native']['active_nav']) == 1, record
                     if key == 'F3' and window.f3_network_view.api_url:
                         geometry = javascript(window.f3_network_view.web, '''({
                           width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,
@@ -139,11 +154,11 @@ def main():
                     records.append(record)
                     if key == 'F2':
                         javascript(web, "(window.F1.setMode('monitoring'), true)")
-                if args.out.name == 'ux-after' and width == 1360:
+                if args.out.name in ('light', 'dark', 'ux-after'):
                     window.on_global_key_pressed(None, Gdk.KEY_F8, 0, 0)
                     dialog = window._close_dialog
                     wait(dialog.get_mapped)
-                    file = 'confirm-close-1360.png'
+                    file = f'{width}x{height}-confirm-close.png'
                     capture(dialog, args.out / file)
                     confirmation_screenshots.append(file)
                     dialog.response(Gtk.ResponseType.CANCEL)
@@ -158,7 +173,7 @@ def main():
                             view._confirm_demo()
                             confirmation = view._demo_confirmation
                             wait(confirmation.get_mapped)
-                            file = 'confirm-simulated-telegram-1360.png'
+                            file = f'{width}x{height}-confirm-simulated-telegram.png'
                             capture(confirmation, args.out / file)
                             confirmation_screenshots.append(file)
                             confirmation.response(Gtk.ResponseType.CANCEL)
@@ -181,7 +196,7 @@ def main():
                 settle()
     application.quit()
     (args.out / 'native-layout.json').write_text(json.dumps(records, indent=2))
-    print(json.dumps({'screenshots':len(records), 'confirmation_screenshots':confirmation_screenshots, 'data':'SIMULATED test profile only', 'poll_count':0,
+    print(json.dumps({'theme':args.theme,'screenshots':len(records), 'confirmation_screenshots':confirmation_screenshots, 'data':'SIMULATED test profile only', 'poll_count':0,
                       'notification_worker_running':False, 'evidence_db_unchanged':True, 'records':records}), flush=True)
 
 

@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--capture', action='store_true')
     parser.add_argument('--theme', choices=('light', 'dark'), default='light')
     parser.add_argument('--checks', action='store_true')
+    parser.add_argument('--regression', action='store_true', help='Full desktop and source contracts without repeating fit captures')
     parser.add_argument('--focused', action='store_true')
     parser.add_argument('--test', action='append', default=[])
     parser.add_argument('--fit', action='store_true')
@@ -64,7 +65,7 @@ def main():
                 run('ux-focused', [sys.executable,'-B','-m','unittest','test_ux_desktop_polish','-v'],90)
             for name in args.test:
                 run('focused-'+name.split('.')[-1], [sys.executable,'-B','-m','unittest',name,'-v'])
-            if args.checks:
+            if args.checks or args.regression:
                 run('desktop-tests', [sys.executable,'-B','-m','unittest','discover','-s','desktop/tests','-v'])
                 run('source-contracts', [sys.executable,'-B','-m','unittest','discover','-s','tests','-v'])
             if args.checks or args.fit:
