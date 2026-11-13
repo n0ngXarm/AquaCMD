@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from gi.repository import Gio, Gtk
+from gi.repository import Gio, Gtk, Graphene
 import app
 from ux_native_capture import javascript, settle, wait
 
@@ -192,6 +192,63 @@ class ThemeSwitchTests(unittest.TestCase):
         settle(.1)
         self.assertEqual([button.get_allocated_height() for button in controls], [34] * 4)
         self.assertIs(window.get_titlebar(), window.chrome_handle)
+
+    def test_f6_theme_control_lives_inside_content_column_and_hides_on_other_tabs(self):
+        window = self.window
+        window.switch_to_tab('alarms')
+        settle(.1)
+        for mode in ('light', 'dark'):
+            window.set_theme(mode)
+            for width, height in ((1024, 600), (1360, 768), (1920, 1080)):
+                window.set_default_size(width, height)
+                wait(lambda: (window.get_width(), window.get_height()) == (width, height))
+                settle(.1)
+                body = window.f6_bodies[0]
+                body_ok, body_pt = body.compute_point(window, Graphene.Point.zero())
+                self.assertTrue(body_ok)
+                body_left = body_pt.x
+                body_right = body_left + body.get_width()
+
+                card = getattr(window, 'f6_appearance_card', None)
+                self.assertIsNotNone(card)
+                card_ok, card_pt = card.compute_point(window, Graphene.Point.zero())
+                self.assertTrue(card_ok)
+                card_left = card_pt.x
+                card_right = card_left + card.get_width()
+
+                # Card is fully inside the centered content column
+                self.assertGreaterEqual(card_left, body_left - 1)
+                self.assertLessEqual(card_right, body_right + 1)
+
+                # Segmented buttons must be >= 12px from window's right edge
+                for btn_mode in ('light', 'dark'):
+                    btn = window.theme_buttons[btn_mode]
+                    btn_ok, btn_pt = btn.compute_point(window, Graphene.Point.zero())
+                    self.assertTrue(btn_ok)
+                    btn_right = btn_pt.x + btn.get_width()
+                    margin_to_edge = window.get_width() - btn_right
+                    self.assertGreaterEqual(
+                        margin_to_edge,
+                        12,
+                        f"Theme button {btn_mode} is {margin_to_edge}px from right edge at {width}x{height}",
+                    )
+
+                # No horizontal scrolling in F6
+                scroll = window.f6_sections.get_child_by_name('opcua')
+                hadj = scroll.get_hadjustment()
+                self.assertLessEqual(hadj.get_upper(), hadj.get_page_size() + 1)
+
+        # Tab visibility: control is only visible on the 'opcua' tab
+        window.f6_sections.set_visible_child_name('opcua')
+        settle(.05)
+        self.assertTrue(window.theme_buttons['light'].get_mapped())
+        for tab_name in ('telemetry', 'telegram', 'history'):
+            window.f6_sections.set_visible_child_name(tab_name)
+            settle(.05)
+            self.assertFalse(window.theme_buttons['light'].get_mapped())
+        window.f6_sections.set_visible_child_name('opcua')
+        settle(.05)
+        self.assertTrue(window.theme_buttons['light'].get_mapped())
 
 
 if __name__ == '__main__':

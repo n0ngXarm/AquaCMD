@@ -1604,8 +1604,17 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
                 button.set_active(self.theme_mode == 'dark')
                 button.set_icon_name('weather-clear-symbolic' if self.theme_mode == 'dark' else 'weather-clear-night-symbolic')
                 button.set_tooltip_text('สลับธีม (สว่าง/มืด)' + getattr(self, '_theme_save_error', ''))
-            for mode, button in getattr(self, 'theme_buttons', {}).items():
-                button.set_active(mode == self.theme_mode)
+            for mode, btn in getattr(self, 'theme_buttons', {}).items():
+                btn.set_active(mode == self.theme_mode)
+                caption = 'สว่าง' if mode == 'light' else 'มืด'
+                btn.set_tooltip_text(f'ธีม{caption}' + getattr(self, '_theme_save_error', ''))
+            help_lbl = getattr(self, 'lbl_theme_help', None)
+            if help_lbl is not None:
+                err = getattr(self, '_theme_save_error', '')
+                if err:
+                    help_lbl.set_text('สลับชุดสีสว่างหรือมืด' + err)
+                else:
+                    help_lbl.set_text('สลับชุดสีสว่างหรือมืดสำหรับสภาพแสงในห้องปฏิบัติการ')
         finally:
             self._syncing_theme_controls = False
 
@@ -2493,23 +2502,6 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         switcher = Gtk.StackSwitcher(stack=self.f6_sections)
         switcher.add_css_class('settings-tabs')
         header.append(switcher)
-        appearance = Gtk.Box(spacing=12, halign=Gtk.Align.END)
-        appearance.add_css_class('appearance-row')
-        appearance.append(label('การแสดงผล', 'f6-field-label'))
-        self.theme_buttons = {}
-        group = None
-        for mode, caption in [('light', 'สว่าง'), ('dark', 'มืด')]:
-            button = Gtk.ToggleButton(label=caption)
-            button.add_css_class('theme-segment')
-            if group is not None:
-                button.set_group(group)
-            group = button
-            button.connect('toggled', lambda button, value=mode: self.set_theme(value)
-                           if button.get_active() and not getattr(self, '_syncing_theme_controls', False) else None)
-            appearance.append(button)
-            self.theme_buttons[mode] = button
-        self._sync_theme_controls()
-        page.append(appearance)
         page.append(self.f6_sections)
 
         opc = add_section('opcua', 'WinCC OPC UA')
@@ -2517,6 +2509,31 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         connection = add_card(connection_column, 'เชื่อมต่อ WinCC',
                               'กรอก URL ของเซิร์ฟเวอร์เพื่ออ่านข้อมูลผ่าน OPC UA แบบอ่านอย่างเดียว')
         certificates = add_card(certificate_column, 'ใบรับรอง OPC UA', '')
+        appearance_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        appearance_card.add_css_class('f6-card')
+        certificate_column.append(appearance_card)
+        appearance_card.append(label('การแสดงผล', 'f6-card-title'))
+        self.lbl_theme_help = label('สลับชุดสีสว่างหรือมืดสำหรับสภาพแสงในห้องปฏิบัติการ', 'f6-help')
+        appearance_card.append(self.lbl_theme_help)
+        self.f6_appearance_card = appearance_card
+        appearance_row = Gtk.Box(spacing=8, valign=Gtk.Align.CENTER)
+        appearance_row.add_css_class('appearance-row')
+        appearance_card.append(appearance_row)
+        self.theme_buttons = {}
+        group = None
+        for mode, caption in [('light', 'สว่าง'), ('dark', 'มืด')]:
+            btn = Gtk.ToggleButton(label=caption)
+            btn.add_css_class('theme-segment')
+            btn.set_tooltip_text(f'ธีม{caption}')
+            btn.update_property([Gtk.AccessibleProperty.LABEL], [f'ธีม{caption}'])
+            if group is not None:
+                btn.set_group(group)
+            group = btn
+            btn.connect('toggled', lambda b, value=mode: self.set_theme(value)
+                        if b.get_active() and not getattr(self, '_syncing_theme_controls', False) else None)
+            appearance_row.append(btn)
+            self.theme_buttons[mode] = btn
+        self._sync_theme_controls()
         monitoring = add_card(opc, 'อ่านค่าอัตโนมัติ',
                               'ตรวจการเชื่อมต่อก่อนเริ่มอ่านตามรอบ การแจ้งเตือนทำงานตาม Task ที่ตั้งไว้')
         fields = Gtk.Grid(column_spacing=16, row_spacing=8)
