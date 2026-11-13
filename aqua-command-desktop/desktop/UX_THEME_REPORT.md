@@ -1,9 +1,9 @@
 # ผล redesign native GTK4 + WebKitGTK และ Light/Dark
 
-บันทึกการตรวจวันที่ 13 พฤศจิกายน 2026 บน branch `ux/desktop-theme-redesign`
-ฐาน `f14cf2e` จากงาน compatibility; ไม่รวมสาม commits ของฐานในจำนวนแปด commits ของงานนี้
-ขอบเขตการดำเนินงานครั้งนี้เป็น GUI/presentation และ test harness ภายใน `desktop/` เท่านั้น
-ไม่มีการเผยแพร่ source, merge เข้า main, ติดตั้งแอป, ติดตั้ง dependency ในระบบผู้ใช้ หรือแก้ operational config ในการตรวจครั้งนี้
+บันทึกการตรวจวันที่ 13 พฤศจิกายน 2026 เผยแพร่บน `main` ที่ `10d1aa6`
+ฐาน `f14cf2e` จากงาน compatibility; ไม่รวมสาม commits ของฐานในจำนวนแปด commits ของงาน redesign นี้
+ขอบเขตการดำเนินงานเป็น GUI/presentation และ test harness ภายใน `desktop/` เท่านั้น
+เผยแพร่บน `main` ถึง `10d1aa6` เมื่อ 2026-11-13; ไม่มีการติดตั้งแอป, ติดตั้ง dependency ในระบบผู้ใช้ หรือแก้ operational config
 
 ## พฤติกรรมที่ส่งมอบ
 
@@ -39,7 +39,40 @@ F3 คงโครงสร้างสามโซน ลำดับ nodes แ
 - `24b8d50 feat(desktop): make the catalog compact and keep unknown states quiet`
 - `ca87e06 feat(desktop): organize Task forms and center connection settings`
 - `d4eb265 style(desktop): apply shared F3 surfaces and verify both theme fits`
-- Commit ที่ 8: contrast, regression ตามข้อกำหนดใหม่, capture และรายงานนี้ (hash อยู่ใน final receipt)
+- `10d1aa6 test(desktop): verify both themes and document native redesign acceptance`
+
+## สถานะการเผยแพร่
+
+ณ วันที่ 2026-11-13 การเปลี่ยนแปลงทั้งหมดรวม 11 commits ได้รับการเผยแพร่บน `main` ถึง `10d1aa6` (ต่อจากฐานเดิม `a3a2ef4`):
+
+### ฐานเดิม (Base commits)
+- `445e1e6`: ฐาน canonical UX เดิม
+- `a3a2ef4`: เผยแพร่ UX polish 11 commits เดิม (เมื่อ 2026-11-12)
+
+### รายการ 11 Commits ที่เผยแพร่บน main (a3a2ef4..10d1aa6)
+1. `fe0ffd9 fix(desktop): import annotation and certificate serialization names` (Python compatibility)
+2. `f888a86 test(desktop): compare identity with the actual OS hostname` (Python compatibility)
+3. `f14cf2e docs(desktop): reconcile published UX and Python compatibility evidence` (Python compatibility)
+4. `6187aad refactor(desktop): centralize theme tokens without changing Dark visuals` (Light/Dark redesign)
+5. `27118e9 feat(desktop): switch Light and Dark live with private UI preference` (Light/Dark redesign)
+6. `fbbec70 feat(desktop): unify chrome and keep one active navigation tab` (Light/Dark redesign)
+7. `7d68e78 feat(desktop): align native and WebKit action and widget styles` (Light/Dark redesign)
+8. `24b8d50 feat(desktop): make the catalog compact and keep unknown states quiet` (Light/Dark redesign)
+9. `ca87e06 feat(desktop): organize Task forms and center connection settings` (Light/Dark redesign)
+10. `d4eb265 style(desktop): apply shared F3 surfaces and verify both theme fits` (Light/Dark redesign)
+11. `10d1aa6 test(desktop): verify both themes and document native redesign acceptance` (Light/Dark redesign)
+
+### จำนวนการทดสอบ (Test Counts)
+- Desktop tests: 353 tests ผ่าน (353 passed)
+- Source contracts: 116 tests ผ่าน (116 passed)
+- F3 usability & layout fit tests: ผ่าน 3 ขนาดหน้าจอ (1024x600, 1360x768, 1920x1080) ทั้ง 2 ธีม (Light และ Dark)
+- WCAG AA Contrast checks: ผ่านครบทุก 134 แถว (text >= 4.5:1, non-text >= 3:1)
+
+### รายการที่ยังคงเปิดอยู่ (Still-Open Items)
+- Git history clearance (`history_clearance: NOT_EVALUATED`): การตัดสินใจของเจ้าของระบบ
+- การติดตั้ง/อัปเดตโปรแกรมบนเครื่องปฏิบัติการจริง (การเผยแพร่ source บน git ไม่ใช่การติดตั้งโปรแกรม)
+- การทดสอบกับ WinCC / PLC / LAN / SCADA และ Telegram จริงในภาคสนาม (ยังคงใช้โหมดจำลอง SIMULATED LAB เท่านั้น)
+- การทดสอบบน Python 3.12 / 3.14 GUI บนสภาพแวดล้อมจริงของผู้ใช้
 
 ## แปดข้อที่ตรวจจากภาพ baseline
 

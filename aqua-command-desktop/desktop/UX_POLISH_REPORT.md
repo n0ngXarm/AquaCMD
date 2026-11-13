@@ -3,7 +3,7 @@
 วันที่ 2026-11-12 · งาน UX เผยแพร่บน `main` ที่ `a3a2ef4` · ฐาน UX `445e1e6`
 
 เผยแพร่ครบ **11 commits**: 10 commits ของ UX และหนึ่ง commit บันทึกอนุญาต
-รอบแก้ Python compatibility อยู่สาขา local `fix/desktop-py-compat` และยังไม่ push
+งานแก้ Python compatibility ได้รับการเผยแพร่บน `main` แล้ว (3 commits: `fe0ffd9`, `f888a86`, `f14cf2e`) เมื่อ 2026-11-13
 
 อัปเดตหลังผู้ใช้ส่งภาพอ้างอิง: รักษาหน้าตาผังสามคอลัมน์เดิม และใช้ภาพ
 1920x1080 ที่มี topology ครบในการเทียบ ผลตรวจงาน UX เดิม Desktop332 / contracts116 /
@@ -278,10 +278,9 @@ Python runtime เดิมกับ `artifacts/ux-reference/reference_capture.p
 
 ## แก้ Python compatibility และความเป็นอิสระจาก hostname — 2026-11-12
 
-งานรอบนี้อยู่สาขา local `fix/desktop-py-compat` จาก `main` ที่ `a3a2ef4`
-ไม่ push/merge หรือติดตั้งโปรแกรม มีสาม commits แยกตามรายการแก้:
-`fe0ffd9` แก้ import/เพิ่ม regression, `f888a86` แก้ hostname assertions,
-และ commit ปรับเอกสารรอบนี้ การเผยแพร่ UX เดิม 11 commits ยังคงเป็นข้อมูลข้างต้น
+งานรอบนี้เผยแพร่บน `main` เมื่อ 2026-11-13 จากฐาน `a3a2ef4`
+ประกอบด้วย 3 commits: `fe0ffd9` (แก้ import/เพิ่ม regression), `f888a86` (แก้ hostname assertions),
+และ `f14cf2e` (ปรับเอกสารและหลักฐาน compatibility) การเผยแพร่ UX เดิม 11 commits ยังคงเป็นข้อมูลข้างต้น
 
 Verified on Python 3.12 + GTK4/WebKit 6.0 on a headless display: 13 UX tests pass;
 full discovery 332 tests had 2 hostname-dependent failures (fixed in `f888a86`);
