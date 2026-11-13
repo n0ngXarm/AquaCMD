@@ -163,6 +163,35 @@ except ImportError:
 # ---------------------------------------------------------
 IS_WINDOWS = (sys.platform == 'win32')
 
+
+def is_icon_available(icon_name: str, display: Optional[Gdk.Display] = None, size: int = 16) -> bool:
+    """Check if an icon exists in the icon theme and can be loaded without image-missing."""
+    if not icon_name:
+        return False
+    if display is None:
+        display = Gdk.Display.get_default()
+    if display is None:
+        return False
+    theme = Gtk.IconTheme.get_for_display(display)
+    if not theme.has_icon(icon_name):
+        return False
+    try:
+        paintable = theme.lookup_icon(icon_name, None, size, 1, Gtk.TextDirection.NONE, Gtk.IconLookupFlags.NONE)
+        if paintable is None:
+            return False
+        f = paintable.get_file()
+        if f is not None:
+            uri = f.get_uri() or f.get_path() or ''
+            if 'image-missing' in uri:
+                return False
+        snapshot = Gtk.Snapshot()
+        paintable.snapshot(snapshot, size, size)
+        if snapshot.to_node() is None:
+            return False
+        return True
+    except Exception:
+        return False
+
 if IS_WINDOWS:
     appdata = os.environ.get('APPDATA') or os.environ.get('LOCALAPPDATA')
     CONFIG_DIR = Path(appdata) / 'AquaCommand' if appdata else Path.home() / '.config' / 'aqua-command'
@@ -1357,10 +1386,13 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         topbar.append(title_label)
         self.brand_detail = title_label
 
-        self.theme_button = Gtk.ToggleButton(icon_name='weather-clear-night-symbolic')
+        self.theme_button = Gtk.ToggleButton()
+        self.theme_button.set_size_request(38, -1)
         self.theme_button.set_tooltip_text('สลับธีม (สว่าง/มืด)')
         self.theme_button.update_property([Gtk.AccessibleProperty.LABEL], ['สลับธีม (สว่าง/มืด)'])
         self.theme_button.add_css_class('theme-toggle')
+        self.theme_button.add_css_class('icon-button')
+        self.theme_button.add_css_class('button-ghost')
         self.theme_button.connect('toggled', lambda button: self.set_theme('dark' if button.get_active() else 'light')
                                   if not getattr(self, '_syncing_theme_controls', False) else None)
         topbar.append(self.theme_button)
@@ -1506,14 +1538,14 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         # Non-interactive status cluster: icon and text, never button-like borders.
         self.status_cluster = Gtk.Box(spacing=6)
         self.status_cluster.add_css_class('status-cluster')
+        self._status_items = []
         for icon_name, label in [('view-list-symbolic', self.pill_scan), ('changes-prevent-symbolic', self.pill_readonly),
                                  ('network-transmit-receive-symbolic', self.internet_badge)]:
             topbar.remove(label)
             item = Gtk.Box(spacing=4)
             item.add_css_class('status-item')
-            icon = Gtk.Image.new_from_icon_name(icon_name)
-            icon.set_pixel_size(12)
-            item.append(icon)
+            self._status_items.append((item, icon_name, label))
+            self._update_status_item_icon(item, icon_name, label)
             item.append(label)
             self.status_cluster.append(item)
             label.set_tooltip_text(label.get_text())
@@ -1596,14 +1628,49 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         for key, (label, full) in self.nav_captions.items():
             label.set_text(captions[key] if layout == 0 else regular.get(key, full))
 
+    def _update_button_icon(self, button, icon_name, fallback_text):
+        display = self.get_display() if hasattr(self, 'get_display') else None
+        if is_icon_available(icon_name, display):
+            button.set_icon_name(icon_name)
+        else:
+            button.set_label(fallback_text)
+
+    def _update_status_item_icon(self, item, icon_name, label):
+        display = self.get_display() if hasattr(self, 'get_display') else None
+        has_icon = is_icon_available(icon_name, display)
+        img = None
+        child = item.get_first_child()
+        while child:
+            if isinstance(child, Gtk.Image):
+                img = child
+                break
+            child = child.get_next_sibling()
+        if has_icon:
+            if img is None:
+                img = Gtk.Image.new_from_icon_name(icon_name)
+                img.set_pixel_size(12)
+                item.prepend(img)
+            else:
+                img.set_from_icon_name(icon_name)
+                img.set_visible(True)
+        else:
+            if img is not None:
+                item.remove(img)
+
     def _sync_theme_controls(self):
         self._syncing_theme_controls = True
         try:
             button = getattr(self, 'theme_button', None)
             if button is not None:
                 button.set_active(self.theme_mode == 'dark')
-                button.set_icon_name('weather-clear-symbolic' if self.theme_mode == 'dark' else 'weather-clear-night-symbolic')
+                icon_name = 'weather-clear-symbolic' if self.theme_mode == 'dark' else 'weather-clear-night-symbolic'
+                self._update_button_icon(button, icon_name, 'ธีม')
                 button.set_tooltip_text('สลับธีม (สว่าง/มืด)' + getattr(self, '_theme_save_error', ''))
+            help_btn = getattr(self, 'help_button', None)
+            if help_btn is not None:
+                self._update_button_icon(help_btn, 'help-browser-symbolic', 'ช่วย')
+            for item, icon_name, label in getattr(self, '_status_items', []):
+                self._update_status_item_icon(item, icon_name, label)
             for mode, btn in getattr(self, 'theme_buttons', {}).items():
                 btn.set_active(mode == self.theme_mode)
                 caption = 'สว่าง' if mode == 'light' else 'มืด'
@@ -1659,7 +1726,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
 
     def build_help_button(self):
         self.help_manual = None
-        self.help_button = Gtk.Button(icon_name='help-browser-symbolic')
+        self.help_button = Gtk.Button()
         self.help_button.add_css_class('fkey-btn')
         self.help_button.add_css_class('icon-button')
         self.help_button.add_css_class('button-ghost')
@@ -1667,6 +1734,7 @@ class AquaWinCCWindow(Gtk.ApplicationWindow):
         self.help_button.set_tooltip_text('คู่มือการใช้งาน · F9')
         self.help_button.update_property([Gtk.AccessibleProperty.LABEL], ['คู่มือการใช้งาน'])
         self.help_button.connect('clicked', self.show_help_manual)
+        self._update_button_icon(self.help_button, 'help-browser-symbolic', 'ช่วย')
         return self.help_button
 
     def show_help_manual(self, _):
