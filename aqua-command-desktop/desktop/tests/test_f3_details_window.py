@@ -8,8 +8,10 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import f3_network
 from gi.repository import Gtk, GLib
+from gtk_wait import wait_for
 
 
 class TestF3DetailsWindow(unittest.TestCase):
@@ -61,7 +63,7 @@ class TestF3DetailsWindow(unittest.TestCase):
         # G13: current library docks details; no second native window is created.
         self.assertTrue(self.view.inspector.get_visible())
         self.view.select_device('PC1')
-        self.spin()
+        wait_for(self.view.inspector.get_mapped, timeout=5.0)
         self.assertIs(self.popup(), self.window)
         self.assertTrue(self.view.inspector.get_mapped())
         self.assertEqual(self.view.inspector.current_device_id, 'PC1')
@@ -83,10 +85,10 @@ class TestF3DetailsWindow(unittest.TestCase):
         self.assertEqual(inspector.current_device_id, 'PC2')
         self.assertIn(self.view.store.devices['PC2']['configured_ip'], inspector.lbl_disp_name.get_text())
         self.view.toggle_inspector(False)
-        self.spin()
+        wait_for(lambda: not self.view.inspector.get_visible(), timeout=5.0)
         self.assertFalse(inspector.get_visible())
         self.view.btn_toggle_insp.emit('clicked')
-        self.spin()
+        wait_for(self.view.inspector.get_mapped, timeout=5.0)
         self.assertIs(self.view.inspector, inspector)
         self.assertTrue(inspector.get_mapped())
 
@@ -102,7 +104,7 @@ class TestF3DetailsWindow(unittest.TestCase):
             return dialog
         with patch("f3_network.DeviceSettingsDialog", side_effect=create):
             self.view.inspector._on_settings_clicked(None)
-        self.spin()
+        wait_for(lambda: created and created[0].get_mapped(), timeout=5.0)
         self.assertTrue(created[0].get_mapped())
         self.assertIs(created[0].get_transient_for(), popup)
         self.assertTrue(created[0].get_destroy_with_parent())
@@ -121,7 +123,7 @@ class TestF3DetailsWindow(unittest.TestCase):
         self.view.select_device('PC1')
         self.assertIs(self.popup(), self.window)
         self.window.destroy()
-        self.spin()
+        wait_for(lambda: not self.view.inspector.get_mapped(), timeout=5.0)
         self.assertFalse(self.view.inspector.get_mapped())
         self.assertIsNone(self.view.details_window)
 

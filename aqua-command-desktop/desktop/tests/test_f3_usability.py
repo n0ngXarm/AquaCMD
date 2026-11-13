@@ -9,10 +9,12 @@ from types import SimpleNamespace
 from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import cairo
 import f3_network
 from gi.repository import GLib, Gtk
 from f3_reconciliation_fixture import assert_all_pages_fit
+from gtk_wait import wait_for, wait_for_layout_stable
 
 
 class TestF3Usability(unittest.TestCase):
@@ -58,15 +60,26 @@ class TestF3Usability(unittest.TestCase):
     def test_device_list_has_a_full_height_view(self):
         window = self.show_window()
         self.view.stack.set_visible_child_name("cards")
-        self.spin()
-        self.assertIn("เลื่อนลง", self.view.guide.get_text())
+        cards_page = self.view.stack.get_child_by_name("cards")
         scroll = self.view.cards_grid.get_ancestor(Gtk.ScrolledWindow)
-        self.assertGreaterEqual(scroll.get_height(), window.get_height() * 0.6)
+
+        def condition(sw):
+            return cards_page.get_mapped() and sw.get_height() > 0
+
+        wait_for_layout_stable(scroll, condition=condition, timeout=5.0, stable_cycles=2)
+        self.assertIn("เลื่อนลง", self.view.guide.get_text())
+        observed_height = scroll.get_height()
+        min_expected = window.get_height() * 0.6
+        self.assertGreaterEqual(
+            observed_height,
+            min_expected,
+            f"Observed scroll height {observed_height}px < expected {min_expected}px (window={window.get_height()}px)",
+        )
 
     def test_selected_device_details_do_not_take_half_the_screen(self):
         self.show_window()
         self.view.select_device("PC1")
-        self.spin()
+        wait_for(self.view.inspector.get_mapped, timeout=5.0)
         self.assertTrue(self.view.inspector.get_mapped())
         self.assertLessEqual(self.view.inspector.get_width(), 400)
 
