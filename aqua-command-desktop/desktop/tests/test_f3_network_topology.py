@@ -447,6 +447,49 @@ class TestF3NetworkTopologyPhase9(unittest.TestCase):
         self.assertEqual(col_dev["identity_source"], IdentitySource.LOCAL_OS)
         self.assertIsNotNone(col_dev["identity_verified_at"])
 
+    def test_identity_01_synthetic_hostname_mock(self):
+        """1b. Verify synthetic mocked hostname is used by store and GUI card, never username, PC4, or local-user."""
+        import getpass
+        real_user = getpass.getuser().strip().lower()
+        synth_host = "lab-workstation-node1"
+
+        with patch("socket.gethostname", return_value=synth_host):
+            h = get_local_hostname()
+            self.assertEqual(h, synth_host)
+            self.assertNotEqual(h.lower(), "pc4")
+            self.assertNotEqual(h.lower(), "local-user")
+            if real_user:
+                self.assertNotEqual(h.lower(), real_user)
+
+            view = F3NetworkTopologyView(self.mock_owner)
+            col_dev = view.store.devices["dev-collector-01"]
+            self.assertEqual(col_dev["hostname"], synth_host)
+            self.assertEqual(col_dev["identity_status"], IdentityStatus.VERIFIED)
+            self.assertEqual(col_dev["identity_source"], IdentitySource.LOCAL_OS)
+
+            col_card = view.cards["dev-collector-01"]
+            card_name = col_card.lbl_name.get_text()
+            self.assertEqual(card_name, synth_host)
+            self.assertNotIn("PC4", card_name)
+            self.assertNotIn("local-user", card_name.lower())
+            if real_user:
+                self.assertNotIn(real_user, card_name.lower())
+
+    def test_identity_01_localhost_triggers_fallback(self):
+        """1c. Verify 'localhost' returned by socket.gethostname() triggers documented OS fallback."""
+        with patch("socket.gethostname", return_value="localhost"), \
+             patch("platform.node", return_value="lab-backup-node"):
+            h = get_local_hostname()
+            self.assertEqual(h, "lab-backup-node")
+
+        # When all candidates are localhost or empty, it returns empty string without crashing or returning 'localhost'
+        with patch("socket.gethostname", return_value="localhost"), \
+             patch("platform.node", return_value="localhost"), \
+             patch("pathlib.Path.exists", return_value=False):
+            h_fallback = get_local_hostname()
+            self.assertNotEqual(h_fallback, "localhost")
+            self.assertEqual(h_fallback, "")
+
     def test_identity_02_unknown_remote_hostname_shows_unknown(self):
         """2. Verify remote SCADA workstation without verified asset record shows Hostname Unknown."""
         view = F3NetworkTopologyView(self.mock_owner)
