@@ -352,3 +352,10 @@ body[data-signal="error"] #f3-toast { border-color: var(--fail); }
   .host-routes div { flex: 1; min-width: 0; grid-template-columns: 2.2em minmax(0, 1fr); }
   .host-routes dd { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
+
+/* Shared presentation only; the three zones and their geometry stay unchanged. */
+.banner, .diagram-frame, .zone, .node { border-radius:var(--radius-md); }
+.node { border-top-color:var(--line-strong); border-right-color:var(--line-strong); border-bottom-color:var(--line-strong); box-shadow:var(--shadow-1); }
+.node:focus-visible, .demo-button:focus-visible, .x:focus-visible { outline:var(--focus); outline-offset:2px; }
+.read-only { border:0; background:var(--accent-tint); color:var(--link); }
+.demo-button { border-radius:var(--radius-sm); }

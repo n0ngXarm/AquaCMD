@@ -17,6 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stage', choices=('before','after'), required=True)
     parser.add_argument('--capture', action='store_true')
+    parser.add_argument('--theme', choices=('light', 'dark'), default='light')
     parser.add_argument('--checks', action='store_true')
     parser.add_argument('--focused', action='store_true')
     parser.add_argument('--test', action='append', default=[])
@@ -58,7 +59,7 @@ def main():
                 if compositor.poll() is not None: raise RuntimeError('Headless compositor exited')
                 time.sleep(.1)
             if args.capture:
-                run('native-capture', [sys.executable,'-B','desktop/tests/ux_native_capture.py','--out',str(output)],120)
+                run('native-capture', [sys.executable,'-B','desktop/tests/ux_native_capture.py','--out',str(output),'--theme',args.theme],180)
             if args.focused:
                 run('ux-focused', [sys.executable,'-B','-m','unittest','test_ux_desktop_polish','-v'],90)
             for name in args.test:
@@ -69,7 +70,8 @@ def main():
             if args.checks or args.fit:
                 for size in ('1024x496','1360x616','1920x1009'):
                     env['F3_TEST_SIZE'] = size
-                    run('f3-handoff-'+size, [sys.executable,'-B','tests/f3_handoff_native.py'],120)
+                    for theme in ('light', 'dark'):
+                        run('f3-handoff-'+theme+'-'+size, [sys.executable,'-B','desktop/tests/ux_theme_fit.py','--theme',theme],120)
         finally:
             compositor.terminate()
             try: compositor.wait(timeout=5)
